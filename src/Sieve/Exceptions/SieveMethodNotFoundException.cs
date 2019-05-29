@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Sieve.Exceptions
 {
@@ -18,18 +19,22 @@ namespace Sieve.Exceptions
 
         public SieveMethodNotFoundException(string message) : base(message)
         {
+
         }
 
         public SieveMethodNotFoundException(string message, Exception innerException) : base(message, innerException)
         {
+
         }
 
         public SieveMethodNotFoundException()
         {
+
         }
 
-        protected SieveMethodNotFoundException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        protected SieveMethodNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+
         }
     }
 }

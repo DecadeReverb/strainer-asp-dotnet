@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Sieve.Exceptions
 {
@@ -35,18 +36,22 @@ namespace Sieve.Exceptions
 
         public SieveIncompatibleMethodException(string message) : base(message)
         {
+
         }
 
         public SieveIncompatibleMethodException(string message, Exception innerException) : base(message, innerException)
         {
+
         }
 
         public SieveIncompatibleMethodException()
         {
+
         }
 
-        protected SieveIncompatibleMethodException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        protected SieveIncompatibleMethodException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+
         }
     }
 }
