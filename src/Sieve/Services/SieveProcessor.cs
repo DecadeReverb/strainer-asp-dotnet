@@ -180,14 +180,15 @@ namespace Sieve.Services
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
-            if (model?.GetFiltersParsed() == null)
+            var parsedFilters = model.GetFiltersParsed();
+            if (parsedFilters == null)
             {
                 return result;
             }
 
             Expression outerExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
-            foreach (var filterTerm in model.GetFiltersParsed())
+            foreach (var filterTerm in parsedFilters)
             {
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)

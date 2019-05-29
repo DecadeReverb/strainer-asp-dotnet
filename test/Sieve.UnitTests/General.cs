@@ -169,9 +169,10 @@ namespace Sieve.UnitTests
                 Filters = "LikeCount==50",
             };
 
-            Console.WriteLine(model.GetFiltersParsed()[0].Values);
-            Console.WriteLine(model.GetFiltersParsed()[0].Operator);
-            Console.WriteLine(model.GetFiltersParsed()[0].OperatorParsed);
+            var parsedFilters = model.GetFiltersParsed();
+            Console.WriteLine(parsedFilters[0].Values);
+            Console.WriteLine(parsedFilters[0].Operator);
+            Console.WriteLine(parsedFilters[0].OperatorParsed);
 
             var result = _processor.Apply(model, _posts);
 
@@ -310,7 +311,7 @@ namespace Sieve.UnitTests
             Assert.AreEqual(1, resultCount);
             Assert.AreEqual(3, entry.Id);
         }
-        
+
         [TestMethod]
         public void OrValueFilteringWorks()
         {
