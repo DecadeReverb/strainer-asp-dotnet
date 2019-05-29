@@ -8,9 +8,6 @@ namespace Sieve.Services
 {
     public class SievePropertyBuilder<TEntity> : ISievePropertyBuilder<TEntity>
     {
-        private readonly PropertyInfo _property;
-        private readonly SievePropertyMapper _mapper;
-
         public SievePropertyBuilder(SievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
@@ -18,17 +15,20 @@ namespace Sieve.Services
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            _mapper = sievePropertyMapper ?? throw new ArgumentNullException(nameof(sievePropertyMapper));
-            (FullName, _property) = GetPropertyInfo(expression);
+            Mapper = sievePropertyMapper ?? throw new ArgumentNullException(nameof(sievePropertyMapper));
+            (FullName, PropertyInfo) = GetPropertyInfo(expression);
             Name = FullName;
             IsFilterable = false;
             IsSortable = false;
         }
 
-        public string FullName { get; private set; }
-        public bool IsFilterable { get; private set; }
-        public bool IsSortable { get; private set; }
-        public string Name { get; private set; }
+        public string FullName { get; protected set; }
+        public bool IsFilterable { get; protected set; }
+        public bool IsSortable { get; protected set; }
+        public string Name { get; protected set; }
+
+        protected PropertyInfo PropertyInfo { get; }
+        protected SievePropertyMapper Mapper { get; }
 
         public ISievePropertyBuilder<TEntity> CanFilter()
         {
@@ -72,7 +72,7 @@ namespace Sieve.Services
                 CanSort = IsSortable
             };
 
-            _mapper.AddMap<TEntity>(_property, metadata);
+            Mapper.AddMap<TEntity>(PropertyInfo, metadata);
         }
 
         private static (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
