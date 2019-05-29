@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Sieve.Models;
 
-namespace Sieve.Models
+namespace Sieve.Services
 {
     public interface IFilterOperatorProvider
     {

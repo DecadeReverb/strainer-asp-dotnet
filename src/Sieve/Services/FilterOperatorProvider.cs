@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sieve.Models;
 
-namespace Sieve.Models
+namespace Sieve.Services
 {
     public class FilterOperatorProvider : IFilterOperatorProvider
     {
