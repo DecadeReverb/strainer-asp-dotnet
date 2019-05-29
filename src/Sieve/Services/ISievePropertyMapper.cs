@@ -9,6 +9,6 @@ namespace Sieve.Services
     {
         void AddMap<TEntity>(PropertyInfo propertyInfo, ISievePropertyMetadata metadata);
         (string, PropertyInfo) FindProperty<TEntity>(bool canSortRequired, bool canFilterRequired, string name, bool isCaseSensitive);
-        IPropertyFluentApi<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);
+        ISievePropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);
     }
 }

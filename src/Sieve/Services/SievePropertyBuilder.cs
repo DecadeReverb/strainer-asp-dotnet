@@ -6,12 +6,12 @@ using Sieve.Models;
 
 namespace Sieve.Services
 {
-    public class PropertyFluentApi<TEntity> : IPropertyFluentApi<TEntity>
+    public class SievePropertyBuilder<TEntity> : ISievePropertyBuilder<TEntity>
     {
         private readonly PropertyInfo _property;
         private readonly SievePropertyMapper _mapper;
 
-        public PropertyFluentApi(SievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
+        public SievePropertyBuilder(SievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
             {
@@ -30,7 +30,7 @@ namespace Sieve.Services
         public bool IsSortable { get; private set; }
         public string Name { get; private set; }
 
-        public IPropertyFluentApi<TEntity> CanFilter()
+        public ISievePropertyBuilder<TEntity> CanFilter()
         {
             IsFilterable = true;
             UpdateMap();
@@ -38,7 +38,7 @@ namespace Sieve.Services
             return this;
         }
 
-        public IPropertyFluentApi<TEntity> CanSort()
+        public ISievePropertyBuilder<TEntity> CanSort()
         {
             IsSortable = true;
             UpdateMap();
@@ -46,7 +46,7 @@ namespace Sieve.Services
             return this;
         }
 
-        public IPropertyFluentApi<TEntity> HasName(string name)
+        public ISievePropertyBuilder<TEntity> HasName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {

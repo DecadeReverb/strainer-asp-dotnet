@@ -54,7 +54,7 @@ namespace Sieve.Services
             }
         }
 
-        public IPropertyFluentApi<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
+        public ISievePropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
             {
@@ -66,7 +66,7 @@ namespace Sieve.Services
                 _map.Add(typeof(TEntity), new List<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>());
             }
 
-            return new PropertyFluentApi<TEntity>(this, expression);
+            return new SievePropertyBuilder<TEntity>(this, expression);
         }
     }
 }
