@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SieveTests.Migrations
+namespace Sieve.Sample.Migrations
 {
     public partial class AddDateLastViewedColumn : Migration
     {

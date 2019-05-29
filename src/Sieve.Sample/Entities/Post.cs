@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Sieve.Attributes;
 
-namespace SieveTests.Entities
+namespace Sieve.Sample.Entities
 {
 	public class Post
     {

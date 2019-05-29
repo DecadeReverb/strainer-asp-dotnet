@@ -207,7 +207,7 @@ It is recommended that you write exception-handling middleware to globally handl
 
 
 ### Example project
-You can find an example project incorporating most Sieve concepts in [SieveTests](https://github.com/Biarity/Sieve/tree/master/SieveTests).
+You can find an example project incorporating most Sieve concepts in [Sieve.Sample](https://github.com/Biarity/Sieve/tree/master/Sieve.Sample).
 
 ## Fluent API
 To use the Fluent API instead of attributes in marking properties, setup an alternative `SieveProcessor` that overrides `MapProperties`. For example:

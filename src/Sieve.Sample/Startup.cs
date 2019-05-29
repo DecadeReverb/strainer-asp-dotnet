@@ -10,10 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sieve.Models;
 using Sieve.Services;
-using SieveTests.Entities;
-using SieveTests.Services;
+using Sieve.Sample.Entities;
+using Sieve.Sample.Services;
 
-namespace SieveTests
+namespace Sieve.Sample
 {
 	public class Startup
     {

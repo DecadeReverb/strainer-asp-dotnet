@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using Sieve.Services;
-using SieveTests.Entities;
+using Sieve.Sample.Entities;
 
-namespace SieveTests.Services
+namespace Sieve.Sample.Services
 {
     public class SieveCustomSortMethods : ISieveCustomSortMethods
     {

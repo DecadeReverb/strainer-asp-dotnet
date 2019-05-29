@@ -1,8 +1,8 @@
 ﻿using Sieve.Services;
-using SieveTests.Entities;
+using Sieve.Sample.Entities;
 using System.Linq;
 
-namespace SieveTests.Services
+namespace Sieve.Sample.Services
 {
 	public class SieveCustomFilterMethods : ISieveCustomFilterMethods
     {

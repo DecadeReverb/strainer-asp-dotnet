@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
-using SieveTests.Entities;
+using Sieve.Sample.Entities;
 using System;
 
-namespace SieveTests.Migrations
+namespace Sieve.Sample.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180522013323_AddDateLastViewedColumn")]
-    partial class AddDateLastViewedColumn
+    [Migration("20180127005347_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace SieveTests.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("SieveTests.Entities.Post", b =>
+            modelBuilder.Entity("Sieve.Sample.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -29,9 +29,6 @@ namespace SieveTests.Migrations
                     b.Property<int>("CommentCount");
 
                     b.Property<DateTimeOffset>("DateCreated");
-
-                    b.Property<DateTime>("DateLastViewed")
-                        .HasColumnType("datetime");
 
                     b.Property<int>("LikeCount");
 

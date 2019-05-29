@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "SieveTests": {
+    "Sieve.Sample": {
       "commandName": "Project",
       "launchUrl": "api/values",
       "environmentVariables": {
