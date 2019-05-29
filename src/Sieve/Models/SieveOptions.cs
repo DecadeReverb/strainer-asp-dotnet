@@ -2,6 +2,11 @@
 {
 	public class SieveOptions
     {
+        // TODO:
+        // Add more options like:
+        // - DefaultPageNumber
+        // - MinPageSize
+
         public bool CaseSensitive { get; set; } = false;
 
         public int DefaultPageSize { get; set; } = 0;
