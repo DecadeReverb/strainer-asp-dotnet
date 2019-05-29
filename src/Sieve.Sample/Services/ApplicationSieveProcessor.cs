@@ -11,7 +11,7 @@ namespace Sieve.Sample.Services
         {
         }
 
-        protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
+        protected override ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
         {
             mapper.Property<Post>(p => p.Title)
                 .CanSort()

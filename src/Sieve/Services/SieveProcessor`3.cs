@@ -21,7 +21,7 @@ namespace Sieve.Services
         private readonly ISieveCustomSortMethods _customSortMethods;
         private readonly ISieveCustomFilterMethods _customFilterMethods;
         //private readonly IFilterOperatorProvider _filterOperatorProvider;
-        private readonly SievePropertyMapper _mapper;
+        private readonly ISievePropertyMapper _mapper;
 
 
         public SieveProcessor(IOptions<SieveOptions> options)
@@ -320,7 +320,7 @@ namespace Sieve.Services
             return result;
         }
 
-        protected virtual SievePropertyMapper MapProperties(SievePropertyMapper mapper)
+        protected virtual ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
         {
             return mapper;
         }

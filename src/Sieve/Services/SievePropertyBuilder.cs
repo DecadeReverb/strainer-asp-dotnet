@@ -8,7 +8,7 @@ namespace Sieve.Services
 {
     public class SievePropertyBuilder<TEntity> : ISievePropertyBuilder<TEntity>
     {
-        public SievePropertyBuilder(SievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
+        public SievePropertyBuilder(ISievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
             {
@@ -28,7 +28,7 @@ namespace Sieve.Services
         public string Name { get; protected set; }
 
         protected PropertyInfo PropertyInfo { get; }
-        protected SievePropertyMapper Mapper { get; }
+        protected ISievePropertyMapper Mapper { get; }
 
         public ISievePropertyBuilder<TEntity> CanFilter()
         {
