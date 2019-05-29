@@ -3,7 +3,11 @@ using Sieve.Models;
 
 namespace Sieve.Services
 {
-    public class SieveProcessor : SieveProcessor<SieveModel, FilterTerm, SortTerm>, ISieveProcessor
+    public class SieveProcessor<TFilterTerm, TSortTerm>
+        : SieveProcessor<SieveModel<TFilterTerm, TSortTerm>, TFilterTerm, TSortTerm>,
+            ISieveProcessor<TFilterTerm, TSortTerm>
+        where TFilterTerm : IFilterTerm, new()
+        where TSortTerm : ISortTerm, new()
     {
         public SieveProcessor(IOptions<SieveOptions> options) : base(options)
         {
