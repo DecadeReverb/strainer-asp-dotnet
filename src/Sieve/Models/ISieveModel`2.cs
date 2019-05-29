@@ -8,11 +8,11 @@ namespace Sieve.Models
     {
         string Filters { get; set; }
 
-        string Sorts { get; set; }
-
         int? Page { get; set; }
 
         int? PageSize { get; set; }
+
+        string Sorts { get; set; }
 
         List<TFilterTerm> GetFiltersParsed();
 
