@@ -6,8 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace Sieve.Models
 {
-    public class SieveModel : SieveModel<FilterTerm, SortTerm> { }
-
     [DataContract]
     public class SieveModel<TFilterTerm, TSortTerm> : ISieveModel<TFilterTerm, TSortTerm>
         where TFilterTerm : IFilterTerm, new()
@@ -78,6 +76,9 @@ namespace Sieve.Models
             }
         }
 
+        // TODO:
+        // Move this logic to some kind of sorting parser.
+        // A DTO should not have such business logic, nethier deal with parsing.
         public List<TSortTerm> GetSortsParsed()
         {
             if (Sorts != null)
