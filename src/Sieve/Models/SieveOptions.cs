@@ -6,6 +6,7 @@
         // Add more options like:
         // - DefaultPageNumber
         // - MinPageSize
+        // - DefaultFilterOperator
 
         public bool CaseSensitive { get; set; } = false;
 

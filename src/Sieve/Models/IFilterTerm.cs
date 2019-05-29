@@ -7,7 +7,7 @@
         string Operator { get; }
         bool OperatorIsCaseInsensitive { get; }
         bool OperatorIsNegated { get; }
-        FilterOperator OperatorParsed { get; }
+        IFilterOperator OperatorParsed { get; }
         string[] Values { get; }
     }
 }

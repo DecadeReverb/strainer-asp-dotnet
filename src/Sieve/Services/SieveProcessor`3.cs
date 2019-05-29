@@ -8,6 +8,7 @@ using Sieve.Attributes;
 using Sieve.Exceptions;
 using Sieve.Extensions;
 using Sieve.Models;
+using Sieve.Models.Filtering.Operators;
 
 namespace Sieve.Services
 {
@@ -19,38 +20,34 @@ namespace Sieve.Services
         private readonly IOptions<SieveOptions> _options;
         private readonly ISieveCustomSortMethods _customSortMethods;
         private readonly ISieveCustomFilterMethods _customFilterMethods;
-        private readonly SievePropertyMapper mapper = new SievePropertyMapper();
+        //private readonly IFilterOperatorProvider _filterOperatorProvider;
+        private readonly SievePropertyMapper _mapper;
+
+
+        public SieveProcessor(IOptions<SieveOptions> options)
+        {
+            _mapper = MapProperties(new SievePropertyMapper());
+            _options = options;
+            //_filterOperatorProvider = new FilterOperatorProvider();
+        }
+
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods customFilterMethods) : this(options)
+        {
+            _customFilterMethods = customFilterMethods;
+        }
+
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods) : this(options)
+        {
+            _customSortMethods = customSortMethods;
+        }
 
         public SieveProcessor(IOptions<SieveOptions> options,
             ISieveCustomSortMethods customSortMethods,
             ISieveCustomFilterMethods customFilterMethods)
+            : this(options)
         {
-            mapper = MapProperties(mapper);
-            _options = options;
             _customSortMethods = customSortMethods;
             _customFilterMethods = customFilterMethods;
-        }
-
-        public SieveProcessor(IOptions<SieveOptions> options,
-            ISieveCustomSortMethods customSortMethods)
-        {
-            mapper = MapProperties(mapper);
-            _options = options;
-            _customSortMethods = customSortMethods;
-        }
-
-        public SieveProcessor(IOptions<SieveOptions> options,
-            ISieveCustomFilterMethods customFilterMethods)
-        {
-            mapper = MapProperties(mapper);
-            _options = options;
-            _customFilterMethods = customFilterMethods;
-        }
-
-        public SieveProcessor(IOptions<SieveOptions> options)
-        {
-            mapper = MapProperties(mapper);
-            _options = options;
         }
 
         /// <summary>
@@ -148,7 +145,10 @@ namespace Sieve.Services
                             propertyValue = Expression.PropertyOrField(propertyValue, part);
                         }
 
-                        if (filterTerm.Values == null) continue;
+                        if (filterTerm.Values == null)
+                        {
+                            continue;
+                        }
 
                         foreach (var filterTermValue in filterTerm.Values)
                         {
@@ -219,33 +219,41 @@ namespace Sieve.Services
                 : result.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
         }
 
+        // TODO:
+        // This method should be public and encapsulated by a dedicated
+        // service, for example some kind of filter operator to expression
+        // translator. It should be possible to add or remove translations,
+        // or even supply custom filter operator to expression translator.
         private static Expression GetExpression(TFilterTerm filterTerm, dynamic filterValue, dynamic propertyValue)
         {
             switch (filterTerm.OperatorParsed)
             {
-                case FilterOperator.Equals:
+                case EqualsOperator equalsOperator:
                     return Expression.Equal(propertyValue, filterValue);
-                case FilterOperator.NotEquals:
+                case NotEqualsOperator notEqualsOperator:
                     return Expression.NotEqual(propertyValue, filterValue);
-                case FilterOperator.GreaterThan:
+                case GreaterThanOperator greaterThanOperator:
                     return Expression.GreaterThan(propertyValue, filterValue);
-                case FilterOperator.LessThan:
+                case LessThanOperator lessThanOperator:
                     return Expression.LessThan(propertyValue, filterValue);
-                case FilterOperator.GreaterThanOrEqualTo:
+                case GreaterThanOrEqualToOperator greaterThanOrEqualToOperator:
                     return Expression.GreaterThanOrEqual(propertyValue, filterValue);
-                case FilterOperator.LessThanOrEqualTo:
+                case LessThanOrEqualToOperator lessThanOrEqualToOperator:
                     return Expression.LessThanOrEqual(propertyValue, filterValue);
-                case FilterOperator.Contains:
-                    return Expression.Call(propertyValue,
-                        typeof(string).GetMethods()
-                        .First(m => m.Name == "Contains" && m.GetParameters().Length == 1),
+                case ContainsOperator containsOperator:
+                    return Expression.Call(
+                        propertyValue,
+                        typeof(string).GetMethods().First(m => m.Name == "Contains" && m.GetParameters().Length == 1),
                         filterValue);
-                case FilterOperator.StartsWith:
-                    return Expression.Call(propertyValue,
-                        typeof(string).GetMethods()
-                        .First(m => m.Name == "StartsWith" && m.GetParameters().Length == 1),
+                case StartsWithOperator startsWithOperator:
+                    return Expression.Call(
+                        propertyValue,
+                        typeof(string).GetMethods().First(m => m.Name == "StartsWith" && m.GetParameters().Length == 1),
                         filterValue);
                 default:
+                    // TODO:
+                    // Call defined default filter operator, instead of calling
+                    // hardcoded equal expression.
                     return Expression.Equal(propertyValue, filterValue);
             }
         }
@@ -322,7 +330,7 @@ namespace Sieve.Services
             bool canFilterRequired,
             string name)
         {
-            var property = mapper.FindProperty<TEntity>(canSortRequired, canFilterRequired, name, _options.Value.CaseSensitive);
+            var property = _mapper.FindProperty<TEntity>(canSortRequired, canFilterRequired, name, _options.Value.CaseSensitive);
 
             if (property.Item1 == null)
             {
@@ -392,8 +400,11 @@ namespace Sieve.Services
             else
             {
                 var incompatibleCustomMethod = parent?.GetType()
-                    .GetMethod(name,
-                    _options.Value.CaseSensitive ? BindingFlags.Default : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    .GetMethod(
+                        name,
+                        _options.Value.CaseSensitive
+                            ? BindingFlags.Default
+                            : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                 if (incompatibleCustomMethod != null)
                 {

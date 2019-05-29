@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Sieve.Models.Filtering.Operators;
 
 namespace Sieve.Models
 {
@@ -9,7 +11,8 @@ namespace Sieve.Models
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
         // TODO:
-        // Move this to public filter operators options.
+        // Move this to public filter operators options or some kind of
+        // filter operators provider.
         // A DTO should not have hardcoded magic strings.
         private static readonly string[] Operators = new string[] {
                     "!@=*",
@@ -29,9 +32,23 @@ namespace Sieve.Models
                     "_="
         };
 
+        private readonly IList<IFilterOperator> _operators;
+
         public FilterTerm()
         {
-
+            // TODO:
+            // Change this to external provider, or move this logic it at all
+            // to filter operator provider. DTO should not handle creating
+            // the operators, it should just have it ready from the start.
+            _operators = (typeof(FilterTerm))
+                .Assembly
+                .DefinedTypes
+                .Where(t =>
+                    t.ImplementedInterfaces.Contains(typeof(IFilterOperator))
+                    && !t.IsAbstract)
+                .Select(t => Activator.CreateInstance(t))
+                .OfType<IFilterOperator>()
+                .ToList();
         }
 
         // TODO:
@@ -48,7 +65,7 @@ namespace Sieve.Models
                 Operator = Array.Find(Operators, o => value.Contains(o)) ?? "==";
                 OperatorParsed = GetOperatorParsed(Operator);
                 OperatorIsCaseInsensitive = Operator.EndsWith("*");
-                OperatorIsNegated = OperatorParsed != FilterOperator.NotEquals && Operator.StartsWith("!");
+                OperatorIsNegated = !(OperatorParsed is NotEqualsOperator) && Operator.StartsWith("!");
             }
 
         }
@@ -57,7 +74,7 @@ namespace Sieve.Models
 
         public string Operator { get; private set; }
 
-        public FilterOperator OperatorParsed { get; private set; }
+        public IFilterOperator OperatorParsed { get; private set; }
 
         public string[] Values { get; private set; }
 
@@ -75,31 +92,21 @@ namespace Sieve.Models
         // TODO:
         // Move this to some kind of operator parser service.
         // A DTO should not take care of string parsing.
-        private FilterOperator GetOperatorParsed(string @operator)
+        //
+        // To consider if this SHOULD return null if no operator was found.
+        // Fallbacking to default filter operator should be handled by some
+        // service, not DTO or simple parsing method. Parsing method should
+        // only parse input, nothing more.
+        private IFilterOperator GetOperatorParsed(string @operator)
         {
-            switch (@operator.TrimEnd('*'))
+            // TODO:
+            // Store somewhere info about case insensitivity asterisk suffix
+            // and negation exclamation mark prefix.
+            return _operators.FirstOrDefault(f =>
             {
-                case "==":
-                    return FilterOperator.Equals;
-                case "!=":
-                    return FilterOperator.NotEquals;
-                case "<":
-                    return FilterOperator.LessThan;
-                case ">":
-                    return FilterOperator.GreaterThan;
-                case ">=":
-                    return FilterOperator.GreaterThanOrEqualTo;
-                case "<=":
-                    return FilterOperator.LessThanOrEqualTo;
-                case "@=":
-                case "!@=":
-                    return FilterOperator.Contains;
-                case "_=":
-                case "!_=":
-                    return FilterOperator.StartsWith;
-                default:
-                    return FilterOperator.Equals;
-            }
+                return f.Operator == @operator.TrimEnd('*')     // Case sensivity variations
+                    || f.Operator == @operator.TrimStart('!');  // Negated variations
+            }) ?? new EqualsOperator();
         }
     }
 }
