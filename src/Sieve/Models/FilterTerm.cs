@@ -6,10 +6,11 @@ namespace Sieve.Models
 {
     public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     {
-        public FilterTerm() { }
-
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
+        // TODO:
+        // Move this to public filter operators options.
+        // A DTO should not have hardcoded magic strings.
         private static readonly string[] Operators = new string[] {
                     "!@=*",
                     "!_=*",
@@ -28,6 +29,14 @@ namespace Sieve.Models
                     "_="
         };
 
+        public FilterTerm()
+        {
+
+        }
+
+        // TODO:
+        // Move this to some kind of filter builder service.
+        // A DTO should not have setter this complex.
         public string Filter
         {
             set
@@ -46,12 +55,26 @@ namespace Sieve.Models
 
         public string[] Names { get; private set; }
 
+        public string Operator { get; private set; }
+
         public FilterOperator OperatorParsed { get; private set; }
 
         public string[] Values { get; private set; }
 
-        public string Operator { get; private set; }
+        public bool OperatorIsCaseInsensitive { get; private set; }
 
+        public bool OperatorIsNegated { get; private set; }
+
+        public bool Equals(FilterTerm other)
+        {
+            return Names.SequenceEqual(other.Names)
+                && Values.SequenceEqual(other.Values)
+                && Operator == other.Operator;
+        }
+
+        // TODO:
+        // Move this to some kind of operator parser service.
+        // A DTO should not take care of string parsing.
         private FilterOperator GetOperatorParsed(string @operator)
         {
             switch (@operator.TrimEnd('*'))
@@ -78,17 +101,5 @@ namespace Sieve.Models
                     return FilterOperator.Equals;
             }
         }
-
-        public bool OperatorIsCaseInsensitive { get; private set; }
-
-        public bool OperatorIsNegated { get; private set; }
-
-        public bool Equals(FilterTerm other)
-        {
-            return Names.SequenceEqual(other.Names)
-                && Values.SequenceEqual(other.Values)
-                && Operator == other.Operator;
-        }
-
     }
 }
