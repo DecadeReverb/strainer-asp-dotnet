@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Sieve.Services
 {
-	public class SievePropertyMapper
+	public class SievePropertyMapper : ISievePropertyMapper
     {
         private readonly Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>> _map;
 
@@ -16,109 +16,20 @@ namespace Sieve.Services
             _map = new Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>>();
         }
 
-        public PropertyFluentApi<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
+        public void AddMap<TEntity>(PropertyInfo propertyInfo, ISievePropertyMetadata metadata)
         {
-            if (expression == null)
+            if (propertyInfo == null)
             {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            if (!_map.ContainsKey(typeof(TEntity)))
+            if (metadata == null)
             {
-                _map.Add(typeof(TEntity), new List<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>());
+                throw new ArgumentNullException(nameof(metadata));
             }
 
-            return new PropertyFluentApi<TEntity>(this, expression);
-        }
-
-        public class PropertyFluentApi<TEntity>
-        {
-            private readonly SievePropertyMapper _sievePropertyMapper;
-            private readonly PropertyInfo _property;
-
-            private string _name;
-            private readonly string _fullName;
-            private bool _canFilter;
-            private bool _canSort;
-
-            public PropertyFluentApi(SievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
-            {
-                if (expression == null)
-                {
-                    throw new ArgumentNullException(nameof(expression));
-                }
-
-                _sievePropertyMapper = sievePropertyMapper ?? throw new ArgumentNullException(nameof(sievePropertyMapper));
-                (_fullName, _property) = GetPropertyInfo(expression);
-                _name = _fullName;
-                _canFilter = false;
-                _canSort = false;
-            }
-
-            public PropertyFluentApi<TEntity> CanFilter()
-            {
-                _canFilter = true;
-                UpdateMap();
-
-                return this;
-            }
-
-            public PropertyFluentApi<TEntity> CanSort()
-            {
-                _canSort = true;
-                UpdateMap();
-
-                return this;
-            }
-
-            public PropertyFluentApi<TEntity> HasName(string name)
-            {
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    throw new ArgumentException(
-                        $"{nameof(name)} cannot be null, empty " +
-                        $"or contain only whitespace characaters.",
-                        nameof(name));
-                }
-
-                _name = name;
-                UpdateMap();
-
-                return this;
-            }
-
-            private void UpdateMap()
-            {
-                var metadata = new SievePropertyMetadata()
-                {
-                    Name = _name,
-                    FullName = _fullName,
-                    CanFilter = _canFilter,
-                    CanSort = _canSort
-                };
-                var pair = new KeyValuePair<PropertyInfo, ISievePropertyMetadata>(_property, metadata);
-
-                _sievePropertyMapper._map[typeof(TEntity)].Add(pair);
-            }
-
-            private static (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> exp)
-            {
-                if (!(exp.Body is MemberExpression body))
-                {
-                    var ubody = (UnaryExpression)exp.Body;
-                    body = ubody.Operand as MemberExpression;
-                }
-
-                var member = body?.Member as PropertyInfo;
-                var stack = new Stack<string>();
-                while (body != null)
-                {
-                    stack.Push(body.Member.Name);
-                    body = body.Expression as MemberExpression;
-                }
-
-                return (string.Join(".", stack.ToArray()), member);
-            }
+            var pair = new KeyValuePair<PropertyInfo, ISievePropertyMetadata>(propertyInfo, metadata);
+            _map[typeof(TEntity)].Add(pair);
         }
 
         public (string, PropertyInfo) FindProperty<TEntity>(
@@ -141,6 +52,21 @@ namespace Sieve.Services
             {
                 return (null, null);
             }
+        }
+
+        public IPropertyFluentApi<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (!_map.ContainsKey(typeof(TEntity)))
+            {
+                _map.Add(typeof(TEntity), new List<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>());
+            }
+
+            return new PropertyFluentApi<TEntity>(this, expression);
         }
     }
 }
