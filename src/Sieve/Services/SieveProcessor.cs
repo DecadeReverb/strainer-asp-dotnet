@@ -186,7 +186,7 @@ namespace Sieve.Services
                         {
                             propertyValue = Expression.PropertyOrField(propertyValue, part);
                         }
-                        
+
                         if (filterTerm.Values == null) continue;
 
                         foreach (var filterTermValue in filterTerm.Values)
@@ -229,7 +229,7 @@ namespace Sieve.Services
                     }
                     else
                     {
-                        result = ApplyCustomMethod(result, filterTermName, _customFilterMethods, 
+                        result = ApplyCustomMethod(result, filterTermName, _customFilterMethods,
                             new object[] {
                                             result,
                                             filterTerm.Operator,
@@ -364,7 +364,7 @@ namespace Sieve.Services
                 return (prop?.Name, prop);
             }
             return property;
-                
+
         }
 
         private PropertyInfo FindPropertyBySieveAttribute<TEntity>(
