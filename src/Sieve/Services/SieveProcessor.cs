@@ -15,39 +15,55 @@ namespace Sieve.Services
     {
         public SieveProcessor(IOptions<SieveOptions> options) : base(options)
         {
+
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods) : base(options, customSortMethods)
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods)
+            : base(options, customSortMethods)
         {
+
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods customFilterMethods) : base(options, customFilterMethods)
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods customFilterMethods)
+            : base(options, customFilterMethods)
         {
+
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods, ISieveCustomFilterMethods customFilterMethods) : base(options, customSortMethods, customFilterMethods)
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods, ISieveCustomFilterMethods customFilterMethods)
+            : base(options, customSortMethods, customFilterMethods)
         {
+
         }
     }
 
-    public class SieveProcessor<TFilterTerm, TSortTerm> : SieveProcessor<SieveModel<TFilterTerm, TSortTerm>, TFilterTerm, TSortTerm>, ISieveProcessor<TFilterTerm, TSortTerm>
+    public class SieveProcessor<TFilterTerm, TSortTerm>
+        : SieveProcessor<SieveModel<TFilterTerm, TSortTerm>, TFilterTerm, TSortTerm>,
+            ISieveProcessor<TFilterTerm, TSortTerm>
         where TFilterTerm : IFilterTerm, new()
         where TSortTerm : ISortTerm, new()
     {
         public SieveProcessor(IOptions<SieveOptions> options) : base(options)
         {
+
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods) : base(options, customSortMethods)
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods)
+            : base(options, customSortMethods)
         {
+
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods customFilterMethods) : base(options, customFilterMethods)
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods customFilterMethods)
+            : base(options, customFilterMethods)
         {
+
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods, ISieveCustomFilterMethods customFilterMethods) : base(options, customSortMethods, customFilterMethods)
+        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods, ISieveCustomFilterMethods customFilterMethods)
+            : base(options, customSortMethods, customFilterMethods)
         {
+
         }
     }
 
@@ -238,17 +254,21 @@ namespace Sieve.Services
 
                     }
                 }
+
                 if (outerExpression == null)
                 {
                     outerExpression = innerExpression;
                     continue;
                 }
+
                 if (innerExpression == null)
                 {
                     continue;
                 }
+
                 outerExpression = Expression.And(outerExpression, innerExpression);
             }
+
             return outerExpression == null
                 ? result
                 : result.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
@@ -358,11 +378,14 @@ namespace Sieve.Services
             string name)
         {
             var property = mapper.FindProperty<TEntity>(canSortRequired, canFilterRequired, name, _options.Value.CaseSensitive);
+
             if(property.Item1 == null)
             {
                 var prop = FindPropertyBySieveAttribute<TEntity>(canSortRequired, canFilterRequired, name, _options.Value.CaseSensitive);
+
                 return (prop?.Name, prop);
             }
+
             return property;
 
         }
@@ -378,15 +401,27 @@ namespace Sieve.Services
                     return p.GetCustomAttribute(typeof(SieveAttribute)) is SieveAttribute sieveAttribute
                     && (canSortRequired ? sieveAttribute.CanSort : true)
                     && (canFilterRequired ? sieveAttribute.CanFilter : true)
-                    && ((sieveAttribute.Name ?? p.Name).Equals(name, isCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase));
+                    && ((sieveAttribute.Name ?? p.Name).Equals(
+                            name,
+                            isCaseSensitive
+                                ? StringComparison.Ordinal
+                                : StringComparison.OrdinalIgnoreCase
+                            )
+                        );
                 });
         }
 
-        private IQueryable<TEntity> ApplyCustomMethod<TEntity>(IQueryable<TEntity> result, string name, object parent, object[] parameters, object[] optionalParameters = null)
+        private IQueryable<TEntity> ApplyCustomMethod<TEntity>(
+            IQueryable<TEntity> result,
+            string name, object parent,
+            object[] parameters,
+            object[] optionalParameters = null)
         {
             var customMethod = parent?.GetType()
                 .GetMethodExt(name,
-                _options.Value.CaseSensitive ? BindingFlags.Default : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance,
+                _options.Value.CaseSensitive
+                    ? BindingFlags.Default
+                    : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance,
                 typeof(IQueryable<TEntity>));
 
             if (customMethod != null)
