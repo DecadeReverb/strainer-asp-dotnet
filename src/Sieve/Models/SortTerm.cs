@@ -13,6 +13,12 @@ namespace Sieve.Models
 
         }
 
+        public bool IsDescending => _sort.StartsWith(DescendingWaySortingPrefix);
+
+        public string Name => _sort.StartsWith(DescendingWaySortingPrefix)
+            ? _sort.Substring(1)
+            : _sort;
+
         // TODO:
         // Getting the real name without hardcoded descending sorting way
         // prefix. A DTO should not do this, neither have such business logic.
@@ -24,16 +30,9 @@ namespace Sieve.Models
             }
         }
 
-        public string Name => _sort.StartsWith(DescendingWaySortingPrefix)
-            ? _sort.Substring(1)
-            : _sort;
-
-        public bool IsDescending => _sort.StartsWith(DescendingWaySortingPrefix);
-
         public bool Equals(SortTerm other)
         {
-            return Name == other.Name
-                && IsDescending == other.IsDescending;
+            return Name == other.Name && IsDescending == other.IsDescending;
         }
     }
 }
