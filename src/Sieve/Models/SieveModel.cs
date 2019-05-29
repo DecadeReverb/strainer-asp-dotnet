@@ -34,16 +34,24 @@ namespace Sieve.Models
                 var value = new List<TFilterTerm>();
                 foreach (var filter in Regex.Split(Filters, EscapedCommaPattern))
                 {
-                    if (string.IsNullOrWhiteSpace(filter)) continue;
+                    if (string.IsNullOrWhiteSpace(filter))
+                    {
+                        continue;
+                    }
 
                     if (filter.StartsWith("("))
                     {
                         var filterOpAndVal = filter.Substring(filter.LastIndexOf(")") + 1);
-                        var subfilters = filter.Replace(filterOpAndVal, "").Replace("(", "").Replace(")", "");
+                        var subfilters = filter
+                            .Replace(filterOpAndVal, "")
+                            .Replace("(", "")
+                            .Replace(")", "");
+
                         var filterTerm = new TFilterTerm
                         {
                             Filter = subfilters + filterOpAndVal
                         };
+
                         if (!value.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
                         {
                             value.Add(filterTerm);
@@ -58,6 +66,7 @@ namespace Sieve.Models
                         value.Add(filterTerm);
                     }
                 }
+
                 return value;
             }
             else
@@ -73,17 +82,22 @@ namespace Sieve.Models
                 var value = new List<TSortTerm>();
                 foreach (var sort in Regex.Split(Sorts, EscapedCommaPattern))
                 {
-                    if (string.IsNullOrWhiteSpace(sort)) continue;
+                    if (string.IsNullOrWhiteSpace(sort))
+                    {
+                        continue;
+                    }
 
                     var sortTerm = new TSortTerm()
                     {
                         Sort = sort
                     };
+
                     if (!value.Any(s => s.Name == sortTerm.Name))
                     {
                         value.Add(sortTerm);
                     }
                 }
+
                 return value;
             }
             else
