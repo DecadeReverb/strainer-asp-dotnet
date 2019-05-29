@@ -174,7 +174,7 @@ mapper.Property<Post>(p => p.Creator.Name)
 Now you can make requests such as: `filters=User.Name==specific_name`.
 
 ### Creating your own DSL
-You can replace this DSL with your own (eg. use JSON instead) by implementing an [ISieveModel](https://github.com/Biarity/Sieve/blob/master/Sieve/Models/ISieveModel.cs). You can use the default [SieveModel](https://github.com/Biarity/Sieve/blob/master/Sieve/Models/SieveModel.cs) for reference.
+You can replace this DSL with your own (eg. use JSON instead) by implementing an [ISieveModel](https://github.com/Prologh/Sieve/blob/master/src/Sieve/Models/ISieveModel.cs). You can use the default [SieveModel](https://github.com/Prologh/Sieve/blob/master/src/Sieve/Models/SieveModel.cs) for reference.
 
 ### Operators
 | Operator   | Meaning                  |
@@ -207,7 +207,7 @@ It is recommended that you write exception-handling middleware to globally handl
 
 
 ### Example project
-You can find an example project incorporating most Sieve concepts in [Sieve.Sample](https://github.com/Biarity/Sieve/tree/master/Sieve.Sample).
+You can find an example project incorporating most Sieve concepts in [Sieve.Sample](https://github.com/Prologh/Sieve/tree/master/src/Sieve.Sample).
 
 ## Fluent API
 To use the Fluent API instead of attributes in marking properties, setup an alternative `SieveProcessor` that overrides `MapProperties`. For example:
