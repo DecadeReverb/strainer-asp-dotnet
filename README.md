@@ -6,6 +6,8 @@ Most common use case would be for serving ASP.NET Core GET queries.
 
 [Get Sieve on nuget](https://www.nuget.org/packages/Sieve/)
 
+**Note:** This repository is forked. The original author of [Sieve](https://github.com/Biarity/Sieve) is [Biarity](https://github.com/Biarity).
+
 ## Usage for ASP.NET Core
 
 In this example, consider an app with a `Post` entity. 
