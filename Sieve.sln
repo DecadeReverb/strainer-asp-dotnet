@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sieve", "src\Sieve\Sieve.cs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SieveTests", "src\Sieve.Tests\SieveTests.csproj", "{B3F4BFE2-D36D-483B-8B3A-2197D756EAC4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{F5B04DFA-8047-4B61-B5B7-9C9A92E992CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{09940CFB-6E9C-4D50-BE1A-D7E463BB28A5} = {00542765-0364-4DA4-946E-7759481C4D72}
+		{B3F4BFE2-D36D-483B-8B3A-2197D756EAC4} = {F5B04DFA-8047-4B61-B5B7-9C9A92E992CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6D7C2175-439A-434B-94C1-C819129D948E}
