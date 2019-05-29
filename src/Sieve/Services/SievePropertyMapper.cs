@@ -9,12 +9,21 @@ namespace Sieve.Services
 {
 	public class SievePropertyMapper
     {
-        private readonly Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>> _map
-            = new Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>>();
+        private readonly Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>> _map;
+
+        public SievePropertyMapper()
+        {
+            _map = new Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>>();
+        }
 
         public PropertyFluentApi<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
         {
-            if(!_map.ContainsKey(typeof(TEntity)))
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (!_map.ContainsKey(typeof(TEntity)))
             {
                 _map.Add(typeof(TEntity), new List<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>());
             }
@@ -27,24 +36,30 @@ namespace Sieve.Services
             private readonly SievePropertyMapper _sievePropertyMapper;
             private readonly PropertyInfo _property;
 
+            private string _name;
+            private readonly string _fullName;
+            private bool _canFilter;
+            private bool _canSort;
+
             public PropertyFluentApi(SievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
             {
-                _sievePropertyMapper = sievePropertyMapper;
+                if (expression == null)
+                {
+                    throw new ArgumentNullException(nameof(expression));
+                }
+
+                _sievePropertyMapper = sievePropertyMapper ?? throw new ArgumentNullException(nameof(sievePropertyMapper));
                 (_fullName, _property) = GetPropertyInfo(expression);
                 _name = _fullName;
                 _canFilter = false;
                 _canSort = false;
             }
 
-            private string _name;
-            private readonly string _fullName;
-            private bool _canFilter;
-            private bool _canSort;
-
             public PropertyFluentApi<TEntity> CanFilter()
             {
                 _canFilter = true;
                 UpdateMap();
+
                 return this;
             }
 
@@ -52,13 +67,23 @@ namespace Sieve.Services
             {
                 _canSort = true;
                 UpdateMap();
+
                 return this;
             }
 
             public PropertyFluentApi<TEntity> HasName(string name)
             {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    throw new ArgumentException(
+                        $"{nameof(name)} cannot be null, empty " +
+                        $"or contain only whitespace characaters.",
+                        nameof(name));
+                }
+
                 _name = name;
                 UpdateMap();
+
                 return this;
             }
 
