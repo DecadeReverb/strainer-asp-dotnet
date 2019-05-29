@@ -1,12 +1,12 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sieve.Models;
-using SieveUnitTests.Entities;
-using SieveUnitTests.Services;
+using Sieve.UnitTests.Entities;
+using Sieve.UnitTests.Services;
 using System.Linq;
 using System.Collections.Generic;
 using Sieve.Exceptions;
 
-namespace SieveUnitTests
+namespace Sieve.UnitTests
 {
 	[TestClass]
     public class Mapper

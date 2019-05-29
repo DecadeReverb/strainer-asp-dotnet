@@ -1,7 +1,7 @@
 ﻿using System;
 using Sieve.Attributes;
 
-namespace SieveUnitTests.Entities
+namespace Sieve.UnitTests.Entities
 {
 	public class Comment
     {

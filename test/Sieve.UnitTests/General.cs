@@ -5,10 +5,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sieve.Exceptions;
 using Sieve.Models;
 using Sieve.Services;
-using SieveUnitTests.Entities;
-using SieveUnitTests.Services;
+using Sieve.UnitTests.Entities;
+using Sieve.UnitTests.Services;
 
-namespace SieveUnitTests
+namespace Sieve.UnitTests
 {
     [TestClass]
     public class General

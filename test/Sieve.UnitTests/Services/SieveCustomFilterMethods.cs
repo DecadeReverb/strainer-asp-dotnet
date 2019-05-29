@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Sieve.Services;
-using SieveUnitTests.Entities;
+using Sieve.UnitTests.Entities;
 
-namespace SieveUnitTests.Services
+namespace Sieve.UnitTests.Services
 {
     public class SieveCustomFilterMethods : ISieveCustomFilterMethods
     {
