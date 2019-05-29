@@ -28,12 +28,12 @@ namespace Sieve.Models
             ? _sort.Substring(1)
             : _sort;
 
-        public bool Descending => _sort.StartsWith(DescendingWaySortingPrefix);
+        public bool IsDescending => _sort.StartsWith(DescendingWaySortingPrefix);
 
         public bool Equals(SortTerm other)
         {
             return Name == other.Name
-                && Descending == other.Descending;
+                && IsDescending == other.IsDescending;
         }
     }
 }

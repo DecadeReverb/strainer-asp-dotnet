@@ -2,7 +2,7 @@
 {
 	public interface ISortTerm
     {
-        bool Descending { get; }
+        bool IsDescending { get; }
         string Name { get; }
         string Sort { set; }
     }

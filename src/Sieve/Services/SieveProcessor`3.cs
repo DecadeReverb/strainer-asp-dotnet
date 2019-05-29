@@ -284,7 +284,7 @@ namespace Sieve.Services
 
                 if (property != null)
                 {
-                    result = result.OrderByDynamic(fullName, property, sortTerm.Descending, useThenBy);
+                    result = result.OrderByDynamic(fullName, property, sortTerm.IsDescending, useThenBy);
                 }
                 else
                 {
@@ -293,7 +293,7 @@ namespace Sieve.Services
                         {
                         result,
                         useThenBy,
-                        sortTerm.Descending
+                        sortTerm.IsDescending
                         }, dataForCustomMethods);
                 }
                 useThenBy = true;
