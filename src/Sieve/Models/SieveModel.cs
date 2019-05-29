@@ -27,6 +27,9 @@ namespace Sieve.Models
         [DataMember, Range(1, int.MaxValue)]
         public int? PageSize { get; set; }
 
+        // TODO:
+        // Move this logic to some kind of filter parser.
+        // A DTO should not have such business logic, nethier deal with parsing.
         public List<TFilterTerm> GetFiltersParsed()
         {
             if (Filters != null)
