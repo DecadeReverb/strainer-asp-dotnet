@@ -7,8 +7,14 @@ namespace Sieve.Sample.Services
 {
 	public class ApplicationSieveProcessor : SieveProcessor
     {
-        public ApplicationSieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods, ISieveCustomFilterMethods customFilterMethods) : base(options, customSortMethods, customFilterMethods)
+        public ApplicationSieveProcessor(
+            IOptions<SieveOptions> options,
+            IFilterOperatorProvider filterOperatorProvider,
+            ISieveCustomSortMethods customSortMethods,
+            ISieveCustomFilterMethods customFilterMethods)
+            : base(options, filterOperatorProvider, customSortMethods, customFilterMethods)
         {
+
         }
 
         protected override ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)

@@ -20,31 +20,34 @@ namespace Sieve.Services
         private readonly IOptions<SieveOptions> _options;
         private readonly ISieveCustomSortMethods _customSortMethods;
         private readonly ISieveCustomFilterMethods _customFilterMethods;
-        //private readonly IFilterOperatorProvider _filterOperatorProvider;
+        private readonly IFilterOperatorProvider _filterOperatorProvider;
         private readonly ISievePropertyMapper _mapper;
 
 
-        public SieveProcessor(IOptions<SieveOptions> options)
+        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider)
         {
             _mapper = MapProperties(new SievePropertyMapper());
             _options = options;
-            //_filterOperatorProvider = new FilterOperatorProvider();
+            _filterOperatorProvider = filterOperatorProvider;
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods customFilterMethods) : this(options)
+        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, ISieveCustomFilterMethods customFilterMethods)
+            : this(options, filterOperatorProvider)
         {
             _customFilterMethods = customFilterMethods;
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, ISieveCustomSortMethods customSortMethods) : this(options)
+        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, ISieveCustomSortMethods customSortMethods)
+            : this(options, filterOperatorProvider)
         {
             _customSortMethods = customSortMethods;
         }
 
         public SieveProcessor(IOptions<SieveOptions> options,
+            IFilterOperatorProvider filterOperatorProvider,
             ISieveCustomSortMethods customSortMethods,
             ISieveCustomFilterMethods customFilterMethods)
-            : this(options)
+            : this(options, filterOperatorProvider)
         {
             _customSortMethods = customSortMethods;
             _customFilterMethods = customFilterMethods;

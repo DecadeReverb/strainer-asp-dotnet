@@ -9,9 +9,10 @@ namespace Sieve.UnitTests.Services
     {
         public ApplicationSieveProcessor(
             IOptions<SieveOptions> options,
+            IFilterOperatorProvider filterOperatorProvider,
             ISieveCustomSortMethods customSortMethods,
             ISieveCustomFilterMethods customFilterMethods)
-            : base(options, customSortMethods, customFilterMethods)
+            : base(options, filterOperatorProvider, customSortMethods, customFilterMethods)
         {
         }
 

@@ -19,7 +19,9 @@ namespace Sieve.UnitTests
 
         public General()
         {
-            _processor = new ApplicationSieveProcessor(new SieveOptionsAccessor(),
+            _processor = new ApplicationSieveProcessor(
+                new SieveOptionsAccessor(),
+                new FilterOperatorProvider(),
                 new SieveCustomSortMethods(),
                 new SieveCustomFilterMethods());
 

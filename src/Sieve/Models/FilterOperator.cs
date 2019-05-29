@@ -9,7 +9,7 @@ namespace Sieve.Models
     /// Represents filter operator.
     /// </summary>
     [DebuggerDisplay("{Operator,nq} {Name,nq}")]
-    public abstract class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
+    public class FilterOperator : IFilterOperator/*, IEquatable<FilterOperator>*/
     {
         /// <summary>
         /// Initializes new instance of <see cref="FilterOperator"/> class.
@@ -51,63 +51,82 @@ namespace Sieve.Models
         }
 
         /// <summary>
-        /// Gets the expression for this operator.
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator has a not negated version.
         /// </summary>
-        public Func<Expression> Expression { get; }
+        public bool HasUnnegatedOperator => UnnegatedOperator != null;
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator is case insensitive
+        /// </summary>
+        public bool IsCaseInsensitive { get; set;  }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator is a negated version of different operator.
+        /// </summary>
+        public bool IsNegated { get; set; }
 
         /// <summary>
         /// Gets the operator name.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets the <see cref="string"/> representation of operator.
         /// </summary>
-        public string Operator { get; }
+        public string Operator { get; set; }
 
         /// <summary>
-        /// Determines whether the specified <see cref="object"/>
-        /// is equal to the current <see cref="FilterOperator"/>.
+        /// Gets a <see cref="IFilterOperator"/> which is a not negated
+        /// version of current operator, if such exists; otherwise <see langword="null"/>.
         /// </summary>
-        /// <param name="obj">
-        /// The <see cref="object"/> to compare with the current <see cref="FilterOperator"/>.
-        /// </param>
-        /// <returns>
-        /// <see langword="true"/> if the specified object is equal
-        /// to the current <see cref="object"/>; otherwise, <see langword="false"/>.
-        /// </returns>
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as FilterOperator);
-        }
+        public IFilterOperator UnnegatedOperator { get; set; }
 
-        /// <summary>
-        /// Indicates whether the current <see cref="FilterOperator"/>
-        /// is equal to another <see cref="FilterOperator"/>.
-        /// </summary>
-        /// <param name="other">
-        /// An <see cref="FilterOperator"/> to compare with this <see cref="FilterOperator"/>.
-        /// </param>
-        /// <returns>
-        /// <see langword="true"/> if the specified object is equal
-        /// to the current <see cref="object"/>; otherwise, <see langword="false"/>.
-        /// </returns>
-        public bool Equals(FilterOperator other)
-        {
-            return other != null && Operator == other.Operator;
-        }
+        ///// <summary>
+        ///// Determines whether the specified <see cref="object"/>
+        ///// is equal to the current <see cref="FilterOperator"/>.
+        ///// </summary>
+        ///// <param name="obj">
+        ///// The <see cref="object"/> to compare with the current <see cref="FilterOperator"/>.
+        ///// </param>
+        ///// <returns>
+        ///// <see langword="true"/> if the specified object is equal
+        ///// to the current <see cref="object"/>; otherwise, <see langword="false"/>.
+        ///// </returns>
+        //public override bool Equals(object obj)
+        //{
+        //    return Equals(obj as FilterOperator);
+        //}
 
-        /// <summary>
-        /// Gets hashcode representation of current <see cref="FilterOperator"/>
-        /// as <see cref="int"/>.
-        /// </summary>
-        /// <returns>
-        /// <see cref="int"/> hashcode.
-        /// </returns>
-        public override int GetHashCode()
-        {
-            return -2036482651 + EqualityComparer<string>.Default.GetHashCode(Operator);
-        }
+        ///// <summary>
+        ///// Indicates whether the current <see cref="FilterOperator"/>
+        ///// is equal to another <see cref="FilterOperator"/>.
+        ///// </summary>
+        ///// <param name="other">
+        ///// An <see cref="FilterOperator"/> to compare with this <see cref="FilterOperator"/>.
+        ///// </param>
+        ///// <returns>
+        ///// <see langword="true"/> if the specified object is equal
+        ///// to the current <see cref="object"/>; otherwise, <see langword="false"/>.
+        ///// </returns>
+        //public bool Equals(FilterOperator other)
+        //{
+        //    return other != null && Operator == other.Operator;
+        //}
+
+        ///// <summary>
+        ///// Gets hashcode representation of current <see cref="FilterOperator"/>
+        ///// as <see cref="int"/>.
+        ///// </summary>
+        ///// <returns>
+        ///// <see cref="int"/> hashcode.
+        ///// </returns>
+        //public override int GetHashCode()
+        //{
+        //    return -2036482651 + EqualityComparer<string>.Default.GetHashCode(Operator);
+        //}
 
         /// <summary>
         /// Returns a <see cref="string"/> that represents the current <see cref="FilterOperator"/>.
@@ -120,14 +139,14 @@ namespace Sieve.Models
             return $"{Operator} {Name}";
         }
 
-        public static bool operator ==(FilterOperator operator1, FilterOperator operator2)
-        {
-            return EqualityComparer<FilterOperator>.Default.Equals(operator1, operator2);
-        }
+        //public static bool operator ==(FilterOperator operator1, FilterOperator operator2)
+        //{
+        //    return EqualityComparer<FilterOperator>.Default.Equals(operator1, operator2);
+        //}
 
-        public static bool operator !=(FilterOperator operator1, FilterOperator operator2)
-        {
-            return !(operator1 == operator2);
-        }
+        //public static bool operator !=(FilterOperator operator1, FilterOperator operator2)
+        //{
+        //    return !(operator1 == operator2);
+        //}
     }
 }

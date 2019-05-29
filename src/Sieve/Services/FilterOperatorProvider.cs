@@ -20,10 +20,34 @@ namespace Sieve.Services
                 .DefinedTypes
                 .Where(t =>
                     t.ImplementedInterfaces.Contains(typeof(IFilterOperator))
-                    && !t.IsAbstract)
+                    && !t.IsAbstract
+                    && t != typeof(FilterOperator))
                 .Select(t => Activator.CreateInstance(t))
                 .OfType<IFilterOperator>()
                 .ToList();
+        }
+
+        public void AddOperator(IFilterOperator @operator)
+        {
+            if (@operator == null)
+            {
+                throw new ArgumentNullException(nameof(@operator));
+            }
+
+            _operators.Add(@operator);
+        }
+
+        public IFilterOperator GetFirstOrDefault(string @operator)
+        {
+            if (string.IsNullOrWhiteSpace(@operator))
+            {
+                throw new ArgumentException(
+                    $"{nameof(@operator)} cannot be null, empty " +
+                    $"or contain only whitespace characaters.",
+                    nameof(@operator));
+            }
+
+            return _operators.FirstOrDefault(f => f.Operator == @operator);
         }
 
         public IReadOnlyList<IFilterOperator> GetOperators()

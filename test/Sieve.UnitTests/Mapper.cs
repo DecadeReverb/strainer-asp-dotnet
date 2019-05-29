@@ -5,6 +5,7 @@ using Sieve.UnitTests.Services;
 using System.Linq;
 using System.Collections.Generic;
 using Sieve.Exceptions;
+using Sieve.Services;
 
 namespace Sieve.UnitTests
 {
@@ -16,7 +17,9 @@ namespace Sieve.UnitTests
 
         public Mapper()
         {
-            _processor = new ApplicationSieveProcessor(new SieveOptionsAccessor(),
+            _processor = new ApplicationSieveProcessor(
+                new SieveOptionsAccessor(),
+                new FilterOperatorProvider(),
                 new SieveCustomSortMethods(),
                 new SieveCustomFilterMethods());
 

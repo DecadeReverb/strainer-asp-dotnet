@@ -40,12 +40,14 @@ namespace Sieve.Models
             // Change this to external provider, or move this logic it at all
             // to filter operator provider. DTO should not handle creating
             // the operators, it should just have it ready from the start.
-            _operators = (typeof(FilterTerm))
+            var types = (typeof(FilterTerm))
                 .Assembly
                 .DefinedTypes
                 .Where(t =>
                     t.ImplementedInterfaces.Contains(typeof(IFilterOperator))
-                    && !t.IsAbstract)
+                    && !t.IsAbstract
+                    && t != typeof(FilterOperator));
+            _operators = types
                 .Select(t => Activator.CreateInstance(t))
                 .OfType<IFilterOperator>()
                 .ToList();
