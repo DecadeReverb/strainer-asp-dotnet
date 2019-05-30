@@ -1,7 +1,7 @@
 image: microsoft/dotnet:2.2-sdk
 
 variables:
- UNIT_TESTS_PROJECT_NAME: 'UnitTests'
+ UNIT_TESTS_PROJECT_NAME: 'Sieve.UnitTests'
  SOURCE_CODE_DIRECTORY: 'src'
  TEST_DIRECTORY: 'test'
  BINARIES_DIRECTORY: 'bin'
