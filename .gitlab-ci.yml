@@ -1,0 +1,46 @@
+﻿image: microsoft/dotnet:2.2-sdk
+
+variables:
+ UNIT_TESTS_PROJECT_NAME: 'UnitTests'
+ SOURCE_CODE_DIRECTORY: 'src'
+ TEST_DIRECTORY: 'test'
+ BINARIES_DIRECTORY: 'bin'
+ OBJECTS_DIRECTORY: 'obj'
+ BUILD_CONFIGURATION: 'Release'
+ NUGET_PACKAGES_DIRECTORY: '.nuget'
+
+stages:
+  - build
+  - test
+  - pack
+  - publish
+
+cache:
+ key: '${CI_JOB_STAGE}-${CI_COMMIT_REF_SLUG}'
+ paths:
+  - '${SOURCE_CODE_DIRECTORY}/*/${OBJECTS_DIRECTORY}/project.assets.json'
+  - '${SOURCE_CODE_DIRECTORY}/*/${OBJECTS_DIRECTORY}/*.csproj.nuget.*'
+  - '${TEST_DIRECTORY}/*/${OBJECTS_DIRECTORY}/project.assets.json'
+  - '${TEST_DIRECTORY}/*/${OBJECTS_DIRECTORY}/*.csproj.nuget.*'
+  - '${NUGET_PACKAGES_DIRECTORY}'
+
+before_script:
+  - 'dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}'
+
+build:
+ stage: build
+ script:
+  - 'dotnet build --no-restore --configuration ${BUILD_CONFIGURATION}'
+ artifacts:
+  paths:
+   - '${SOURCE_CODE_DIRECTORY}/*/${BINARIES_DIRECTORY}'
+   - '${SOURCE_CODE_DIRECTORY}/*/${OBJECTS_DIRECTORY}'
+   - '${TEST_DIRECTORY}/*/${BINARIES_DIRECTORY}'
+   - '${TEST_DIRECTORY}/*/${OBJECTS_DIRECTORY}'
+
+unit tests:
+ stage: test
+ script:
+  - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
+ dependencies:
+  - build
