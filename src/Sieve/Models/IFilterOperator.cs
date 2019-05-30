@@ -6,16 +6,34 @@
     public interface IFilterOperator
     {
         /// <summary>
+        /// Gets a <see cref="IFilterOperator"/> which is a not negated
+        /// version of current operator, if such exists; otherwise <see langword="null"/>.
+        /// </summary>
+        IFilterOperator CaseSensitiveVersion { get; }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator has a case sensitive version.
+        /// </summary>
+        bool HasCaseSensitiveVersion { get; }
+
+        /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator has a not negated version.
         /// </summary>
-        bool HasUnnegatedOperator { get; }
+        bool HasUnnegatedVersion { get; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive
         /// </summary>
         bool IsCaseInsensitive { get; }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator is a default operator.
+        /// </summary>
+        bool IsDefault { get; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
@@ -37,6 +55,6 @@
         /// Gets a <see cref="IFilterOperator"/> which is a not negated
         /// version of current operator, if such exists; otherwise <see langword="null"/>.
         /// </summary>
-        IFilterOperator UnnegatedOperator { get; }
+        IFilterOperator UnnegatedVersion { get; }
     }
 }

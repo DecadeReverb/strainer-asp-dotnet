@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq.Expressions;
 
 namespace Sieve.Models
 {
@@ -13,6 +11,15 @@ namespace Sieve.Models
     {
         /// <summary>
         /// Initializes new instance of <see cref="FilterOperator"/> class.
+        /// </summary>
+        public FilterOperator()
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes new instance of <see cref="FilterOperator"/> class
+        /// with name and operator.
         /// </summary>
         /// <param name="name">
         /// The name of filter operator.
@@ -28,7 +35,7 @@ namespace Sieve.Models
         /// <paramref name="@operator"/> is <see langword="null"/>, empty
         /// or contains only whitespace characters.
         /// </exception>
-        protected FilterOperator(string name, string @operator)
+        public FilterOperator(string name, string @operator)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -51,16 +58,34 @@ namespace Sieve.Models
         }
 
         /// <summary>
+        /// Gets a <see cref="IFilterOperator"/> which is a not negated
+        /// version of current operator, if such exists; otherwise <see langword="null"/>.
+        /// </summary>
+        public IFilterOperator CaseSensitiveVersion { get; set;  }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator has a case sensitive version.
+        /// </summary>
+        public bool HasCaseSensitiveVersion => CaseSensitiveVersion != null;
+
+        /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator has a not negated version.
         /// </summary>
-        public bool HasUnnegatedOperator => UnnegatedOperator != null;
+        public bool HasUnnegatedVersion => UnnegatedVersion != null;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive
         /// </summary>
         public bool IsCaseInsensitive { get; set;  }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator is a default operator.
+        /// </summary>
+        public bool IsDefault { get; set; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
@@ -82,7 +107,7 @@ namespace Sieve.Models
         /// Gets a <see cref="IFilterOperator"/> which is a not negated
         /// version of current operator, if such exists; otherwise <see langword="null"/>.
         /// </summary>
-        public IFilterOperator UnnegatedOperator { get; set; }
+        public IFilterOperator UnnegatedVersion { get; set; }
 
         ///// <summary>
         ///// Determines whether the specified <see cref="object"/>

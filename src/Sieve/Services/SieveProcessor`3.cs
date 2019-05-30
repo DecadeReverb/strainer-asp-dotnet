@@ -21,33 +21,35 @@ namespace Sieve.Services
         private readonly ISieveCustomSortMethods _customSortMethods;
         private readonly ISieveCustomFilterMethods _customFilterMethods;
         private readonly IFilterOperatorProvider _filterOperatorProvider;
+        private readonly IFilterTermParser _filterTermParser;
         private readonly ISievePropertyMapper _mapper;
 
-
-        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider)
+        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, IFilterTermParser filterTermParser)
         {
             _mapper = MapProperties(new SievePropertyMapper());
             _options = options;
             _filterOperatorProvider = filterOperatorProvider;
+            _filterTermParser = filterTermParser;
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, ISieveCustomFilterMethods customFilterMethods)
-            : this(options, filterOperatorProvider)
+        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, IFilterTermParser filterTermParser, ISieveCustomFilterMethods customFilterMethods)
+            : this(options, filterOperatorProvider, filterTermParser)
         {
             _customFilterMethods = customFilterMethods;
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, ISieveCustomSortMethods customSortMethods)
-            : this(options, filterOperatorProvider)
+        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, IFilterTermParser filterTermParser, ISieveCustomSortMethods customSortMethods)
+            : this(options, filterOperatorProvider, filterTermParser)
         {
             _customSortMethods = customSortMethods;
         }
 
         public SieveProcessor(IOptions<SieveOptions> options,
             IFilterOperatorProvider filterOperatorProvider,
+            IFilterTermParser filterTermParser,
             ISieveCustomSortMethods customSortMethods,
             ISieveCustomFilterMethods customFilterMethods)
-            : this(options, filterOperatorProvider)
+            : this(options, filterOperatorProvider, filterTermParser)
         {
             _customSortMethods = customSortMethods;
             _customFilterMethods = customFilterMethods;
@@ -119,12 +121,22 @@ namespace Sieve.Services
             }
         }
 
+        protected virtual ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
+        {
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
+
+            return mapper;
+        }
+
         private IQueryable<TEntity> ApplyFiltering<TEntity>(
             TSieveModel model,
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
-            var parsedFilters = model.GetFiltersParsed();
+            var parsedFilters = _filterTermParser.GetParsedFilterTerms(model.Filters);
             if (parsedFilters == null)
             {
                 return result;
@@ -157,21 +169,22 @@ namespace Sieve.Services
                         {
 
                             dynamic constantVal = converter.CanConvertFrom(typeof(string))
-                                                      ? converter.ConvertFrom(filterTermValue)
-                                                      : Convert.ChangeType(filterTermValue, property.PropertyType);
+                                ? converter.ConvertFrom(filterTermValue)
+                                : Convert.ChangeType(filterTermValue, property.PropertyType);
 
                             var filterValue = GetClosureOverConstant(constantVal, property.PropertyType);
 
-
                             if (filterTerm.OperatorIsCaseInsensitive)
                             {
-                                propertyValue = Expression.Call(propertyValue,
+                                propertyValue = Expression.Call(
+                                    propertyValue,
                                     typeof(string).GetMethods()
-                                    .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
+                                        .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
 
-                                filterValue = Expression.Call(filterValue,
+                                filterValue = Expression.Call(
+                                    filterValue,
                                     typeof(string).GetMethods()
-                                    .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
+                                        .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
                             }
 
                             var expression = GetExpression(filterTerm, filterValue, propertyValue);
@@ -193,12 +206,17 @@ namespace Sieve.Services
                     }
                     else
                     {
-                        result = ApplyCustomMethod(result, filterTermName, _customFilterMethods,
-                            new object[] {
-                                            result,
-                                            filterTerm.Operator,
-                                            filterTerm.Values
-                            }, dataForCustomMethods);
+                        result = ApplyCustomMethod(
+                            result,
+                            filterTermName,
+                            _customFilterMethods,
+                            new object[]
+                            {
+                                result,
+                                filterTerm.Operator,
+                                filterTerm.Values
+                            },
+                            dataForCustomMethods);
 
                     }
                 }
@@ -227,7 +245,7 @@ namespace Sieve.Services
         // service, for example some kind of filter operator to expression
         // translator. It should be possible to add or remove translations,
         // or even supply custom filter operator to expression translator.
-        private static Expression GetExpression(TFilterTerm filterTerm, dynamic filterValue, dynamic propertyValue)
+        private static Expression GetExpression(IFilterTerm filterTerm, dynamic filterValue, dynamic propertyValue)
         {
             switch (filterTerm.OperatorParsed)
             {
@@ -291,13 +309,17 @@ namespace Sieve.Services
                 }
                 else
                 {
-                    result = ApplyCustomMethod(result, sortTerm.Name, _customSortMethods,
+                    result = ApplyCustomMethod(
+                        result,
+                        sortTerm.Name,
+                        _customSortMethods,
                         new object[]
                         {
-                        result,
-                        useThenBy,
-                        sortTerm.IsDescending
-                        }, dataForCustomMethods);
+                            result,
+                            useThenBy,
+                            sortTerm.IsDescending
+                        },
+                        dataForCustomMethods);
                 }
                 useThenBy = true;
             }
@@ -321,11 +343,6 @@ namespace Sieve.Services
             }
 
             return result;
-        }
-
-        protected virtual ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
-        {
-            return mapper;
         }
 
         private (string, PropertyInfo) GetSieveProperty<TEntity>(
@@ -369,23 +386,24 @@ namespace Sieve.Services
 
         private IQueryable<TEntity> ApplyCustomMethod<TEntity>(
             IQueryable<TEntity> result,
-            string name, object parent,
+            string name,
+            object parent,
             object[] parameters,
             object[] optionalParameters = null)
         {
             var customMethod = parent?.GetType()
-                .GetMethodExt(name,
-                _options.Value.CaseSensitive
-                    ? BindingFlags.Default
-                    : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance,
-                typeof(IQueryable<TEntity>));
+                .GetMethodExt(
+                    name,
+                    _options.Value.CaseSensitive
+                        ? BindingFlags.Default
+                        : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance,
+                    typeof(IQueryable<TEntity>));
 
             if (customMethod != null)
             {
                 try
                 {
-                    result = customMethod.Invoke(parent, parameters)
-                        as IQueryable<TEntity>;
+                    result = customMethod.Invoke(parent, parameters) as IQueryable<TEntity>;
                 }
                 catch (TargetParameterCountException)
                 {

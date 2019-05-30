@@ -10,9 +10,10 @@ namespace Sieve.Sample.Services
         public ApplicationSieveProcessor(
             IOptions<SieveOptions> options,
             IFilterOperatorProvider filterOperatorProvider,
+            IFilterTermParser filterTermParser,
             ISieveCustomSortMethods customSortMethods,
             ISieveCustomFilterMethods customFilterMethods)
-            : base(options, filterOperatorProvider, customSortMethods, customFilterMethods)
+            : base(options, filterOperatorProvider, filterTermParser, customSortMethods, customFilterMethods)
         {
 
         }

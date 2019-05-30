@@ -12,14 +12,19 @@ namespace Sieve.UnitTests
 	[TestClass]
     public class Mapper
     {
+        private readonly FilterTermParser _filterTermParser;
         private readonly ApplicationSieveProcessor _processor;
         private readonly IQueryable<Post> _posts;
 
         public Mapper()
         {
+            var filterOperatorProvider = new FilterOperatorProvider();
+            var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
+            _filterTermParser = new FilterTermParser(filterOperatorParser);
             _processor = new ApplicationSieveProcessor(
                 new SieveOptionsAccessor(),
-                new FilterOperatorProvider(),
+                filterOperatorProvider,
+                _filterTermParser,
                 new SieveCustomSortMethods(),
                 new SieveCustomFilterMethods());
 

@@ -27,6 +27,8 @@ namespace Sieve.Services
                 .ToList();
         }
 
+        public IEnumerable<IFilterOperator> Operators => _operators.AsReadOnly();
+
         public void AddOperator(IFilterOperator @operator)
         {
             if (@operator == null)
@@ -35,6 +37,11 @@ namespace Sieve.Services
             }
 
             _operators.Add(@operator);
+        }
+
+        public IFilterOperator GetDefaultOperator()
+        {
+            return _operators.FirstOrDefault(f => f.IsDefault);
         }
 
         public IFilterOperator GetFirstOrDefault(string @operator)
@@ -48,11 +55,6 @@ namespace Sieve.Services
             }
 
             return _operators.FirstOrDefault(f => f.Operator == @operator);
-        }
-
-        public IReadOnlyList<IFilterOperator> GetOperators()
-        {
-            return _operators.AsReadOnly();
         }
     }
 }

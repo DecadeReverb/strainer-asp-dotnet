@@ -13,6 +13,11 @@ namespace Sieve.Models
     {
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
 
+        public SieveModel()
+        {
+
+        }
+
         [DataMember]
         public string Filters { get; set; }
 
@@ -24,57 +29,6 @@ namespace Sieve.Models
 
         [DataMember, Range(1, int.MaxValue)]
         public int? PageSize { get; set; }
-
-        // TODO:
-        // Move this logic to some kind of filter parser.
-        // A DTO should not have such business logic, nethier deal with parsing.
-        public List<TFilterTerm> GetFiltersParsed()
-        {
-            if (Filters != null)
-            {
-                var value = new List<TFilterTerm>();
-                foreach (var filter in Regex.Split(Filters, EscapedCommaPattern))
-                {
-                    if (string.IsNullOrWhiteSpace(filter))
-                    {
-                        continue;
-                    }
-
-                    if (filter.StartsWith("("))
-                    {
-                        var filterOpAndVal = filter.Substring(filter.LastIndexOf(")") + 1);
-                        var subfilters = filter
-                            .Replace(filterOpAndVal, "")
-                            .Replace("(", "")
-                            .Replace(")", "");
-
-                        var filterTerm = new TFilterTerm
-                        {
-                            Filter = subfilters + filterOpAndVal
-                        };
-
-                        if (!value.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
-                        {
-                            value.Add(filterTerm);
-                        }
-                    }
-                    else
-                    {
-                        var filterTerm = new TFilterTerm
-                        {
-                            Filter = filter
-                        };
-                        value.Add(filterTerm);
-                    }
-                }
-
-                return value;
-            }
-            else
-            {
-                return null;
-            }
-        }
 
         // TODO:
         // Move this logic to some kind of sorting parser.

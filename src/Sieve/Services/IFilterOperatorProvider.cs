@@ -5,8 +5,10 @@ namespace Sieve.Services
 {
     public interface IFilterOperatorProvider
     {
+        IEnumerable<IFilterOperator> Operators { get; }
+
         void AddOperator(IFilterOperator @operator);
-        IReadOnlyList<IFilterOperator> GetOperators();
+        IFilterOperator GetDefaultOperator();
         IFilterOperator GetFirstOrDefault(string @operator);
     }
 }

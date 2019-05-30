@@ -13,15 +13,20 @@ namespace Sieve.UnitTests
     [TestClass]
     public class General
     {
+        private readonly FilterTermParser _filterTermParser;
         private readonly SieveProcessor _processor;
         private readonly IQueryable<Post> _posts;
         private readonly IQueryable<Comment> _comments;
 
         public General()
         {
+            var filterOperatorProvider = new FilterOperatorProvider();
+            var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
+            _filterTermParser = new FilterTermParser(filterOperatorParser);
             _processor = new ApplicationSieveProcessor(
                 new SieveOptionsAccessor(),
-                new FilterOperatorProvider(),
+                filterOperatorProvider,
+                _filterTermParser,
                 new SieveCustomSortMethods(),
                 new SieveCustomFilterMethods());
 
@@ -171,10 +176,10 @@ namespace Sieve.UnitTests
                 Filters = "LikeCount==50",
             };
 
-            var parsedFilters = model.GetFiltersParsed();
-            Console.WriteLine(parsedFilters[0].Values);
-            Console.WriteLine(parsedFilters[0].Operator);
-            Console.WriteLine(parsedFilters[0].OperatorParsed);
+            var parsedFilters = _filterTermParser.GetParsedFilterTerms(model.Filters);
+            Console.WriteLine(parsedFilters.First().Values);
+            Console.WriteLine(parsedFilters.First().Operator);
+            Console.WriteLine(parsedFilters.First().OperatorParsed);
 
             var result = _processor.Apply(model, _posts);
 

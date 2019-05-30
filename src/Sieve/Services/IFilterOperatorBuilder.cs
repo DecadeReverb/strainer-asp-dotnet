@@ -6,9 +6,10 @@ namespace Sieve.Services
     {
         IFilterOperator Build();
         IFilterOperatorBuilder CaseInsensitive();
+        IFilterOperatorBuilder Default();
+        IFilterOperatorBuilder HasCaseSensitiveVersion(IFilterOperator filterOperator);
         IFilterOperatorBuilder HasName(string name);
-        IFilterOperatorBuilder HasUnnegatedOperator(IFilterOperator filterOperator);
-        IFilterOperatorBuilder Negated();
-        IFilterOperatorBuilder Operator();
+        IFilterOperatorBuilder HasUnnegatedVersion(IFilterOperator filterOperator);
+        IFilterOperatorBuilder Operator(string @operator);
     }
 }

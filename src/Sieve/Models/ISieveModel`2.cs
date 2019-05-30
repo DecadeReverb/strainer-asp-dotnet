@@ -14,8 +14,6 @@ namespace Sieve.Models
 
         string Sorts { get; set; }
 
-        List<TFilterTerm> GetFiltersParsed();
-
         List<TSortTerm> GetSortsParsed();
     }
 }
