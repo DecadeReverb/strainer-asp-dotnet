@@ -3,13 +3,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Microsoft.Extensions.Options;
 using Sieve.Attributes;
 using Sieve.Exceptions;
 using Sieve.Extensions;
 using Sieve.Models;
 using Sieve.Models.Filtering.Operators;
-using Sieve.Services.Filtering;
 
 namespace Sieve.Services
 {
@@ -18,43 +16,17 @@ namespace Sieve.Services
            where TFilterTerm : IFilterTerm, new()
            where TSortTerm : ISortTerm, new()
     {
-        private readonly IOptions<SieveOptions> _options;
-        private readonly ISieveCustomSortMethods _customSortMethods;
-        private readonly ISieveCustomFilterMethods _customFilterMethods;
-        private readonly IFilterOperatorProvider _filterOperatorProvider;
-        private readonly IFilterTermParser _filterTermParser;
-        private readonly ISievePropertyMapper _mapper;
-
-        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, IFilterTermParser filterTermParser)
+        public SieveProcessor(ISieveContext context)
         {
-            _mapper = MapProperties(new SievePropertyMapper());
-            _options = options;
-            _filterOperatorProvider = filterOperatorProvider;
-            _filterTermParser = filterTermParser;
+            Context = context;
+
+            MapProperties(context.Mapper);
         }
 
-        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, IFilterTermParser filterTermParser, ISieveCustomFilterMethods customFilterMethods)
-            : this(options, filterOperatorProvider, filterTermParser)
-        {
-            _customFilterMethods = customFilterMethods;
-        }
-
-        public SieveProcessor(IOptions<SieveOptions> options, IFilterOperatorProvider filterOperatorProvider, IFilterTermParser filterTermParser, ISieveCustomSortMethods customSortMethods)
-            : this(options, filterOperatorProvider, filterTermParser)
-        {
-            _customSortMethods = customSortMethods;
-        }
-
-        public SieveProcessor(IOptions<SieveOptions> options,
-            IFilterOperatorProvider filterOperatorProvider,
-            IFilterTermParser filterTermParser,
-            ISieveCustomSortMethods customSortMethods,
-            ISieveCustomFilterMethods customFilterMethods)
-            : this(options, filterOperatorProvider, filterTermParser)
-        {
-            _customSortMethods = customSortMethods;
-            _customFilterMethods = customFilterMethods;
-        }
+        /// <summary>
+        /// Gets the <see cref="ISieveContext"/>.
+        /// </summary>
+        protected ISieveContext Context { get; }
 
         /// <summary>
         /// Apply filtering, sorting, and pagination parameters found in `model` to `source`
@@ -106,7 +78,7 @@ namespace Sieve.Services
             }
             catch (Exception ex)
             {
-                if (_options.Value.ThrowExceptions)
+                if (Context.Options.ThrowExceptions)
                 {
                     if (ex is SieveException)
                     {
@@ -137,7 +109,7 @@ namespace Sieve.Services
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
-            var parsedFilters = _filterTermParser.GetParsedFilterTerms(model.Filters);
+            var parsedFilters = Context.FilterTermContext.Parser.GetParsedFilterTerms(model.Filters);
             if (parsedFilters == null)
             {
                 return result;
@@ -210,7 +182,7 @@ namespace Sieve.Services
                         result = ApplyCustomMethod(
                             result,
                             filterTermName,
-                            _customFilterMethods,
+                            Context.CustomMethodsContext.FilterMethods,
                             new object[]
                             {
                                 result,
@@ -313,7 +285,7 @@ namespace Sieve.Services
                     result = ApplyCustomMethod(
                         result,
                         sortTerm.Name,
-                        _customSortMethods,
+                        Context.CustomMethodsContext.SortMethods,
                         new object[]
                         {
                             result,
@@ -333,8 +305,10 @@ namespace Sieve.Services
             IQueryable<TEntity> result)
         {
             var page = model?.Page ?? 1;
-            var pageSize = model?.PageSize ?? _options.Value.DefaultPageSize;
-            var maxPageSize = _options.Value.MaxPageSize > 0 ? _options.Value.MaxPageSize : pageSize;
+            var pageSize = model?.PageSize ?? Context.Options.DefaultPageSize;
+            var maxPageSize = Context.Options.MaxPageSize > 0
+                ? Context.Options.MaxPageSize
+                : pageSize;
 
             result = result.Skip((page - 1) * pageSize);
 
@@ -351,11 +325,19 @@ namespace Sieve.Services
             bool canFilterRequired,
             string name)
         {
-            var property = _mapper.FindProperty<TEntity>(canSortRequired, canFilterRequired, name, _options.Value.CaseSensitive);
+            var property = Context.Mapper.FindProperty<TEntity>(
+                canSortRequired,
+                canFilterRequired,
+                name,
+                Context.Options.CaseSensitive);
 
             if (property.Item1 == null)
             {
-                var prop = FindPropertyBySieveAttribute<TEntity>(canSortRequired, canFilterRequired, name, _options.Value.CaseSensitive);
+                var prop = FindPropertyBySieveAttribute<TEntity>(
+                    canSortRequired,
+                    canFilterRequired,
+                    name,
+                    Context.Options.CaseSensitive);
 
                 return (prop?.Name, prop);
             }
@@ -395,7 +377,7 @@ namespace Sieve.Services
             var customMethod = parent?.GetType()
                 .GetMethodExt(
                     name,
-                    _options.Value.CaseSensitive
+                    Context.Options.CaseSensitive
                         ? BindingFlags.Default
                         : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance,
                     typeof(IQueryable<TEntity>));
@@ -424,7 +406,7 @@ namespace Sieve.Services
                 var incompatibleCustomMethod = parent?.GetType()
                     .GetMethod(
                         name,
-                        _options.Value.CaseSensitive
+                        Context.Options.CaseSensitive
                             ? BindingFlags.Default
                             : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 

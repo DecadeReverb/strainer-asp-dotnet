@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sieve.Exceptions;
 using Sieve.Models;
+using Sieve.Services;
 using Sieve.Services.Filtering;
 using Sieve.UnitTests.Entities;
 using Sieve.UnitTests.Services;
@@ -12,21 +13,36 @@ namespace Sieve.UnitTests
     [TestClass]
     public class Mapper
     {
-        private readonly FilterTermParser _filterTermParser;
+        private readonly SieveContext _context;
         private readonly ApplicationSieveProcessor _processor;
         private readonly IQueryable<Post> _posts;
 
         public Mapper()
         {
+            var options = new SieveOptionsAccessor();
+
             var filterOperatorProvider = new FilterOperatorProvider();
             var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
-            _filterTermParser = new FilterTermParser(filterOperatorParser);
-            _processor = new ApplicationSieveProcessor(
-                new SieveOptionsAccessor(),
-                filterOperatorProvider,
-                _filterTermParser,
-                new SieveCustomSortMethods(),
-                new SieveCustomFilterMethods());
+            var filterOperatorValidator = new FilterOperatorValidator();
+            var filterOperatorContext = new FilterOperatorContext(filterOperatorParser, filterOperatorProvider, filterOperatorValidator);
+
+            var filterTermParser = new FilterTermParser(filterOperatorParser);
+            var filterTermContext = new FilterTermContext(filterTermParser);
+
+            var mapper = new SievePropertyMapper();
+
+            var customFilterMethods = new SieveCustomFilterMethods();
+            var customSortMethods = new SieveCustomSortMethods();
+            var customMethodsContext = new SieveCustomMethodsContext(customFilterMethods, customSortMethods);
+
+            _context = new SieveContext(
+                options,
+                filterOperatorContext,
+                filterTermContext,
+                mapper,
+                customMethodsContext);
+
+            _processor = new ApplicationSieveProcessor(_context);
 
             _posts = new List<Post>
             {

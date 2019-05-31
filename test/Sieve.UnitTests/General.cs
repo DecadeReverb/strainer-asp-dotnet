@@ -14,22 +14,37 @@ namespace Sieve.UnitTests
     [TestClass]
     public class General
     {
-        private readonly FilterTermParser _filterTermParser;
+        private readonly SieveContext _context;
         private readonly SieveProcessor _processor;
         private readonly IQueryable<Post> _posts;
         private readonly IQueryable<Comment> _comments;
 
         public General()
         {
+            var options = new SieveOptionsAccessor();
+
             var filterOperatorProvider = new FilterOperatorProvider();
             var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
-            _filterTermParser = new FilterTermParser(filterOperatorParser);
-            _processor = new ApplicationSieveProcessor(
-                new SieveOptionsAccessor(),
-                filterOperatorProvider,
-                _filterTermParser,
-                new SieveCustomSortMethods(),
-                new SieveCustomFilterMethods());
+            var filterOperatorValidator = new FilterOperatorValidator();
+            var filterOperatorContext = new FilterOperatorContext(filterOperatorParser, filterOperatorProvider, filterOperatorValidator);
+
+            var filterTermParser = new FilterTermParser(filterOperatorParser);
+            var filterTermContext = new FilterTermContext(filterTermParser);
+
+            var mapper = new SievePropertyMapper();
+
+            var customFilterMethods = new SieveCustomFilterMethods();
+            var customSortMethods = new SieveCustomSortMethods();
+            var customMethodsContext = new SieveCustomMethodsContext(customFilterMethods, customSortMethods);
+
+            _context = new SieveContext(
+                options,
+                filterOperatorContext,
+                filterTermContext,
+                mapper,
+                customMethodsContext);
+
+            _processor = new ApplicationSieveProcessor(_context);
 
             _posts = new List<Post>
             {
@@ -177,7 +192,7 @@ namespace Sieve.UnitTests
                 Filters = "LikeCount==50",
             };
 
-            var parsedFilters = _filterTermParser.GetParsedFilterTerms(model.Filters);
+            var parsedFilters = _context.FilterTermContext.Parser.GetParsedFilterTerms(model.Filters);
             Console.WriteLine(parsedFilters.First().Values);
             Console.WriteLine(parsedFilters.First().Operator);
             Console.WriteLine(parsedFilters.First().OperatorParsed);
