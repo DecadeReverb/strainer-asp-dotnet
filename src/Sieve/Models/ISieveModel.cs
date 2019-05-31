@@ -1,6 +1,6 @@
 ﻿namespace Sieve.Models
 {
-    public interface ISieveModel : ISieveModel<IFilterTerm, ISortTerm>
+    public interface ISieveModel : ISieveModel<ISortTerm>
     {
 
     }

@@ -2,8 +2,7 @@
 
 namespace Sieve.Models
 {
-    public interface ISieveModel<TFilterTerm, TSortTerm>
-        where TFilterTerm : IFilterTerm
+    public interface ISieveModel<TSortTerm>
         where TSortTerm : ISortTerm
     {
         string Filters { get; set; }

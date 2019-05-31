@@ -2,7 +2,7 @@
 
 namespace Sieve.Services
 {
-    public interface ISieveProcessor : ISieveProcessor<SieveModel, FilterTerm, SortTerm>
+    public interface ISieveProcessor : ISieveProcessor<SieveModel, SortTerm>
     {
 
     }
