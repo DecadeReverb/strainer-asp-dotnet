@@ -37,7 +37,7 @@ namespace Sieve.Services.Filtering
 
         protected IFilterOperatorParser Parser { get; }
 
-        public IList<IFilterTerm> GetParsedFilterTerms(string input)
+        public IList<IFilterTerm> GetParsedTerms(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
             {

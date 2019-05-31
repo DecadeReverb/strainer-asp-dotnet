@@ -192,7 +192,7 @@ namespace Sieve.UnitTests
                 Filters = "LikeCount==50",
             };
 
-            var parsedFilters = _context.FilterTermContext.Parser.GetParsedFilterTerms(model.Filters);
+            var parsedFilters = _context.FilterTermContext.Parser.GetParsedTerms(model.Filters);
             Console.WriteLine(parsedFilters.First().Values);
             Console.WriteLine(parsedFilters.First().Operator);
             Console.WriteLine(parsedFilters.First().OperatorParsed);
