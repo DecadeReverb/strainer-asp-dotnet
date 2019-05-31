@@ -9,15 +9,13 @@ namespace Sieve.Services
     {
         public SieveContext(
             IOptions<SieveOptions> options,
-            IFilterOperatorContext filterOperatorContext,
-            IFilterTermContext filterTermContext,
+            IFilteringContext filteringContext,
             ISortingContext sortingContext,
             ISievePropertyMapper mapper,
             ISieveCustomMethodsContext customMethodsContext)
         {
             CustomMethodsContext = customMethodsContext;
-            FilterOperatorContext = filterOperatorContext;
-            FilterTermContext = filterTermContext;
+            FilteringContext = filteringContext;
             SortingContext = sortingContext;
             Mapper = mapper;
             Options = options.Value;
@@ -25,9 +23,7 @@ namespace Sieve.Services
 
         public ISieveCustomMethodsContext CustomMethodsContext { get; }
 
-        public IFilterOperatorContext FilterOperatorContext { get; }
-
-        public IFilterTermContext FilterTermContext { get; }
+        public IFilteringContext FilteringContext { get; }
 
         public ISievePropertyMapper Mapper { get; }
 

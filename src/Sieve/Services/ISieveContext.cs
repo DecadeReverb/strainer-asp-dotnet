@@ -7,8 +7,7 @@ namespace Sieve.Services
     public interface ISieveContext
     {
         ISieveCustomMethodsContext CustomMethodsContext { get; }
-        IFilterOperatorContext FilterOperatorContext { get; }
-        IFilterTermContext FilterTermContext { get; }
+        IFilteringContext FilteringContext { get; }
         ISievePropertyMapper Mapper { get; }
         SieveOptions Options { get; }
         ISortingContext SortingContext { get; }

@@ -52,10 +52,8 @@ namespace Sieve.Extensions.DependencyInjection
             services.AddScoped<IFilterOperatorParser, FilterOperatorParser>();
             services.AddScoped<IFilterOperatorProvider, FilterOperatorProvider>();
             services.AddScoped<IFilterOperatorValidator, FilterOperatorValidator>();
-            services.AddScoped<IFilterOperatorContext, FilterOperatorContext>();
-
             services.AddScoped<IFilterTermParser, FilterTermParser>();
-            services.AddScoped<IFilterTermContext, FilterTermContext>();
+            services.AddScoped<IFilteringContext, FilteringContext>();
 
             services.AddScoped<ISortTermParser, SortTermParser>();
             services.AddScoped<ISortingContext, SortingContext>();

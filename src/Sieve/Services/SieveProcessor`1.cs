@@ -107,7 +107,7 @@ namespace Sieve.Services
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
-            var parsedFilters = Context.FilterTermContext.Parser.GetParsedTerms(model.Filters);
+            var parsedFilters = Context.FilteringContext.TermParser.GetParsedTerms(model.Filters);
             if (parsedFilters == null)
             {
                 return result;

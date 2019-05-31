@@ -27,10 +27,8 @@ namespace Sieve.UnitTests
             var filterOperatorProvider = new FilterOperatorProvider();
             var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
-            var filterOperatorContext = new FilterOperatorContext(filterOperatorParser, filterOperatorProvider, filterOperatorValidator);
-
             var filterTermParser = new FilterTermParser(filterOperatorParser);
-            var filterTermContext = new FilterTermContext(filterTermParser);
+            var filteringContext = new FilteringContext(filterOperatorParser, filterOperatorProvider, filterOperatorValidator, filterTermParser);
 
             var sortTermParser = new SortTermParser();
             var sortingContext = new SortingContext(sortTermParser);
@@ -43,8 +41,7 @@ namespace Sieve.UnitTests
 
             _context = new SieveContext(
                 options,
-                filterOperatorContext,
-                filterTermContext,
+                filteringContext,
                 sortingContext,
                 mapper,
                 customMethodsContext);
@@ -197,7 +194,7 @@ namespace Sieve.UnitTests
                 Filters = "LikeCount==50",
             };
 
-            var parsedFilters = _context.FilterTermContext.Parser.GetParsedTerms(model.Filters);
+            var parsedFilters = _context.FilteringContext.TermParser.GetParsedTerms(model.Filters);
             Console.WriteLine(parsedFilters.First().Values);
             Console.WriteLine(parsedFilters.First().Operator);
             Console.WriteLine(parsedFilters.First().OperatorParsed);
