@@ -9,10 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sieve.Extensions.DependencyInjection;
-using Sieve.Models;
 using Sieve.Sample.Entities;
 using Sieve.Sample.Services;
-using Sieve.Services;
 
 namespace Sieve.Sample
 {
