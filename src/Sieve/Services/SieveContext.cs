@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services.Filtering;
+using Sieve.Services.Sorting;
 
 namespace Sieve.Services
 {
@@ -10,12 +11,14 @@ namespace Sieve.Services
             IOptions<SieveOptions> options,
             IFilterOperatorContext filterOperatorContext,
             IFilterTermContext filterTermContext,
+            ISortingContext sortingContext,
             ISievePropertyMapper mapper,
             ISieveCustomMethodsContext customMethodsContext)
         {
             CustomMethodsContext = customMethodsContext;
             FilterOperatorContext = filterOperatorContext;
             FilterTermContext = filterTermContext;
+            SortingContext = sortingContext;
             Mapper = mapper;
             Options = options.Value;
         }
@@ -29,5 +32,7 @@ namespace Sieve.Services
         public ISievePropertyMapper Mapper { get; }
 
         public SieveOptions Options { get; }
+
+        public ISortingContext SortingContext { get; }
     }
 }

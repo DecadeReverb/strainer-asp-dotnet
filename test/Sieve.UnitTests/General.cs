@@ -6,6 +6,7 @@ using Sieve.Exceptions;
 using Sieve.Models;
 using Sieve.Services;
 using Sieve.Services.Filtering;
+using Sieve.Services.Sorting;
 using Sieve.UnitTests.Entities;
 using Sieve.UnitTests.Services;
 
@@ -31,6 +32,9 @@ namespace Sieve.UnitTests
             var filterTermParser = new FilterTermParser(filterOperatorParser);
             var filterTermContext = new FilterTermContext(filterTermParser);
 
+            var sortTermParser = new SortTermParser();
+            var sortingContext = new SortingContext(sortTermParser);
+
             var mapper = new SievePropertyMapper();
 
             var customFilterMethods = new SieveCustomFilterMethods();
@@ -41,6 +45,7 @@ namespace Sieve.UnitTests
                 options,
                 filterOperatorContext,
                 filterTermContext,
+                sortingContext,
                 mapper,
                 customMethodsContext);
 

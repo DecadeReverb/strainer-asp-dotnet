@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
 using Sieve.Services.Filtering;
+using Sieve.Services.Sorting;
 
 namespace Sieve.Extensions.DependencyInjection
 {
@@ -55,6 +56,9 @@ namespace Sieve.Extensions.DependencyInjection
 
             services.AddScoped<IFilterTermParser, FilterTermParser>();
             services.AddScoped<IFilterTermContext, FilterTermContext>();
+
+            services.AddScoped<ISortTermParser, SortTermParser>();
+            services.AddScoped<ISortingContext, SortingContext>();
 
             services.AddScoped<ISievePropertyMapper, SievePropertyMapper>();
 

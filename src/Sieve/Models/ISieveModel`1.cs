@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Sieve.Models
+﻿namespace Sieve.Models
 {
     public interface ISieveModel<TSortTerm>
         where TSortTerm : ISortTerm
@@ -12,7 +10,5 @@ namespace Sieve.Models
         int? PageSize { get; set; }
 
         string Sorts { get; set; }
-
-        List<TSortTerm> GetSortsParsed();
     }
 }

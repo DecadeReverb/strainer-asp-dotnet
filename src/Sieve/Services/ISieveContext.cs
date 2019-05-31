@@ -1,5 +1,6 @@
 ﻿using Sieve.Models;
 using Sieve.Services.Filtering;
+using Sieve.Services.Sorting;
 
 namespace Sieve.Services
 {
@@ -10,5 +11,6 @@ namespace Sieve.Services
         IFilterTermContext FilterTermContext { get; }
         ISievePropertyMapper Mapper { get; }
         SieveOptions Options { get; }
+        ISortingContext SortingContext { get; }
     }
 }

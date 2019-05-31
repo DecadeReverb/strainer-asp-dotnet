@@ -265,13 +265,14 @@ namespace Sieve.Services
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
-            if (model?.GetSortsParsed() == null)
+            var parsedTerms = Context.SortingContext.TermParser.GetParsedTerms(model.Sorts);
+            if (parsedTerms.Count == 0)
             {
                 return result;
             }
 
             var useThenBy = false;
-            foreach (var sortTerm in model.GetSortsParsed())
+            foreach (var sortTerm in parsedTerms)
             {
                 var (fullName, property) = GetSieveProperty<TEntity>(true, false, sortTerm.Name);
 
