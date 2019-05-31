@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sieve.Models;
 
-namespace Sieve.Services
+namespace Sieve.Services.Filtering
 {
     public class FilterOperatorValidator : IFilterOperatorValidator
     {

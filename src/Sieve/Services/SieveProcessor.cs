@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Sieve.Models;
+using Sieve.Services.Filtering;
 
 namespace Sieve.Services
 {

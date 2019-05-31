@@ -2,6 +2,7 @@
 using Sieve.Models;
 using Sieve.Services;
 using Sieve.Sample.Entities;
+using Sieve.Services.Filtering;
 
 namespace Sieve.Sample.Services
 {

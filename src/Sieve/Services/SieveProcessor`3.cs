@@ -9,6 +9,7 @@ using Sieve.Exceptions;
 using Sieve.Extensions;
 using Sieve.Models;
 using Sieve.Models.Filtering.Operators;
+using Sieve.Services.Filtering;
 
 namespace Sieve.Services
 {

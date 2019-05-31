@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sieve.Exceptions;
 using Sieve.Models;
 using Sieve.Services;
+using Sieve.Services.Filtering;
 using Sieve.UnitTests.Entities;
 using Sieve.UnitTests.Services;
 

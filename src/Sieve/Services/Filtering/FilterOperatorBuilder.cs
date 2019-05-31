@@ -1,7 +1,7 @@
 ﻿using System;
 using Sieve.Models;
 
-namespace Sieve.Services
+namespace Sieve.Services.Filtering
 {
     public class FilterOperatorBuilder : IFilterOperatorBuilder
     {

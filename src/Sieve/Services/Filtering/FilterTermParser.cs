@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using Sieve.Models;
 using Sieve.Models.Filtering.Operators;
 
-namespace Sieve.Services
+namespace Sieve.Services.Filtering
 {
     public class FilterTermParser : IFilterTermParser
     {

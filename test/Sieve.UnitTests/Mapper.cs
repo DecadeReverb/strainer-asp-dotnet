@@ -1,15 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sieve.Exceptions;
 using Sieve.Models;
+using Sieve.Services.Filtering;
 using Sieve.UnitTests.Entities;
 using Sieve.UnitTests.Services;
-using System.Linq;
-using System.Collections.Generic;
-using Sieve.Exceptions;
-using Sieve.Services;
 
 namespace Sieve.UnitTests
 {
-	[TestClass]
+    [TestClass]
     public class Mapper
     {
         private readonly FilterTermParser _filterTermParser;

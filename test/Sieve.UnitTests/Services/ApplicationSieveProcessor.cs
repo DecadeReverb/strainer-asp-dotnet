@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
+using Sieve.Services.Filtering;
 using Sieve.UnitTests.Entities;
 
 namespace Sieve.UnitTests.Services
