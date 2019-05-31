@@ -2,7 +2,7 @@
 ⚗️ Sieve is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
 Most common use case would be for serving ASP.NET Core GET queries.
 
-[![Travis CI](https://img.shields.io/travis/Prologh/Sieve/master.svg?style=flat-square)](https://travis-ci.org/Prologh/Sieve)
+[![GitLab CI](https://img.shields.io/gitlab/pipeline/Prologh/Sieve/master.svg?style=flat-square)](https://gitlab.com/Prologh/Sieve/pipelines)
 [![NuGet Release](https://img.shields.io/nuget/v/Sieve.svg?style=flat-square)](https://www.nuget.org/packages/Sieve)
 
 **Note:** This repository is forked. The original author of [Sieve](https://github.com/Biarity/Sieve) is [Biarity](https://github.com/Biarity).
