@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sieve.Models;
+using Sieve.Models.Filtering.Operators;
 
 namespace Sieve.Services.Filtering
 {
@@ -11,23 +12,20 @@ namespace Sieve.Services.Filtering
 
         public FilterOperatorProvider()
         {
-            // TODO:
-            // Change this to external provider, or move this logic it at all
-            // to filter operator provider. DTO should not handle creating
-            // the operators, it should just have it ready from the start.
-            _operators = (typeof(FilterTerm))
-                .Assembly
-                .DefinedTypes
-                .Where(t =>
-                    t.ImplementedInterfaces.Contains(typeof(IFilterOperator))
-                    && !t.IsAbstract
-                    && t != typeof(FilterOperator))
-                .Select(t => Activator.CreateInstance(t))
-                .OfType<IFilterOperator>()
-                .ToList();
+            _operators = new List<IFilterOperator>
+            {
+                new EqualsOperator(),
+                new NotEqualsOperator(),
+                new LessThanOperator(),
+                new LessThanOrEqualToOperator(),
+                new GreaterThanOperator(),
+                new GreaterThanOrEqualToOperator(),
+                new ContainsOperator(),
+                new StartsWithOperator(),
+            };
         }
 
-        public IEnumerable<IFilterOperator> Operators => _operators.AsReadOnly();
+        public IReadOnlyList<IFilterOperator> Operators => _operators.AsReadOnly();
 
         public void AddOperator(IFilterOperator @operator)
         {
@@ -35,6 +33,9 @@ namespace Sieve.Services.Filtering
             {
                 throw new ArgumentNullException(nameof(@operator));
             }
+
+            // TODO:
+            // Perform validation checks before adding new operator.
 
             _operators.Add(@operator);
         }

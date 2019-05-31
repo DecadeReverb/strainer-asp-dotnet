@@ -12,5 +12,11 @@
         {
 
         }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether current
+        /// operator is a default operator.
+        /// </summary>
+        public override bool IsDefault => true;
     }
 }

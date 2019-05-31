@@ -7,15 +7,15 @@ namespace Sieve.Models
     /// Represents filter operator.
     /// </summary>
     [DebuggerDisplay("{Operator,nq} {Name,nq}")]
-    public class FilterOperator : IFilterOperator/*, IEquatable<FilterOperator>*/
+    public abstract class FilterOperator : IFilterOperator/*, IEquatable<FilterOperator>*/
     {
-        /// <summary>
-        /// Initializes new instance of <see cref="FilterOperator"/> class.
-        /// </summary>
-        public FilterOperator()
-        {
+        ///// <summary>
+        ///// Initializes new instance of <see cref="FilterOperator"/> class.
+        ///// </summary>
+        //protected FilterOperator()
+        //{
 
-        }
+        //}
 
         /// <summary>
         /// Initializes new instance of <see cref="FilterOperator"/> class
@@ -35,7 +35,7 @@ namespace Sieve.Models
         /// <paramref name="@operator"/> is <see langword="null"/>, empty
         /// or contains only whitespace characters.
         /// </exception>
-        public FilterOperator(string name, string @operator)
+        protected FilterOperator(string name, string @operator)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -57,57 +57,57 @@ namespace Sieve.Models
             Operator = @operator;
         }
 
-        /// <summary>
-        /// Gets a <see cref="IFilterOperator"/> which is a not negated
-        /// version of current operator, if such exists; otherwise <see langword="null"/>.
-        /// </summary>
-        public IFilterOperator CaseSensitiveVersion { get; set;  }
+        ///// <summary>
+        ///// Gets a <see cref="IFilterOperator"/> which is a not negated
+        ///// version of current operator, if such exists; otherwise <see langword="null"/>.
+        ///// </summary>
+        //public virtual IFilterOperator CaseSensitiveVersion { get; set;  }
 
-        /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator has a case sensitive version.
-        /// </summary>
-        public bool HasCaseSensitiveVersion => CaseSensitiveVersion != null;
+        ///// <summary>
+        ///// Gets a <see cref="bool"/> value indictating whether current
+        ///// operator has a case sensitive version.
+        ///// </summary>
+        //public bool HasCaseSensitiveVersion => CaseSensitiveVersion != null;
 
-        /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator has a not negated version.
-        /// </summary>
-        public bool HasUnnegatedVersion => UnnegatedVersion != null;
+        ///// <summary>
+        ///// Gets a <see cref="bool"/> value indictating whether current
+        ///// operator has a not negated version.
+        ///// </summary>
+        //public bool HasUnnegatedVersion => UnnegatedVersion != null;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive
         /// </summary>
-        public bool IsCaseInsensitive { get; set;  }
+        public virtual bool IsCaseInsensitive { get; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is a default operator.
         /// </summary>
-        public bool IsDefault { get; set; }
+        public virtual bool IsDefault { get; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is a negated version of different operator.
         /// </summary>
-        public bool IsNegated { get; set; }
+        public virtual bool IsNegated { get; }
 
         /// <summary>
         /// Gets the operator name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets the <see cref="string"/> representation of operator.
         /// </summary>
-        public string Operator { get; set; }
+        public string Operator { get; }
 
-        /// <summary>
-        /// Gets a <see cref="IFilterOperator"/> which is a not negated
-        /// version of current operator, if such exists; otherwise <see langword="null"/>.
-        /// </summary>
-        public IFilterOperator UnnegatedVersion { get; set; }
+        ///// <summary>
+        ///// Gets a <see cref="IFilterOperator"/> which is a not negated
+        ///// version of current operator, if such exists; otherwise <see langword="null"/>.
+        ///// </summary>
+        //public virtual IFilterOperator UnnegatedVersion { get; }
 
         ///// <summary>
         ///// Determines whether the specified <see cref="object"/>

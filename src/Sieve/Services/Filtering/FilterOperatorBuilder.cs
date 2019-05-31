@@ -1,102 +1,99 @@
-﻿using System;
-using Sieve.Models;
+﻿//using System;
+//using Sieve.Models;
 
-namespace Sieve.Services.Filtering
-{
-    public class FilterOperatorBuilder : IFilterOperatorBuilder
-    {
-        private readonly FilterOperator _filterOperator;
+//namespace Sieve.Services.Filtering
+//{
+//    public class FilterOperatorBuilder : IFilterOperatorBuilder
+//    {
+//        private readonly FilterOperator _filterOperator;
 
-        public FilterOperatorBuilder(IFilterOperatorProvider provider)
-        {
-            OperatorProvider = provider;
-            _filterOperator = new FilterOperator();
-        }
+//        public FilterOperatorBuilder()
+//        {
+//            _filterOperator = new FilterOperator();
+//        }
 
-        protected IFilterOperatorProvider OperatorProvider { get; }
+//        public IFilterOperator Build() => _filterOperator;
 
-        public IFilterOperator Build() => _filterOperator;
+//        public IFilterOperatorBuilder CaseInsensitive()
+//        {
+//            _filterOperator.IsCaseInsensitive = true;
 
-        public IFilterOperatorBuilder CaseInsensitive()
-        {
-            _filterOperator.IsCaseInsensitive = true;
+//            return this;
+//        }
 
-            return this;
-        }
+//        public IFilterOperatorBuilder Default()
+//        {
+//            _filterOperator.IsDefault = true;
 
-        public IFilterOperatorBuilder Default()
-        {
-            _filterOperator.IsDefault = true;
+//            return this;
+//        }
 
-            return this;
-        }
+//        public IFilterOperatorBuilder HasCaseSensitiveVersion(IFilterOperator filterOperator)
+//        {
+//            if (filterOperator == null)
+//            {
+//                throw new ArgumentNullException(nameof(filterOperator));
+//            }
 
-        public IFilterOperatorBuilder HasCaseSensitiveVersion(IFilterOperator filterOperator)
-        {
-            if (filterOperator == null)
-            {
-                throw new ArgumentNullException(nameof(filterOperator));
-            }
+//            if (filterOperator.IsCaseInsensitive)
+//            {
+//                throw new ArgumentException(
+//                    "Case sensitive version of current operator cannot be case insensitive. " +
+//                    "Please provide case insensitive operator.");
+//            }
 
-            if (filterOperator.IsCaseInsensitive)
-            {
-                throw new ArgumentException(
-                    "Case sensitive version of current operator cannot be case insensitive. " +
-                    "Please provide case insensitive operator.");
-            }
+//            _filterOperator.CaseSensitiveVersion = filterOperator;
 
-            _filterOperator.CaseSensitiveVersion = filterOperator;
+//            return this;
+//        }
 
-            return this;
-        }
+//        public IFilterOperatorBuilder HasName(string name)
+//        {
+//            if (string.IsNullOrWhiteSpace(name))
+//            {
+//                throw new ArgumentException(
+//                    $"{nameof(name)} cannot be null, empty " +
+//                    $"or contain only whitespace characaters.",
+//                    nameof(name));
+//            }
 
-        public IFilterOperatorBuilder HasName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException(
-                    $"{nameof(name)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(name));
-            }
+//            _filterOperator.Name = name;
 
-            _filterOperator.Name = name;
+//            return this;
+//        }
 
-            return this;
-        }
+//        public IFilterOperatorBuilder HasUnnegatedVersion(IFilterOperator filterOperator)
+//        {
+//            if (filterOperator == null)
+//            {
+//                throw new ArgumentNullException(nameof(filterOperator));
+//            }
 
-        public IFilterOperatorBuilder HasUnnegatedVersion(IFilterOperator filterOperator)
-        {
-            if (filterOperator == null)
-            {
-                throw new ArgumentNullException(nameof(filterOperator));
-            }
+//            if (filterOperator.IsNegated)
+//            {
+//                throw new ArgumentException(
+//                    "Unnegated version of current operator cannot be negated. " +
+//                    "Please provide unnegated operator.");
+//            }
 
-            if (filterOperator.IsNegated)
-            {
-                throw new ArgumentException(
-                    "Unnegated version of current operator cannot be negated. " +
-                    "Please provide unnegated operator.");
-            }
+//            _filterOperator.UnnegatedVersion = filterOperator;
 
-            _filterOperator.UnnegatedVersion = filterOperator;
+//            return this;
+//        }
 
-            return this;
-        }
+//        public IFilterOperatorBuilder Operator(string @operator)
+//        {
+//            if (string.IsNullOrWhiteSpace(@operator))
+//            {
+//                throw new ArgumentException(
+//                    $"{nameof(@operator)} cannot be null, empty " +
+//                    $"or contain only whitespace characaters.",
+//                    nameof(@operator));
+//            }
 
-        public IFilterOperatorBuilder Operator(string @operator)
-        {
-            if (string.IsNullOrWhiteSpace(@operator))
-            {
-                throw new ArgumentException(
-                    $"{nameof(@operator)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(@operator));
-            }
+//            _filterOperator.Operator = @operator;
 
-            _filterOperator.Operator = @operator;
-
-            return this;
-        }
-    }
-}
+//            return this;
+//        }
+//    }
+//}
