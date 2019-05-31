@@ -2,9 +2,9 @@
 {
 	public interface ISievePropertyMetadata
     {
-        string Name { get; set; }
+        string Name { get; }
         string FullName { get; }
-        bool CanFilter { get; set; }
-        bool CanSort { get; set; }
+        bool CanFilter { get; }
+        bool CanSort { get; }
     }
 }
