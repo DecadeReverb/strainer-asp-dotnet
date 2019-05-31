@@ -2,8 +2,8 @@
 {
 	public interface ISortTerm
     {
+        string Input { set; }
         bool IsDescending { get; }
         string Name { get; }
-        string Sort { set; }
     }
 }

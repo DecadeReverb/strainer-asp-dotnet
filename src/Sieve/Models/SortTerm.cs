@@ -22,7 +22,7 @@ namespace Sieve.Models
         // TODO:
         // Getting the real name without hardcoded descending sorting way
         // prefix. A DTO should not do this, neither have such business logic.
-        public string Sort
+        public string Input
         {
             set
             {

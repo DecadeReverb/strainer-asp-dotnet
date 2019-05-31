@@ -46,7 +46,7 @@ namespace Sieve.Models
 
                     var sortTerm = new TSortTerm()
                     {
-                        Sort = sort
+                        Input = sort
                     };
 
                     if (!value.Any(s => s.Name == sortTerm.Name))
