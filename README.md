@@ -15,15 +15,15 @@ We'll use Sieve to add sorting, filtering, and pagination capabilities when GET-
 ### 1. Add required services
 
 Inject the `SieveProcessor` service. So in `Startup.cs` add:
-```C#
-services.AddScoped<SieveProcessor>();
+```cs
+services.AddSieve<SieveProcessor>();
 ```
 
 ### 2. Tell Sieve which properties you'd like to sort/filter in your models
 
 Sieve will only sort/filter properties that have the attribute `[Sieve(CanSort = true, CanFilter = true)]` on them (they don't have to be both true).
 So for our `Post` entity model example:
-```C#
+```cs
 public int Id { get; set; }
 
 [Sieve(CanFilter = true, CanSort = true)]
@@ -47,7 +47,7 @@ Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is esp
 
 In the action that handles returning Posts, use `SieveModel` to get the sort/filter/page query. 
 Apply it to your data by injecting `SieveProcessor` into the controller and using its `Apply<TEntity>` method. So for instance:
-```C#
+```cs
 [HttpGet]
 public JsonResult GetPosts(SieveModel sieveModel) 
 {
@@ -64,15 +64,16 @@ You can also explicitly specify if only filtering, sorting, and/or pagination sh
 
 ### Add custom sort/filter methods
 
-If you want to add custom sort/filter methods, inject `ISieveCustomSortMethods` or `ISieveCustomFilterMethods` with the implementation being a class that has custom sort/filter methods that Sieve will search through.
+If you want to add custom sort/filter methods, add custom implementation holding sort/filter methods that Sieve will search through.
 
 For instance:
-```C#
-services.AddScoped<ISieveCustomSortMethods, SieveCustomSortMethods>();
-services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
+```cs
+services.AddSieve<ApplicationSieveProcessor>()
+    .AddCustomFilterMethods<SieveCustomFilterMethods>()
+    .AddCustomSortMethods<SieveCustomSortMethods>();
 ```
 Where `SieveCustomSortMethodsOfPosts` for example is:
-```C#
+```cs
 public class SieveCustomSortMethods : ISieveCustomSortMethods
 {
     public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc) // The method is given an indicator of weather to use ThenBy(), and if the query is descending 
@@ -88,7 +89,7 @@ public class SieveCustomSortMethods : ISieveCustomSortMethods
 }
 ```
 And `SieveCustomFilterMethods`:
-```C#
+```cs
 public class SieveCustomFilterMethods : ISieveCustomFilterMethods
 {
     public IQueryable<Post> IsNew(IQueryable<Post> source, string op, string[] values) // The method is given the {Operator} & {Value}
@@ -103,7 +104,7 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
 
 ## Configure Sieve
 Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) with `SieveOptions` to tell Sieve where to look for configuration. For example:
-```C#
+```cs
 services.Configure<SieveOptions>(Configuration.GetSection("Sieve"));
 ```
 Then you can add the configuration:
@@ -155,7 +156,7 @@ Marking via attributes not currently supported.
 
 For example, using this object model:
 
-```C#
+```cs
 public class Post {
     public User Creator { get; set; }
 }
@@ -166,7 +167,7 @@ public class User {
 ```
 
 Mark `Post.User` to be filterable:
-```C#
+```cs
 // in MapProperties
 mapper.Property<Post>(p => p.Creator.Name)
     .CanFilter();
@@ -213,7 +214,7 @@ You can find an example project incorporating most Sieve concepts in [Sieve.Samp
 ## Fluent API
 To use the Fluent API instead of attributes in marking properties, setup an alternative `SieveProcessor` that overrides `MapProperties`. For example:
 
-```C#
+```cs
 public class ApplicationSieveProcessor : SieveProcessor
 {
     public ApplicationSieveProcessor(
@@ -244,7 +245,7 @@ public class ApplicationSieveProcessor : SieveProcessor
 ```
 
 Now you should inject the new class instead:
-```C#
+```cs
 services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 ```
 
