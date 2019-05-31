@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Sieve</AssemblyName>
     <RootNamespace>Sieve</RootNamespace>
-    <Version>2.3.2</Version>
+    <Version>3.0.0</Version>
     <Description>Sieve is a simple, clean, and extensible framework for .NET Core that adds sorting, filtering, and pagination functionality out of the box. Most common use case would be for serving ASP.NET Core GET queries. Documentation available on GitHub: https://github.com/Biarity/Sieve/
 </Description>
     <Copyright>Copyright 2018</Copyright>
