@@ -1,11 +1,11 @@
 # Sieve
+
 ⚗️ Sieve is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
 Most common use case would be for serving ASP.NET Core GET queries.
 
-[![GitLab CI](https://img.shields.io/gitlab/pipeline/Prologh/Sieve/master.svg?style=flat-square)](https://gitlab.com/Prologh/Sieve/pipelines)
-[![NuGet Release](https://img.shields.io/nuget/v/Sieve.svg?style=flat-square)](https://www.nuget.org/packages/Sieve)
+[![GitLab CI](https://img.shields.io/gitlab/pipeline/fluorite/Strainer/master.svg?style=flat-square)](https://gitlab.com/fluorite/Strainer/pipelines)
 
-**Note:** This repository is forked. The original author of [Sieve](https://github.com/Biarity/Sieve) is [Biarity](https://github.com/Biarity).
+**Note:** This repository is forked from repository named [Sieve](https://github.com/Biarity/Sieve) with original author [Biarity](https://github.com/Biarity).
 
 ## Usage for ASP.NET Core
 
@@ -15,6 +15,7 @@ We'll use Sieve to add sorting, filtering, and pagination capabilities when GET-
 ### 1. Add required services
 
 Inject the `SieveProcessor` service. So in `Startup.cs` add:
+
 ```cs
 services.AddSieve<SieveProcessor>();
 ```
@@ -23,6 +24,7 @@ services.AddSieve<SieveProcessor>();
 
 Sieve will only sort/filter properties that have the attribute `[Sieve(CanSort = true, CanFilter = true)]` on them (they don't have to be both true).
 So for our `Post` entity model example:
+
 ```cs
 public int Id { get; set; }
 
@@ -37,8 +39,8 @@ public int CommentCount { get; set; }
 
 [Sieve(CanFilter = true, CanSort = true, Name = "created")]
 public DateTimeOffset DateCreated { get; set; } = DateTimeOffset.UtcNow;
-
 ```
+
 There is also the `Name` parameter that you can use to have a different name for use by clients.
 
 Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is especially useful if you don't want to use attributes or have multiple APIs. 
@@ -47,6 +49,7 @@ Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is esp
 
 In the action that handles returning Posts, use `SieveModel` to get the sort/filter/page query. 
 Apply it to your data by injecting `SieveProcessor` into the controller and using its `Apply<TEntity>` method. So for instance:
+
 ```cs
 [HttpGet]
 public JsonResult GetPosts(SieveModel sieveModel) 
@@ -56,6 +59,7 @@ public JsonResult GetPosts(SieveModel sieveModel)
     return Json(result.ToList());
 }
 ```
+
 You can also explicitly specify if only filtering, sorting, and/or pagination should be applied via optional arguments.
 
 ### 4. Send a request
@@ -67,12 +71,15 @@ You can also explicitly specify if only filtering, sorting, and/or pagination sh
 If you want to add custom sort/filter methods, add custom implementation holding sort/filter methods that Sieve will search through.
 
 For instance:
+
 ```cs
 services.AddSieve<ApplicationSieveProcessor>()
     .AddCustomFilterMethods<SieveCustomFilterMethods>()
     .AddCustomSortMethods<SieveCustomSortMethods>();
 ```
+
 Where `SieveCustomSortMethodsOfPosts` for example is:
+
 ```cs
 public class SieveCustomSortMethods : ISieveCustomSortMethods
 {
@@ -88,7 +95,9 @@ public class SieveCustomSortMethods : ISieveCustomSortMethods
     }
 }
 ```
+
 And `SieveCustomFilterMethods`:
+
 ```cs
 public class SieveCustomFilterMethods : ISieveCustomFilterMethods
 {
@@ -103,11 +112,15 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
 ```
 
 ## Configure Sieve
+
 Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) with `SieveOptions` to tell Sieve where to look for configuration. For example:
+
 ```cs
 services.Configure<SieveOptions>(Configuration.GetSection("Sieve"));
 ```
+
 Then you can add the configuration:
+
 ```json
 {
     "Sieve": {
@@ -121,8 +134,8 @@ Then you can add the configuration:
 
 ## Send a request
 
-With all the above in place, you can now send a GET request that includes a sort/filter/page query.
-An example:
+With all the above in place, you can now send a GET request that includes a sort/filter/page query. An example:
+
 ```curl
 GET /GetPosts
 
@@ -151,8 +164,8 @@ Notes:
 * Another example on [how to do OR logic](https://github.com/Biarity/Sieve/issues/8)
 
 ### Nested objects
-You can filter/sort on a nested object's property by marking the property using the Fluent API. 
-Marking via attributes not currently supported.
+
+You can filter/sort on a nested object's property by marking the property using the Fluent API. Marking via attributes not currently supported.
 
 For example, using this object model:
 
@@ -176,9 +189,11 @@ mapper.Property<Post>(p => p.Creator.Name)
 Now you can make requests such as: `filters=User.Name==specific_name`.
 
 ### Creating your own DSL
+
 You can replace this DSL with your own (eg. use JSON instead) by implementing an [ISieveModel](https://github.com/Prologh/Sieve/blob/master/src/Sieve/Models/ISieveModel.cs). You can use the default [SieveModel](https://github.com/Prologh/Sieve/blob/master/src/Sieve/Models/SieveModel.cs) for reference.
 
 ### Operators
+
 | Operator   | Meaning                  |
 |------------|--------------------------|
 | `==`       | Equals                   |
@@ -207,25 +222,23 @@ Sieve will silently fail unless `ThrowExceptions` in the configuration is set to
 
 It is recommended that you write exception-handling middleware to globally handle Sieve's exceptions when using it with ASP.NET Core.
 
-
 ### Example project
+
 You can find an example project incorporating most Sieve concepts in [Sieve.Sample](https://github.com/Prologh/Sieve/tree/master/src/Sieve.Sample).
 
 ## Fluent API
+
 To use the Fluent API instead of attributes in marking properties, setup an alternative `SieveProcessor` that overrides `MapProperties`. For example:
 
 ```cs
 public class ApplicationSieveProcessor : SieveProcessor
 {
-    public ApplicationSieveProcessor(
-        IOptions<SieveOptions> options, 
-        ISieveCustomSortMethods customSortMethods, 
-        ISieveCustomFilterMethods customFilterMethods) 
-        : base(options, customSortMethods, customFilterMethods)
+    public ApplicationSieveProcessor(ISieveContext context) : base(context)
     {
+
     }
 
-    protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
+    protected override ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
     {
         mapper.Property<Post>(p => p.Title)
             .CanFilter()
@@ -244,12 +257,17 @@ public class ApplicationSieveProcessor : SieveProcessor
 }
 ```
 
-Now you should inject the new class instead:
+Now you should inject custom `SieveProcessor`:
+
 ```cs
-services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
+services.AddSieve<ApplicationSieveProcessor>();
 ```
 
 Find More on Sieve's Fluent API [here](https://github.com/Biarity/Sieve/issues/4#issuecomment-364629048).
+
+## Upgrading to v3.0.0
+
+A lot happened between v2* and 3*, so read the full migration guide [here]().
 
 ## Upgrading to v2.2.0
 
@@ -266,6 +284,6 @@ Find More on Sieve's Fluent API [here](https://github.com/Biarity/Sieve/issues/4
     * `ApplyFiltering`, `ApplySorting`, and `ApplyPagination` are now depricated - instead you can use optional arguments on `Apply` to achieve the same
 * Instead of just removing commas from `{Value}`s, [you'll also need to remove brackets and pipes](#send-a-request)
 
-
 ## License & Contributing
+
 Sieve is licensed under Apache 2.0. Any contributions highly appreciated!
