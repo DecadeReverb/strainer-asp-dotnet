@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Fluorite.Extensions.DependencyInjection;
+using Fluorite.Strainer.Sample.Entities;
+using Fluorite.Strainer.Sample.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Fluorite.Strainer.Extensions.DependencyInjection;
-using Fluorite.Strainer.Sample.Entities;
-using Fluorite.Strainer.Sample.Services;
 
 namespace Fluorite.Strainer.Sample
 {

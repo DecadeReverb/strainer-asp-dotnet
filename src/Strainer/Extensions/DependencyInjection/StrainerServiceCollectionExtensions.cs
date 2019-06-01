@@ -8,7 +8,7 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 
-namespace Fluorite.Strainer.Extensions.DependencyInjection
+namespace Fluorite.Extensions.DependencyInjection
 {
     public static class StrainerServiceCollectionExtensions
     {
