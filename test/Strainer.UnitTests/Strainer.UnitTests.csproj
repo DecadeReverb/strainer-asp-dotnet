@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Sieve\Sieve.csproj" />
+    <ProjectReference Include="..\..\src\Strainer\Strainer.csproj" />
   </ItemGroup>
 
 </Project>
