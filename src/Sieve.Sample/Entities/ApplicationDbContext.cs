@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Sieve.Sample.Entities
+namespace Strainer.Sample.Entities
 {
 	public class ApplicationDbContext : DbContext
     {

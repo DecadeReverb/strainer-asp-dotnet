@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using Sieve.Services;
-using Sieve.Sample.Entities;
+using Strainer.Services;
+using Strainer.Sample.Entities;
 
-namespace Sieve.Sample.Services
+namespace Strainer.Sample.Services
 {
-    public class SieveCustomSortMethods : ISieveCustomSortMethods
+    public class StrainerCustomSortMethods : IStrainerCustomSortMethods
     {
         public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy) => useThenBy
             ? ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount)

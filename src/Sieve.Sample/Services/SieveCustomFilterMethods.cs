@@ -1,10 +1,10 @@
-﻿using Sieve.Services;
-using Sieve.Sample.Entities;
+﻿using Strainer.Services;
+using Strainer.Sample.Entities;
 using System.Linq;
 
-namespace Sieve.Sample.Services
+namespace Strainer.Sample.Services
 {
-	public class SieveCustomFilterMethods : ISieveCustomFilterMethods
+	public class StrainerCustomFilterMethods : IStrainerCustomFilterMethods
     {
         public IQueryable<Post> IsNew(IQueryable<Post> source, string op, string[] values)
             => source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Sieve.Sample
+namespace Strainer.Sample
 {
     public static class Program
     {

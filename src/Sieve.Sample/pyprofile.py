@@ -7,7 +7,7 @@ for run in range(500):
 
 
 #for run in range(50):
-#    contents = urllib.request.urlopen("http://localhost:6500/api/posts/getallWithSieve?filters=IsNew&sorts=popularity").read()
+#    contents = urllib.request.urlopen("http://localhost:6500/api/posts/getallWithStrainer?filters=IsNew&sorts=popularity").read()
 #    print(contents[-50:])
 #    time.sleep(1)
 

@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Sieve.Extensions.DependencyInjection;
-using Sieve.Sample.Entities;
-using Sieve.Sample.Services;
+using Strainer.Extensions.DependencyInjection;
+using Strainer.Sample.Entities;
+using Strainer.Sample.Services;
 
-namespace Sieve.Sample
+namespace Strainer.Sample
 {
     public class Startup
     {
@@ -31,9 +31,9 @@ namespace Sieve.Sample
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TestSqlServer")));
 
-            services.AddSieve<ApplicationSieveProcessor>()
-                .AddCustomFilterMethods<SieveCustomFilterMethods>()
-                .AddCustomSortMethods<SieveCustomSortMethods>();
+            services.AddStrainer<ApplicationStrainerProcessor>()
+                .AddCustomFilterMethods<StrainerCustomFilterMethods>()
+                .AddCustomSortMethods<StrainerCustomSortMethods>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

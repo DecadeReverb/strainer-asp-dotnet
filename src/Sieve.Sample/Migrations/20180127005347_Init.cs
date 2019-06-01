@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Sieve.Sample.Migrations
+namespace Strainer.Sample.Migrations
 {
     public partial class Init : Migration
     {

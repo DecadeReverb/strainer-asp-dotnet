@@ -1,31 +1,31 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Sieve.Models;
-using Sieve.Services;
-using Sieve.Sample.Entities;
+using Strainer.Models;
+using Strainer.Services;
+using Strainer.Sample.Entities;
 
-namespace Sieve.Sample.Controllers
+namespace Strainer.Sample.Controllers
 {
 	[Route("api/[controller]/[action]")]
     public class PostsController : Controller
     {
-        private readonly ISieveProcessor _sieveProcessor;
+        private readonly IStrainerProcessor _strainerProcessor;
         private readonly ApplicationDbContext _dbContext;
 
-        public PostsController(ISieveProcessor sieveProcessor,
+        public PostsController(IStrainerProcessor strainerProcessor,
             ApplicationDbContext dbContext)
         {
-            _sieveProcessor = sieveProcessor;
+            _strainerProcessor = strainerProcessor;
             _dbContext = dbContext;
         }
 
         [HttpGet]
-        public JsonResult GetAllWithSieve(SieveModel sieveModel)
+        public JsonResult GetAllWithStrainer(StrainerModel strainerModel)
         {
             var result = _dbContext.Posts.AsNoTracking();
 
-            result = _sieveProcessor.Apply(sieveModel, result);
+            result = _strainerProcessor.Apply(strainerModel, result);
 
             return Json(result.ToList());
         }

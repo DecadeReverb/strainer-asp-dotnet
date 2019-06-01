@@ -1,16 +1,16 @@
-﻿using Sieve.Sample.Entities;
-using Sieve.Services;
+﻿using Strainer.Sample.Entities;
+using Strainer.Services;
 
-namespace Sieve.Sample.Services
+namespace Strainer.Sample.Services
 {
-    public class ApplicationSieveProcessor : SieveProcessor
+    public class ApplicationStrainerProcessor : StrainerProcessor
     {
-        public ApplicationSieveProcessor(ISieveContext context) : base(context)
+        public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
         {
 
         }
 
-        protected override ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
+        protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
         {
             mapper.Property<Post>(p => p.Title)
                 .CanSort()
