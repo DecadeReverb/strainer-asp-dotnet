@@ -263,7 +263,7 @@ services.AddStrainer<ApplicationStrainerProcessor>();
 
 ## Migrating from Sieve to Strainer v3.0.0
 
-A lot happened between Sieve v2* and Strainer v3*. Read the full migration guide [here](https://gitlab.com/fluorite/strainer/blob/master/docs/migration-guide-to-v3.0.0.md).
+A lot happened between Sieve v2* and Strainer v3*. Read the full migration guide [here](https://gitlab.com/fluorite/strainer/blob/master/docs/migration-guide-from-sieve-to-strainer.md).
 
 ## License & Contributing
 
