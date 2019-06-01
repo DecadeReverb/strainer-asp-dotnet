@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sieve.Exceptions;
-using Sieve.Models;
-using Sieve.Services;
-using Sieve.Services.Filtering;
-using Sieve.Services.Sorting;
-using Sieve.UnitTests.Entities;
-using Sieve.UnitTests.Services;
+using Strainer.Exceptions;
+using Strainer.Models;
+using Strainer.Services;
+using Strainer.Services.Filtering;
+using Strainer.Services.Sorting;
+using Strainer.UnitTests.Entities;
+using Strainer.UnitTests.Services;
 
-namespace Sieve.UnitTests
+namespace Strainer.UnitTests
 {
     [TestClass]
     public class General
     {
-        private readonly SieveContext _context;
-        private readonly SieveProcessor _processor;
+        private readonly StrainerContext _context;
+        private readonly StrainerProcessor _processor;
         private readonly IQueryable<Post> _posts;
         private readonly IQueryable<Comment> _comments;
 
         public General()
         {
-            var options = new SieveOptionsAccessor();
+            var options = new StrainerOptionsAccessor();
 
             var filterOperatorProvider = new FilterOperatorProvider();
             var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
@@ -33,20 +33,20 @@ namespace Sieve.UnitTests
             var sortTermParser = new SortTermParser();
             var sortingContext = new SortingContext(sortTermParser);
 
-            var mapper = new SievePropertyMapper();
+            var mapper = new StrainerPropertyMapper();
 
-            var customFilterMethods = new SieveCustomFilterMethods();
-            var customSortMethods = new SieveCustomSortMethods();
-            var customMethodsContext = new SieveCustomMethodsContext(customFilterMethods, customSortMethods);
+            var customFilterMethods = new StrainerCustomFilterMethods();
+            var customSortMethods = new StrainerCustomSortMethods();
+            var customMethodsContext = new StrainerCustomMethodsContext(customFilterMethods, customSortMethods);
 
-            _context = new SieveContext(
+            _context = new StrainerContext(
                 options,
                 filteringContext,
                 sortingContext,
                 mapper,
                 customMethodsContext);
 
-            _processor = new ApplicationSieveProcessor(_context);
+            _processor = new ApplicationStrainerProcessor(_context);
 
             _posts = new List<Post>
             {
@@ -110,7 +110,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void ContainsCanBeCaseInsensitive()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "Title@=*a"
             };
@@ -124,7 +124,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void ContainsIsCaseSensitive()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "Title@=a",
             };
@@ -137,7 +137,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void NotContainsWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "Title!@=D",
             };
@@ -150,7 +150,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CanFilterBools()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "IsDraft==false"
             };
@@ -163,7 +163,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CanSortBools()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Sorts = "-IsDraft"
             };
@@ -176,7 +176,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CanFilterNullableInts()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "CategoryId==1"
             };
@@ -189,7 +189,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void EqualsDoesntFailWithNonStringTypes()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "LikeCount==50",
             };
@@ -208,7 +208,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CustomFiltersWork()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "Isnew",
             };
@@ -222,7 +222,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CustomFiltersWithOperatorsWork()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "HasInTitle==A",
             };
@@ -236,7 +236,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CustomFiltersMixedWithUsualWork1()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "Isnew,CategoryId==2",
             };
@@ -250,7 +250,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CustomFiltersMixedWithUsualWork2()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "CategoryId==2,Isnew",
             };
@@ -264,7 +264,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CustomFiltersOnDifferentSourcesCanShareName()
         {
-            var postModel = new SieveModel()
+            var postModel = new StrainerModel()
             {
                 Filters = "CategoryId==2,Isnew",
             };
@@ -274,7 +274,7 @@ namespace Sieve.UnitTests
             Assert.IsTrue(postResult.Any(p => p.Id == 3));
             Assert.AreEqual(1, postResult.Count());
 
-            var commentModel = new SieveModel()
+            var commentModel = new StrainerModel()
             {
                 Filters = "Isnew",
             };
@@ -288,7 +288,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void CustomSortsWork()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Sorts = "Popularity",
             };
@@ -301,29 +301,29 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void MethodNotFoundExceptionWork()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "does not exist",
             };
 
-            Assert.ThrowsException<SieveMethodNotFoundException>(() => _processor.Apply(model, _posts));
+            Assert.ThrowsException<StrainerMethodNotFoundException>(() => _processor.Apply(model, _posts));
         }
 
         [TestMethod]
         public void IncompatibleMethodExceptionsWork()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "TestComment",
             };
 
-            Assert.ThrowsException<SieveIncompatibleMethodException>(() => _processor.Apply(model, _posts));
+            Assert.ThrowsException<StrainerIncompatibleMethodException>(() => _processor.Apply(model, _posts));
         }
 
         [TestMethod]
         public void OrNameFilteringWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "(Title|LikeCount)==3",
             };
@@ -340,7 +340,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void OrValueFilteringWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "Title==C|D",
             };
@@ -354,7 +354,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void OrValueFilteringWorks2()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "Text@=(|)",
             };
@@ -367,7 +367,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void NestedFilteringWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "TopComment.Text!@=A",
             };
@@ -383,7 +383,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void NestedSortingWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Sorts = "TopComment.Id",
             };
@@ -400,7 +400,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void NestedFilteringWithIdenticTypesWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "(topc|featc)@=*2",
             };
@@ -408,7 +408,7 @@ namespace Sieve.UnitTests
             var result = _processor.Apply(model, _posts);
             Assert.AreEqual(4, result.Count());
 
-            model = new SieveModel()
+            model = new StrainerModel()
             {
                 Filters = "(topc|featc)@=*B",
             };

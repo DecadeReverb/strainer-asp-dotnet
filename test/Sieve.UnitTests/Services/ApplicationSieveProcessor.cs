@@ -1,16 +1,16 @@
-﻿using Sieve.Services;
-using Sieve.UnitTests.Entities;
+﻿using Strainer.Services;
+using Strainer.UnitTests.Entities;
 
-namespace Sieve.UnitTests.Services
+namespace Strainer.UnitTests.Services
 {
-    public class ApplicationSieveProcessor : SieveProcessor
+    public class ApplicationStrainerProcessor : StrainerProcessor
     {
-        public ApplicationSieveProcessor(ISieveContext context) : base(context)
+        public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
         {
 
         }
 
-        protected override ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
+        protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
         {
             mapper.Property<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .CanSort()

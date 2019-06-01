@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sieve.Services;
-using Sieve.UnitTests.Entities;
+using Strainer.Services;
+using Strainer.UnitTests.Entities;
 
-namespace Sieve.UnitTests.Services
+namespace Strainer.UnitTests.Services
 {
-    public class SieveCustomFilterMethods : ISieveCustomFilterMethods
+    public class StrainerCustomFilterMethods : IStrainerCustomFilterMethods
     {
         public IQueryable<Post> IsNew(IQueryable<Post> source, string op, IList<string> values)
         {

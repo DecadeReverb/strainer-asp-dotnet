@@ -1,26 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sieve.Exceptions;
-using Sieve.Models;
-using Sieve.Services;
-using Sieve.Services.Filtering;
-using Sieve.Services.Sorting;
-using Sieve.UnitTests.Entities;
-using Sieve.UnitTests.Services;
+using Strainer.Exceptions;
+using Strainer.Models;
+using Strainer.Services;
+using Strainer.Services.Filtering;
+using Strainer.Services.Sorting;
+using Strainer.UnitTests.Entities;
+using Strainer.UnitTests.Services;
 
-namespace Sieve.UnitTests
+namespace Strainer.UnitTests
 {
     [TestClass]
     public class Mapper
     {
-        private readonly SieveContext _context;
-        private readonly ApplicationSieveProcessor _processor;
+        private readonly StrainerContext _context;
+        private readonly ApplicationStrainerProcessor _processor;
         private readonly IQueryable<Post> _posts;
 
         public Mapper()
         {
-            var options = new SieveOptionsAccessor();
+            var options = new StrainerOptionsAccessor();
 
             var filterOperatorProvider = new FilterOperatorProvider();
             var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
@@ -31,20 +31,20 @@ namespace Sieve.UnitTests
             var sortTermParser = new SortTermParser();
             var sortingContext = new SortingContext(sortTermParser);
 
-            var mapper = new SievePropertyMapper();
+            var mapper = new StrainerPropertyMapper();
 
-            var customFilterMethods = new SieveCustomFilterMethods();
-            var customSortMethods = new SieveCustomSortMethods();
-            var customMethodsContext = new SieveCustomMethodsContext(customFilterMethods, customSortMethods);
+            var customFilterMethods = new StrainerCustomFilterMethods();
+            var customSortMethods = new StrainerCustomSortMethods();
+            var customMethodsContext = new StrainerCustomMethodsContext(customFilterMethods, customSortMethods);
 
-            _context = new SieveContext(
+            _context = new StrainerContext(
                 options,
                 filteringContext,
                 sortingContext,
                 mapper,
                 customMethodsContext);
 
-            _processor = new ApplicationSieveProcessor(_context);
+            _processor = new ApplicationStrainerProcessor(_context);
 
             _posts = new List<Post>
             {
@@ -72,7 +72,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void MapperWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "shortname@=A",
             };
@@ -87,7 +87,7 @@ namespace Sieve.UnitTests
         [TestMethod]
         public void MapperSortOnlyWorks()
         {
-            var model = new SieveModel()
+            var model = new StrainerModel()
             {
                 Filters = "OnlySortableViaFluentApi@=50",
                 Sorts = "OnlySortableViaFluentApi"
@@ -95,7 +95,7 @@ namespace Sieve.UnitTests
 
             var result = _processor.Apply(model, _posts, applyFiltering: false, applyPagination: false);
 
-            Assert.ThrowsException<SieveMethodNotFoundException>(() => _processor.Apply(model, _posts));
+            Assert.ThrowsException<StrainerMethodNotFoundException>(() => _processor.Apply(model, _posts));
 
             Assert.AreEqual(result.First().Id, 3);
 

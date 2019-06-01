@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using Sieve.Services;
-using Sieve.UnitTests.Entities;
+using Strainer.Services;
+using Strainer.UnitTests.Entities;
 
-namespace Sieve.UnitTests.Services
+namespace Strainer.UnitTests.Services
 {
-    public class SieveCustomSortMethods : ISieveCustomSortMethods
+    public class StrainerCustomSortMethods : IStrainerCustomSortMethods
     {
         public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc)
         {

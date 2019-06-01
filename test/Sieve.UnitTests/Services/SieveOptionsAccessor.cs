@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Options;
-using Sieve.Models;
+using Strainer.Models;
 
-namespace Sieve.UnitTests
+namespace Strainer.UnitTests
 {
-    public class SieveOptionsAccessor : IOptions<SieveOptions>
+    public class StrainerOptionsAccessor : IOptions<StrainerOptions>
     {
-        public SieveOptions Value { get; }
+        public StrainerOptions Value { get; }
 
-        public SieveOptionsAccessor()
+        public StrainerOptionsAccessor()
         {
-            Value = new SieveOptions()
+            Value = new StrainerOptions()
             {
                 ThrowExceptions = true
             };
