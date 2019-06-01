@@ -1,11 +1,9 @@
 # Strainer
 
-⚗️ Strainer is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
+Strainer is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
 Most common use case would be for serving ASP.NET Core GET queries.
 
-[![GitLab CI](https://img.shields.io/gitlab/pipeline/fluorite/Strainer/master.svg?style=flat-square)](https://gitlab.com/fluorite/Strainer/pipelines)
-
-**Note:** This repository is forked from repository named [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
+**Note:** This project is a fork from original repository named [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
 
 ## Usage for ASP.NET Core
 
@@ -190,7 +188,7 @@ Now you can make requests such as: `filters=User.Name==specific_name`.
 
 ### Creating your own DSL
 
-You can replace this DSL with your own (eg. use JSON instead) by implementing an [IStrainerModel](https://gitlab.com/fluorite/Strainer/blob/master/src/Strainer/Models/IStrainerModel.cs). You can use the default [StrainerModel](https://gitlab.com/fluorite/Strainer/blob/master/src/Strainer/Models/StrainerModel.cs) for reference.
+You can replace this DSL with your own (eg. use JSON instead) by implementing an [IStrainerModel](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs). You can use the default [StrainerModel](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/StrainerModel.cs) for reference.
 
 ### Operators
 
@@ -224,7 +222,7 @@ It is recommended that you write exception-handling middleware to globally handl
 
 ### Example project
 
-You can find an example project incorporating most Strainer concepts in [Strainer.Sample](https://gitlab.com/fluorite/Strainer/tree/master/src/Strainer.Sample).
+You can find an example project incorporating most Strainer concepts in [Strainer.Sample](https://gitlab.com/fluorite/strainer/tree/master/src/Strainer.Sample).
 
 ## Fluent API
 
@@ -265,7 +263,7 @@ services.AddStrainer<ApplicationStrainerProcessor>();
 
 ## Migrating from Sieve to Strainer v3.0.0
 
-A lot happened between Sieve v2* and Strainer v3*. Read the full migration guide [here](https://gitlab.com/fluorite/Strainer/blob/master/docs/migration-guide-to-v3.0.0.md).
+A lot happened between Sieve v2* and Strainer v3*. Read the full migration guide [here](https://gitlab.com/fluorite/strainer/blob/master/docs/migration-guide-to-v3.0.0.md).
 
 ## License & Contributing
 
