@@ -2,21 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Strainer</AssemblyName>
-    <RootNamespace>Strainer</RootNamespace>
+    <AssemblyName>Fluorite.Strainer</AssemblyName>
+    <RootNamespace>Fluorite.Strainer</RootNamespace>
+    <Authors>Fluorite</Authors>
     <Version>3.0.0</Version>
     <Description>
-      Strainer is a simple, clean, and extensible framework for .NET Core that adds sorting, filtering, and pagination functionality out of the box. Most common use case would be for serving ASP.NET Core GET queries. Documentation available on GitHub: https://gitlab.com/fluorite/Strainer/
+      Strainer is a simple, clean, and extensible framework for .NET Core that adds sorting, filtering, and pagination functionality out of the box. Most common use case would be for serving ASP.NET Core GET queries. Documentation available on GitLab: https://gitlab.com/fluorite/strainer/
     </Description>
     <Copyright>Copyright 2019</Copyright>
-    <PackageLicenseUrl>https://gitlab.com/fluorite/Strainer/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://gitlab.com/fluorite/Strainer</PackageProjectUrl>
-    <PackageIconUrl>https://emojipedia-us.s3.amazonaws.com/thumbs/240/twitter/120/alembic_2697.png</PackageIconUrl>
-    <RepositoryUrl></RepositoryUrl>
+    <PackageTags>strainer,sorting,filtering,pagination,fluorite</PackageTags>
+    <PackageLicenseUrl>https://gitlab.com/fluorite/strainer/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://gitlab.com/fluorite/strainer</PackageProjectUrl>
+    <PackageIconUrl>https://gitlab.com/fluorite/assets/raw/master/img/logo/png/fluorite-logo-transparent-bg-64.png</PackageIconUrl>
+    <RepositoryUrl>https://gitlab.com/fluorite/strainer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Heavy refactoring</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Authors>Fluorite</Authors>
   </PropertyGroup>
 
   <ItemGroup>
