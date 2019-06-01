@@ -3,7 +3,7 @@
 Strainer is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
 Most common use case would be for serving ASP.NET Core GET queries.
 
-**Note:** This project is a fork from original repository named [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
+**Note:** This project is a fork from repository named [Sieve](https://github.com/Biarity/Sieve) with its author [Biarity](https://github.com/Biarity).
 
 ## Usage for ASP.NET Core
 
