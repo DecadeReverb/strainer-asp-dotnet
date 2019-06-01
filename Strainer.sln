@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		.gitlab-ci.yml = .gitlab-ci.yml
 		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
-		docs\migration-guide-to-v3.0.0.md = docs\migration-guide-to-v3.0.0.md
+		docs\migration-guide-from-sieve-to-strainer.md = docs\migration-guide-from-sieve-to-strainer.md
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{00542765
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer", "src\Strainer\Strainer.csproj", "{6E5E7DF9-95EE-46FD-BB09-92740357A7A5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Strainer", "Samples", "{F5B04DFA-8047-4B61-B5B7-9C9A92E992CC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Strainer", "Strainer", "{F5B04DFA-8047-4B61-B5B7-9C9A92E992CC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.Sample", "src\Strainer.Sample\Strainer.Sample.csproj", "{B1421F86-1398-4784-A95C-8A1FBE7D3C8B}"
 EndProject
