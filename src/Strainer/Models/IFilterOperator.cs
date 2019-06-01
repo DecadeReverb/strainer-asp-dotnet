@@ -1,4 +1,4 @@
-﻿namespace Strainer.Models
+﻿namespace Fluorite.Strainer.Models
 {
     /// <summary>
     /// Defines minimum requirements for filter operator.

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-using Strainer.Models;
+using Fluorite.Strainer.Models;
 
-namespace Strainer.UnitTests
+namespace Fluorite.Strainer.UnitTests
 {
     public class StrainerOptionsAccessor : IOptions<StrainerOptions>
     {

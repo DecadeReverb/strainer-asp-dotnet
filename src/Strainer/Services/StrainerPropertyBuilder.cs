@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using Strainer.Models;
+using Fluorite.Strainer.Models;
 
-namespace Strainer.Services
+namespace Fluorite.Strainer.Services
 {
     public class StrainerPropertyBuilder<TEntity> : IStrainerPropertyBuilder<TEntity>
     {

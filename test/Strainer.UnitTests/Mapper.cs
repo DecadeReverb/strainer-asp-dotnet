@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Strainer.Exceptions;
-using Strainer.Models;
-using Strainer.Services;
-using Strainer.Services.Filtering;
-using Strainer.Services.Sorting;
-using Strainer.UnitTests.Entities;
-using Strainer.UnitTests.Services;
+using Fluorite.Strainer.Exceptions;
+using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Sorting;
+using Fluorite.Strainer.UnitTests.Entities;
+using Fluorite.Strainer.UnitTests.Services;
 
-namespace Strainer.UnitTests
+namespace Fluorite.Strainer.UnitTests
 {
     [TestClass]
     public class Mapper

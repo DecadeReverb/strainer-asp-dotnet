@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace Strainer.Models
+namespace Fluorite.Strainer.Models
 {
     public class StrainerModel : IStrainerModel
     {

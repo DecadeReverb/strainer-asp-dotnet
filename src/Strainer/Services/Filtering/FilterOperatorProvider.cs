@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Strainer.Models;
-using Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering.Operators;
 
-namespace Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterOperatorProvider : IFilterOperatorProvider
     {

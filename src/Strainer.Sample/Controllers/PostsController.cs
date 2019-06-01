@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Strainer.Models;
-using Strainer.Services;
-using Strainer.Sample.Entities;
+using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Sample.Entities;
 
-namespace Strainer.Sample.Controllers
+namespace Fluorite.Strainer.Sample.Controllers
 {
 	[Route("api/[controller]/[action]")]
     public class PostsController : Controller

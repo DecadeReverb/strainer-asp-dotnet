@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Strainer.Models
+namespace Fluorite.Strainer.Models
 {
     /// <summary>
     /// Represents filter operator.

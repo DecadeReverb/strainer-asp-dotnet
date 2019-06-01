@@ -1,4 +1,4 @@
-﻿namespace Strainer.Models.Filtering.Operators
+﻿namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
     /// Represents starts with filter operator.

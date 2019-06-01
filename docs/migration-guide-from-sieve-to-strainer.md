@@ -64,10 +64,10 @@ Project rebranding came with new namespace. Replace your `Sieve` usings:
 using Sieve.Services;
 ```
 
-with `Strainer`:
+with `Fluorite.Strainer`:
 
 ```cs
-using Strainer.Services;
+using Fluorite.Strainer.Services;
 ```
 
 ### New and simpler SieveProcessor - StrainerProcessor

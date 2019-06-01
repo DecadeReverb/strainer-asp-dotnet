@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Strainer.Exceptions
+namespace Fluorite.Strainer.Exceptions
 {
     public class StrainerException : Exception
     {

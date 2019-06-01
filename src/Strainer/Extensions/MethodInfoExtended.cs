@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Strainer.Extensions
+namespace Fluorite.Strainer.Extensions
 {
     // The default GetMethod doesn't allow for generic methods which means
     // custom filters for different sources can't share the same name.

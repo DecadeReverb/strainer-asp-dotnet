@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Strainer.Models
+namespace Fluorite.Strainer.Models
 {
     public class SortTerm : ISortTerm, IEquatable<SortTerm>
     {

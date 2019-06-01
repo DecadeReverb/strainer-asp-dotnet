@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Strainer.Models;
+using Fluorite.Strainer.Models;
 
-namespace Strainer.Services
+namespace Fluorite.Strainer.Services
 {
     public interface IStrainerPropertyMapper
     {

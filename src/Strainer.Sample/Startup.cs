@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Strainer.Extensions.DependencyInjection;
-using Strainer.Sample.Entities;
-using Strainer.Sample.Services;
+using Fluorite.Strainer.Extensions.DependencyInjection;
+using Fluorite.Strainer.Sample.Entities;
+using Fluorite.Strainer.Sample.Services;
 
-namespace Strainer.Sample
+namespace Fluorite.Strainer.Sample
 {
     public class Startup
     {

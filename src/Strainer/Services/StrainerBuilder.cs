@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Strainer.Services
+namespace Fluorite.Strainer.Services
 {
     public class StrainerBuilder : IStrainerBuilder
     {

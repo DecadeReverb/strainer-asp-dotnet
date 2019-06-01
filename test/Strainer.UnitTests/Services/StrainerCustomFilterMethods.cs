@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Strainer.Services;
-using Strainer.UnitTests.Entities;
+using Fluorite.Strainer.Services;
+using Fluorite.Strainer.UnitTests.Entities;
 
-namespace Strainer.UnitTests.Services
+namespace Fluorite.Strainer.UnitTests.Services
 {
     public class StrainerCustomFilterMethods : IStrainerCustomFilterMethods
     {

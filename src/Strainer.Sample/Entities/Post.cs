@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using Strainer.Attributes;
+using Fluorite.Strainer.Attributes;
 
-namespace Strainer.Sample.Entities
+namespace Fluorite.Strainer.Sample.Entities
 {
 	public class Post
     {

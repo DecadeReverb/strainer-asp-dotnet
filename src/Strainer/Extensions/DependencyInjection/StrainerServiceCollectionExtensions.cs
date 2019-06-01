@@ -3,12 +3,12 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Strainer.Models;
-using Strainer.Services;
-using Strainer.Services.Filtering;
-using Strainer.Services.Sorting;
+using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Sorting;
 
-namespace Strainer.Extensions.DependencyInjection
+namespace Fluorite.Strainer.Extensions.DependencyInjection
 {
     public static class StrainerServiceCollectionExtensions
     {

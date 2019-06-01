@@ -1,4 +1,4 @@
-﻿namespace Strainer.Services.Filtering
+﻿namespace Fluorite.Strainer.Services.Filtering
 {
     public interface IFilteringContext
     {

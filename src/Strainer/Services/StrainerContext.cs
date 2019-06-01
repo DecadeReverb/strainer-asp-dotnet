@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-using Strainer.Models;
-using Strainer.Services.Filtering;
-using Strainer.Services.Sorting;
+using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Sorting;
 
-namespace Strainer.Services
+namespace Fluorite.Strainer.Services
 {
     public class StrainerContext : IStrainerContext
     {

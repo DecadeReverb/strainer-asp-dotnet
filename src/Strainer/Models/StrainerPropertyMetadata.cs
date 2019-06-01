@@ -1,4 +1,4 @@
-﻿namespace Strainer.Models
+﻿namespace Fluorite.Strainer.Models
 {
 	public class StrainerPropertyMetadata : IStrainerPropertyMetadata
     {

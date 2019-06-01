@@ -1,6 +1,6 @@
-﻿using Strainer.Models;
+﻿using Fluorite.Strainer.Models;
 
-namespace Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering
 {
     public interface IFilterOperatorParser
     {

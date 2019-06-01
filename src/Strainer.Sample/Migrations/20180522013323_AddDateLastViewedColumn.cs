@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Strainer.Sample.Migrations
+namespace Fluorite.Strainer.Sample.Migrations
 {
     public partial class AddDateLastViewedColumn : Migration
     {

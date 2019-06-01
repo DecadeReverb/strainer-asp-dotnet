@@ -3,13 +3,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Strainer.Attributes;
-using Strainer.Exceptions;
-using Strainer.Extensions;
-using Strainer.Models;
-using Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Attributes;
+using Fluorite.Strainer.Exceptions;
+using Fluorite.Strainer.Extensions;
+using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering.Operators;
 
-namespace Strainer.Services
+namespace Fluorite.Strainer.Services
 {
     public class StrainerProcessor : IStrainerProcessor
     {

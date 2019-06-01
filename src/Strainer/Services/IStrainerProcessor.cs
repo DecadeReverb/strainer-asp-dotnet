@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using Strainer.Models;
+using Fluorite.Strainer.Models;
 
-namespace Strainer.Services
+namespace Fluorite.Strainer.Services
 {
     public interface IStrainerProcessor
     {

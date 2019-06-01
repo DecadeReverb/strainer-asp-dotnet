@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Strainer.Models;
+using Fluorite.Strainer.Models;
 
-namespace Strainer.Services.Sorting
+namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortTermParser : ISortTermParser
     {

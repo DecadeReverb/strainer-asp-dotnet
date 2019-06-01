@@ -1,8 +1,8 @@
-﻿using Strainer.Services;
-using Strainer.Sample.Entities;
+﻿using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Sample.Entities;
 using System.Linq;
 
-namespace Strainer.Sample.Services
+namespace Fluorite.Strainer.Sample.Services
 {
 	public class StrainerCustomFilterMethods : IStrainerCustomFilterMethods
     {

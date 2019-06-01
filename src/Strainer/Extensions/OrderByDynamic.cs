@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Strainer.Extensions
+namespace Fluorite.Strainer.Extensions
 {
     public static partial class LinqExtentions
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Strainer.Models
+namespace Fluorite.Strainer.Models
 {
     public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     {

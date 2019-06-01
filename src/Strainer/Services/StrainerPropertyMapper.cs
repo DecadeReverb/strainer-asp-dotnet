@@ -1,11 +1,11 @@
-﻿using Strainer.Models;
+﻿using Fluorite.Strainer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Strainer.Services
+namespace Fluorite.Strainer.Services
 {
 	public class StrainerPropertyMapper : IStrainerPropertyMapper
     {

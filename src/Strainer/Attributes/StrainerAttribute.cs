@@ -1,7 +1,7 @@
-﻿using Strainer.Models;
+﻿using Fluorite.Strainer.Models;
 using System;
 
-namespace Strainer.Attributes
+namespace Fluorite.Strainer.Attributes
 {
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class StrainerAttribute : Attribute, IStrainerPropertyMetadata

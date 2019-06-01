@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Strainer.Models;
+using Fluorite.Strainer.Models;
 
-namespace Strainer.Services.Sorting
+namespace Fluorite.Strainer.Services.Sorting
 {
     public interface ISortTermParser
     {

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using Strainer.Services;
-using Strainer.Sample.Entities;
+using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Sample.Entities;
 
-namespace Strainer.Sample.Services
+namespace Fluorite.Strainer.Sample.Services
 {
     public class StrainerCustomSortMethods : IStrainerCustomSortMethods
     {

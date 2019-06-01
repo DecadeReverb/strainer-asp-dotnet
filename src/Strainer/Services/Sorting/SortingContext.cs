@@ -1,4 +1,4 @@
-﻿namespace Strainer.Services.Sorting
+﻿namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortingContext : ISortingContext
     {
