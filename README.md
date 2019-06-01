@@ -1,43 +1,43 @@
-# Sieve
+# Strainer
 
-⚗️ Sieve is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
+⚗️ Strainer is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
 Most common use case would be for serving ASP.NET Core GET queries.
 
 [![GitLab CI](https://img.shields.io/gitlab/pipeline/fluorite/Strainer/master.svg?style=flat-square)](https://gitlab.com/fluorite/Strainer/pipelines)
 
-**Note:** This repository is forked from repository named [Sieve](https://github.com/Biarity/Sieve) with original author [Biarity](https://github.com/Biarity).
+**Note:** This repository is forked from repository named [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
 
 ## Usage for ASP.NET Core
 
 In this example, consider an app with a `Post` entity. 
-We'll use Sieve to add sorting, filtering, and pagination capabilities when GET-ing all available posts.
+We'll use Strainer to add sorting, filtering, and pagination capabilities when GET-ing all available posts.
 
 ### 1. Add required services
 
-Inject the `SieveProcessor` service. So in `Startup.cs` add:
+Inject the `StrainerProcessor` service. So in `Startup.cs` add:
 
 ```cs
-services.AddSieve<SieveProcessor>();
+services.AddStrainer<StrainerProcessor>();
 ```
 
-### 2. Tell Sieve which properties you'd like to sort/filter in your models
+### 2. Tell Strainer which properties you'd like to sort/filter in your models
 
-Sieve will only sort/filter properties that have the attribute `[Sieve(CanSort = true, CanFilter = true)]` on them (they don't have to be both true).
+Strainer will only sort/filter properties that have the attribute `[Strainer(CanSort = true, CanFilter = true)]` on them (they don't have to be both true).
 So for our `Post` entity model example:
 
 ```cs
 public int Id { get; set; }
 
-[Sieve(CanFilter = true, CanSort = true)]
+[Strainer(CanFilter = true, CanSort = true)]
 public string Title { get; set; }
 
-[Sieve(CanFilter = true, CanSort = true)]
+[Strainer(CanFilter = true, CanSort = true)]
 public int LikeCount { get; set; }
 
-[Sieve(CanFilter = true, CanSort = true)]
+[Strainer(CanFilter = true, CanSort = true)]
 public int CommentCount { get; set; }
 
-[Sieve(CanFilter = true, CanSort = true, Name = "created")]
+[Strainer(CanFilter = true, CanSort = true, Name = "created")]
 public DateTimeOffset DateCreated { get; set; } = DateTimeOffset.UtcNow;
 ```
 
@@ -45,17 +45,17 @@ There is also the `Name` parameter that you can use to have a different name for
 
 Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is especially useful if you don't want to use attributes or have multiple APIs. 
 
-### 3. Get sort/filter/page queries by using the Sieve model in your controllers
+### 3. Get sort/filter/page queries by using the Strainer model in your controllers
 
-In the action that handles returning Posts, use `SieveModel` to get the sort/filter/page query. 
-Apply it to your data by injecting `SieveProcessor` into the controller and using its `Apply<TEntity>` method. So for instance:
+In the action that handles returning Posts, use `StrainerModel` to get the sort/filter/page query. 
+Apply it to your data by injecting `StrainerProcessor` into the controller and using its `Apply<TEntity>` method. So for instance:
 
 ```cs
 [HttpGet]
-public JsonResult GetPosts(SieveModel sieveModel) 
+public JsonResult GetPosts(StrainerModel strainerModel) 
 {
     var result = _dbContext.Posts.AsNoTracking(); // Makes read-only queries faster
-    result = _sieveProcessor.Apply(sieveModel, result); // Returns `result` after applying the sort/filter/page query in `SieveModel` to it
+    result = _strainerProcessor.Apply(strainerModel, result); // Returns `result` after applying the sort/filter/page query in `StrainerModel` to it
     return Json(result.ToList());
 }
 ```
@@ -68,20 +68,20 @@ You can also explicitly specify if only filtering, sorting, and/or pagination sh
 
 ### Add custom sort/filter methods
 
-If you want to add custom sort/filter methods, add custom implementation holding sort/filter methods that Sieve will search through.
+If you want to add custom sort/filter methods, add custom implementation holding sort/filter methods that Strainer will search through.
 
 For instance:
 
 ```cs
-services.AddSieve<ApplicationSieveProcessor>()
-    .AddCustomFilterMethods<SieveCustomFilterMethods>()
-    .AddCustomSortMethods<SieveCustomSortMethods>();
+services.AddStrainer<ApplicationStrainerProcessor>()
+    .AddCustomFilterMethods<StrainerCustomFilterMethods>()
+    .AddCustomSortMethods<StrainerCustomSortMethods>();
 ```
 
-Where `SieveCustomSortMethodsOfPosts` for example is:
+Where `StrainerCustomSortMethodsOfPosts` for example is:
 
 ```cs
-public class SieveCustomSortMethods : ISieveCustomSortMethods
+public class StrainerCustomSortMethods : IStrainerCustomSortMethods
 {
     public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc) // The method is given an indicator of weather to use ThenBy(), and if the query is descending 
     {
@@ -96,10 +96,10 @@ public class SieveCustomSortMethods : ISieveCustomSortMethods
 }
 ```
 
-And `SieveCustomFilterMethods`:
+And `StrainerCustomFilterMethods`:
 
 ```cs
-public class SieveCustomFilterMethods : ISieveCustomFilterMethods
+public class StrainerCustomFilterMethods : IStrainerCustomFilterMethods
 {
     public IQueryable<Post> IsNew(IQueryable<Post> source, string op, string[] values) // The method is given the {Operator} & {Value}
     {
@@ -111,23 +111,23 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
 }
 ```
 
-## Configure Sieve
+## Configure Strainer
 
-Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) with `SieveOptions` to tell Sieve where to look for configuration. For example:
+Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) with `StrainerOptions` to tell Strainer where to look for configuration. For example:
 
 ```cs
-services.Configure<SieveOptions>(Configuration.GetSection("Sieve"));
+services.Configure<StrainerOptions>(Configuration.GetSection("Strainer"));
 ```
 
 Then you can add the configuration:
 
 ```json
 {
-    "Sieve": {
+    "Strainer": {
         "CaseSensitive": "boolean: should property names be case-sensitive? Defaults to false",
         "DefaultPageSize": "int number: optional number to fallback to when no page argument is given. Set <=0 to disable paging if no pageSize is specified (default).",
         "MaxPageSize": "int number: maximum allowed page size. Set <=0 to make infinite (default)",
-        "ThrowExceptions": "boolean: should Sieve throw exceptions instead of silently failing? Defaults to false"
+        "ThrowExceptions": "boolean: should Strainer throw exceptions instead of silently failing? Defaults to false"
     }
 }
 ```
@@ -148,7 +148,7 @@ GET /GetPosts
 More formally:
 * `sorts` is a comma-delimited ordered list of property names to sort by. Adding a `-` before the name switches to sorting descendingly.
 * `filters` is a comma-delimited list of `{Name}{Operator}{Value}` where
-    * `{Name}` is the name of a property with the Sieve attribute or the name of a custom filter method for TEntity
+    * `{Name}` is the name of a property with the Strainer attribute or the name of a custom filter method for TEntity
         * You can also have multiple names (for OR logic) by enclosing them in brackets and using a pipe delimiter, eg. `(LikeCount|CommentCount)>10` asks if `LikeCount` or `CommentCount` is `>10`
     * `{Operator}` is one of the [Operators](#operators)
     * `{Value}` is the value to use for filtering
@@ -190,7 +190,7 @@ Now you can make requests such as: `filters=User.Name==specific_name`.
 
 ### Creating your own DSL
 
-You can replace this DSL with your own (eg. use JSON instead) by implementing an [ISieveModel](https://github.com/Prologh/Sieve/blob/master/src/Sieve/Models/ISieveModel.cs). You can use the default [SieveModel](https://github.com/Prologh/Sieve/blob/master/src/Sieve/Models/SieveModel.cs) for reference.
+You can replace this DSL with your own (eg. use JSON instead) by implementing an [IStrainerModel](https://gitlab.com/fluorite/Strainer/blob/master/src/Strainer/Models/IStrainerModel.cs). You can use the default [StrainerModel](https://gitlab.com/fluorite/Strainer/blob/master/src/Strainer/Models/StrainerModel.cs) for reference.
 
 ### Operators
 
@@ -212,33 +212,33 @@ You can replace this DSL with your own (eg. use JSON instead) by implementing an
 | `!@=*`     | Case-insensitive string does not Contains |
 | `!_=*`     | Case-insensitive string does not Starts with |
 
-### Handle Sieve's exceptions
+### Handle Strainer's exceptions
 
-Sieve will silently fail unless `ThrowExceptions` in the configuration is set to true. 3 kinds of custom exceptions can be thrown:
+Strainer will silently fail unless `ThrowExceptions` in the configuration is set to true. 3 kinds of custom exceptions can be thrown:
 
-* `SieveMethodNotFoundException` with a `MethodName`
-* `SieveIncompatibleMethodException` with a `MethodName`, an `ExpectedType` and an `ActualType`
-* `SieveException` which encapsulates any other exception types in its `InnerException`
+* `StrainerMethodNotFoundException` with a `MethodName`
+* `StrainerIncompatibleMethodException` with a `MethodName`, an `ExpectedType` and an `ActualType`
+* `StrainerException` which encapsulates any other exception types in its `InnerException`
 
-It is recommended that you write exception-handling middleware to globally handle Sieve's exceptions when using it with ASP.NET Core.
+It is recommended that you write exception-handling middleware to globally handle Strainer's exceptions when using it with ASP.NET Core.
 
 ### Example project
 
-You can find an example project incorporating most Sieve concepts in [Sieve.Sample](https://github.com/Prologh/Sieve/tree/master/src/Sieve.Sample).
+You can find an example project incorporating most Strainer concepts in [Strainer.Sample](https://gitlab.com/fluorite/Strainer/tree/master/src/Strainer.Sample).
 
 ## Fluent API
 
-To use the Fluent API instead of attributes in marking properties, setup an alternative `SieveProcessor` that overrides `MapProperties`. For example:
+To use the Fluent API instead of attributes in marking properties, setup an alternative `StrainerProcessor` that overrides `MapProperties`. For example:
 
 ```cs
-public class ApplicationSieveProcessor : SieveProcessor
+public class ApplicationStrainerProcessor : StrainerProcessor
 {
-    public ApplicationSieveProcessor(ISieveContext context) : base(context)
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
     {
 
     }
 
-    protected override ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
+    protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
     {
         mapper.Property<Post>(p => p.Title)
             .CanFilter()
@@ -257,33 +257,16 @@ public class ApplicationSieveProcessor : SieveProcessor
 }
 ```
 
-Now you should inject custom `SieveProcessor`:
+Now you should inject custom `StrainerProcessor`:
 
 ```cs
-services.AddSieve<ApplicationSieveProcessor>();
+services.AddStrainer<ApplicationStrainerProcessor>();
 ```
 
-Find More on Sieve's Fluent API [here](https://github.com/Biarity/Sieve/issues/4#issuecomment-364629048).
+## Migrating from Sieve to Strainer v3.0.0
 
-## Upgrading to v3.0.0
-
-A lot happened between v2* and 3*, so read the full migration guide [here]().
-
-## Upgrading to v2.2.0
-
-2.2.0 introduced OR logic for filter values. This means your custom filters will need to accept multiple values rather than just the one.
-
-* In all your custom filter methods, change the last argument to be a `string[] values` instead of `string value`
-* The first value can then be found to be `values[0]` rather than `value`
-* Multiple values will be present if the client uses OR logic
-
-## Upgrading from v1.* to v2.*
-
-* Changes to the `SieveProcessor` API:
-    * `ApplyAll` is now `Apply`
-    * `ApplyFiltering`, `ApplySorting`, and `ApplyPagination` are now depricated - instead you can use optional arguments on `Apply` to achieve the same
-* Instead of just removing commas from `{Value}`s, [you'll also need to remove brackets and pipes](#send-a-request)
+A lot happened between Sieve v2* and Strainer v3*. Read the full migration guide [here](https://gitlab.com/fluorite/Strainer/blob/master/docs/migration-guide-to-v3.0.0.md).
 
 ## License & Contributing
 
-Sieve is licensed under Apache 2.0. Any contributions highly appreciated!
+Strainer is licensed under Apache 2.0. Any contributions highly appreciated!
