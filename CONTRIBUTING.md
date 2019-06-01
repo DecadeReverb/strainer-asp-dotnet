@@ -1,0 +1,1 @@
+See [Code of Conduct](https://gitlab.com/fluorite/strainer/blob/master/CODE_OF_CONDUCT.md).
