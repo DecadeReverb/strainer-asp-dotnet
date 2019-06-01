@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
     public class StrainerServiceCollectionExtensionsTests
     {
         [Fact]
-        public void ExtensionMethod_AddsStrainer()
+        public void ExtensionMethod_ShouldAddStrainer()
         {
             // Arrange
             IConfiguration configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
