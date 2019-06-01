@@ -1,22 +1,22 @@
-﻿using Sieve.Models;
+﻿using Strainer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-	public class SievePropertyMapper : ISievePropertyMapper
+	public class StrainerPropertyMapper : IStrainerPropertyMapper
     {
-        private readonly Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>> _map;
+        private readonly Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>> _map;
 
-        public SievePropertyMapper()
+        public StrainerPropertyMapper()
         {
-            _map = new Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>>();
+            _map = new Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>>();
         }
 
-        public void AddMap<TEntity>(PropertyInfo propertyInfo, ISievePropertyMetadata metadata)
+        public void AddMap<TEntity>(PropertyInfo propertyInfo, IStrainerPropertyMetadata metadata)
         {
             if (propertyInfo == null)
             {
@@ -28,7 +28,7 @@ namespace Sieve.Services
                 throw new ArgumentNullException(nameof(metadata));
             }
 
-            var pair = new KeyValuePair<PropertyInfo, ISievePropertyMetadata>(propertyInfo, metadata);
+            var pair = new KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>(propertyInfo, metadata);
             _map[typeof(TEntity)].Add(pair);
         }
 
@@ -54,7 +54,7 @@ namespace Sieve.Services
             }
         }
 
-        public ISievePropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
+        public IStrainerPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
             {
@@ -63,10 +63,10 @@ namespace Sieve.Services
 
             if (!_map.ContainsKey(typeof(TEntity)))
             {
-                _map.Add(typeof(TEntity), new List<KeyValuePair<PropertyInfo, ISievePropertyMetadata>>());
+                _map.Add(typeof(TEntity), new List<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>());
             }
 
-            return new SievePropertyBuilder<TEntity>(this, expression);
+            return new StrainerPropertyBuilder<TEntity>(this, expression);
         }
     }
 }

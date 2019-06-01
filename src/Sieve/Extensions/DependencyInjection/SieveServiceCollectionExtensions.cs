@@ -3,17 +3,17 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Sieve.Models;
-using Sieve.Services;
-using Sieve.Services.Filtering;
-using Sieve.Services.Sorting;
+using Strainer.Models;
+using Strainer.Services;
+using Strainer.Services.Filtering;
+using Strainer.Services.Sorting;
 
-namespace Sieve.Extensions.DependencyInjection
+namespace Strainer.Extensions.DependencyInjection
 {
-    public static class SieveServiceCollectionExtensions
+    public static class StrainerServiceCollectionExtensions
     {
-        public static ISieveBuilder AddSieve<TProcessor>(this IServiceCollection services, Action<SieveOptions> options)
-            where TProcessor : class, ISieveProcessor
+        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, Action<StrainerOptions> options)
+            where TProcessor : class, IStrainerProcessor
         {
             if (services == null)
             {
@@ -25,14 +25,14 @@ namespace Sieve.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(options));
             }
 
-            var builder = services.AddSieve<TProcessor>();
+            var builder = services.AddStrainer<TProcessor>();
             builder.Services.PostConfigure(options);
 
             return builder;
         }
 
-        public static ISieveBuilder AddSieve<TProcessor>(this IServiceCollection services)
-            where TProcessor : class, ISieveProcessor
+        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services)
+            where TProcessor : class, IStrainerProcessor
         {
             if (services == null)
             {
@@ -41,11 +41,11 @@ namespace Sieve.Extensions.DependencyInjection
 
             using (var provider = services.BuildServiceProvider())
             {
-                // Add Sieve options only if they weren't configured yet.
-                if (!services.Any(d => d.ServiceType == typeof(IOptions<SieveOptions>)))
+                // Add Strainer options only if they weren't configured yet.
+                if (!services.Any(d => d.ServiceType == typeof(IOptions<StrainerOptions>)))
                 {
                     var configuration = provider.GetRequiredService<IConfiguration>();
-                    services.Configure<SieveOptions>(configuration.GetSection("Sieve"));
+                    services.Configure<StrainerOptions>(configuration.GetSection("Strainer"));
                 }
             }
 
@@ -58,39 +58,39 @@ namespace Sieve.Extensions.DependencyInjection
             services.AddScoped<ISortTermParser, SortTermParser>();
             services.AddScoped<ISortingContext, SortingContext>();
 
-            services.AddScoped<ISievePropertyMapper, SievePropertyMapper>();
+            services.AddScoped<IStrainerPropertyMapper, StrainerPropertyMapper>();
 
-            services.AddScoped<ISieveCustomMethodsContext, SieveCustomMethodsContext>();
+            services.AddScoped<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>();
 
-            services.AddScoped<ISieveContext, SieveContext>();
+            services.AddScoped<IStrainerContext, StrainerContext>();
 
-            services.AddScoped<ISieveProcessor, TProcessor>();
+            services.AddScoped<IStrainerProcessor, TProcessor>();
 
-            return new SieveBuilder(services);
+            return new StrainerBuilder(services);
         }
 
-        public static ISieveBuilder AddCustomFilterMethods<TFilterMethods>(this ISieveBuilder builder)
-            where TFilterMethods : class, ISieveCustomFilterMethods
+        public static IStrainerBuilder AddCustomFilterMethods<TFilterMethods>(this IStrainerBuilder builder)
+            where TFilterMethods : class, IStrainerCustomFilterMethods
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.AddScoped<ISieveCustomFilterMethods, TFilterMethods>();
+            builder.Services.AddScoped<IStrainerCustomFilterMethods, TFilterMethods>();
 
             return builder;
         }
 
-        public static ISieveBuilder AddCustomSortMethods<TSortMethods>(this ISieveBuilder builder)
-            where TSortMethods : class, ISieveCustomSortMethods
+        public static IStrainerBuilder AddCustomSortMethods<TSortMethods>(this IStrainerBuilder builder)
+            where TSortMethods : class, IStrainerCustomSortMethods
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.AddScoped<ISieveCustomSortMethods, TSortMethods>();
+            builder.Services.AddScoped<IStrainerCustomSortMethods, TSortMethods>();
 
             return builder;
         }

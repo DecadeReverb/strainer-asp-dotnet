@@ -1,7 +1,7 @@
 ﻿//using System;
-//using Sieve.Models;
+//using Strainer.Models;
 
-//namespace Sieve.Services.Filtering
+//namespace Strainer.Services.Filtering
 //{
 //    public class FilterOperatorBuilder : IFilterOperatorBuilder
 //    {

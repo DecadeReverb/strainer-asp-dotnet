@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Sieve.Models;
+using Strainer.Models;
 
-namespace Sieve.Services.Filtering
+namespace Strainer.Services.Filtering
 {
     public interface IFilterOperatorProvider
     {

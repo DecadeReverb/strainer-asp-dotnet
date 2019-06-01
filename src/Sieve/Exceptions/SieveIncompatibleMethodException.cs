@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Sieve.Exceptions
+namespace Strainer.Exceptions
 {
-    public class SieveIncompatibleMethodException : SieveException
+    public class StrainerIncompatibleMethodException : StrainerException
     {
         public string MethodName { get; protected set; }
         public Type ExpectedType { get; protected set; }
         public Type ActualType { get; protected set; }
 
-        public SieveIncompatibleMethodException(
+        public StrainerIncompatibleMethodException(
             string methodName,
             Type expectedType,
             Type actualType,
@@ -21,7 +21,7 @@ namespace Sieve.Exceptions
             ActualType = actualType;
         }
 
-        public SieveIncompatibleMethodException(
+        public StrainerIncompatibleMethodException(
             string methodName,
             Type expectedType,
             Type actualType,
@@ -34,22 +34,22 @@ namespace Sieve.Exceptions
             ActualType = actualType;
         }
 
-        public SieveIncompatibleMethodException(string message) : base(message)
+        public StrainerIncompatibleMethodException(string message) : base(message)
         {
 
         }
 
-        public SieveIncompatibleMethodException(string message, Exception innerException) : base(message, innerException)
+        public StrainerIncompatibleMethodException(string message, Exception innerException) : base(message, innerException)
         {
 
         }
 
-        public SieveIncompatibleMethodException()
+        public StrainerIncompatibleMethodException()
         {
 
         }
 
-        protected SieveIncompatibleMethodException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected StrainerIncompatibleMethodException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
 
         }

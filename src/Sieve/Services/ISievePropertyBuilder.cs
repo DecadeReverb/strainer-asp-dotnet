@@ -1,14 +1,14 @@
-﻿namespace Sieve.Services
+﻿namespace Strainer.Services
 {
-    public interface ISievePropertyBuilder<TEntity>
+    public interface IStrainerPropertyBuilder<TEntity>
     {
         string FullName { get; }
         bool IsFilterable { get; }
         bool IsSortable { get; }
         string Name { get; }
 
-        ISievePropertyBuilder<TEntity> CanFilter();
-        ISievePropertyBuilder<TEntity> HasName(string name);
-        ISievePropertyBuilder<TEntity> CanSort();
+        IStrainerPropertyBuilder<TEntity> CanFilter();
+        IStrainerPropertyBuilder<TEntity> HasName(string name);
+        IStrainerPropertyBuilder<TEntity> CanSort();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Sieve.Services.Filtering
+﻿namespace Strainer.Services.Filtering
 {
     public class FilteringContext : IFilteringContext
     {

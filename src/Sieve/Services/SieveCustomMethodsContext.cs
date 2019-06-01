@@ -1,30 +1,30 @@
-﻿namespace Sieve.Services
+﻿namespace Strainer.Services
 {
-    public class SieveCustomMethodsContext : ISieveCustomMethodsContext
+    public class StrainerCustomMethodsContext : IStrainerCustomMethodsContext
     {
-        public SieveCustomMethodsContext()
+        public StrainerCustomMethodsContext()
         {
 
         }
 
-        public SieveCustomMethodsContext(ISieveCustomFilterMethods filterMethods)
+        public StrainerCustomMethodsContext(IStrainerCustomFilterMethods filterMethods)
         {
             FilterMethods = filterMethods;
         }
 
-        public SieveCustomMethodsContext(ISieveCustomSortMethods sortMethods)
+        public StrainerCustomMethodsContext(IStrainerCustomSortMethods sortMethods)
         {
             SortMethods = sortMethods;
         }
 
-        public SieveCustomMethodsContext(ISieveCustomFilterMethods filterMethods, ISieveCustomSortMethods sortMethods)
+        public StrainerCustomMethodsContext(IStrainerCustomFilterMethods filterMethods, IStrainerCustomSortMethods sortMethods)
         {
             FilterMethods = filterMethods;
             SortMethods = sortMethods;
         }
 
-        public ISieveCustomFilterMethods FilterMethods { get; }
+        public IStrainerCustomFilterMethods FilterMethods { get; }
 
-        public ISieveCustomSortMethods SortMethods { get; }
+        public IStrainerCustomSortMethods SortMethods { get; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sieve.Models
+namespace Strainer.Models
 {
     public class SortTerm : ISortTerm, IEquatable<SortTerm>
     {

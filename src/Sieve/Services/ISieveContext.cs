@@ -1,15 +1,15 @@
-﻿using Sieve.Models;
-using Sieve.Services.Filtering;
-using Sieve.Services.Sorting;
+﻿using Strainer.Models;
+using Strainer.Services.Filtering;
+using Strainer.Services.Sorting;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public interface ISieveContext
+    public interface IStrainerContext
     {
-        ISieveCustomMethodsContext CustomMethodsContext { get; }
+        IStrainerCustomMethodsContext CustomMethodsContext { get; }
         IFilteringContext FilteringContext { get; }
-        ISievePropertyMapper Mapper { get; }
-        SieveOptions Options { get; }
+        IStrainerPropertyMapper Mapper { get; }
+        StrainerOptions Options { get; }
         ISortingContext SortingContext { get; }
     }
 }

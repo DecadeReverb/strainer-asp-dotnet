@@ -1,38 +1,38 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Sieve.Exceptions
+namespace Strainer.Exceptions
 {
-    public class SieveMethodNotFoundException : SieveException
+    public class StrainerMethodNotFoundException : StrainerException
     {
         public string MethodName { get; protected set; }
 
-        public SieveMethodNotFoundException(string methodName, string message) : base(message)
+        public StrainerMethodNotFoundException(string methodName, string message) : base(message)
         {
             MethodName = methodName;
         }
 
-        public SieveMethodNotFoundException(string methodName, string message, Exception innerException) : base(message, innerException)
+        public StrainerMethodNotFoundException(string methodName, string message, Exception innerException) : base(message, innerException)
         {
             MethodName = methodName;
         }
 
-        public SieveMethodNotFoundException(string message) : base(message)
+        public StrainerMethodNotFoundException(string message) : base(message)
         {
 
         }
 
-        public SieveMethodNotFoundException(string message, Exception innerException) : base(message, innerException)
+        public StrainerMethodNotFoundException(string message, Exception innerException) : base(message, innerException)
         {
 
         }
 
-        public SieveMethodNotFoundException()
+        public StrainerMethodNotFoundException()
         {
 
         }
 
-        protected SieveMethodNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected StrainerMethodNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
 
         }

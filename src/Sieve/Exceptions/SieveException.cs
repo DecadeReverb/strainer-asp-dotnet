@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Sieve.Exceptions
+namespace Strainer.Exceptions
 {
-    public class SieveException : Exception
+    public class StrainerException : Exception
     {
-        public SieveException(string message) : base(message)
+        public StrainerException(string message) : base(message)
         {
 
         }
 
-        public SieveException(string message, Exception innerException) : base(message, innerException)
+        public StrainerException(string message, Exception innerException) : base(message, innerException)
         {
 
         }
 
-        public SieveException()
+        public StrainerException()
         {
 
         }
 
-        protected SieveException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected StrainerException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
 
         }

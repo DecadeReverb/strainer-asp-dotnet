@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Sieve.Models;
+using Strainer.Models;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public interface ISievePropertyMapper
+    public interface IStrainerPropertyMapper
     {
-        void AddMap<TEntity>(PropertyInfo propertyInfo, ISievePropertyMetadata metadata);
+        void AddMap<TEntity>(PropertyInfo propertyInfo, IStrainerPropertyMetadata metadata);
         (string, PropertyInfo) FindProperty<TEntity>(bool canSortRequired, bool canFilterRequired, string name, bool isCaseSensitive);
-        ISievePropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);
+        IStrainerPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);
     }
 }

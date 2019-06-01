@@ -1,6 +1,6 @@
-﻿namespace Sieve.Services
+﻿namespace Strainer.Services
 {
-	public interface ISieveCustomFilterMethods
+	public interface IStrainerCustomFilterMethods
     {
 
     }

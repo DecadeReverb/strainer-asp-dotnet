@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Sieve.Models;
+using Strainer.Models;
 
-namespace Sieve.Services.Sorting
+namespace Strainer.Services.Sorting
 {
     public interface ISortTermParser
     {

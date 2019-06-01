@@ -1,4 +1,4 @@
-﻿namespace Sieve.Models.Filtering.Operators
+﻿namespace Strainer.Models.Filtering.Operators
 {
     /// <summary>
     /// Represents greater than or equal to filter operator.

@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Options;
-using Sieve.Models;
-using Sieve.Services.Filtering;
-using Sieve.Services.Sorting;
+using Strainer.Models;
+using Strainer.Services.Filtering;
+using Strainer.Services.Sorting;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public class SieveContext : ISieveContext
+    public class StrainerContext : IStrainerContext
     {
-        public SieveContext(
-            IOptions<SieveOptions> options,
+        public StrainerContext(
+            IOptions<StrainerOptions> options,
             IFilteringContext filteringContext,
             ISortingContext sortingContext,
-            ISievePropertyMapper mapper,
-            ISieveCustomMethodsContext customMethodsContext)
+            IStrainerPropertyMapper mapper,
+            IStrainerCustomMethodsContext customMethodsContext)
         {
             CustomMethodsContext = customMethodsContext;
             FilteringContext = filteringContext;
@@ -21,13 +21,13 @@ namespace Sieve.Services
             Options = options.Value;
         }
 
-        public ISieveCustomMethodsContext CustomMethodsContext { get; }
+        public IStrainerCustomMethodsContext CustomMethodsContext { get; }
 
         public IFilteringContext FilteringContext { get; }
 
-        public ISievePropertyMapper Mapper { get; }
+        public IStrainerPropertyMapper Mapper { get; }
 
-        public SieveOptions Options { get; }
+        public StrainerOptions Options { get; }
 
         public ISortingContext SortingContext { get; }
     }

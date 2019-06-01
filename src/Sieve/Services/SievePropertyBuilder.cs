@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using Sieve.Models;
+using Strainer.Models;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public class SievePropertyBuilder<TEntity> : ISievePropertyBuilder<TEntity>
+    public class StrainerPropertyBuilder<TEntity> : IStrainerPropertyBuilder<TEntity>
     {
-        public SievePropertyBuilder(ISievePropertyMapper sievePropertyMapper, Expression<Func<TEntity, object>> expression)
+        public StrainerPropertyBuilder(IStrainerPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
             {
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            Mapper = sievePropertyMapper ?? throw new ArgumentNullException(nameof(sievePropertyMapper));
+            Mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
             (FullName, PropertyInfo) = GetPropertyInfo(expression);
             Name = FullName;
             IsFilterable = false;
@@ -28,9 +28,9 @@ namespace Sieve.Services
         public string Name { get; protected set; }
 
         protected PropertyInfo PropertyInfo { get; }
-        protected ISievePropertyMapper Mapper { get; }
+        protected IStrainerPropertyMapper Mapper { get; }
 
-        public ISievePropertyBuilder<TEntity> CanFilter()
+        public IStrainerPropertyBuilder<TEntity> CanFilter()
         {
             IsFilterable = true;
             UpdateMap();
@@ -38,7 +38,7 @@ namespace Sieve.Services
             return this;
         }
 
-        public ISievePropertyBuilder<TEntity> CanSort()
+        public IStrainerPropertyBuilder<TEntity> CanSort()
         {
             IsSortable = true;
             UpdateMap();
@@ -46,7 +46,7 @@ namespace Sieve.Services
             return this;
         }
 
-        public ISievePropertyBuilder<TEntity> HasName(string name)
+        public IStrainerPropertyBuilder<TEntity> HasName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -64,7 +64,7 @@ namespace Sieve.Services
 
         private void UpdateMap()
         {
-            var metadata = new SievePropertyMetadata()
+            var metadata = new StrainerPropertyMetadata()
             {
                 Name = Name,
                 FullName = FullName,

@@ -1,6 +1,6 @@
-﻿namespace Sieve.Models
+﻿namespace Strainer.Models
 {
-    public interface ISieveModel
+    public interface IStrainerModel
     {
         string Filters { get; set; }
 

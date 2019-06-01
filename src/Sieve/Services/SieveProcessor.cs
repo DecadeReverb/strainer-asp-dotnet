@@ -3,17 +3,17 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Sieve.Attributes;
-using Sieve.Exceptions;
-using Sieve.Extensions;
-using Sieve.Models;
-using Sieve.Models.Filtering.Operators;
+using Strainer.Attributes;
+using Strainer.Exceptions;
+using Strainer.Extensions;
+using Strainer.Models;
+using Strainer.Models.Filtering.Operators;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public class SieveProcessor : ISieveProcessor
+    public class StrainerProcessor : IStrainerProcessor
     {
-        public SieveProcessor(ISieveContext context)
+        public StrainerProcessor(IStrainerContext context)
         {
             Context = context;
 
@@ -21,15 +21,15 @@ namespace Sieve.Services
         }
 
         /// <summary>
-        /// Gets the <see cref="ISieveContext"/>.
+        /// Gets the <see cref="IStrainerContext"/>.
         /// </summary>
-        protected ISieveContext Context { get; }
+        protected IStrainerContext Context { get; }
 
         /// <summary>
         /// Apply filtering, sorting, and pagination parameters found in `model` to `source`
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
-        /// <param name="model">An instance of ISieveModel</param>
+        /// <param name="model">An instance of IStrainerModel</param>
         /// <param name="source">Data source</param>
         /// <param name="dataForCustomMethods">Additional data that will be passed down to custom methods</param>
         /// <param name="applyFiltering">Should the data be filtered? Defaults to true.</param>
@@ -37,7 +37,7 @@ namespace Sieve.Services
         /// <param name="applyPagination">Should the data be paginated? Defaults to true.</param>
         /// <returns>Returns a transformed version of `source`</returns>
         public IQueryable<TEntity> Apply<TEntity>(
-            ISieveModel model,
+            IStrainerModel model,
             IQueryable<TEntity> source,
             object[] dataForCustomMethods = null,
             bool applyFiltering = true,
@@ -77,12 +77,12 @@ namespace Sieve.Services
             {
                 if (Context.Options.ThrowExceptions)
                 {
-                    if (ex is SieveException)
+                    if (ex is StrainerException)
                     {
                         throw;
                     }
 
-                    throw new SieveException(ex.Message, ex);
+                    throw new StrainerException(ex.Message, ex);
                 }
                 else
                 {
@@ -91,7 +91,7 @@ namespace Sieve.Services
             }
         }
 
-        protected virtual ISievePropertyMapper MapProperties(ISievePropertyMapper mapper)
+        protected virtual IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
         {
             if (mapper == null)
             {
@@ -102,7 +102,7 @@ namespace Sieve.Services
         }
 
         private IQueryable<TEntity> ApplyFiltering<TEntity>(
-            ISieveModel model,
+            IStrainerModel model,
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
@@ -119,7 +119,7 @@ namespace Sieve.Services
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var (fullName, property) = GetSieveProperty<TEntity>(false, true, filterTermName);
+                    var (fullName, property) = GetStrainerProperty<TEntity>(false, true, filterTermName);
                     if (property != null)
                     {
                         var converter = TypeDescriptor.GetConverter(property.PropertyType);
@@ -259,7 +259,7 @@ namespace Sieve.Services
         }
 
         private IQueryable<TEntity> ApplySorting<TEntity>(
-            ISieveModel model,
+            IStrainerModel model,
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
@@ -272,7 +272,7 @@ namespace Sieve.Services
             var useThenBy = false;
             foreach (var sortTerm in parsedTerms)
             {
-                var (fullName, property) = GetSieveProperty<TEntity>(true, false, sortTerm.Name);
+                var (fullName, property) = GetStrainerProperty<TEntity>(true, false, sortTerm.Name);
 
                 if (property != null)
                 {
@@ -299,7 +299,7 @@ namespace Sieve.Services
         }
 
         private IQueryable<TEntity> ApplyPagination<TEntity>(
-            ISieveModel model,
+            IStrainerModel model,
             IQueryable<TEntity> result)
         {
             var page = model?.Page ?? 1;
@@ -318,7 +318,7 @@ namespace Sieve.Services
             return result;
         }
 
-        private (string, PropertyInfo) GetSieveProperty<TEntity>(
+        private (string, PropertyInfo) GetStrainerProperty<TEntity>(
             bool canSortRequired,
             bool canFilterRequired,
             string name)
@@ -331,7 +331,7 @@ namespace Sieve.Services
 
             if (property.Item1 == null)
             {
-                var prop = FindPropertyBySieveAttribute<TEntity>(
+                var prop = FindPropertyByStrainerAttribute<TEntity>(
                     canSortRequired,
                     canFilterRequired,
                     name,
@@ -344,7 +344,7 @@ namespace Sieve.Services
 
         }
 
-        private PropertyInfo FindPropertyBySieveAttribute<TEntity>(
+        private PropertyInfo FindPropertyByStrainerAttribute<TEntity>(
             bool canSortRequired,
             bool canFilterRequired,
             string name,
@@ -352,10 +352,10 @@ namespace Sieve.Services
         {
             return Array.Find(typeof(TEntity).GetProperties(), p =>
             {
-                return p.GetCustomAttribute(typeof(SieveAttribute)) is SieveAttribute sieveAttribute
-                && (canSortRequired ? sieveAttribute.CanSort : true)
-                && (canFilterRequired ? sieveAttribute.CanFilter : true)
-                && ((sieveAttribute.Name ?? p.Name).Equals(
+                return p.GetCustomAttribute(typeof(StrainerAttribute)) is StrainerAttribute strainerAttribute
+                && (canSortRequired ? strainerAttribute.CanSort : true)
+                && (canFilterRequired ? strainerAttribute.CanFilter : true)
+                && ((strainerAttribute.Name ?? p.Name).Equals(
                         name,
                         isCaseSensitive
                             ? StringComparison.Ordinal
@@ -412,12 +412,12 @@ namespace Sieve.Services
                 {
                     var expected = typeof(IQueryable<TEntity>);
                     var actual = incompatibleCustomMethod.ReturnType;
-                    throw new SieveIncompatibleMethodException(name, expected, actual,
+                    throw new StrainerIncompatibleMethodException(name, expected, actual,
                         $"{name} failed. Expected a custom method for type {expected} but only found for type {actual}");
                 }
                 else
                 {
-                    throw new SieveMethodNotFoundException(name, $"{name} not found.");
+                    throw new StrainerMethodNotFoundException(name, $"{name} not found.");
                 }
             }
 

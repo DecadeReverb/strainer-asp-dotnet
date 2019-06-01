@@ -1,6 +1,6 @@
-﻿namespace Sieve.Models
+﻿namespace Strainer.Models
 {
-	public interface ISievePropertyMetadata
+	public interface IStrainerPropertyMetadata
     {
         string Name { get; }
         string FullName { get; }

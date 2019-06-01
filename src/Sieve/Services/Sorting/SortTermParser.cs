@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Sieve.Models;
+using Strainer.Models;
 
-namespace Sieve.Services.Sorting
+namespace Strainer.Services.Sorting
 {
     public class SortTermParser : ISortTermParser
     {

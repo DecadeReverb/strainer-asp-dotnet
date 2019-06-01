@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sieve.Models
+namespace Strainer.Models
 {
     public interface IFilterTerm
     {

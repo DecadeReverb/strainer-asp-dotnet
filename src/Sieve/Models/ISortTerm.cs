@@ -1,4 +1,4 @@
-﻿namespace Sieve.Models
+﻿namespace Strainer.Models
 {
 	public interface ISortTerm
     {

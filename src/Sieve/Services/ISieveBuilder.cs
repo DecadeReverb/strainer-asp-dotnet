@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public interface ISieveBuilder
+    public interface IStrainerBuilder
     {
         IServiceCollection Services { get; }
     }

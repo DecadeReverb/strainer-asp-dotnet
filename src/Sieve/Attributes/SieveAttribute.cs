@@ -1,10 +1,10 @@
-﻿using Sieve.Models;
+﻿using Strainer.Models;
 using System;
 
-namespace Sieve.Attributes
+namespace Strainer.Attributes
 {
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class SieveAttribute : Attribute, ISievePropertyMetadata
+    public class StrainerAttribute : Attribute, IStrainerPropertyMetadata
     {
         public string Name { get; set; }
         public string FullName => Name;

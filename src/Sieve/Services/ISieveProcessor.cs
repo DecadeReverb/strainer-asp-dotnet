@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using Sieve.Models;
+using Strainer.Models;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public interface ISieveProcessor
+    public interface IStrainerProcessor
     {
         IQueryable<TEntity> Apply<TEntity>(
-            ISieveModel model,
+            IStrainerModel model,
             IQueryable<TEntity> source,
             object[] dataForCustomMethods = null,
             bool applyFiltering = true,

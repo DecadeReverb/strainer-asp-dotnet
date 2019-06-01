@@ -1,8 +1,8 @@
-﻿namespace Sieve.Services
+﻿namespace Strainer.Services
 {
-    public interface ISieveCustomMethodsContext
+    public interface IStrainerCustomMethodsContext
     {
-        ISieveCustomFilterMethods FilterMethods { get; }
-        ISieveCustomSortMethods SortMethods { get; }
+        IStrainerCustomFilterMethods FilterMethods { get; }
+        IStrainerCustomSortMethods SortMethods { get; }
     }
 }

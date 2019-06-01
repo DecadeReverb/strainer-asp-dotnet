@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Sieve.Models;
-using Sieve.Models.Filtering.Operators;
+using Strainer.Models;
+using Strainer.Models.Filtering.Operators;
 
-namespace Sieve.Services.Filtering
+namespace Strainer.Services.Filtering
 {
     public class FilterTermParser : IFilterTermParser
     {

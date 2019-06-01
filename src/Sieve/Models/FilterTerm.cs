@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sieve.Models
+namespace Strainer.Models
 {
     public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     {

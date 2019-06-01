@@ -1,4 +1,4 @@
-﻿namespace Sieve.Services.Sorting
+﻿namespace Strainer.Services.Sorting
 {
     public class SortingContext : ISortingContext
     {

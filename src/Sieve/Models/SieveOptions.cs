@@ -1,6 +1,6 @@
-﻿namespace Sieve.Models
+﻿namespace Strainer.Models
 {
-	public class SieveOptions
+	public class StrainerOptions
     {
         // TODO:
         // Add more options like:

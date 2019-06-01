@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Sieve.Services
+namespace Strainer.Services
 {
-    public class SieveBuilder : ISieveBuilder
+    public class StrainerBuilder : IStrainerBuilder
     {
-        public SieveBuilder(IServiceCollection services)
+        public StrainerBuilder(IServiceCollection services)
         {
             Services = services ?? throw new System.ArgumentNullException(nameof(services));
         }

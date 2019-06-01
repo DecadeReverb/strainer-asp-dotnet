@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Sieve.Models
+namespace Strainer.Models
 {
     /// <summary>
     /// Represents filter operator.

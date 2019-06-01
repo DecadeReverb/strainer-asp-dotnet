@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace Sieve.Models
+namespace Strainer.Models
 {
-    public class SieveModel : ISieveModel
+    public class StrainerModel : IStrainerModel
     {
-        public SieveModel()
+        public StrainerModel()
         {
 
         }
