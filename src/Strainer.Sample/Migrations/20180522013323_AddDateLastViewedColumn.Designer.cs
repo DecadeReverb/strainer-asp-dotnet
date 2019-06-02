@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
-using Fluorite.Strainer.Sample.Entities;
+using Fluorite.Strainer.Example.Entities;
 using System;
 
-namespace Fluorite.Strainer.Sample.Migrations
+namespace Fluorite.Strainer.Example.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20180522013323_AddDateLastViewedColumn")]
@@ -21,7 +21,7 @@ namespace Fluorite.Strainer.Sample.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Strainer.Sample.Entities.Post", b =>
+            modelBuilder.Entity("Strainer.Example.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();

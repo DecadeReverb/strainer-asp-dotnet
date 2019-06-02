@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Fluorite.Strainer.Attributes;
 
-namespace Fluorite.Strainer.Sample.Entities
+namespace Fluorite.Strainer.Example.Entities
 {
 	public class Post
     {

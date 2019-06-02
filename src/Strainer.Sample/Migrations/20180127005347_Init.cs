@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Fluorite.Strainer.Sample.Migrations
+namespace Fluorite.Strainer.Example.Migrations
 {
     public partial class Init : Migration
     {

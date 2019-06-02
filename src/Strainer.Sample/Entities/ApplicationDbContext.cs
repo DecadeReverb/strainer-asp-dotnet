@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Fluorite.Strainer.Sample.Entities
+namespace Fluorite.Strainer.Example.Entities
 {
 	public class ApplicationDbContext : DbContext
     {

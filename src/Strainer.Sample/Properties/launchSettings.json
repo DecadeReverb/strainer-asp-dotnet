@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Strainer.Sample": {
+    "Strainer.Example": {
       "commandName": "Project",
       "launchUrl": "api/values",
       "environmentVariables": {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Fluorite.Strainer.Sample
+namespace Fluorite.Strainer.Example
 {
     public static class Program
     {

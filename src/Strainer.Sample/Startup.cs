@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Fluorite.Extensions.DependencyInjection;
-using Fluorite.Strainer.Sample.Entities;
-using Fluorite.Strainer.Sample.Services;
+using Fluorite.Strainer.Example.Entities;
+using Fluorite.Strainer.Example.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Fluorite.Strainer.Sample
+namespace Fluorite.Strainer.Example
 {
     public class Startup
     {
