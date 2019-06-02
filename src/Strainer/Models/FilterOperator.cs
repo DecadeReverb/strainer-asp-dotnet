@@ -9,14 +9,6 @@ namespace Fluorite.Strainer.Models
     [DebuggerDisplay("{Operator,nq} {Name,nq}")]
     public abstract class FilterOperator : IFilterOperator/*, IEquatable<FilterOperator>*/
     {
-        ///// <summary>
-        ///// Initializes new instance of <see cref="FilterOperator"/> class.
-        ///// </summary>
-        //protected FilterOperator()
-        //{
-
-        //}
-
         /// <summary>
         /// Initializes new instance of <see cref="FilterOperator"/> class
         /// with name and operator.
@@ -57,24 +49,6 @@ namespace Fluorite.Strainer.Models
             Operator = @operator;
         }
 
-        ///// <summary>
-        ///// Gets a <see cref="IFilterOperator"/> which is a not negated
-        ///// version of current operator, if such exists; otherwise <see langword="null"/>.
-        ///// </summary>
-        //public virtual IFilterOperator CaseSensitiveVersion { get; set;  }
-
-        ///// <summary>
-        ///// Gets a <see cref="bool"/> value indictating whether current
-        ///// operator has a case sensitive version.
-        ///// </summary>
-        //public bool HasCaseSensitiveVersion => CaseSensitiveVersion != null;
-
-        ///// <summary>
-        ///// Gets a <see cref="bool"/> value indictating whether current
-        ///// operator has a not negated version.
-        ///// </summary>
-        //public bool HasUnnegatedVersion => UnnegatedVersion != null;
-
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive
@@ -103,56 +77,6 @@ namespace Fluorite.Strainer.Models
         /// </summary>
         public string Operator { get; }
 
-        ///// <summary>
-        ///// Gets a <see cref="IFilterOperator"/> which is a not negated
-        ///// version of current operator, if such exists; otherwise <see langword="null"/>.
-        ///// </summary>
-        //public virtual IFilterOperator UnnegatedVersion { get; }
-
-        ///// <summary>
-        ///// Determines whether the specified <see cref="object"/>
-        ///// is equal to the current <see cref="FilterOperator"/>.
-        ///// </summary>
-        ///// <param name="obj">
-        ///// The <see cref="object"/> to compare with the current <see cref="FilterOperator"/>.
-        ///// </param>
-        ///// <returns>
-        ///// <see langword="true"/> if the specified object is equal
-        ///// to the current <see cref="object"/>; otherwise, <see langword="false"/>.
-        ///// </returns>
-        //public override bool Equals(object obj)
-        //{
-        //    return Equals(obj as FilterOperator);
-        //}
-
-        ///// <summary>
-        ///// Indicates whether the current <see cref="FilterOperator"/>
-        ///// is equal to another <see cref="FilterOperator"/>.
-        ///// </summary>
-        ///// <param name="other">
-        ///// An <see cref="FilterOperator"/> to compare with this <see cref="FilterOperator"/>.
-        ///// </param>
-        ///// <returns>
-        ///// <see langword="true"/> if the specified object is equal
-        ///// to the current <see cref="object"/>; otherwise, <see langword="false"/>.
-        ///// </returns>
-        //public bool Equals(FilterOperator other)
-        //{
-        //    return other != null && Operator == other.Operator;
-        //}
-
-        ///// <summary>
-        ///// Gets hashcode representation of current <see cref="FilterOperator"/>
-        ///// as <see cref="int"/>.
-        ///// </summary>
-        ///// <returns>
-        ///// <see cref="int"/> hashcode.
-        ///// </returns>
-        //public override int GetHashCode()
-        //{
-        //    return -2036482651 + EqualityComparer<string>.Default.GetHashCode(Operator);
-        //}
-
         /// <summary>
         /// Returns a <see cref="string"/> that represents the current <see cref="FilterOperator"/>.
         /// </summary>
@@ -163,15 +87,5 @@ namespace Fluorite.Strainer.Models
         {
             return $"{Operator} {Name}";
         }
-
-        //public static bool operator ==(FilterOperator operator1, FilterOperator operator2)
-        //{
-        //    return EqualityComparer<FilterOperator>.Default.Equals(operator1, operator2);
-        //}
-
-        //public static bool operator !=(FilterOperator operator1, FilterOperator operator2)
-        //{
-        //    return !(operator1 == operator2);
-        //}
     }
 }

@@ -14,35 +14,9 @@
 
 //        public IFilterOperator Build() => _filterOperator;
 
-//        public IFilterOperatorBuilder CaseInsensitive()
-//        {
-//            _filterOperator.IsCaseInsensitive = true;
-
-//            return this;
-//        }
-
 //        public IFilterOperatorBuilder Default()
 //        {
 //            _filterOperator.IsDefault = true;
-
-//            return this;
-//        }
-
-//        public IFilterOperatorBuilder HasCaseSensitiveVersion(IFilterOperator filterOperator)
-//        {
-//            if (filterOperator == null)
-//            {
-//                throw new ArgumentNullException(nameof(filterOperator));
-//            }
-
-//            if (filterOperator.IsCaseInsensitive)
-//            {
-//                throw new ArgumentException(
-//                    "Case sensitive version of current operator cannot be case insensitive. " +
-//                    "Please provide case insensitive operator.");
-//            }
-
-//            _filterOperator.CaseSensitiveVersion = filterOperator;
 
 //            return this;
 //        }
@@ -58,25 +32,6 @@
 //            }
 
 //            _filterOperator.Name = name;
-
-//            return this;
-//        }
-
-//        public IFilterOperatorBuilder HasUnnegatedVersion(IFilterOperator filterOperator)
-//        {
-//            if (filterOperator == null)
-//            {
-//                throw new ArgumentNullException(nameof(filterOperator));
-//            }
-
-//            if (filterOperator.IsNegated)
-//            {
-//                throw new ArgumentException(
-//                    "Unnegated version of current operator cannot be negated. " +
-//                    "Please provide unnegated operator.");
-//            }
-
-//            _filterOperator.UnnegatedVersion = filterOperator;
 
 //            return this;
 //        }
