@@ -61,7 +61,6 @@ namespace Fluorite.Sieve.Example.Data
                 CommentCount = _random.Next(0, 38),
                 DateCreated = randomDateTime,
                 DateLastViewed = randomDateTime.AddDays(_random.Next((DateTime.Today - randomDateTime).Days)),
-                Id = _random.Next(12000),
                 LikeCount = _random.Next(0, 48),
                 Title = RandomizeTitle(),
             };
