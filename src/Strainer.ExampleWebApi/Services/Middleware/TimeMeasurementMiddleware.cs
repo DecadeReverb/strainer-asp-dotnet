@@ -8,10 +8,8 @@ using Microsoft.AspNetCore.Http;
 namespace Fluorite.Sieve.Example.Services.Middleware
 {
     /// <summary>
-    /// Employee whitelist like middleware - allows only users with employee
-    /// identifier claim.
+    /// Provides means of time measurement for incoming requests.
     /// </summary>
-    /// <seealso cref="Claims.EmployeeClaimsMiddleware"/>
     public class TimeMeasurementMiddleware
     {
         private readonly RequestDelegate _next;
