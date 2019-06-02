@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Fluorite.Sieve.Example.Data;
 using Fluorite.Strainer.Example.Entities;
@@ -7,11 +6,12 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Fluorite.Strainer.Example.Controllers
 {
     [ApiController]
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class PostsController : Controller
     {
         private readonly IStrainerProcessor _strainerProcessor;
@@ -24,9 +24,14 @@ namespace Fluorite.Strainer.Example.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Post>>> GetAll()
+        public async Task<ActionResult<List<Post>>> Index()
         {
-            return Json(await _dbContext.Posts.ToListAsync());
+            var result = await _dbContext.Posts.ToListAsync();
+
+            return Json(result, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         [HttpGet("[action]")]
