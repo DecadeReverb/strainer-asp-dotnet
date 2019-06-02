@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using Fluorite.Extensions.DependencyInjection;
+using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.UnitTests.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
@@ -33,6 +35,39 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .Should()
                 .NotBeNull("Because extension method should add " +
                         "Strainer to the service collection.");
+        }
+
+        [Fact]
+        public void ExtensionMethod_ShouldAddStrainerWhileConfiguringOptions()
+        {
+            // Arrange
+            var defaultPageSize = 20;
+            IConfiguration configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
+            var services = new ServiceCollection().AddSingleton(configuration);
+
+            // Act
+            var serviceProvider = services.BuildServiceProvider();
+            var preExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
+            services.AddStrainer<StrainerProcessor>(options =>
+            {
+                options.DefaultPageSize = defaultPageSize;
+            });
+            serviceProvider = services.BuildServiceProvider();
+            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
+            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
+
+            // Assert
+            preExtensionStrainer
+                .Should()
+                .BeNull("Because Strainer has not been registered yet.");
+            postExtensionStrainer
+                .Should()
+                .NotBeNull("Because extension method should add " +
+                        "Strainer to the service collection.");
+            postExtensionStrainerOptions
+                ?.DefaultPageSize
+                .Should()
+                .Be(defaultPageSize);
         }
 
         [Fact]
