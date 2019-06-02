@@ -8,7 +8,7 @@
         string Name { get; }
 
         IStrainerPropertyBuilder<TEntity> CanFilter();
-        IStrainerPropertyBuilder<TEntity> HasName(string name);
         IStrainerPropertyBuilder<TEntity> CanSort();
+        IStrainerPropertyBuilder<TEntity> HasName(string name);
     }
 }
