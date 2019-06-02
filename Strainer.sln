@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer", "src\Strainer\St
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{19D3EA3A-5F1B-4650-8261-A5D82C5A1F4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.Sample", "src\Strainer.Sample\Strainer.Sample.csproj", "{F2108017-DB32-4BCD-B334-CDD1771F4FA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.Example", "src\Strainer.Sample\Strainer.Example.csproj", "{F2108017-DB32-4BCD-B334-CDD1771F4FA4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.UnitTests", "test\Strainer.UnitTests\Strainer.UnitTests.csproj", "{D1DB24FC-52FB-41D7-BC3F-29D90C12FC34}"
 EndProject
