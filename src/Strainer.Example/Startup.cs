@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Sieve.Example.Data;
+using Fluorite.Sieve.Example.Services.Middleware;
 using Fluorite.Strainer.Example.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,28 +47,12 @@ namespace Fluorite.Strainer.Example
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // TODO:
-            // Move time measurement to dedicated middleware.
-
-            // TIME MEASUREMENT
-            var times = new List<long>();
-            app.Use(async (context, next) =>
-            {
-                var sw = new Stopwatch();
-                sw.Start();
-                await next.Invoke();
-                sw.Stop();
-                times.Add(sw.ElapsedMilliseconds);
-                var text = $"AVG: {(int)times.Average()}ms; AT {sw.ElapsedMilliseconds}; COUNT: {times.Count()}";
-                Console.WriteLine(text);
-                await context.Response.WriteAsync($"<!-- {text} -->");
-            });
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<TimeMeasurementMiddleware>();
             app.UseMvc();
         }
     }
