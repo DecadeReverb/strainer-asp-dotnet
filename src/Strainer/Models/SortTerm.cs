@@ -4,35 +4,22 @@ namespace Fluorite.Strainer.Models
 {
     public class SortTerm : ISortTerm, IEquatable<SortTerm>
     {
-        private const string DescendingWaySortingPrefix = "-";
-
-        private string _sort;
-
         public SortTerm()
         {
 
         }
 
-        public bool IsDescending => _sort.StartsWith(DescendingWaySortingPrefix);
+        public string Input { get; set; }
 
-        public string Name => _sort.StartsWith(DescendingWaySortingPrefix)
-            ? _sort.Substring(1)
-            : _sort;
+        public bool IsDescending { get; set; }
 
-        // TODO:
-        // Getting the real name without hardcoded descending sorting way
-        // prefix. A DTO should not do this, neither have such business logic.
-        public string Input
-        {
-            set
-            {
-                _sort = value;
-            }
-        }
+        public string Name { get; set; }
 
         public bool Equals(SortTerm other)
         {
-            return Name == other.Name && IsDescending == other.IsDescending;
+            return other != null
+                && IsDescending == other.IsDescending
+                && Name == other.Name;
         }
     }
 }
