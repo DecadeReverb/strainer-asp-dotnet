@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{19
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.UnitTests", "test\Strainer.UnitTests\Strainer.UnitTests.csproj", "{D1DB24FC-52FB-41D7-BC3F-29D90C12FC34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.Example", "src\Strainer.Example\Strainer.Example.csproj", "{9F2A2B69-8583-4EAA-8292-F40866C226D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.ExampleWebApi", "src\Strainer.Example\Strainer.ExampleWebApi.csproj", "{9F2A2B69-8583-4EAA-8292-F40866C226D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
