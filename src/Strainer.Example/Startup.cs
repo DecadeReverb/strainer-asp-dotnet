@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using Fluorite.Extensions.Builder;
 using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Sieve.Example.Data;
-using Fluorite.Sieve.Example.Services.Middleware;
 using Fluorite.Strainer.Example.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,7 +47,7 @@ namespace Fluorite.Strainer.Example
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMiddleware<TimeMeasurementMiddleware>();
+            app.UseTimeMeasurement();
             app.UseMvc();
         }
     }
