@@ -1,52 +1,41 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Fluorite.Sieve.Example.Data;
+using Fluorite.Strainer.Example.Entities;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Example.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fluorite.Strainer.Example.Controllers
 {
-	[Route("api/[controller]/[action]")]
+    [ApiController]
+	[Route("api/[controller]")]
     public class PostsController : Controller
     {
         private readonly IStrainerProcessor _strainerProcessor;
         private readonly ApplicationDbContext _dbContext;
 
-        public PostsController(IStrainerProcessor strainerProcessor,
-            ApplicationDbContext dbContext)
+        public PostsController(IStrainerProcessor strainerProcessor, ApplicationDbContext dbContext)
         {
             _strainerProcessor = strainerProcessor;
             _dbContext = dbContext;
         }
 
         [HttpGet]
-        public JsonResult GetAllWithStrainer(StrainerModel strainerModel)
+        public async Task<ActionResult<List<Post>>> GetAll()
         {
-            var result = _dbContext.Posts.AsNoTracking();
-
-            result = _strainerProcessor.Apply(strainerModel, result);
-
-            return Json(result.ToList());
+            return Json(await _dbContext.Posts.ToListAsync());
         }
 
-        [HttpGet]
-        public JsonResult Create(int number = 10)
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Post>>> GetAllWithStrainer(StrainerModel strainerModel)
         {
-            for (int i = 0; i < number; i++)
-            {
-                _dbContext.Posts.Add(new Post());
-            }
+            var source = _dbContext.Posts.AsNoTracking();
+            var result = _strainerProcessor.Apply(strainerModel, source);
 
-            _dbContext.SaveChanges();
-
-            return Json(_dbContext.Posts.ToList());
-        }
-
-        [HttpGet]
-        public JsonResult GetAll()
-        {
-            return Json(_dbContext.Posts.ToList());
+            return await result.ToListAsync();
         }
     }
 }

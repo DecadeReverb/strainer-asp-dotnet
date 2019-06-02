@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Fluorite.Extensions.DependencyInjection;
-using Fluorite.Strainer.Example.Entities;
+using Fluorite.Sieve.Example.Data;
 using Fluorite.Strainer.Example.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +29,9 @@ namespace Fluorite.Strainer.Example
             services.AddMvc();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("TestSqlServer")));
+            {
+                options.UseInMemoryDatabase("InMemoryDatabase");
+            });
 
             services.AddStrainer<ApplicationStrainerProcessor>()
                 .AddCustomFilterMethods<StrainerCustomFilterMethods>()
@@ -39,6 +41,9 @@ namespace Fluorite.Strainer.Example
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // TODO:
+            // Move time measurement to dedicated middleware.
+
             // TIME MEASUREMENT
             var times = new List<long>();
             app.Use(async (context, next) =>

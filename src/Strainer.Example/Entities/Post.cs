@@ -14,7 +14,6 @@ namespace Fluorite.Strainer.Example.Entities
         [Strainer(CanFilter = true, CanSort = true)]
         public int LikeCount { get; set; } = new Random().Next(0, 1000);
 
-
         [Strainer(CanFilter = true, CanSort = true)]
         public int CommentCount { get; set; } = new Random().Next(0, 1000);
 

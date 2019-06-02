@@ -1,0 +1,109 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Fluorite.Strainer.Example.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Fluorite.Sieve.Example.Data
+{
+    /// <summary>
+    /// Provides means of database initialization.
+    /// </summary>
+    public static class DatabaseInitializer
+    {
+        private static Random _random = new Random();
+
+        /// <summary>
+        /// Creates the database if it does not exists and seeds it with
+        /// initial data.
+        /// </summary>
+        public static void Initialize(ApplicationDbContext context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            context.Database.EnsureCreated();
+
+            // Look for any Posts.
+            if (context.Posts.AsNoTracking().Any() && context.Posts.AsNoTracking().Any())
+            {
+                // Database already has been seeded.
+                return;
+            }
+
+            var posts = Constants.Data.Seeding.Posts;
+
+            #region levels
+            AddPosts(context, posts);
+            context.SaveChanges();
+            #endregion
+        }
+
+        private static void AddPosts(ApplicationDbContext context, int posts)
+        {
+            for (var i = 0; i < posts; i++)
+            {
+                var post = RandomizePost();
+                context.Posts.Add(post);
+                context.SaveChanges();
+            }
+        }
+
+        private static Post RandomizePost()
+        {
+            var randomDateTime = RandomizeDateTime();
+
+            return new Post
+            {
+                CategoryId = _random.Next(1, 3000),
+                CommentCount = _random.Next(0, 38),
+                DateCreated = randomDateTime,
+                DateLastViewed = randomDateTime.AddDays(_random.Next((DateTime.Today - randomDateTime).Days)),
+                Id = _random.Next(12000),
+                LikeCount = _random.Next(0, 48),
+                Title = RandomizeTitle(),
+            };
+        }
+
+        private static DateTime RandomizeDateTime()
+        {
+            var start = new DateTime(2016, 1, 1);
+            var range = (DateTime.Today - start).Days;
+
+            return start.AddDays(_random.Next(range));
+        }
+
+        private static string RandomizeTitle()
+        {
+            var words = new List<string>
+            {
+                "anemone", "wagstaff", "man", "the", "for",
+                "and", "a", "with", "bird", "fox"
+            };
+            var sentence = new List<string>();
+            while (sentence.Count != words.Count)
+            {
+                var index = _random.Next(0, words.Count);
+                var word = words[index];
+                if (!sentence.Contains(word))
+                {
+                    sentence.Add(word);
+                }
+            }
+
+            return string.Join(" ", sentence).FirstCharToUpper();
+        }
+
+        private static string FirstCharToUpper(this string input)
+        {
+            switch (input)
+            {
+                case null: throw new ArgumentNullException(nameof(input));
+                case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
+                default: return input.First().ToString().ToUpper() + input.Substring(1);
+            }
+        }
+    }
+}
