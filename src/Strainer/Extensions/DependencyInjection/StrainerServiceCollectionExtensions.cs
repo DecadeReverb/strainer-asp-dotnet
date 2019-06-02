@@ -12,6 +12,34 @@ namespace Fluorite.Extensions.DependencyInjection
 {
     public static class StrainerServiceCollectionExtensions
     {
+        private const ServiceLifetime StrainerServicesLifetime = ServiceLifetime.Scoped;
+
+        public static IStrainerBuilder AddCustomFilterMethods<TFilterMethods>(this IStrainerBuilder builder)
+            where TFilterMethods : class, IStrainerCustomFilterMethods
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            builder.Services.TryAddService<IStrainerCustomFilterMethods, TFilterMethods>(StrainerServicesLifetime);
+
+            return builder;
+        }
+
+        public static IStrainerBuilder AddCustomSortMethods<TSortMethods>(this IStrainerBuilder builder)
+            where TSortMethods : class, IStrainerCustomSortMethods
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            builder.Services.TryAddService<IStrainerCustomSortMethods, TSortMethods>(StrainerServicesLifetime);
+
+            return builder;
+        }
+
         public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, Action<StrainerOptions> options)
             where TProcessor : class, IStrainerProcessor
         {
@@ -39,60 +67,61 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
+            if (services.Any(d => d.ServiceType == typeof(IStrainerProcessor)))
+            {
+                throw new InvalidOperationException(
+                    $"Unable to registrer {nameof(IStrainerProcessor)} " +
+                    $"because there is already registered one.");
+            }
+
             using (var provider = services.BuildServiceProvider())
             {
                 // Add Strainer options only if they weren't configured yet.
-                if (!services.Any(d => d.ServiceType == typeof(IOptions<StrainerOptions>)))
+                if (!services.ContainsServiceOfType<IOptions<StrainerOptions>>())
                 {
                     var configuration = provider.GetRequiredService<IConfiguration>();
                     services.Configure<StrainerOptions>(configuration.GetSection("Strainer"));
                 }
             }
 
-            services.AddScoped<IFilterOperatorParser, FilterOperatorParser>();
-            services.AddScoped<IFilterOperatorProvider, FilterOperatorProvider>();
-            services.AddScoped<IFilterOperatorValidator, FilterOperatorValidator>();
-            services.AddScoped<IFilterTermParser, FilterTermParser>();
-            services.AddScoped<IFilteringContext, FilteringContext>();
+            services.TryAddService<IFilterOperatorParser, FilterOperatorParser>(StrainerServicesLifetime);
+            services.TryAddService<IFilterOperatorProvider, FilterOperatorProvider>(StrainerServicesLifetime);
+            services.TryAddService<IFilterOperatorValidator, FilterOperatorValidator>(StrainerServicesLifetime);
+            services.TryAddService<IFilterTermParser, FilterTermParser>(StrainerServicesLifetime);
+            services.TryAddService<IFilteringContext, FilteringContext>(StrainerServicesLifetime);
 
-            services.AddScoped<ISortTermParser, SortTermParser>();
-            services.AddScoped<ISortingContext, SortingContext>();
+            services.TryAddService<ISortTermParser, SortTermParser>(StrainerServicesLifetime);
+            services.TryAddService<ISortingContext, SortingContext>(StrainerServicesLifetime);
 
-            services.AddScoped<IStrainerPropertyMapper, StrainerPropertyMapper>();
+            services.TryAddService<IStrainerPropertyMapper, StrainerPropertyMapper>(StrainerServicesLifetime);
 
-            services.AddScoped<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>();
+            services.TryAddService<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>(StrainerServicesLifetime);
 
-            services.AddScoped<IStrainerContext, StrainerContext>();
+            services.TryAddService<IStrainerContext, StrainerContext>(StrainerServicesLifetime);
 
-            services.AddScoped<IStrainerProcessor, TProcessor>();
+            services.Add<IStrainerProcessor, TProcessor>(StrainerServicesLifetime);
 
             return new StrainerBuilder(services);
         }
 
-        public static IStrainerBuilder AddCustomFilterMethods<TFilterMethods>(this IStrainerBuilder builder)
-            where TFilterMethods : class, IStrainerCustomFilterMethods
+        private static IServiceCollection Add<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            services.Add(new ServiceDescriptor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime));
 
-            builder.Services.AddScoped<IStrainerCustomFilterMethods, TFilterMethods>();
-
-            return builder;
+            return services;
         }
 
-        public static IStrainerBuilder AddCustomSortMethods<TSortMethods>(this IStrainerBuilder builder)
-            where TSortMethods : class, IStrainerCustomSortMethods
+        private static bool ContainsServiceOfType<TImplementationType>(this IServiceCollection services)
         {
-            if (builder == null)
+            return services.Any(d => d.ServiceType == typeof(TImplementationType));
+        }
+
+        private static void TryAddService<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
+        {
+            if (!services.ContainsServiceOfType<TServiceType>())
             {
-                throw new ArgumentNullException(nameof(builder));
+                services.Add<TServiceType, TImplementationType>(serviceLifetime);
             }
-
-            builder.Services.AddScoped<IStrainerCustomSortMethods, TSortMethods>();
-
-            return builder;
         }
     }
 }
