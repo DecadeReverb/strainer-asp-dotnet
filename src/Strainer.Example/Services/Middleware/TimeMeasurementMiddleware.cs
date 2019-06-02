@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 
 namespace Fluorite.Sieve.Example.Services.Middleware
 {
@@ -37,7 +36,7 @@ namespace Fluorite.Sieve.Example.Services.Middleware
         /// <param name="context">
         /// The <see cref="HttpContext"/>.
         /// </param>
-        public async Task Invoke(HttpContext context, IConfiguration configuration)
+        public async Task Invoke(HttpContext context)
         {
             var sw = new Stopwatch();
             sw.Start();
