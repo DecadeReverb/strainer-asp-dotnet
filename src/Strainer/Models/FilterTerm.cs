@@ -28,9 +28,10 @@ namespace Fluorite.Strainer.Models
 
         public bool Equals(FilterTerm other)
         {
-            return Names.SequenceEqual(other.Names)
-                && Values.SequenceEqual(other.Values)
-                && Operator == other.Operator;
+            return other != null
+                && Names.SequenceEqual(other.Names)
+                && Operator == other.Operator
+                && Values.SequenceEqual(other.Values);
         }
     }
 }
