@@ -1,4 +1,4 @@
-﻿using Fluorite.Strainer.Example.Entities;
+﻿using Fluorite.Strainer.ExampleWebApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fluorite.Sieve.Example.Data

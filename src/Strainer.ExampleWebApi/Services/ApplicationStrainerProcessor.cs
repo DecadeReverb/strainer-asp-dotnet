@@ -1,7 +1,7 @@
-﻿using Fluorite.Strainer.Example.Entities;
+﻿using Fluorite.Strainer.ExampleWebApi.Entities;
 using Fluorite.Strainer.Services;
 
-namespace Fluorite.Strainer.Example.Services
+namespace Fluorite.Strainer.ExampleWebApi.Services
 {
     public class ApplicationStrainerProcessor : StrainerProcessor
     {

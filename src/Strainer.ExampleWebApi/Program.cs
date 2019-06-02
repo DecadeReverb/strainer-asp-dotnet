@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Fluorite.Strainer.Example
+namespace Fluorite.Strainer.ExampleWebApi
 {
     public class Program
     {

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AssemblyName>Fluorite.Sieve.Example</AssemblyName>
-    <RootNamespace>Fluorite.Sieve.Example</RootNamespace>
+    <AssemblyName>Fluorite.Strainer.ExampleWebApi</AssemblyName>
+    <RootNamespace>Fluorite.Strainer.ExampleWebApi</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

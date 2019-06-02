@@ -222,7 +222,7 @@ It is recommended that you write exception-handling middleware to globally handl
 
 ### Example project
 
-You can find an example project incorporating most Strainer concepts in [Strainer.Example](https://gitlab.com/fluorite/strainer/tree/master/src/Strainer.Example).
+You can find an example project incorporating most Strainer concepts in [Strainer.ExampleWebApi](https://gitlab.com/fluorite/strainer/tree/master/src/Strainer.ExampleWebApi).
 
 ## Fluent API
 

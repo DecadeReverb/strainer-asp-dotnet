@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fluorite.Strainer.Example.Entities;
+using Fluorite.Strainer.ExampleWebApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fluorite.Sieve.Example.Data

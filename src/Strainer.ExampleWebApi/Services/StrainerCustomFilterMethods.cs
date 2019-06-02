@@ -1,8 +1,8 @@
 ﻿using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Example.Entities;
+using Fluorite.Strainer.ExampleWebApi.Entities;
 using System.Linq;
 
-namespace Fluorite.Strainer.Example.Services
+namespace Fluorite.Strainer.ExampleWebApi.Services
 {
 	public class StrainerCustomFilterMethods : IStrainerCustomFilterMethods
     {

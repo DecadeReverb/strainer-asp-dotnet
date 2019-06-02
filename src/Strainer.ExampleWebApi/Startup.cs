@@ -1,7 +1,7 @@
 ﻿using Fluorite.Extensions.Builder;
 using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Sieve.Example.Data;
-using Fluorite.Strainer.Example.Services;
+using Fluorite.Strainer.ExampleWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace Fluorite.Strainer.Example
+namespace Fluorite.Strainer.ExampleWebApi
 {
     public class Startup
     {
