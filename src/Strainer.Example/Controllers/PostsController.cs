@@ -30,8 +30,7 @@ namespace Fluorite.Strainer.Example.Controllers
             return Json(result);
         }
 
-        [HttpGet()]
-        [Route("[action]")]
+        [HttpGet("[action]")]
         public async Task<ActionResult<List<Post>>> GetAllWithStrainer([FromQuery] StrainerModel strainerModel)
         {
             var source = _dbContext.Posts.AsNoTracking();
