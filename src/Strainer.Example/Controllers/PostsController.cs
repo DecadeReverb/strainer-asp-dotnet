@@ -6,7 +6,6 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Fluorite.Strainer.Example.Controllers
 {
@@ -26,16 +25,14 @@ namespace Fluorite.Strainer.Example.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Post>>> Index()
         {
-            var result = await _dbContext.Posts.ToListAsync();
+            var result = await _dbContext.Posts.AsNoTracking().ToListAsync();
 
-            return Json(result, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return Json(result);
         }
 
-        [HttpGet("[action]")]
-        public async Task<ActionResult<List<Post>>> GetAllWithStrainer(StrainerModel strainerModel)
+        [HttpGet()]
+        [Route("[action]")]
+        public async Task<ActionResult<List<Post>>> GetAllWithStrainer([FromQuery] StrainerModel strainerModel)
         {
             var source = _dbContext.Posts.AsNoTracking();
             var result = _strainerProcessor.Apply(strainerModel, source);
