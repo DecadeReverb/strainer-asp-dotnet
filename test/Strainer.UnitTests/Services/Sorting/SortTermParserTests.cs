@@ -7,7 +7,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
     public class SortTermParserTests
     {
         [Fact]
-        public void Parser_ReturnsSortTerm_WhenInputIsNull()
+        public void Parser_ReturnsNoSortTerm_WhenInputIsNull()
         {
             // Arrange
             string input = null;
@@ -23,7 +23,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         }
 
         [Fact]
-        public void Parser_ReturnsSortTerm_WhenInputIsEmpty()
+        public void Parser_ReturnsNoSortTerm_WhenInputIsEmpty()
         {
             // Arrange
             var input = string.Empty;
@@ -39,7 +39,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         }
 
         [Fact]
-        public void Parser_ReturnsSortTerm_WhenInputIsOnlyWhitespace()
+        public void Parser_ReturnsNoSortTerm_WhenInputIsOnlyWhitespace()
         {
             // Arrange
             var input = string.Empty;
