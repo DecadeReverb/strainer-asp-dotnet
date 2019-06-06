@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
         }
 
-        public string Format(string input)
+        public string Format(string input, bool isDescending)
         {
             if (input == null)
             {
@@ -22,10 +22,10 @@ namespace Fluorite.Strainer.Services.Sorting
             {
                 return input;
             }
-            else
-            {
-                return DescendingWaySortingPrefix + input;
-            }
+
+            return isDescending
+                ? DescendingWaySortingPrefix + input
+                : input;
         }
 
         public bool IsDescending(string input)
