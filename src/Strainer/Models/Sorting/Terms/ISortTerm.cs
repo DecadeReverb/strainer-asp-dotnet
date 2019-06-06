@@ -1,4 +1,4 @@
-﻿namespace Fluorite.Strainer.Models
+﻿namespace Fluorite.Strainer.Models.Sorting.Terms
 {
 	public interface ISortTerm
     {

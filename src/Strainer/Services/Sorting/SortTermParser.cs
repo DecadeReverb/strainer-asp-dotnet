@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Fluorite.Strainer.Models.Sorting.Terms;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Fluorite.Strainer.Models;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
