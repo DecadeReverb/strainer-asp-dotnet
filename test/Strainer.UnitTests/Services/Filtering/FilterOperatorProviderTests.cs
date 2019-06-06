@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using Fluorite.Strainer.Services.Filtering;
 using Xunit;
 
@@ -26,38 +27,34 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         }
 
         [Fact]
-        public void Provider_ReturnsDefaultFilterOperator_WhenNoMatchingOperatorIsFound()
+        public void Provider_ReturnsNull_WhenNoMatchingOperatorIsFound()
         {
             // Arrange
-            var filterOperator = string.Empty;
+            var @operator = string.Empty;
             IFilterOperatorProvider provider = new FilterOperatorProvider();
 
             // Act
-            var defaultFilterOperator = provider.GetFirstOrDefault(filterOperator);
+            var filterOperator = provider.FirstOrDefault(f => f.Operator == @operator);
 
             // Assert
-            defaultFilterOperator
+            filterOperator
                 .Should()
-                .NotBeNull();
-            defaultFilterOperator
-                .IsDefault
-                .Should()
-                .BeTrue();
+                .BeNull();
         }
 
         [Fact]
-        public void Provider_ReturnsFilterOperatorList()
+        public void Provider_IsNotEmpty()
         {
             // Arrange
             IFilterOperatorProvider provider = new FilterOperatorProvider();
 
             // Act
-            var filterOperators = provider.Operators;
+            var filterOperatorsAmount = provider.Count();
 
             // Assert
-            filterOperators
+            filterOperatorsAmount
                 .Should()
-                .NotBeEmpty();
+                .BeGreaterThan(0);
         }
     }
 }

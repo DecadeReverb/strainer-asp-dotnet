@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Fluorite.Strainer.Models;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
-    public interface IFilterOperatorProvider
+    public interface IFilterOperatorProvider : IEnumerable<IFilterOperator>, IEnumerable
     {
-        IReadOnlyList<IFilterOperator> Operators { get; }
-
-        void AddOperator(IFilterOperator @operator);
         IFilterOperator GetDefaultOperator();
-        IFilterOperator GetFirstOrDefault(string @operator);
     }
 }

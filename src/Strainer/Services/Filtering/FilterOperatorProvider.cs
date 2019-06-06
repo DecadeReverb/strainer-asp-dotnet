@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fluorite.Strainer.Models;
@@ -25,37 +25,13 @@ namespace Fluorite.Strainer.Services.Filtering
             };
         }
 
-        public IReadOnlyList<IFilterOperator> Operators => _operators.AsReadOnly();
-
-        public void AddOperator(IFilterOperator @operator)
-        {
-            if (@operator == null)
-            {
-                throw new ArgumentNullException(nameof(@operator));
-            }
-
-            // TODO:
-            // Perform validation checks before adding new operator.
-
-            _operators.Add(@operator);
-        }
-
         public IFilterOperator GetDefaultOperator()
         {
             return _operators.FirstOrDefault(f => f.IsDefault);
         }
 
-        public IFilterOperator GetFirstOrDefault(string @operator)
-        {
-            if (string.IsNullOrWhiteSpace(@operator))
-            {
-                throw new ArgumentException(
-                    $"{nameof(@operator)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(@operator));
-            }
+        public IEnumerator<IFilterOperator> GetEnumerator() => _operators.GetEnumerator();
 
-            return _operators.FirstOrDefault(f => f.Operator == @operator);
-        }
+        IEnumerator IEnumerable.GetEnumerator() => _operators.GetEnumerator();
     }
 }
