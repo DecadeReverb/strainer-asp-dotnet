@@ -1,4 +1,4 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
 
 namespace Fluorite.Strainer.Services.Filtering
 {

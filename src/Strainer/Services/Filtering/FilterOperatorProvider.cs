@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering.Operators;
 
 namespace Fluorite.Strainer.Services.Filtering
 {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Models
 {
