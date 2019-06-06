@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models.Filtering.Terms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering.Operators;
 
 namespace Fluorite.Strainer.Services.Filtering
 {

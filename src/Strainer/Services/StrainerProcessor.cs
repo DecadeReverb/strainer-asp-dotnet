@@ -1,13 +1,14 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using Fluorite.Strainer.Attributes;
+﻿using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Extensions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models.Filtering.Terms;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {

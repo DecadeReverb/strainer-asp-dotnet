@@ -1,7 +1,7 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
 using System.Collections.Generic;
 
-namespace Fluorite.Strainer.Models
+namespace Fluorite.Strainer.Models.Filtering.Terms
 {
     public interface IFilterTerm
     {

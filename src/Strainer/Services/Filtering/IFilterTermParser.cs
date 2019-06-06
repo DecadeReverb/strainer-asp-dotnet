@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models.Filtering.Terms;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Filtering
 {

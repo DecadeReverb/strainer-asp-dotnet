@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fluorite.Strainer.Models
+namespace Fluorite.Strainer.Models.Filtering.Terms
 {
     public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     {
