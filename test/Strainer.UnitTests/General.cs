@@ -30,8 +30,9 @@ namespace Fluorite.Strainer.UnitTests
             var filterTermParser = new FilterTermParser(filterOperatorParser);
             var filteringContext = new FilteringContext(filterOperatorParser, filterOperatorProvider, filterOperatorValidator, filterTermParser);
 
-            var sortTermParser = new SortTermParser();
-            var sortingContext = new SortingContext(sortTermParser);
+            var sortingWayFormatter = new SortingWayFormatter();
+            var sortTermParser = new SortTermParser(sortingWayFormatter);
+            var sortingContext = new SortingContext(sortingWayFormatter, sortTermParser);
 
             var mapper = new StrainerPropertyMapper();
 

@@ -7,12 +7,13 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortTermParser : ISortTermParser
     {
-        private const string DescendingWaySortingPrefix = "-";
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
 
-        public SortTermParser()
-        {
+        private readonly ISortingWayFormatter _formatter;
 
+        public SortTermParser(ISortingWayFormatter formatter)
+        {
+            _formatter = formatter;
         }
 
         public IList<ISortTerm> GetParsedTerms(string input)
@@ -35,8 +36,8 @@ namespace Fluorite.Strainer.Services.Sorting
                 var sortTerm = new SortTerm()
                 {
                     Input = part,
-                    IsDescending = CheckIsDescending(part),
-                    Name = ParseName(part),
+                    IsDescending = _formatter.IsDescending(part),
+                    Name = _formatter.Unformat(part),
                 };
 
                 if (!value.Any(s => s.Name == sortTerm.Name))
@@ -46,18 +47,6 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             return value;
-        }
-
-        private static string ParseName(string input)
-        {
-            return input.StartsWith(DescendingWaySortingPrefix)
-                ? input.Substring(1)
-                : input;
-        }
-
-        private bool CheckIsDescending(string input)
-        {
-            return input.StartsWith(DescendingWaySortingPrefix);
         }
     }
 }

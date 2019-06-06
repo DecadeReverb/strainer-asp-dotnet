@@ -2,10 +2,13 @@
 {
     public class SortingContext : ISortingContext
     {
-        public SortingContext(ISortTermParser parser)
+        public SortingContext(ISortingWayFormatter formatter, ISortTermParser parser)
         {
+            Formatter = formatter;
             TermParser = parser;
         }
+
+        public ISortingWayFormatter Formatter { get; }
 
         public ISortTermParser TermParser { get; }
     }

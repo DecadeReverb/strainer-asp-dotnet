@@ -2,6 +2,7 @@
 {
     public interface ISortingContext
     {
+        ISortingWayFormatter Formatter { get; }
         ISortTermParser TermParser { get; }
     }
 }
