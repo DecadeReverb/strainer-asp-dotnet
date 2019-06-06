@@ -1,0 +1,58 @@
+﻿using System;
+
+namespace Fluorite.Strainer.Services.Sorting
+{
+    public class SortingWayFormatter : ISortingWayFormatter
+    {
+        public static readonly string DescendingWaySortingPrefix = "-";
+
+        public SortingWayFormatter()
+        {
+
+        }
+
+        public string Format(string input)
+        {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return input;
+            }
+            else
+            {
+                return DescendingWaySortingPrefix + input;
+            }
+        }
+
+        public bool IsDescending(string input)
+        {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            return input.TrimStart().StartsWith(DescendingWaySortingPrefix);
+        }
+
+        public string Unformat(string input)
+        {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return input;
+            }
+            else
+            {
+                return input.TrimStart().TrimStart(DescendingWaySortingPrefix[0]);
+            }
+        }
+    }
+}
