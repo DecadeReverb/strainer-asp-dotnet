@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(input));
             }
 
-            return input.TrimStart().StartsWith(DescendingWaySortingPrefix);
+            return input.StartsWith(DescendingWaySortingPrefix);
         }
 
         public string Unformat(string input)
@@ -51,7 +51,9 @@ namespace Fluorite.Strainer.Services.Sorting
             }
             else
             {
-                return input.TrimStart().TrimStart(DescendingWaySortingPrefix[0]);
+                return input.StartsWith(DescendingWaySortingPrefix)
+                    ? input.Substring(1)
+                    : input;
             }
         }
     }
