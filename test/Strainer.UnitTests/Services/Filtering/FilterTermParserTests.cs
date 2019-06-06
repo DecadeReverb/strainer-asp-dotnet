@@ -7,7 +7,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
     public class FilterTermParserTests
     {
         [Fact]
-        public void Parser_ReturnsFilterTerm_WhenInputIsNull()
+        public void Parser_ReturnsNoFilterTerms_WhenInputIsNull()
         {
             // Arrange
             string input = null;
@@ -25,7 +25,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         }
 
         [Fact]
-        public void Parser_ReturnsFilterTerm_WhenInputIsEmpty()
+        public void Parser_ReturnsNoFilterTerms_WhenInputIsEmpty()
         {
             // Arrange
             var input = string.Empty;
@@ -43,7 +43,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         }
 
         [Fact]
-        public void Parser_ReturnsFilterTerm_WhenInputIsOnlyWhitespace()
+        public void Parser_ReturnsNoFilterTerms_WhenInputIsOnlyWhitespace()
         {
             // Arrange
             var input = string.Empty;
