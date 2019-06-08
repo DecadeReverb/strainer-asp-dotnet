@@ -4,10 +4,10 @@ using System.Diagnostics;
 namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
-    /// Represents filter operator.
+    /// Represents base filter operator.
     /// </summary>
     [DebuggerDisplay("{Operator,nq} {Name,nq}")]
-    public abstract class FilterOperator : IFilterOperator/*, IEquatable<FilterOperator>*/
+    public abstract class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
     {
         /// <summary>
         /// Initializes new instance of <see cref="FilterOperator"/> class
@@ -76,6 +76,23 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// Gets the <see cref="string"/> representation of operator.
         /// </summary>
         public string Operator { get; }
+
+        /// <summary>
+        /// Checks if current instance of <see cref="FilterOperator"/> is equal
+        /// to other <see cref="FilterOperator"/> instance.
+        /// </summary>
+        /// <param name="other">
+        /// Other <see cref="FilterOperator"/> instance.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if provided other <see cref="object"/>
+        /// instance is equal to the current one; otherwise <see langword="false"/>.
+        /// </returns>
+        public bool Equals(FilterOperator other)
+        {
+            return other != null
+                && Operator.Equals(other.Operator, StringComparison.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         /// Returns a <see cref="string"/> that represents the current <see cref="FilterOperator"/>.
