@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes new instance of <see cref="LessThanOrEqualToOperator"/> class.
         /// </summary>
-        public LessThanOrEqualToOperator() : base(name: "less than or equal to", @operator: "<=")
+        public LessThanOrEqualToOperator() : base(name: "less than or equal to", symbol: "<=")
         {
 
         }

@@ -26,10 +26,10 @@ namespace Fluorite.Strainer.Services.Filtering
                     $"cannot be null, empty or contain only whitespace characaters.");
             }
 
-            if (string.IsNullOrWhiteSpace(filterOperator.Operator))
+            if (string.IsNullOrWhiteSpace(filterOperator.Symbol))
             {
                 throw new InvalidOperationException(
-                    $"{nameof(IFilterOperator.Operator)}] of filter operator " +
+                    $"{nameof(IFilterOperator.Symbol)}] of filter operator " +
                     $"cannot be null, empty or contain only whitespace characaters.");
             }
         }

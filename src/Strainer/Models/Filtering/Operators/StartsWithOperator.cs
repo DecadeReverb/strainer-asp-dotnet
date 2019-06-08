@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes new instance of <see cref="StartsWithOperator"/> class.
         /// </summary>
-        public StartsWithOperator() : base(name: "starts with", @operator: "_=")
+        public StartsWithOperator() : base(name: "starts with", symbol: "_=")
         {
 
         }

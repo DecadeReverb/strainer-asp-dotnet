@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes new instance of <see cref="GreaterThanOperator"/> class.
         /// </summary>
-        public GreaterThanOperator() : base(name: "greater than", @operator: ">")
+        public GreaterThanOperator() : base(name: "greater than", symbol: ">")
         {
 
         }

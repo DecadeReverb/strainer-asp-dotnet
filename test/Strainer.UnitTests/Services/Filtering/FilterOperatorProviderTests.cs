@@ -34,7 +34,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             IFilterOperatorProvider provider = new FilterOperatorProvider();
 
             // Act
-            var filterOperator = provider.FirstOrDefault(f => f.Operator == @operator);
+            var filterOperator = provider.FirstOrDefault(f => f.Symbol == @operator);
 
             // Assert
             filterOperator

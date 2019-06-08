@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes new instance of <see cref="EqualsOperator"/> class.
         /// </summary>
-        public EqualsOperator() : base(name: "equals", @operator: "==")
+        public EqualsOperator() : base(name: "equals", symbol: "==")
         {
 
         }

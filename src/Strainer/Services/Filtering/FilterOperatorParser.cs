@@ -25,7 +25,7 @@ namespace Fluorite.Strainer.Services.Filtering
             // TODO:
             // Store somewhere info about case insensitivity asterisk suffix
             // and negation exclamation mark prefix.
-            return OperatorProvider.FirstOrDefault(f => f.Operator == input.TrimEnd('*')) // Case sensivity variations;
+            return OperatorProvider.FirstOrDefault(f => f.Symbol == input.TrimEnd('*')) // Case sensivity variations;
                 ?? OperatorProvider.GetDefaultOperator();
         }
 
@@ -46,8 +46,8 @@ namespace Fluorite.Strainer.Services.Filtering
             // and negation exclamation mark prefix.
             return OperatorProvider.FirstOrDefault(f =>
             {
-                return f.Operator == input.TrimEnd('*')     // Case sensivity variations
-                    || f.Operator == input.TrimStart('!');  // Negated variations
+                return f.Symbol == input.TrimEnd('*')     // Case sensivity variations
+                    || f.Symbol == input.TrimStart('!');  // Negated variations
             }) ?? OperatorProvider.GetDefaultOperator();
         }
     }

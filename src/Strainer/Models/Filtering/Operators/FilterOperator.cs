@@ -6,7 +6,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
     /// <summary>
     /// Represents base filter operator.
     /// </summary>
-    [DebuggerDisplay("{Operator,nq} {Name,nq}")]
+    [DebuggerDisplay("{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}")]
     public abstract class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
     {
         /// <summary>
@@ -16,7 +16,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// <param name="name">
         /// The name of filter operator.
         /// </param>
-        /// <param name="operator">
+        /// <param name="symbol">
         /// <see cref="string"/> representation of the operator.
         /// </param>
         /// <exception cref="ArgumentException">
@@ -27,7 +27,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// <paramref name="@operator"/> is <see langword="null"/>, empty
         /// or contains only whitespace characters.
         /// </exception>
-        protected FilterOperator(string name, string @operator)
+        protected FilterOperator(string name, string symbol)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -37,21 +37,21 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
                     nameof(name));
             }
 
-            if (string.IsNullOrWhiteSpace(@operator))
+            if (string.IsNullOrWhiteSpace(symbol))
             {
                 throw new ArgumentException(
-                    $"{nameof(@operator)} cannot be null, empty " +
+                    $"{nameof(symbol)} cannot be null, empty " +
                     $"or contain only whitespace characaters.",
-                    nameof(@operator));
+                    nameof(symbol));
             }
 
             Name = name;
-            Operator = @operator;
+            Symbol = symbol;
         }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator is case insensitive
+        /// operator is case insensitive.
         /// </summary>
         public virtual bool IsCaseInsensitive { get; }
 
@@ -63,7 +63,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator is a negated version of different operator.
+        /// operator is a negated version of a different operator.
         /// </summary>
         public virtual bool IsNegated { get; }
 
@@ -75,7 +75,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// <summary>
         /// Gets the <see cref="string"/> representation of operator.
         /// </summary>
-        public string Operator { get; }
+        public string Symbol { get; }
 
         /// <summary>
         /// Checks if current instance of <see cref="FilterOperator"/> is equal
@@ -91,7 +91,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         public bool Equals(FilterOperator other)
         {
             return other != null
-                && Operator.Equals(other.Operator, StringComparison.OrdinalIgnoreCase);
+                && Symbol.Equals(other.Symbol, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// </returns>
         public override string ToString()
         {
-            return $"{Operator} {Name}";
+            return $"{Symbol} {Name}";
         }
     }
 }

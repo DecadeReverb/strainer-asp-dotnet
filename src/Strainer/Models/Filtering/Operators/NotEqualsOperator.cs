@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes new instance of <see cref="NotEqualsOperator"/> class.
         /// </summary>
-        public NotEqualsOperator() : base(name: "not equals", @operator: "!=")
+        public NotEqualsOperator() : base(name: "not equals", symbol: "!=")
         {
 
         }

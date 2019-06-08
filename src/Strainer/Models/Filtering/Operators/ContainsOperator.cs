@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes new instance of <see cref="ContainsOperator"/> class.
         /// </summary>
-        public ContainsOperator() : base(name: "contains", @operator: "@=")
+        public ContainsOperator() : base(name: "contains", symbol: "@=")
         {
 
         }

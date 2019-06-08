@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes new instance of <see cref="LessThanOperator"/> class.
         /// </summary>
-        public LessThanOperator() : base(name: "less than", @operator: "<")
+        public LessThanOperator() : base(name: "less than", symbol: "<")
         {
 
         }

@@ -1,13 +1,13 @@
 ﻿namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
-    /// Defines minimum requirements for filter operator.
+    /// Provides information about filtering symbol.
     /// </summary>
     public interface IFilterOperator
     {
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator is case insensitive
+        /// operator is case insensitive.
         /// </summary>
         bool IsCaseInsensitive { get; }
 
@@ -19,7 +19,7 @@
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator is a negated version of different operator.
+        /// operator is a negated version of a different operator.
         /// </summary>
         bool IsNegated { get; }
 
@@ -31,6 +31,6 @@
         /// <summary>
         /// Gets the <see cref="string"/> representation of operator.
         /// </summary>
-        string Operator { get; }
+        string Symbol { get; }
     }
 }
