@@ -2,9 +2,9 @@
 {
 	public interface IStrainerPropertyMetadata
     {
-        bool CanFilter { get; }
-        bool CanSort { get; }
-        string FullName { get; }
+        string DisplayName { get; }
+        bool IsFilterable { get; }
+        bool IsSortable { get; }
         string Name { get; }
     }
 }

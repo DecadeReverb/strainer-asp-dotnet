@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
             mapper.Property<Post>(p => p.Title)
                 .CanSort()
                 .CanFilter()
-                .HasName("CustomTitleName");
+                .HasDisplayName("CustomTitleName");
 
             return mapper;
         }

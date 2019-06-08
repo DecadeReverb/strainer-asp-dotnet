@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             mapper.Property<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .CanSort()
                 .CanFilter()
-                .HasName("shortname");
+                .HasDisplayName("shortname");
 
             mapper.Property<Post>(p => p.TopComment.Text)
                 .CanFilter();
@@ -28,11 +28,11 @@ namespace Fluorite.Strainer.UnitTests.Services
 
             mapper.Property<Post>(p => p.TopComment.Text)
                 .CanFilter()
-                .HasName("topc");
+                .HasDisplayName("topc");
 
             mapper.Property<Post>(p => p.FeaturedComment.Text)
                 .CanFilter()
-                .HasName("featc");
+                .HasDisplayName("featc");
 
             return mapper;
         }

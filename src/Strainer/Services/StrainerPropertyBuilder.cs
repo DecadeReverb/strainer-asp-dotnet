@@ -16,13 +16,13 @@ namespace Fluorite.Strainer.Services
             }
 
             Mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
-            (FullName, PropertyInfo) = GetPropertyInfo(expression);
-            Name = FullName;
+            (Name, PropertyInfo) = GetPropertyInfo(expression);
+            DisplayName = Name;
             IsFilterable = false;
             IsSortable = false;
         }
 
-        public string FullName { get; protected set; }
+        public string DisplayName { get; protected set; }
         public bool IsFilterable { get; protected set; }
         public bool IsSortable { get; protected set; }
         public string Name { get; protected set; }
@@ -46,17 +46,17 @@ namespace Fluorite.Strainer.Services
             return this;
         }
 
-        public IStrainerPropertyBuilder<TEntity> HasName(string name)
+        public IStrainerPropertyBuilder<TEntity> HasDisplayName(string displayName)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(displayName))
             {
                 throw new ArgumentException(
-                    $"{nameof(name)} cannot be null, empty " +
+                    $"{nameof(displayName)} cannot be null, empty " +
                     $"or contain only whitespace characaters.",
-                    nameof(name));
+                    nameof(displayName));
             }
 
-            Name = name;
+            DisplayName = displayName;
             UpdateMap();
 
             return this;
@@ -66,10 +66,10 @@ namespace Fluorite.Strainer.Services
         {
             var metadata = new StrainerPropertyMetadata()
             {
+                DisplayName = DisplayName,
+                IsFilterable = IsFilterable,
+                IsSortable = IsSortable,
                 Name = Name,
-                FullName = FullName,
-                CanFilter = IsFilterable,
-                CanSort = IsSortable
             };
 
             Mapper.AddMap<TEntity>(PropertyInfo, metadata);

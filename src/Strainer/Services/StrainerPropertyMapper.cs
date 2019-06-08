@@ -9,11 +9,11 @@ namespace Fluorite.Strainer.Services
 {
 	public class StrainerPropertyMapper : IStrainerPropertyMapper
     {
-        private readonly Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>> _map;
+        private readonly Dictionary<Type, ISet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>> _map;
 
         public StrainerPropertyMapper()
         {
-            _map = new Dictionary<Type, ICollection<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>>();
+            _map = new Dictionary<Type, ISet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>>();
         }
 
         public void AddMap<TEntity>(PropertyInfo propertyInfo, IStrainerPropertyMetadata metadata)
@@ -40,13 +40,16 @@ namespace Fluorite.Strainer.Services
         {
             try
             {
+                var comparisonMethod = isCaseSensitive
+                    ? StringComparison.Ordinal
+                    : StringComparison.OrdinalIgnoreCase;
                 var result = _map[typeof(TEntity)]
-                    .FirstOrDefault(kv =>
-                    kv.Value.Name.Equals(name, isCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase)
-                    && (!canSortRequired || kv.Value.CanSort)
-                    && (!canFilterRequired || kv.Value.CanFilter));
+                    .FirstOrDefault(pair =>
+                        pair.Value.DisplayName.Equals(name, comparisonMethod)
+                        && (!canSortRequired || pair.Value.IsSortable)
+                        && (!canFilterRequired || pair.Value.IsFilterable));
 
-                return (result.Value?.FullName, result.Key);
+                return (result.Value?.Name, result.Key);
             }
             catch (Exception ex) when (ex is KeyNotFoundException || ex is ArgumentNullException)
             {
@@ -63,7 +66,7 @@ namespace Fluorite.Strainer.Services
 
             if (!_map.ContainsKey(typeof(TEntity)))
             {
-                _map.Add(typeof(TEntity), new List<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>());
+                _map.Add(typeof(TEntity), new HashSet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>());
             }
 
             return new StrainerPropertyBuilder<TEntity>(this, expression);

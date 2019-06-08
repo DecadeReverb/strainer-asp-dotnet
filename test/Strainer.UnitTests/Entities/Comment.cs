@@ -7,10 +7,10 @@ namespace Fluorite.Strainer.UnitTests.Entities
     {
         public int Id { get; set; }
 
-        [Strainer(CanFilter = true, CanSort = true)]
+        [Strainer(IsFilterable = true, IsSortable = true)]
         public DateTimeOffset DateCreated { get; set; } = DateTimeOffset.UtcNow;
 
-        [Strainer(CanFilter = true)]
+        [Strainer(IsFilterable = true)]
         public string Text { get; set; }
     }
 }
