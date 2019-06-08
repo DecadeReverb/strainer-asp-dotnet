@@ -192,23 +192,23 @@ You can replace this DSL with your own (eg. use JSON instead) by implementing an
 
 ### Operators
 
-| Operator   | Meaning                  |
-|------------|--------------------------|
-| `==`       | Equals                   |
-| `!=`       | Not equals               |
-| `>`        | Greater than             |
-| `<`        | Less than                |
-| `>=`       | Greater than or equal to |
-| `<=`       | Less than or equal to    |
-| `@=`       | Contains                 |
-| `_=`       | Starts with              |
-| `!@=`      | Does not Contains        |
-| `!_=`      | Does not Starts with     |
-| `@=*`      | Case-insensitive string Contains |
-| `_=*`      | Case-insensitive string Starts with |
-| `==*`      | Case-insensitive string Equals |
-| `!@=*`     | Case-insensitive string does not Contains |
-| `!_=*`     | Case-insensitive string does not Starts with |
+| Operator   | Meaning                                      |
+|------------|----------------------------------------------|
+| `==`       | Equals                                       |
+| `!=`       | Not equals                                   |
+| `>`        | Greater than                                 |
+| `<`        | Less than                                    |
+| `>=`       | Greater than or equal to                     |
+| `<=`       | Less than or equal to                        |
+| `@=`       | Contains                                     |
+| `_=`       | Starts with                                  |
+| `!@=`      | Does not contain                             |
+| `!_=`      | Does not start with                          |
+| `@=*`      | Contains _(case-insensitive)_                |
+| `_=*`      | Starts with _(case-insensitive)_             |
+| `==*`      | Equals _(case-insensitive)_                  |
+| `!@=*`     | Does not contain _(case-insensitive)_        |
+| `!_=*`     | Does not start with _(case-insensitive)_     |
 
 ### Handle Strainer's exceptions
 
