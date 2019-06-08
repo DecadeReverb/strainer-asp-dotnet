@@ -120,7 +120,11 @@ namespace Fluorite.Strainer.Services
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var (fullName, property) = GetStrainerProperty<TEntity>(false, true, filterTermName);
+                    var (fullName, property) = GetStrainerProperty<TEntity>(
+                        isSortingRequired: false,
+                        ifFileringRequired: true,
+                        name: filterTermName);
+
                     if (property != null)
                     {
                         var converter = TypeDescriptor.GetConverter(property.PropertyType);
@@ -273,7 +277,10 @@ namespace Fluorite.Strainer.Services
             var useThenBy = false;
             foreach (var sortTerm in parsedTerms)
             {
-                var (fullName, property) = GetStrainerProperty<TEntity>(true, false, sortTerm.Name);
+                var (fullName, property) = GetStrainerProperty<TEntity>(
+                    isSortingRequired: true,
+                    ifFileringRequired: false,
+                    name: sortTerm.Name);
 
                 if (property != null)
                 {
@@ -320,21 +327,21 @@ namespace Fluorite.Strainer.Services
         }
 
         private (string, PropertyInfo) GetStrainerProperty<TEntity>(
-            bool canSortRequired,
-            bool canFilterRequired,
+            bool isSortingRequired,
+            bool ifFileringRequired,
             string name)
         {
             var property = Context.Mapper.FindProperty<TEntity>(
-                canSortRequired,
-                canFilterRequired,
+                isSortingRequired,
+                ifFileringRequired,
                 name,
                 Context.Options.CaseSensitive);
 
             if (property.Item1 == null)
             {
                 var prop = FindPropertyByStrainerAttribute<TEntity>(
-                    canSortRequired,
-                    canFilterRequired,
+                    isSortingRequired,
+                    ifFileringRequired,
                     name,
                     Context.Options.CaseSensitive);
 
@@ -346,8 +353,8 @@ namespace Fluorite.Strainer.Services
         }
 
         private PropertyInfo FindPropertyByStrainerAttribute<TEntity>(
-            bool canSortRequired,
-            bool canFilterRequired,
+            bool isSortingRequired,
+            bool isFilteringRequired,
             string name,
             bool isCaseSensitive)
         {
@@ -358,8 +365,8 @@ namespace Fluorite.Strainer.Services
                     ? StringComparison.Ordinal
                     : StringComparison.OrdinalIgnoreCase;
 
-                return (canSortRequired ? strainerAttribute.IsSortable : true)
-                    && (canFilterRequired ? strainerAttribute.IsFilterable : true)
+                return (isSortingRequired ? strainerAttribute.IsSortable : true)
+                    && (isFilteringRequired ? strainerAttribute.IsFilterable : true)
                     && ((strainerAttribute.DisplayName ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
             });
         }
@@ -411,8 +418,13 @@ namespace Fluorite.Strainer.Services
                 {
                     var expected = typeof(IQueryable<TEntity>);
                     var actual = incompatibleCustomMethod.ReturnType;
-                    throw new StrainerIncompatibleMethodException(name, expected, actual,
-                        $"{name} failed. Expected a custom method for type {expected} but only found for type {actual}");
+
+                    throw new StrainerIncompatibleMethodException(
+                        name,
+                        expected,
+                        actual,
+                            $"{name} failed. Expected a custom method for type " +
+                            $"{expected} but only found for type {actual}");
                 }
                 else
                 {
