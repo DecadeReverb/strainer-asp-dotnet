@@ -358,14 +358,17 @@ namespace Fluorite.Strainer.Services
             string name,
             bool isCaseSensitive)
         {
-            return Array.Find(typeof(TEntity).GetProperties(), propertyInfo =>
+            var stringComparisonMethod = isCaseSensitive
+                ? StringComparison.Ordinal
+                : StringComparison.OrdinalIgnoreCase;
+            var properties = typeof(TEntity).GetProperties();
+
+            return Array.Find(properties, propertyInfo =>
             {
                 var strainerAttribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
-                var stringComparisonMethod = isCaseSensitive
-                    ? StringComparison.Ordinal
-                    : StringComparison.OrdinalIgnoreCase;
 
-                return (isSortingRequired ? strainerAttribute.IsSortable : true)
+                return strainerAttribute != null
+                    && (isSortingRequired ? strainerAttribute.IsSortable : true)
                     && (isFilteringRequired ? strainerAttribute.IsFilterable : true)
                     && ((strainerAttribute.DisplayName ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
             });

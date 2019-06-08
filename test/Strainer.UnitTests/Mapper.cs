@@ -96,7 +96,10 @@ namespace Fluorite.Strainer.UnitTests
 
             var result = _processor.Apply(model, _posts, applyFiltering: false, applyPagination: false);
 
-            Assert.ThrowsException<StrainerMethodNotFoundException>(() => _processor.Apply(model, _posts));
+            Assert.ThrowsException<StrainerMethodNotFoundException>(() =>
+            {
+                _processor.Apply(model, _posts);
+            });
 
             Assert.AreEqual(result.First().Id, 3);
 
