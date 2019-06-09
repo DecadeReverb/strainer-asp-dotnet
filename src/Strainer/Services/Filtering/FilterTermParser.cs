@@ -130,9 +130,8 @@ namespace Fluorite.Strainer.Services.Filtering
             var operatorIsCaseInsensitive = CheckIfFilterOperatorIsCaseInsensitive(@operator);
             var operatorIsNegated = CheckIfFilterOperatorIsNegated(@operator, operatorParsed);
 
-            return new FilterTerm
+            return new FilterTerm(input)
             {
-                Input = input,
                 Names = names,
                 Values = values,
                 Operator = @operator,
