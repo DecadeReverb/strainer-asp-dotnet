@@ -2,7 +2,7 @@
 
 To reach version 3.0.0 Strainer met heavy refactoring. Whole bunch of new interfaces and services was created, a lot of code was split into smaller pieces in order to achieve finer granularity. No worries - all this without a change in framework's core functionality. The main goal of this process was to make the framework easier to maintain, test and extend.
 
-### New name Sieve => Strainer
+### New project name - "Strainer"
 
 As this project was forked, to avoid ambiguity a new name was established - **"Strainer"**.
 
@@ -58,7 +58,7 @@ public class PostsController : Controller
 
 ### New namespace
 
-Project rebranding came with new namespace. Replace your `Sieve` usings:
+New project name comes with new namespace. Replace your `Sieve` usings:
 
 ```cs
 using Sieve.Services;
@@ -88,7 +88,7 @@ public class ApplicationSieveProcessor : SieveProcessor
 }
 ```
 
-With Strainer an `IStrainerContext` was introduced to wrap all important services. Eventually, all you need to do is call the base constructor while passing the context:
+With Strainer an [`IStrainerContext`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/IStrainerContext.cs) was introduced to wrap all important services. Eventually, all you need to do is call the base constructor while passing the context:
 
 ```cs
 public class ApplicationStrainerProcessor : StrainerProcessor
@@ -99,5 +99,27 @@ public class ApplicationStrainerProcessor : StrainerProcessor
     }
 }
 ```
+
+### Validation attributes removed from sieve model
+
+So far, the `SieveModel` had validation attributes applied on pagination related properties:
+
+```cs
+[Range(1, int.MaxValue)]
+public int? Page { get; set; }
+
+[Range(1, int.MaxValue)]
+public int? PageSize { get; set; }
+```
+
+Strainer however, does not create any initial validation requirements and leaves that task entirely to user. Validation attributes has been removed from the `Page` and `PageSize` properties, but at the same time they were made `virtual` to allow being overriden in a derived class:
+
+```cs
+public virtual int? Page { get; set; }
+
+public virtual int? PageSize { get; set; }
+```
+
+ Eventually you can also create a new model implementing [`IStrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs) interface.
 
 ### ...more will come.
