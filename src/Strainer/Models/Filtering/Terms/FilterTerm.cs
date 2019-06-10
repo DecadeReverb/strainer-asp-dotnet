@@ -31,26 +31,9 @@ namespace Fluorite.Strainer.Models.Filtering.Terms
         public IList<string> Names { get; set; }
 
         /// <summary>
-        /// Gets or sets the unparsed <see cref="string"/> filter operator.
+        /// Gets or sets the filter operator.
         /// </summary>
-        public string Operator { get; set; }
-
-        /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indictating whether used
-        /// operator is case insensitive.
-        /// </summary>
-        public bool OperatorIsCaseInsensitive { get; set; }
-
-        /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indictating whether used
-        /// operator is a negated version of a different operator.
-        /// </summary>
-        public bool OperatorIsNegated { get; set; }
-
-        /// <summary>
-        /// Gets or sets the parsed filter operator.
-        /// </summary>
-        public IFilterOperator OperatorParsed { get; set; }
+        public IFilterOperator Operator { get; set; }
 
         /// <summary>
         /// Gets or sets the list of values.

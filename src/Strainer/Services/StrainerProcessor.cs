@@ -149,7 +149,7 @@ namespace Fluorite.Strainer.Services
 
                             var filterValue = GetClosureOverConstant(constantVal, property.PropertyType);
 
-                            if (filterTerm.OperatorIsCaseInsensitive)
+                            if (filterTerm.Operator.IsCaseInsensitive)
                             {
                                 propertyValue = Expression.Call(
                                     propertyValue,
@@ -164,7 +164,7 @@ namespace Fluorite.Strainer.Services
 
                             var expression = GetExpression(filterTerm, filterValue, propertyValue);
 
-                            if (filterTerm.OperatorIsNegated)
+                            if (filterTerm.Operator.IsNegated)
                             {
                                 expression = Expression.Not(expression);
                             }
@@ -222,9 +222,10 @@ namespace Fluorite.Strainer.Services
         // or even supply custom filter operator to expression translator.
         private static Expression GetExpression(IFilterTerm filterTerm, dynamic filterValue, dynamic propertyValue)
         {
-            switch (filterTerm.OperatorParsed)
+            switch (filterTerm.Operator)
             {
                 case EqualsOperator equalsOperator:
+                case EqualsCaseInsensitiveOperator equalsCaseInsensitiveOperator:
                     return Expression.Equal(propertyValue, filterValue);
                 case NotEqualsOperator notEqualsOperator:
                     return Expression.NotEqual(propertyValue, filterValue);
@@ -237,11 +238,17 @@ namespace Fluorite.Strainer.Services
                 case LessThanOrEqualToOperator lessThanOrEqualToOperator:
                     return Expression.LessThanOrEqual(propertyValue, filterValue);
                 case ContainsOperator containsOperator:
+                case ContainsCaseInsensitiveOperator containsCaseInsensitiveOperator:
+                case DoesNotContainOperator doesNotContainOperator:
+                case DoesNotContainCaseInsensitiveOperator doesNotContainCaseInsensitiveOperator:
                     return Expression.Call(
                         propertyValue,
                         typeof(string).GetMethods().First(m => m.Name == "Contains" && m.GetParameters().Length == 1),
                         filterValue);
                 case StartsWithOperator startsWithOperator:
+                case StartsWithCaseInsensitiveOperator startsWithCaseInsensitiveOperator:
+                case DoesNotStartWithOperator doesNotStartWithOperator:
+                case DoesNotStartWithCaseInsensitiveOperator doesNotStartWithCaseInsensitiveOperator:
                     return Expression.Call(
                         propertyValue,
                         typeof(string).GetMethods().First(m => m.Name == "StartsWith" && m.GetParameters().Length == 1),

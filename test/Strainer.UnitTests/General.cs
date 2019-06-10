@@ -198,7 +198,6 @@ namespace Fluorite.Strainer.UnitTests
             var parsedFilters = _context.FilteringContext.TermParser.GetParsedTerms(model.Filters);
             Console.WriteLine(parsedFilters.First().Values);
             Console.WriteLine(parsedFilters.First().Operator);
-            Console.WriteLine(parsedFilters.First().OperatorParsed);
 
             var result = _processor.Apply(model, _posts);
 

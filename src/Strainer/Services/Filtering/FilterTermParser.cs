@@ -1,5 +1,4 @@
-﻿using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Models.Filtering.Terms;
+﻿using Fluorite.Strainer.Models.Filtering.Terms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,16 +74,6 @@ namespace Fluorite.Strainer.Services.Filtering
             return list;
         }
 
-        private static bool CheckIfFilterOperatorIsCaseInsensitive(string @operator)
-        {
-            return @operator.EndsWith("*");
-        }
-
-        private static bool CheckIfFilterOperatorIsNegated(string @operator, IFilterOperator operatorParsed)
-        {
-            return !(operatorParsed is NotEqualsOperator) && @operator.StartsWith("!");
-        }
-
         private static List<string> GetFilterNames(List<string> filterSplits)
         {
             return Regex.Split(filterSplits.First(), EscapedPipePattern)
@@ -126,18 +115,13 @@ namespace Fluorite.Strainer.Services.Filtering
             var names = GetFilterNames(filterSplits);
             var values = GetFilterValues(filterSplits);
             var @operator = GetFilterOperator(input);
-            var operatorParsed = Parser.GetParsedOperatorAsUnnegated(@operator);
-            var operatorIsCaseInsensitive = CheckIfFilterOperatorIsCaseInsensitive(@operator);
-            var operatorIsNegated = CheckIfFilterOperatorIsNegated(@operator, operatorParsed);
+            var operatorParsed = Parser.GetParsedOperator(@operator);
 
             return new FilterTerm(input)
             {
                 Names = names,
                 Values = values,
-                Operator = @operator,
-                OperatorIsCaseInsensitive = operatorIsCaseInsensitive,
-                OperatorIsNegated = operatorIsNegated,
-                OperatorParsed = operatorParsed,
+                Operator = operatorParsed,
             };
         }
 

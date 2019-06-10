@@ -19,26 +19,9 @@ namespace Fluorite.Strainer.Models.Filtering.Terms
         IList<string> Names { get; }
 
         /// <summary>
-        /// Gets the unparsed <see cref="string"/> filter operator.
+        /// Gets the filter operator.
         /// </summary>
-        string Operator { get; }
-
-        /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether used
-        /// operator is case insensitive.
-        /// </summary>
-        bool OperatorIsCaseInsensitive { get; }
-
-        /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether used
-        /// operator is a negated version of a different operator.
-        /// </summary>
-        bool OperatorIsNegated { get; }
-
-        /// <summary>
-        /// Gets the parsed filter operator.
-        /// </summary>
-        IFilterOperator OperatorParsed { get; }
+        IFilterOperator Operator { get; }
 
         /// <summary>
         /// Gets the list of values.

@@ -20,35 +20,8 @@ namespace Fluorite.Strainer.Services.Filtering
                 return OperatorProvider.GetDefaultOperator();
             }
 
-            input = input.Trim();
-
-            // TODO:
-            // Store somewhere info about case insensitivity asterisk suffix
-            // and negation exclamation mark prefix.
-            return OperatorProvider.FirstOrDefault(f => f.Symbol == input.TrimEnd('*')) // Case sensivity variations;
+            return OperatorProvider.FirstOrDefault(op => op.Symbol.Equals(input, StringComparison.OrdinalIgnoreCase))
                 ?? OperatorProvider.GetDefaultOperator();
-        }
-
-        public virtual IFilterOperator GetParsedOperatorAsUnnegated(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                throw new ArgumentException(
-                    $"{nameof(input)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(input));
-            }
-
-            input = input.Trim();
-
-            // TODO:
-            // Store somewhere info about case insensitivity asterisk suffix
-            // and negation exclamation mark prefix.
-            return OperatorProvider.FirstOrDefault(f =>
-            {
-                return f.Symbol == input.TrimEnd('*')     // Case sensivity variations
-                    || f.Symbol == input.TrimStart('!');  // Negated variations
-            }) ?? OperatorProvider.GetDefaultOperator();
         }
     }
 }

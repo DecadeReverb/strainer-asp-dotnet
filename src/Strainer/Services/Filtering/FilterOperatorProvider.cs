@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
-    public class FilterOperatorProvider : IFilterOperatorProvider
+    public class FilterOperatorProvider : IFilterOperatorProvider, IEnumerable<IFilterOperator>, IEnumerable
     {
         private readonly List<IFilterOperator> _operators;
 
@@ -20,7 +20,15 @@ namespace Fluorite.Strainer.Services.Filtering
                 new GreaterThanOperator(),
                 new GreaterThanOrEqualToOperator(),
                 new ContainsOperator(),
+                new DoesNotContainOperator(),
                 new StartsWithOperator(),
+                new DoesNotStartWithOperator(),
+
+                new EqualsCaseInsensitiveOperator(),
+                new ContainsCaseInsensitiveOperator(),
+                new DoesNotContainCaseInsensitiveOperator(),
+                new StartsWithCaseInsensitiveOperator(),
+                new DoesNotStartWithCaseInsensitiveOperator(),
             };
         }
 

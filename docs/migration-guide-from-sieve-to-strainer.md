@@ -122,4 +122,19 @@ public virtual int? PageSize { get; set; }
 
  Eventually you can also create a new model implementing [`IStrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs) interface.
 
+
+### New pattern for custom filter methods
+
+Instead of passing filter operator as a `string` value:
+
+```cs
+public IQueryable<T> IsNew(IQueryable<T> source, string op, IList<string> values)
+```
+
+from now on an `IFilterOperator` instance will be passed. Change the type of operator parameter from `string` to `IFilterOperator`:
+
+```cs
+public IQueryable<T> IsNew(IQueryable<T> source, IFilterOperator op, IList<string> values);
+```
+
 ### ...more will come.
