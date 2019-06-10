@@ -3,12 +3,12 @@
     /// <summary>
     /// Represents does not start with (case insensitive) filter operator.
     /// </summary>
-    public class DoesNotStartWithCaseInsensitive : FilterOperator
+    public class DoesNotStartWithCaseInsensitiveOperator : FilterOperator
     {
         /// <summary>
-        /// Initializes new instance of <see cref="DoesNotStartWithCaseInsensitive"/> class.
+        /// Initializes new instance of <see cref="DoesNotStartWithCaseInsensitiveOperator"/> class.
         /// </summary>
-        public DoesNotStartWithCaseInsensitive() : base(name: "does not start with (case insensitive)", symbol: "!_=*")
+        public DoesNotStartWithCaseInsensitiveOperator() : base(name: "does not start with (case insensitive)", symbol: "!_=*")
         {
 
         }
