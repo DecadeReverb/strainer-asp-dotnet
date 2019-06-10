@@ -25,7 +25,7 @@ namespace Fluorite.Strainer.UnitTests
             var filterOperatorProvider = new FilterOperatorProvider();
             var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
-            var filterTermParser = new FilterTermParser(filterOperatorParser);
+            var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorProvider);
             var filteringContext = new FilteringContext(filterOperatorParser, filterOperatorProvider, filterOperatorValidator, filterTermParser);
 
             var sortingWayFormatter = new SortingWayFormatter();

@@ -11,30 +11,14 @@ namespace Fluorite.Strainer.Services.Filtering
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
-        private static readonly string[] AllOperators = new string[] {
-                    "!@=*",
-                    "!_=*",
-                    "!@=",
-                    "!_=",
-                    "==*",
-                    "@=*",
-                    "_=*",
-                    "==",
-                    "!=",
-                    ">=",
-                    "<=",
-                    ">",
-                    "<",
-                    "@=",
-                    "_="
-        };
-
-        public FilterTermParser(IFilterOperatorParser parser)
+        public FilterTermParser(IFilterOperatorParser parser, IFilterOperatorProvider provider)
         {
             Parser = parser;
+            Provider = provider;
         }
 
         protected IFilterOperatorParser Parser { get; }
+        protected IFilterOperatorProvider Provider { get; }
 
         public IList<IFilterTerm> GetParsedTerms(string input)
         {
@@ -74,28 +58,32 @@ namespace Fluorite.Strainer.Services.Filtering
             return list;
         }
 
-        private static List<string> GetFilterNames(List<string> filterSplits)
+        private List<string> GetFilterNames(List<string> filterSplits)
         {
             return Regex.Split(filterSplits.First(), EscapedPipePattern)
                 .Select(t => t.Trim())
                 .ToList();
         }
 
-        private static string GetFilterOperator(string input)
+        private string GetFilterOperatorSymbol(string input, List<string> filterSplits)
         {
-            return Array.Find(AllOperators, o => input.Contains(o))
-                ?? "==";
+            return new string(input.Except(string.Join("", filterSplits).ToArray()).ToArray());
         }
 
-        private static List<string> GetFilterSplits(string input)
+        private List<string> GetFilterSplits(string input)
         {
+            var symbols = Provider
+                .Select(op => op.Symbol)
+                .OrderByDescending(s => s.Length)
+                .ToArray();
+
             return input
-                .Split(AllOperators, StringSplitOptions.RemoveEmptyEntries)
+                .Split(symbols, StringSplitOptions.RemoveEmptyEntries)
                 .Select(t => t.Trim())
                 .ToList();
         }
 
-        private static List<string> GetFilterValues(List<string> filterSplits)
+        private List<string> GetFilterValues(List<string> filterSplits)
         {
             return filterSplits.Count() > 1
                 ? Regex.Split(filterSplits[1], EscapedPipePattern)
@@ -104,7 +92,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 : null;
         }
 
-        private static string ParseFilterOperatorAndValue(string filter)
+        private string ParseFilterOperatorAndValue(string filter)
         {
             return filter.Substring(filter.LastIndexOf(")") + 1);
         }
@@ -114,8 +102,8 @@ namespace Fluorite.Strainer.Services.Filtering
             var filterSplits = GetFilterSplits(input);
             var names = GetFilterNames(filterSplits);
             var values = GetFilterValues(filterSplits);
-            var @operator = GetFilterOperator(input);
-            var operatorParsed = Parser.GetParsedOperator(@operator);
+            var symbol = GetFilterOperatorSymbol(input, filterSplits);
+            var operatorParsed = Parser.GetParsedOperator(symbol);
 
             return new FilterTerm(input)
             {
@@ -125,7 +113,7 @@ namespace Fluorite.Strainer.Services.Filtering
             };
         }
 
-        private static string ParseSubfilters(string filter, string filterOpAndVal)
+        private string ParseSubfilters(string filter, string filterOpAndVal)
         {
             return filter
                 .Replace(filterOpAndVal, "")

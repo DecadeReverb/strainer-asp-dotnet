@@ -19,15 +19,18 @@ namespace Fluorite.Strainer.Services.Filtering
                 new LessThanOrEqualToOperator(),
                 new GreaterThanOperator(),
                 new GreaterThanOrEqualToOperator(),
+
                 new ContainsOperator(),
-                new DoesNotContainOperator(),
                 new StartsWithOperator(),
+
+                new DoesNotContainOperator(),
                 new DoesNotStartWithOperator(),
 
                 new EqualsCaseInsensitiveOperator(),
                 new ContainsCaseInsensitiveOperator(),
-                new DoesNotContainCaseInsensitiveOperator(),
                 new StartsWithCaseInsensitiveOperator(),
+
+                new DoesNotContainCaseInsensitiveOperator(),
                 new DoesNotStartWithCaseInsensitiveOperator(),
             };
         }

@@ -13,7 +13,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             string input = null;
             IFilterOperatorProvider operatorProvider = new FilterOperatorProvider();
             IFilterOperatorParser operatorParser = new FilterOperatorParser(operatorProvider);
-            IFilterTermParser parser = new FilterTermParser(operatorParser);
+            IFilterTermParser parser = new FilterTermParser(operatorParser, operatorProvider);
 
             // Act
             var FilterTermList = parser.GetParsedTerms(input);
@@ -31,7 +31,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var input = string.Empty;
             IFilterOperatorProvider operatorProvider = new FilterOperatorProvider();
             IFilterOperatorParser operatorParser = new FilterOperatorParser(operatorProvider);
-            IFilterTermParser parser = new FilterTermParser(operatorParser);
+            IFilterTermParser parser = new FilterTermParser(operatorParser, operatorProvider);
 
             // Act
             var FilterTermList = parser.GetParsedTerms(input);
@@ -49,7 +49,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var input = string.Empty;
             IFilterOperatorProvider operatorProvider = new FilterOperatorProvider();
             IFilterOperatorParser operatorParser = new FilterOperatorParser(operatorProvider);
-            IFilterTermParser parser = new FilterTermParser(operatorParser);
+            IFilterTermParser parser = new FilterTermParser(operatorParser, operatorProvider);
 
             // Act
             var FilterTermList = parser.GetParsedTerms(input);

@@ -13,14 +13,14 @@ namespace Fluorite.Strainer.Services.Filtering
 
         protected IFilterOperatorProvider OperatorProvider { get; }
 
-        public virtual IFilterOperator GetParsedOperator(string input)
+        public virtual IFilterOperator GetParsedOperator(string symbol)
         {
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(symbol))
             {
                 return OperatorProvider.GetDefaultOperator();
             }
 
-            return OperatorProvider.FirstOrDefault(op => op.Symbol.Equals(input, StringComparison.OrdinalIgnoreCase))
+            return OperatorProvider.FirstOrDefault(op => op.Symbol.Equals(symbol, StringComparison.OrdinalIgnoreCase))
                 ?? OperatorProvider.GetDefaultOperator();
         }
     }
