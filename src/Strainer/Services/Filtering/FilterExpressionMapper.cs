@@ -7,105 +7,105 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionMapper : IFilterExpressionMapper
     {
-        private readonly Dictionary<Type, Func<Expression, Expression, Expression>> _expressions;
+        private readonly Dictionary<Type, Func<IFilterExpressionContext, Expression>> _expressions;
 
         public FilterExpressionMapper()
         {
-            _expressions = new Dictionary<Type, Func<Expression, Expression, Expression>>
+            _expressions = new Dictionary<Type, Func<IFilterExpressionContext, Expression>>
             {
                 // Equality operators
                 {
                     typeof(EqualsOperator),
-                    (filterValue, propertyValue) => Expression.Equal(propertyValue, filterValue)
+                    (context) => Expression.Equal(context.PropertyValue, context.FilterValue)
                 },
                 {
                     typeof(EqualsCaseInsensitiveOperator),
-                    (filterValue, propertyValue) => Expression.Equal(propertyValue, filterValue)
+                    (context) => Expression.Equal(context.PropertyValue, context.FilterValue)
                 },
                 {
                     typeof(NotEqualsOperator),
-                    (filterValue, propertyValue) => Expression.NotEqual(propertyValue, filterValue)
+                    (context) => Expression.NotEqual(context.PropertyValue, context.FilterValue)
                 },
 
 
                 // Less/greater operators
                 {
                     typeof(GreaterThanOperator),
-                    (filterValue, propertyValue) => Expression.GreaterThan(propertyValue, filterValue)
+                    (context) => Expression.GreaterThan(context.PropertyValue, context.FilterValue)
                 },
                 {
                     typeof(GreaterThanOrEqualToOperator),
-                    (filterValue, propertyValue) => Expression.GreaterThanOrEqual(propertyValue, filterValue)
+                    (context) => Expression.GreaterThanOrEqual(context.PropertyValue, context.FilterValue)
                 },
                 {
                     typeof(LessThanOperator),
-                    (filterValue, propertyValue) => Expression.LessThan(propertyValue, filterValue)
+                    (context) => Expression.LessThan(context.PropertyValue, context.FilterValue)
                 },
                 {
                     typeof(LessThanOrEqualToOperator),
-                    (filterValue, propertyValue) => Expression.LessThanOrEqual(propertyValue, filterValue)
+                    (context) => Expression.LessThanOrEqual(context.PropertyValue, context.FilterValue)
                 },
 
 
                 // Contains operators
                 {
                     typeof(ContainsOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
                 {
                     typeof(ContainsCaseInsensitiveOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
                 {
                     typeof(DoesNotContainOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
                 {
                     typeof(DoesNotContainCaseInsensitiveOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
 
 
                 // Starts with operators
                 {
                     typeof(StartsWithOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
                 {
                     typeof(StartsWithCaseInsensitiveOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
                 {
                     typeof(DoesNotStartWithOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
                 {
                     typeof(DoesNotStartWithCaseInsensitiveOperator),
-                    (filterValue, propertyValue) => Expression.Call(
-                        propertyValue,
+                    (context) => Expression.Call(
+                        context.PropertyValue,
                         typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
-                        filterValue)
+                        context.FilterValue)
                 },
             };
         }
@@ -145,7 +145,7 @@ namespace Fluorite.Strainer.Services.Filtering
             var operatorType = filterOperator.GetType();
             if (_expressions.ContainsKey(operatorType))
             {
-                return _expressions[operatorType](filterValue, propertyValue);
+                return _expressions[operatorType](new FilterExpressionContext(filterValue, propertyValue));
             }
             else
             {
