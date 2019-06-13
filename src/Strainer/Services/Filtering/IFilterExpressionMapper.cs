@@ -5,7 +5,7 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public interface IFilterExpressionMapper
     {
-        Expression GetDefaultExpression(dynamic filterValue, dynamic propertyValue);
-        Expression GetExpression(IFilterOperator filterOperator, dynamic filterValue, dynamic propertyValue);
+        Expression GetDefaultExpression(Expression filterValue, Expression propertyValue);
+        Expression GetExpression(IFilterOperator filterOperator, Expression filterValue, Expression propertyValue);
     }
 }

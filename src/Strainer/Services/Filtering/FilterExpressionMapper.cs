@@ -7,11 +7,11 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionMapper : IFilterExpressionMapper
     {
-        private readonly Dictionary<Type, Func<dynamic, dynamic, Expression>> _expressions;
+        private readonly Dictionary<Type, Func<Expression, Expression, Expression>> _expressions;
 
         public FilterExpressionMapper()
         {
-            _expressions = new Dictionary<Type, Func<dynamic, dynamic, Expression>>
+            _expressions = new Dictionary<Type, Func<Expression, Expression, Expression>>
             {
                 // Equality operators
                 {
@@ -110,7 +110,7 @@ namespace Fluorite.Strainer.Services.Filtering
             };
         }
 
-        public Expression GetDefaultExpression(dynamic filterValue, dynamic propertyValue)
+        public Expression GetDefaultExpression(Expression filterValue, Expression propertyValue)
         {
             if (filterValue == null)
             {
@@ -125,7 +125,7 @@ namespace Fluorite.Strainer.Services.Filtering
             return Expression.Equal(propertyValue, filterValue);
         }
 
-        public Expression GetExpression(IFilterOperator filterOperator, dynamic filterValue, dynamic propertyValue)
+        public Expression GetExpression(IFilterOperator filterOperator, Expression filterValue, Expression propertyValue)
         {
             if (filterOperator == null)
             {

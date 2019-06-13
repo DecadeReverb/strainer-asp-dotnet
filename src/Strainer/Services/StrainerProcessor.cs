@@ -126,8 +126,7 @@ namespace Fluorite.Strainer.Services
                     if (property != null)
                     {
                         var converter = TypeDescriptor.GetConverter(property.PropertyType);
-
-                        dynamic propertyValue = parameterExpression;
+                        Expression propertyValue = parameterExpression;
                         foreach (var part in fullName.Split('.'))
                         {
                             propertyValue = Expression.PropertyOrField(propertyValue, part);
@@ -141,7 +140,7 @@ namespace Fluorite.Strainer.Services
                         foreach (var filterTermValue in filterTerm.Values)
                         {
 
-                            dynamic constantVal = converter.CanConvertFrom(typeof(string))
+                            var constantVal = converter.CanConvertFrom(typeof(string))
                                 ? converter.ConvertFrom(filterTermValue)
                                 : Convert.ChangeType(filterTermValue, property.PropertyType);
 
