@@ -52,28 +52,28 @@ namespace Fluorite.Strainer.Services.Filtering
                     typeof(ContainsOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.Contains), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
                 {
                     typeof(ContainsCaseInsensitiveOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.Contains), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
                 {
                     typeof(DoesNotContainOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.Contains), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
                 {
                     typeof(DoesNotContainCaseInsensitiveOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("Contains", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.Contains), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
 
@@ -83,28 +83,28 @@ namespace Fluorite.Strainer.Services.Filtering
                     typeof(StartsWithOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.StartsWith), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
                 {
                     typeof(StartsWithCaseInsensitiveOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.StartsWith), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
                 {
                     typeof(DoesNotStartWithOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.StartsWith), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
                 {
                     typeof(DoesNotStartWithCaseInsensitiveOperator),
                     (context) => Expression.Call(
                         context.PropertyValue,
-                        typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }),
+                        typeof(string).GetMethod(nameof(string.StartsWith), new Type[]{ typeof(string) }),
                         context.FilterValue)
                 },
             };
