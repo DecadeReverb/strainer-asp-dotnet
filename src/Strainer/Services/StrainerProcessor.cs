@@ -2,8 +2,6 @@
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Extensions;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Models.Filtering.Terms;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -162,7 +160,7 @@ namespace Fluorite.Strainer.Services
                                         .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
                             }
 
-                            var expression = GetExpression(filterTerm, filterValue, propertyValue);
+                            var expression = Context.FilteringContext.ExpressionMapper.GetExpression(filterTerm.Operator, filterValue, propertyValue);
 
                             if (filterTerm.Operator.IsNegated)
                             {
@@ -213,52 +211,6 @@ namespace Fluorite.Strainer.Services
             return outerExpression == null
                 ? result
                 : result.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
-        }
-
-        // TODO:
-        // This method should be public and encapsulated by a dedicated
-        // service, for example some kind of filter operator to expression
-        // translator. It should be possible to add or remove translations,
-        // or even supply custom filter operator to expression translator.
-        private static Expression GetExpression(IFilterTerm filterTerm, dynamic filterValue, dynamic propertyValue)
-        {
-            switch (filterTerm.Operator)
-            {
-                case EqualsOperator equalsOperator:
-                case EqualsCaseInsensitiveOperator equalsCaseInsensitiveOperator:
-                    return Expression.Equal(propertyValue, filterValue);
-                case NotEqualsOperator notEqualsOperator:
-                    return Expression.NotEqual(propertyValue, filterValue);
-                case GreaterThanOperator greaterThanOperator:
-                    return Expression.GreaterThan(propertyValue, filterValue);
-                case LessThanOperator lessThanOperator:
-                    return Expression.LessThan(propertyValue, filterValue);
-                case GreaterThanOrEqualToOperator greaterThanOrEqualToOperator:
-                    return Expression.GreaterThanOrEqual(propertyValue, filterValue);
-                case LessThanOrEqualToOperator lessThanOrEqualToOperator:
-                    return Expression.LessThanOrEqual(propertyValue, filterValue);
-                case ContainsOperator containsOperator:
-                case ContainsCaseInsensitiveOperator containsCaseInsensitiveOperator:
-                case DoesNotContainOperator doesNotContainOperator:
-                case DoesNotContainCaseInsensitiveOperator doesNotContainCaseInsensitiveOperator:
-                    return Expression.Call(
-                        propertyValue,
-                        typeof(string).GetMethods().First(m => m.Name == "Contains" && m.GetParameters().Length == 1),
-                        filterValue);
-                case StartsWithOperator startsWithOperator:
-                case StartsWithCaseInsensitiveOperator startsWithCaseInsensitiveOperator:
-                case DoesNotStartWithOperator doesNotStartWithOperator:
-                case DoesNotStartWithCaseInsensitiveOperator doesNotStartWithCaseInsensitiveOperator:
-                    return Expression.Call(
-                        propertyValue,
-                        typeof(string).GetMethods().First(m => m.Name == "StartsWith" && m.GetParameters().Length == 1),
-                        filterValue);
-                default:
-                    // TODO:
-                    // Call defined default filter operator, instead of calling
-                    // hardcoded equal expression.
-                    return Expression.Equal(propertyValue, filterValue);
-            }
         }
 
         // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core

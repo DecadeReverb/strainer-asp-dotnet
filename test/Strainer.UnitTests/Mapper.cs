@@ -22,11 +22,12 @@ namespace Fluorite.Strainer.UnitTests
         {
             var options = new StrainerOptionsAccessor();
 
+            var filterExpressionMapper = new FilterExpressionMapper();
             var filterOperatorProvider = new FilterOperatorProvider();
             var filterOperatorParser = new FilterOperatorParser(filterOperatorProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorProvider);
-            var filteringContext = new FilteringContext(filterOperatorParser, filterOperatorProvider, filterOperatorValidator, filterTermParser);
+            var filteringContext = new FilteringContext(filterExpressionMapper, filterOperatorParser, filterOperatorProvider, filterOperatorValidator, filterTermParser);
 
             var sortingWayFormatter = new SortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter);
