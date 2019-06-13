@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Strainer.Models
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Fluorite.Strainer.Models
 {
 	public class StrainerOptions
     {
@@ -8,12 +10,19 @@
         // - MinPageSize
         // - DefaultFilterOperator
 
-        public bool CaseSensitive { get; set; } = false;
+        public StrainerOptions()
+        {
+            ServiceLifetime = ServiceLifetime.Scoped;
+        }
 
-        public int DefaultPageSize { get; set; } = 0;
+        public bool CaseSensitive { get; set; }
 
-        public int MaxPageSize { get; set; } = 0;
+        public int DefaultPageSize { get; set; }
 
-        public bool ThrowExceptions { get; set; } = false;
+        public int MaxPageSize { get; set; }
+
+        public ServiceLifetime ServiceLifetime { get; set; }
+
+        public bool ThrowExceptions { get; set; }
     }
 }

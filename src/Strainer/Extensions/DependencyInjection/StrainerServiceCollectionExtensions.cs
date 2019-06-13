@@ -12,8 +12,6 @@ namespace Fluorite.Extensions.DependencyInjection
 {
     public static class StrainerServiceCollectionExtensions
     {
-        private const ServiceLifetime StrainerServicesLifetime = ServiceLifetime.Scoped;
-
         public static IStrainerBuilder AddCustomFilterMethods<TFilterMethods>(this IStrainerBuilder builder)
             where TFilterMethods : class, IStrainerCustomFilterMethods
         {
@@ -22,7 +20,8 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.TryAddService<IStrainerCustomFilterMethods, TFilterMethods>(StrainerServicesLifetime);
+            var options = builder.Services.GetStrainerOptions();
+            builder.Services.TryAddService<IStrainerCustomFilterMethods, TFilterMethods>(options.ServiceLifetime);
 
             return builder;
         }
@@ -35,7 +34,8 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.TryAddService<IStrainerCustomSortMethods, TSortMethods>(StrainerServicesLifetime);
+            var options = builder.Services.GetStrainerOptions();
+            builder.Services.TryAddService<IStrainerCustomSortMethods, TSortMethods>(options.ServiceLifetime);
 
             return builder;
         }
@@ -84,23 +84,25 @@ namespace Fluorite.Extensions.DependencyInjection
                 }
             }
 
-            services.TryAddService<IFilterOperatorParser, FilterOperatorParser>(StrainerServicesLifetime);
-            services.TryAddService<IFilterOperatorProvider, FilterOperatorProvider>(StrainerServicesLifetime);
-            services.TryAddService<IFilterOperatorValidator, FilterOperatorValidator>(StrainerServicesLifetime);
-            services.TryAddService<IFilterTermParser, FilterTermParser>(StrainerServicesLifetime);
-            services.TryAddService<IFilteringContext, FilteringContext>(StrainerServicesLifetime);
+            var options = services.GetStrainerOptions();
 
-            services.TryAddService<ISortingWayFormatter, SortingWayFormatter>(StrainerServicesLifetime);
-            services.TryAddService<ISortTermParser, SortTermParser>(StrainerServicesLifetime);
-            services.TryAddService<ISortingContext, SortingContext>(StrainerServicesLifetime);
+            services.TryAddService<IFilterOperatorParser, FilterOperatorParser>(options.ServiceLifetime);
+            services.TryAddService<IFilterOperatorProvider, FilterOperatorProvider>(options.ServiceLifetime);
+            services.TryAddService<IFilterOperatorValidator, FilterOperatorValidator>(options.ServiceLifetime);
+            services.TryAddService<IFilterTermParser, FilterTermParser>(options.ServiceLifetime);
+            services.TryAddService<IFilteringContext, FilteringContext>(options.ServiceLifetime);
 
-            services.TryAddService<IStrainerPropertyMapper, StrainerPropertyMapper>(StrainerServicesLifetime);
+            services.TryAddService<ISortingWayFormatter, SortingWayFormatter>(options.ServiceLifetime);
+            services.TryAddService<ISortTermParser, SortTermParser>(options.ServiceLifetime);
+            services.TryAddService<ISortingContext, SortingContext>(options.ServiceLifetime);
 
-            services.TryAddService<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>(StrainerServicesLifetime);
+            services.TryAddService<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
 
-            services.TryAddService<IStrainerContext, StrainerContext>(StrainerServicesLifetime);
+            services.TryAddService<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>(options.ServiceLifetime);
 
-            services.Add<IStrainerProcessor, TProcessor>(StrainerServicesLifetime);
+            services.TryAddService<IStrainerContext, StrainerContext>(options.ServiceLifetime);
+
+            services.Add<IStrainerProcessor, TProcessor>(options.ServiceLifetime);
 
             return new StrainerBuilder(services);
         }
@@ -115,6 +117,14 @@ namespace Fluorite.Extensions.DependencyInjection
         private static bool ContainsServiceOfType<TImplementationType>(this IServiceCollection services)
         {
             return services.Any(d => d.ServiceType == typeof(TImplementationType));
+        }
+
+        private static StrainerOptions GetStrainerOptions(this IServiceCollection services)
+        {
+            using (var provider = services.BuildServiceProvider())
+            {
+                return provider.GetRequiredService<IOptions<StrainerOptions>>().Value;
+            }
         }
 
         private static void TryAddService<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
