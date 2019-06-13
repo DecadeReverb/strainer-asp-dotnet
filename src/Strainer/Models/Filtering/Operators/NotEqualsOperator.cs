@@ -17,6 +17,6 @@
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is a negated version of different operator.
         /// </summary>
-        public override bool IsNegated => true;
+        public override bool IsNegated => false;
     }
 }

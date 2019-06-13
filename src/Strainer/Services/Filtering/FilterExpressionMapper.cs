@@ -7,11 +7,11 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionMapper : IFilterExpressionMapper
     {
-        private readonly Dictionary<Type, Func<IFilterExpressionContext, Expression>> _expressions;
+        private readonly Dictionary<Type, Func<IFilterExpressionContext, Expression>> _map;
 
         public FilterExpressionMapper()
         {
-            _expressions = new Dictionary<Type, Func<IFilterExpressionContext, Expression>>
+            _map = new Dictionary<Type, Func<IFilterExpressionContext, Expression>>
             {
                 // Equality operators
                 {
@@ -110,6 +110,21 @@ namespace Fluorite.Strainer.Services.Filtering
             };
         }
 
+        public void Add(Type filterOperatorType, Func<IFilterExpressionContext, Expression> expression)
+        {
+            if (filterOperatorType == null)
+            {
+                throw new ArgumentNullException(nameof(filterOperatorType));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            _map.Add(filterOperatorType, expression);
+        }
+
         public Expression GetDefaultExpression(Expression filterValue, Expression propertyValue)
         {
             if (filterValue == null)
@@ -129,6 +144,7 @@ namespace Fluorite.Strainer.Services.Filtering
         {
             if (filterOperator == null)
             {
+
                 throw new ArgumentNullException(nameof(filterOperator));
             }
 
@@ -143,14 +159,19 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             var operatorType = filterOperator.GetType();
-            if (_expressions.ContainsKey(operatorType))
+            if (_map.ContainsKey(operatorType))
             {
-                return _expressions[operatorType](new FilterExpressionContext(filterValue, propertyValue));
+                return _map[operatorType](new FilterExpressionContext(filterValue, propertyValue));
             }
             else
             {
                 return GetDefaultExpression(filterValue, propertyValue);
             }
+        }
+
+        public IFilterExpressionBuilder<TOperator> Operator<TOperator>() where TOperator : IFilterOperator
+        {
+            return new FilterExpressionBuilder<TOperator>(this);
         }
     }
 }

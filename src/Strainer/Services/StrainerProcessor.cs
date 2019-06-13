@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Extensions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Filtering;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Fluorite.Strainer.Services
         {
             Context = context;
 
+            MapFilterExpression(context.FilteringContext.ExpressionMapper);
             MapProperties(context.Mapper);
         }
 
@@ -88,6 +90,16 @@ namespace Fluorite.Strainer.Services
                     return result;
                 }
             }
+        }
+
+        protected virtual IFilterExpressionMapper MapFilterExpression(IFilterExpressionMapper mapper)
+        {
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
+
+            return mapper;
         }
 
         protected virtual IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
