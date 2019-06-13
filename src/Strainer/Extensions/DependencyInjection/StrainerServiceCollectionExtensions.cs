@@ -21,7 +21,7 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             var options = builder.Services.GetStrainerOptions();
-            builder.Services.TryAddService<IStrainerCustomFilterMethods, TFilterMethods>(options.ServiceLifetime);
+            builder.Services.Add<IStrainerCustomFilterMethods, TFilterMethods>(options.ServiceLifetime);
 
             return builder;
         }
@@ -35,7 +35,7 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             var options = builder.Services.GetStrainerOptions();
-            builder.Services.TryAddService<IStrainerCustomSortMethods, TSortMethods>(options.ServiceLifetime);
+            builder.Services.Add<IStrainerCustomSortMethods, TSortMethods>(options.ServiceLifetime);
 
             return builder;
         }
@@ -86,21 +86,21 @@ namespace Fluorite.Extensions.DependencyInjection
 
             var options = services.GetStrainerOptions();
 
-            services.TryAddService<IFilterOperatorParser, FilterOperatorParser>(options.ServiceLifetime);
-            services.TryAddService<IFilterOperatorProvider, FilterOperatorProvider>(options.ServiceLifetime);
-            services.TryAddService<IFilterOperatorValidator, FilterOperatorValidator>(options.ServiceLifetime);
-            services.TryAddService<IFilterTermParser, FilterTermParser>(options.ServiceLifetime);
-            services.TryAddService<IFilteringContext, FilteringContext>(options.ServiceLifetime);
+            services.Add<IFilterOperatorParser, FilterOperatorParser>(options.ServiceLifetime);
+            services.Add<IFilterOperatorProvider, FilterOperatorProvider>(options.ServiceLifetime);
+            services.Add<IFilterOperatorValidator, FilterOperatorValidator>(options.ServiceLifetime);
+            services.Add<IFilterTermParser, FilterTermParser>(options.ServiceLifetime);
+            services.Add<IFilteringContext, FilteringContext>(options.ServiceLifetime);
 
-            services.TryAddService<ISortingWayFormatter, SortingWayFormatter>(options.ServiceLifetime);
-            services.TryAddService<ISortTermParser, SortTermParser>(options.ServiceLifetime);
-            services.TryAddService<ISortingContext, SortingContext>(options.ServiceLifetime);
+            services.Add<ISortingWayFormatter, SortingWayFormatter>(options.ServiceLifetime);
+            services.Add<ISortTermParser, SortTermParser>(options.ServiceLifetime);
+            services.Add<ISortingContext, SortingContext>(options.ServiceLifetime);
 
-            services.TryAddService<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
+            services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
 
-            services.TryAddService<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>(options.ServiceLifetime);
+            services.Add<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>(options.ServiceLifetime);
 
-            services.TryAddService<IStrainerContext, StrainerContext>(options.ServiceLifetime);
+            services.Add<IStrainerContext, StrainerContext>(options.ServiceLifetime);
 
             services.Add<IStrainerProcessor, TProcessor>(options.ServiceLifetime);
 
@@ -124,14 +124,6 @@ namespace Fluorite.Extensions.DependencyInjection
             using (var provider = services.BuildServiceProvider())
             {
                 return provider.GetRequiredService<IOptions<StrainerOptions>>().Value;
-            }
-        }
-
-        private static void TryAddService<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
-        {
-            if (!services.ContainsServiceOfType<TServiceType>())
-            {
-                services.Add<TServiceType, TImplementationType>(serviceLifetime);
             }
         }
     }

@@ -77,11 +77,9 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var services = new ServiceCollection().AddSingleton(configuration);
 
             // Act
+            services.AddStrainer<StrainerProcessor>();
             services.AddScoped<IFilterTermParser, _TestFilterTermParser>();
             var serviceProvider = services.BuildServiceProvider();
-            services.AddScoped<IFilterTermParser, _TestFilterTermParser>();
-            services.AddStrainer<StrainerProcessor>();
-            serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionFilterTermParser = serviceProvider.GetService<IFilterTermParser>();
 
@@ -92,7 +90,8 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                         "Strainer to the service collection.");
             postExtensionFilterTermParser
                 .Should()
-                .BeAssignableTo<_TestFilterTermParser>();
+                .BeAssignableTo<_TestFilterTermParser>(
+                    "Because DI container should return service that was registered last.");
         }
 
         [Fact]
