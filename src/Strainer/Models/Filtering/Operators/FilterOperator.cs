@@ -28,13 +28,13 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive.
         /// </summary>
-        public virtual bool IsCaseInsensitive { get; set; }
+        public bool IsCaseInsensitive { get; set; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is a default operator.
         /// </summary>
-        public virtual bool IsDefault { get; set; }
+        public bool IsDefault { get; set; }
 
         /// <summary>
         /// Gets the operator name.
@@ -46,7 +46,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// <see cref="System.Linq.Expressions.Expression"/> should be negated
         /// before using it for filtering data.
         /// </summary>
-        public virtual bool NegateExpression { get; set; }
+        public bool NegateExpression { get; set; }
 
         /// <summary>
         /// Gets the <see cref="string"/> representation of operator.
