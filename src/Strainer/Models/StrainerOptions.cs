@@ -38,14 +38,14 @@ namespace Fluorite.Strainer.Models
         public int DefaultPageNumber { get; set; } = 1;
 
         /// <summary>
-        /// Gets or sets a default page number.
+        /// Gets or sets a default page size.
         /// <para/>
         /// Defaults to 10.
         /// </summary>
         public int DefaultPageSize { get; set; } = 10;
 
         /// <summary>
-        /// Gets or sets a default page number.
+        /// Gets or sets a maximum page number.
         /// <para/>
         /// Defaults to 50.
         /// </summary>
