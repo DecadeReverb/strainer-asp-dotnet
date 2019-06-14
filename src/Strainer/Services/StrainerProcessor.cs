@@ -284,7 +284,7 @@ namespace Fluorite.Strainer.Services
             IStrainerModel model,
             IQueryable<TEntity> result)
         {
-            var page = model?.Page ?? 1;
+            var page = model?.Page ?? Context.Options.DefaultPageNumber;
             var pageSize = model?.PageSize ?? Context.Options.DefaultPageSize;
             var maxPageSize = Context.Options.MaxPageSize > 0
                 ? Context.Options.MaxPageSize
