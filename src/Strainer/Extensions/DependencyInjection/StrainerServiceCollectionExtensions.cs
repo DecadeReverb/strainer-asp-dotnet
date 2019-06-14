@@ -86,9 +86,8 @@ namespace Fluorite.Extensions.DependencyInjection
 
             var options = services.GetStrainerOptions();
 
-            services.Add<IFilterExpressionMapper, FilterExpressionMapper>(options.ServiceLifetime);
+            services.Add<IFilterOperatorMapper, FilterOperatorMapper>(options.ServiceLifetime);
             services.Add<IFilterOperatorParser, FilterOperatorParser>(options.ServiceLifetime);
-            services.Add<IFilterOperatorProvider, FilterOperatorProvider>(options.ServiceLifetime);
             services.Add<IFilterOperatorValidator, FilterOperatorValidator>(options.ServiceLifetime);
             services.Add<IFilterTermParser, FilterTermParser>(options.ServiceLifetime);
             services.Add<IFilteringContext, FilteringContext>(options.ServiceLifetime);

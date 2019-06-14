@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Extensions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Services.Filtering;
 using System;
 using System.ComponentModel;
@@ -17,7 +18,9 @@ namespace Fluorite.Strainer.Services
         {
             Context = context;
 
-            MapFilterExpression(context.FilteringContext.ExpressionMapper);
+            MapFilterOperators(context.FilteringContext.OperatorMapper);
+            Context.FilteringContext.OperatorValidator.Validate(Context.FilteringContext.OperatorMapper.Operators);
+
             MapProperties(context.Mapper);
         }
 
@@ -92,7 +95,7 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual IFilterExpressionMapper MapFilterExpression(IFilterExpressionMapper mapper)
+        protected virtual IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
         {
             if (mapper == null)
             {
@@ -171,9 +174,10 @@ namespace Fluorite.Strainer.Services
                                         .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
                             }
 
-                            var expression = Context.FilteringContext.ExpressionMapper.GetExpression(filterTerm.Operator, filterValue, propertyValue);
+                            var filterOperatorContext = new FilterExpressionContext(filterValue, propertyValue);
+                            var expression = filterTerm.Operator.Expression(filterOperatorContext);
 
-                            if (filterTerm.Operator.IsNegated)
+                            if (filterTerm.Operator.NegateExpression)
                             {
                                 expression = Expression.Not(expression);
                             }

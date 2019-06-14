@@ -6,22 +6,21 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterOperatorParser : IFilterOperatorParser
     {
-        public FilterOperatorParser(IFilterOperatorProvider operatorProvider)
+        public FilterOperatorParser(IFilterOperatorMapper mapper)
         {
-            OperatorProvider = operatorProvider;
+            Mapper = mapper;
         }
 
-        protected IFilterOperatorProvider OperatorProvider { get; }
+        protected IFilterOperatorMapper Mapper { get; }
 
         public virtual IFilterOperator GetParsedOperator(string symbol)
         {
             if (string.IsNullOrWhiteSpace(symbol))
             {
-                return OperatorProvider.GetDefaultOperator();
+                return Mapper.GetDefault();
             }
 
-            return OperatorProvider.FirstOrDefault(op => op.Symbol.Equals(symbol, StringComparison.OrdinalIgnoreCase))
-                ?? OperatorProvider.GetDefaultOperator();
+            return Mapper.Find(symbol) ?? Mapper.GetDefault();
         }
     }
 }

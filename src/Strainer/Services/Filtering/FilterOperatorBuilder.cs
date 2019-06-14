@@ -1,54 +1,90 @@
-﻿//using System;
-//using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using System;
+using System.Linq.Expressions;
 
-//namespace Fluorite.Strainer.Services.Filtering
-//{
-//    public class FilterOperatorBuilder : IFilterOperatorBuilder
-//    {
-//        private readonly FilterOperator _filterOperator;
+namespace Fluorite.Strainer.Services.Filtering
+{
+    public class FilterOperatorBuilder : IFilterOperatorBuilder
+    {
+        private readonly FilterOperator _filterOperator;
 
-//        public FilterOperatorBuilder()
-//        {
-//            _filterOperator = new FilterOperator();
-//        }
+        public FilterOperatorBuilder(IFilterOperatorMapper mapper, string symbol)
+        {
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                throw new ArgumentException(
+                    $"{nameof(symbol)} cannot be null, empty " +
+                    $"or contain only whitespace characaters.",
+                    nameof(symbol));
+            }
 
-//        public IFilterOperator Build() => _filterOperator;
+            _filterOperator = new FilterOperator
+            {
+                Symbol = symbol,
+            };
+            Mapper = mapper;
+        }
 
-//        public IFilterOperatorBuilder Default()
-//        {
-//            _filterOperator.IsDefault = true;
+        protected IFilterOperatorMapper Mapper { get; }
 
-//            return this;
-//        }
+        public IFilterOperator Build() => _filterOperator;
 
-//        public IFilterOperatorBuilder HasName(string name)
-//        {
-//            if (string.IsNullOrWhiteSpace(name))
-//            {
-//                throw new ArgumentException(
-//                    $"{nameof(name)} cannot be null, empty " +
-//                    $"or contain only whitespace characaters.",
-//                    nameof(name));
-//            }
+        public IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
 
-//            _filterOperator.Name = name;
+            _filterOperator.Expression = expression;
+            UpdateMap();
 
-//            return this;
-//        }
+            return this;
+        }
 
-//        public IFilterOperatorBuilder Operator(string @operator)
-//        {
-//            if (string.IsNullOrWhiteSpace(@operator))
-//            {
-//                throw new ArgumentException(
-//                    $"{nameof(@operator)} cannot be null, empty " +
-//                    $"or contain only whitespace characaters.",
-//                    nameof(@operator));
-//            }
+        public IFilterOperatorBuilder HasName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(
+                    $"{nameof(name)} cannot be null, empty " +
+                    $"or contain only whitespace characaters.",
+                    nameof(name));
+            }
 
-//            _filterOperator.Operator = @operator;
+            _filterOperator.Name = name;
+            UpdateMap();
 
-//            return this;
-//        }
-//    }
-//}
+            return this;
+        }
+
+        public IFilterOperatorBuilder IsCaseInsensitive()
+        {
+            _filterOperator.IsCaseInsensitive = true;
+            UpdateMap();
+
+            return this;
+        }
+
+        public IFilterOperatorBuilder IsDefault()
+        {
+            _filterOperator.IsDefault = true;
+            UpdateMap();
+
+            return this;
+        }
+
+        public IFilterOperatorBuilder NegateExpression()
+        {
+            _filterOperator.NegateExpression = true;
+            UpdateMap();
+
+            return this;
+        }
+
+        private void UpdateMap()
+        {
+            Mapper.AddMap(_filterOperator.Symbol, _filterOperator);
+        }
+    }
+}

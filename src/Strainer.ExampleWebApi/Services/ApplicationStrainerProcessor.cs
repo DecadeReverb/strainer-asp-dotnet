@@ -12,10 +12,12 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         }
 
-        protected override IFilterExpressionMapper MapFilterExpression(IFilterExpressionMapper mapper)
+        protected override IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
         {
-            mapper.Operator<NotEqualsCaseInsensitiveOperator>()
-                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue));
+            mapper.AddOperator(symbol: "!=*")
+                .HasName("not equal to (case insensitive)")
+                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
+                .IsCaseInsensitive();
 
             return mapper;
         }

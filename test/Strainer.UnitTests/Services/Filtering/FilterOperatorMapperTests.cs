@@ -4,63 +4,59 @@ using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
 {
-    public class FilterOperatorParserTests
+    public class FilterOperatorMapperTests
     {
         [Fact]
-        public void Parser_ReturnsDefaultFilterOperator_WhenInputIsNull()
+        public void Mapper_ReturnsDefaultFilterOperator()
         {
             // Arrange
-            string input = null;
             IFilterOperatorValidator validator = new FilterOperatorValidator();
             IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser parser = new FilterOperatorParser(mapper);
 
             // Act
             var defaultFilterOperator = mapper.GetDefault();
-            var filterOperator = parser.GetParsedOperator(input);
 
             // Assert
-            filterOperator
+            defaultFilterOperator
                 .Should()
-                .Be(defaultFilterOperator);
+                .NotBeNull();
+            defaultFilterOperator
+                .IsDefault
+                .Should()
+                .BeTrue();
         }
 
         [Fact]
-        public void Parser_ReturnsDefaultFilterOperator_WhenInputIsEmpty()
+        public void Mapper_ReturnsNull_WhenNoMatchingOperatorIsFound()
         {
             // Arrange
-            var input = string.Empty;
+            var symbol = string.Empty;
             IFilterOperatorValidator validator = new FilterOperatorValidator();
             IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser parser = new FilterOperatorParser(mapper);
 
             // Act
-            var defaultFilterOperator = mapper.GetDefault();
-            var filterOperator = parser.GetParsedOperator(input);
+            var filterOperator = mapper.Find(symbol);
 
             // Assert
             filterOperator
                 .Should()
-                .Be(defaultFilterOperator);
+                .BeNull();
         }
 
         [Fact]
-        public void Parser_ReturnsDefaultFilterOperator_WhenInputIsWhitespace()
+        public void Mapper_IsNotEmpty()
         {
             // Arrange
-            var input = " ";
             IFilterOperatorValidator validator = new FilterOperatorValidator();
             IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser parser = new FilterOperatorParser(mapper);
 
             // Act
-            var defaultFilterOperator = mapper.GetDefault();
-            var filterOperator = parser.GetParsedOperator(input);
+            var filterOperatorsAmount = mapper.Operators.Count;
 
             // Assert
-            filterOperator
+            filterOperatorsAmount
                 .Should()
-                .Be(defaultFilterOperator);
+                .BeGreaterThan(0);
         }
     }
 }

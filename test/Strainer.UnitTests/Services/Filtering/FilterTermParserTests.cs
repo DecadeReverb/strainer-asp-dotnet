@@ -11,9 +11,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             string input = null;
-            IFilterOperatorProvider operatorProvider = new FilterOperatorProvider();
-            IFilterOperatorParser operatorParser = new FilterOperatorParser(operatorProvider);
-            IFilterTermParser parser = new FilterTermParser(operatorParser, operatorProvider);
+            IFilterOperatorValidator validator = new FilterOperatorValidator();
+            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
+            IFilterOperatorParser operatorParser = new FilterOperatorParser(mapper);
+            IFilterTermParser parser = new FilterTermParser(operatorParser, mapper);
 
             // Act
             var FilterTermList = parser.GetParsedTerms(input);
@@ -29,9 +30,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            IFilterOperatorProvider operatorProvider = new FilterOperatorProvider();
-            IFilterOperatorParser operatorParser = new FilterOperatorParser(operatorProvider);
-            IFilterTermParser parser = new FilterTermParser(operatorParser, operatorProvider);
+            IFilterOperatorValidator validator = new FilterOperatorValidator();
+            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
+            IFilterOperatorParser operatorParser = new FilterOperatorParser(mapper);
+            IFilterTermParser parser = new FilterTermParser(operatorParser, mapper);
 
             // Act
             var FilterTermList = parser.GetParsedTerms(input);
@@ -47,9 +49,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            IFilterOperatorProvider operatorProvider = new FilterOperatorProvider();
-            IFilterOperatorParser operatorParser = new FilterOperatorParser(operatorProvider);
-            IFilterTermParser parser = new FilterTermParser(operatorParser, operatorProvider);
+            IFilterOperatorValidator validator = new FilterOperatorValidator();
+            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
+            IFilterOperatorParser operatorParser = new FilterOperatorParser(mapper);
+            IFilterTermParser parser = new FilterTermParser(operatorParser, mapper);
 
             // Act
             var FilterTermList = parser.GetParsedTerms(input);

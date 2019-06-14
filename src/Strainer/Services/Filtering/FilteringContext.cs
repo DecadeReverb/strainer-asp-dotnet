@@ -3,24 +3,20 @@
     public class FilteringContext : IFilteringContext
     {
         public FilteringContext(
-            IFilterExpressionMapper expressionMapper,
+            IFilterOperatorMapper operatorMapper,
             IFilterOperatorParser operatorParser,
-            IFilterOperatorProvider operatorProvider,
             IFilterOperatorValidator operatorValidator,
             IFilterTermParser termParser)
         {
-            ExpressionMapper = expressionMapper;
+            OperatorMapper = operatorMapper;
             OperatorParser = operatorParser;
-            OperatorProvider = operatorProvider;
             OperatorValidator = operatorValidator;
             TermParser = termParser;
         }
 
-        public IFilterExpressionMapper ExpressionMapper { get; }
+        public IFilterOperatorMapper OperatorMapper { get; }
 
         public IFilterOperatorParser OperatorParser { get; }
-
-        public IFilterOperatorProvider OperatorProvider { get; }
 
         public IFilterOperatorValidator OperatorValidator { get; }
 

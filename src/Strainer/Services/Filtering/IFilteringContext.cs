@@ -2,9 +2,8 @@
 {
     public interface IFilteringContext
     {
-        IFilterExpressionMapper ExpressionMapper { get; }
+        IFilterOperatorMapper OperatorMapper { get; }
         IFilterOperatorParser OperatorParser { get; }
-        IFilterOperatorProvider OperatorProvider { get; }
         IFilterOperatorValidator OperatorValidator { get; }
         IFilterTermParser TermParser { get; }
     }

@@ -1,10 +1,19 @@
-﻿namespace Fluorite.Strainer.Models.Filtering.Operators
+﻿using System;
+using System.Linq.Expressions;
+
+namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
     /// Provides information about filtering symbol.
     /// </summary>
     public interface IFilterOperator
     {
+        /// <summary>
+        /// Gets a function leading to <see cref="System.Linq.Expressions.Expression"/>
+        /// associated to current operator.
+        /// </summary>
+        Func<IFilterExpressionContext, Expression> Expression { get; }
+
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive.
@@ -18,15 +27,16 @@
         bool IsDefault { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator is a negated version of a different operator.
-        /// </summary>
-        bool IsNegated { get; }
-
-        /// <summary>
         /// Gets the operator name.
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether associated
+        /// <see cref="System.Linq.Expressions.Expression"/> should be negated
+        /// before using it for filtering data.
+        /// </summary>
+        bool NegateExpression { get; }
 
         /// <summary>
         /// Gets the <see cref="string"/> representation of operator.

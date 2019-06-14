@@ -1,81 +1,57 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
-    /// Represents base filter operator.
+    /// Represents filter operator.
     /// </summary>
     [DebuggerDisplay("{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}")]
-    public abstract class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
+    public class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
     {
         /// <summary>
-        /// Initializes new instance of <see cref="FilterOperator"/> class
-        /// with name and operator.
+        /// Initializes new instance of <see cref="FilterOperator"/> class.
         /// </summary>
-        /// <param name="name">
-        /// The name of filter operator.
-        /// </param>
-        /// <param name="symbol">
-        /// <see cref="string"/> representation of the operator.
-        /// </param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="name"/> is <see langword="null"/>, empty
-        /// or contains only whitespace characters.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="@operator"/> is <see langword="null"/>, empty
-        /// or contains only whitespace characters.
-        /// </exception>
-        protected FilterOperator(string name, string symbol)
+        public FilterOperator()
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException(
-                    $"{nameof(name)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(name));
-            }
 
-            if (string.IsNullOrWhiteSpace(symbol))
-            {
-                throw new ArgumentException(
-                    $"{nameof(symbol)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(symbol));
-            }
-
-            Name = name;
-            Symbol = symbol;
         }
+
+        /// <summary>
+        /// Gets or sets a function leading to <see cref="System.Linq.Expressions.Expression"/>
+        /// associated to current operator.
+        /// </summary>
+        public Func<IFilterExpressionContext, Expression> Expression { get; set;  }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive.
         /// </summary>
-        public virtual bool IsCaseInsensitive { get; }
+        public virtual bool IsCaseInsensitive { get; set; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indictating whether current
         /// operator is a default operator.
         /// </summary>
-        public virtual bool IsDefault { get; }
-
-        /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator is a negated version of a different operator.
-        /// </summary>
-        public virtual bool IsNegated { get; }
+        public virtual bool IsDefault { get; set; }
 
         /// <summary>
         /// Gets the operator name.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether associated
+        /// <see cref="System.Linq.Expressions.Expression"/> should be negated
+        /// before using it for filtering data.
+        /// </summary>
+        public virtual bool NegateExpression { get; set; }
 
         /// <summary>
         /// Gets the <see cref="string"/> representation of operator.
         /// </summary>
-        public string Symbol { get; }
+        public string Symbol { get; set; }
 
         /// <summary>
         /// Checks if current instance of <see cref="FilterOperator"/> is equal

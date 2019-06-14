@@ -11,14 +11,14 @@ namespace Fluorite.Strainer.Services.Filtering
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
-        public FilterTermParser(IFilterOperatorParser parser, IFilterOperatorProvider provider)
+        public FilterTermParser(IFilterOperatorParser parser, IFilterOperatorMapper mapper)
         {
+            Mapper = mapper;
             Parser = parser;
-            Provider = provider;
         }
 
+        protected IFilterOperatorMapper Mapper { get; }
         protected IFilterOperatorParser Parser { get; }
-        protected IFilterOperatorProvider Provider { get; }
 
         public IList<IFilterTerm> GetParsedTerms(string input)
         {
@@ -72,8 +72,8 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private List<string> GetFilterSplits(string input)
         {
-            var symbols = Provider
-                .Select(op => op.Symbol)
+            var symbols = Mapper
+                .Symbols
                 .OrderByDescending(s => s.Length)
                 .ToArray();
 
