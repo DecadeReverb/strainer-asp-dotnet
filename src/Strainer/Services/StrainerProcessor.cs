@@ -18,8 +18,8 @@ namespace Fluorite.Strainer.Services
         {
             Context = context;
 
-            MapFilterOperators(context.FilteringContext.OperatorMapper);
-            Context.FilteringContext.OperatorValidator.Validate(Context.FilteringContext.OperatorMapper.Operators);
+            MapFilterOperators(context.Filtering.OperatorMapper);
+            Context.Filtering.OperatorValidator.Validate(Context.Filtering.OperatorMapper.Operators);
 
             MapProperties(context.Mapper);
         }
@@ -120,7 +120,7 @@ namespace Fluorite.Strainer.Services
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
-            var parsedFilters = Context.FilteringContext.TermParser.GetParsedTerms(model.Filters);
+            var parsedFilters = Context.Filtering.TermParser.GetParsedTerms(model.Filters);
             if (parsedFilters == null)
             {
                 return result;
@@ -197,7 +197,7 @@ namespace Fluorite.Strainer.Services
                         result = ApplyCustomMethod(
                             result,
                             filterTermName,
-                            Context.CustomMethodsContext.FilterMethods,
+                            Context.CustomMethods.FilterMethods,
                             new object[]
                             {
                                 result,
@@ -242,7 +242,7 @@ namespace Fluorite.Strainer.Services
             IQueryable<TEntity> result,
             object[] dataForCustomMethods = null)
         {
-            var parsedTerms = Context.SortingContext.TermParser.GetParsedTerms(model.Sorts);
+            var parsedTerms = Context.Sorting.TermParser.GetParsedTerms(model.Sorts);
             if (parsedTerms.Count == 0)
             {
                 return result;
@@ -265,7 +265,7 @@ namespace Fluorite.Strainer.Services
                     result = ApplyCustomMethod(
                         result,
                         sortTerm.Name,
-                        Context.CustomMethodsContext.SortMethods,
+                        Context.CustomMethods.SortMethods,
                         new object[]
                         {
                             result,

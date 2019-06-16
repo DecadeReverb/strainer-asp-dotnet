@@ -14,21 +14,21 @@ namespace Fluorite.Strainer.Services
             IStrainerPropertyMapper mapper,
             IStrainerCustomMethodsContext customMethodsContext)
         {
-            CustomMethodsContext = customMethodsContext;
-            FilteringContext = filteringContext;
-            SortingContext = sortingContext;
+            CustomMethods = customMethodsContext;
+            Filtering = filteringContext;
+            Sorting = sortingContext;
             Mapper = mapper;
             Options = options.Value;
         }
 
-        public IStrainerCustomMethodsContext CustomMethodsContext { get; }
+        public IStrainerCustomMethodsContext CustomMethods { get; }
 
-        public IFilteringContext FilteringContext { get; }
+        public IFilteringContext Filtering { get; }
 
         public IStrainerPropertyMapper Mapper { get; }
 
         public StrainerOptions Options { get; }
 
-        public ISortingContext SortingContext { get; }
+        public ISortingContext Sorting { get; }
     }
 }

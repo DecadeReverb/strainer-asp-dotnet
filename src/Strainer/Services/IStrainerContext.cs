@@ -6,10 +6,10 @@ namespace Fluorite.Strainer.Services
 {
     public interface IStrainerContext
     {
-        IStrainerCustomMethodsContext CustomMethodsContext { get; }
-        IFilteringContext FilteringContext { get; }
+        IStrainerCustomMethodsContext CustomMethods { get; }
+        IFilteringContext Filtering { get; }
         IStrainerPropertyMapper Mapper { get; }
         StrainerOptions Options { get; }
-        ISortingContext SortingContext { get; }
+        ISortingContext Sorting { get; }
     }
 }

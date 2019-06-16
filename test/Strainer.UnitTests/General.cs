@@ -195,7 +195,7 @@ namespace Fluorite.Strainer.UnitTests
                 Filters = "LikeCount==50",
             };
 
-            var parsedFilters = _context.FilteringContext.TermParser.GetParsedTerms(model.Filters);
+            var parsedFilters = _context.Filtering.TermParser.GetParsedTerms(model.Filters);
             Console.WriteLine(parsedFilters.First().Values);
             Console.WriteLine(parsedFilters.First().Operator);
 
