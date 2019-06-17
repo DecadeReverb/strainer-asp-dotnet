@@ -20,7 +20,7 @@ namespace Fluorite.Strainer.Extensions
             var type = typeof(TEntity);
             var parameter = Expression.Parameter(type, "p");
 
-            dynamic propertyValue = parameter;
+            Expression propertyValue = parameter;
             if (fullPropertyName.Contains("."))
             {
                 var parts = fullPropertyName.Split('.');
