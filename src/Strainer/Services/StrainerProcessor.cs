@@ -323,7 +323,6 @@ namespace Fluorite.Strainer.Services
             }
 
             return property;
-
         }
 
         private PropertyInfo FindPropertyByStrainerAttribute<TEntity>(
