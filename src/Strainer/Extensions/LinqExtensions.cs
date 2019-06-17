@@ -14,6 +14,16 @@ namespace Fluorite.Strainer.Extensions
             bool desc,
             bool useThenBy)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (fullPropertyName == null)
+            {
+                throw new ArgumentNullException(nameof(fullPropertyName));
+            }
+
             var command = desc ?
                 ( useThenBy ? "ThenByDescending" : "OrderByDescending") :
                 ( useThenBy ? "ThenBy" : "OrderBy");
