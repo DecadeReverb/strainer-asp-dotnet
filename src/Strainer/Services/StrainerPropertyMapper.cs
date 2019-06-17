@@ -29,6 +29,11 @@ namespace Fluorite.Strainer.Services
             }
 
             var pair = new KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>(propertyInfo, metadata);
+            if (!_map.Keys.Contains(typeof(TEntity)))
+            {
+                _map[typeof(TEntity)] = new HashSet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>();
+            }
+
             _map[typeof(TEntity)].Add(pair);
         }
 
@@ -66,7 +71,7 @@ namespace Fluorite.Strainer.Services
 
             if (!_map.ContainsKey(typeof(TEntity)))
             {
-                _map.Add(typeof(TEntity), new HashSet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>());
+                _map[typeof(TEntity)] = new HashSet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>();
             }
 
             return new StrainerPropertyBuilder<TEntity>(this, expression);
