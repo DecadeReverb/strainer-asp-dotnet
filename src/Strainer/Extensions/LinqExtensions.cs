@@ -1,103 +1,46 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Extensions
 {
     public static partial class LinqExtentions
     {
-        public static IQueryable<TEntity> OrderByDynamic<TEntity>(
+        public static IQueryable<TEntity> OrderWithSortExpression<TEntity>(
             this IQueryable<TEntity> source,
-            string fullPropertyName,
-            PropertyInfo propertyInfo,
-            bool desc,
-            bool useThenBy)
+            ISortExpression<TEntity> sortExpression)
         {
             if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
             }
 
-            if (fullPropertyName == null)
+            if (sortExpression == null)
             {
-                throw new ArgumentNullException(nameof(fullPropertyName));
+                throw new ArgumentNullException(nameof(sortExpression));
             }
 
-            var command = desc ?
-                ( useThenBy ? "ThenByDescending" : "OrderByDescending") :
-                ( useThenBy ? "ThenBy" : "OrderBy");
-            var type = typeof(TEntity);
-            var parameter = Expression.Parameter(type, "p");
-
-            Expression propertyValue = parameter;
-            if (fullPropertyName.Contains("."))
+            if (sortExpression.IsDescending)
             {
-                var parts = fullPropertyName.Split('.');
-                for (var i = 0; i < parts.Length - 1; i++)
+                if (sortExpression.IsSubsequent)
                 {
-                    propertyValue = Expression.PropertyOrField(propertyValue, parts[i]);
+                    return (source as IOrderedQueryable<TEntity>).ThenByDescending(sortExpression.Expression);
+                }
+                else
+                {
+                    return source.OrderByDescending(sortExpression.Expression);
                 }
             }
-
-            var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
-            var orderByExpression = Expression.Lambda(propertyAccess, parameter);
-            var resultExpression = Expression.Call(
-                typeof(Queryable),
-                command,
-                new Type[] { type, propertyInfo.PropertyType },
-                source.Expression,
-                Expression.Quote(orderByExpression));
-
-            return source.Provider.CreateQuery<TEntity>(resultExpression);
-        }
-
-        private static IQueryable<TEntity> OrderBySortExpression<TEntity>(
-            this IQueryable<TEntity> source,
-            ISortExpression<TEntity> sortExpression)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (sortExpression == null)
-            {
-                throw new ArgumentNullException(nameof(sortExpression));
-            }
-
-            if (sortExpression.IsDescending)
-            {
-                return source.OrderByDescending(sortExpression.Expression);
-            }
             else
             {
-                return source.OrderBy(sortExpression.Expression);
-            }
-        }
-
-        private static IOrderedQueryable<TEntity> ThenBySortExpression<TEntity>(
-            this IOrderedQueryable<TEntity> source,
-            ISortExpression<TEntity> sortExpression)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (sortExpression == null)
-            {
-                throw new ArgumentNullException(nameof(sortExpression));
-            }
-
-            if (sortExpression.IsDescending)
-            {
-                return source.ThenByDescending(sortExpression.Expression);
-            }
-            else
-            {
-                return source.ThenBy(sortExpression.Expression);
+                if (sortExpression.IsSubsequent)
+                {
+                    return (source as IOrderedQueryable<TEntity>).ThenBy(sortExpression.Expression);
+                }
+                else
+                {
+                    return source.OrderBy(sortExpression.Expression);
+                }
             }
         }
     }

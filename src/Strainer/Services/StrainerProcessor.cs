@@ -258,7 +258,11 @@ namespace Fluorite.Strainer.Services
 
                 if (property != null)
                 {
-                    result = result.OrderByDynamic(fullName, property, sortTerm.IsDescending, useThenBy);
+                    var sortExpression = Context.Sorting.ExpressionProvider.GetExpression<TEntity>(sortTerm, isFirst: !useThenBy);
+                    if (sortExpression != null)
+                    {
+                        result = result.OrderWithSortExpression(sortExpression);
+                    }
                 }
                 else
                 {

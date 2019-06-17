@@ -9,6 +9,7 @@ using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.UnitTests.Entities;
 using Fluorite.Strainer.UnitTests.Services;
+using FluentAssertions;
 
 namespace Fluorite.Strainer.UnitTests
 {
@@ -164,14 +165,34 @@ namespace Fluorite.Strainer.UnitTests
         [TestMethod]
         public void CanSortBools()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Sorts = "-IsDraft"
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.AreEqual(result.First().Id, 0);
+            // Assert
+            result.Should().BeInDescendingOrder(p => p.IsDraft);
+        }
+
+        [TestMethod]
+        public void CanSortByMultipleProperties()
+        {
+            // Arrange
+            var model = new StrainerModel()
+            {
+                Sorts = "-IsDraft,-LikeCount"
+            };
+
+            // Act
+            var result = _processor.Apply(model, _posts);
+
+            // Assert
+            result.Should().BeInDescendingOrder(p => p.IsDraft);
+            result.First().LikeCount.Should().Be(100);
         }
 
         [TestMethod]

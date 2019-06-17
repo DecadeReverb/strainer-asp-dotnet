@@ -32,6 +32,49 @@ namespace Fluorite.Strainer.Services.Sorting
             _options = options.Value;
         }
 
+        public ISortExpression<TEntity> GetExpression<TEntity>(ISortTerm sortTerm, bool isFirst)
+        {
+            if (sortTerm == null)
+            {
+                throw new ArgumentNullException(nameof(sortTerm));
+            }
+
+            var (fullName, propertyInfo) = GetStrainerProperty<TEntity>(
+                isSortingRequired: true,
+                ifFileringRequired: false,
+                name: sortTerm.Name);
+
+            if (propertyInfo != null)
+            {
+                var parameter = Expression.Parameter(typeof(TEntity), "p");
+                Expression propertyValue = parameter;
+
+                if (fullName.Contains("."))
+                {
+                    var parts = fullName.Split('.');
+                    for (var i = 0; i < parts.Length - 1; i++)
+                    {
+                        propertyValue = Expression.PropertyOrField(propertyValue, parts[i]);
+                    }
+                }
+
+                var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
+                var conversion = Expression.Convert(propertyAccess, typeof(object));
+                var orderExpression = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
+
+                return new SortExpression<TEntity>
+                {
+                    Expression = orderExpression,
+                    IsDescending = sortTerm.IsDescending,
+                    IsSubsequent = !isFirst,
+                };
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
         /// list of sort terms used to associate names from <see cref="IStrainerPropertyMapper"/>.
@@ -55,50 +98,24 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(sortTerms));
             }
 
-            var expressionInfoList = new List<ISortExpression<TEntity>>();
-            var isSubsequent = false;
+            var expressions = new List<ISortExpression<TEntity>>();
+            var isFirst = true;
             foreach (var sortTerm in sortTerms)
             {
-                var (fullName, propertyInfo) = GetStrainerProperty<TEntity>(
-                    isSortingRequired: true,
-                    ifFileringRequired: false,
-                    name: sortTerm.Name);
-
-                if (propertyInfo != null)
+                var sortExpression = GetExpression<TEntity>(sortTerm, isFirst);
+                if (sortExpression != null)
                 {
-                    var parameter = Expression.Parameter(typeof(TEntity), "p");
-                    Expression propertyValue = parameter;
-
-                    if (fullName.Contains("."))
-                    {
-                        var parts = fullName.Split('.');
-                        for (var i = 0; i < parts.Length - 1; i++)
-                        {
-                            propertyValue = Expression.PropertyOrField(propertyValue, parts[i]);
-                        }
-                    }
-
-                    var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
-                    var conversion = Expression.Convert(propertyAccess, typeof(object));
-                    var orderExpression = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
-                    var expressionInfo = new SortExpression<TEntity>
-                    {
-                        Expression = orderExpression,
-                        IsDescending = sortTerm.IsDescending,
-                        IsSubsequent = isSubsequent,
-                    };
-
-                    expressionInfoList.Add(expressionInfo);
+                    expressions.Add(sortExpression);
                 }
                 else
                 {
                     continue;
                 }
 
-                isSubsequent = true;
+                isFirst = false;
             }
 
-            return expressionInfoList;
+            return expressions;
         }
 
         private (string, PropertyInfo) GetStrainerProperty<TEntity>(
