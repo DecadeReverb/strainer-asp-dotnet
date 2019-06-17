@@ -21,6 +21,7 @@ namespace Fluorite.Strainer.UnitTests
         public Mapper()
         {
             var options = new StrainerOptionsAccessor();
+            var mapper = new StrainerPropertyMapper();
 
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterOperatorMapper = new FilterOperatorMapper(filterOperatorValidator);
@@ -28,11 +29,10 @@ namespace Fluorite.Strainer.UnitTests
             var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorMapper);
             var filteringContext = new FilteringContext(filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
 
+            var sortExpressionProvider = new SortExpressionProvider(mapper, options);
             var sortingWayFormatter = new SortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter);
-            var sortingContext = new SortingContext(sortingWayFormatter, sortTermParser);
-
-            var mapper = new StrainerPropertyMapper();
+            var sortingContext = new SortingContext(sortExpressionProvider, sortingWayFormatter, sortTermParser);
 
             var customFilterMethods = new StrainerCustomFilterMethods();
             var customSortMethods = new StrainerCustomSortMethods();

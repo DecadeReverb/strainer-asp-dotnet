@@ -92,6 +92,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IFilterTermParser, FilterTermParser>(options.ServiceLifetime);
             services.Add<IFilteringContext, FilteringContext>(options.ServiceLifetime);
 
+            services.Add<ISortExpressionProvider, SortExpressionProvider>(options.ServiceLifetime);
             services.Add<ISortingWayFormatter, SortingWayFormatter>(options.ServiceLifetime);
             services.Add<ISortTermParser, SortTermParser>(options.ServiceLifetime);
             services.Add<ISortingContext, SortingContext>(options.ServiceLifetime);
