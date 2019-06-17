@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fluorite.Strainer.Models.Sorting;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -50,6 +51,54 @@ namespace Fluorite.Strainer.Extensions
                 Expression.Quote(orderByExpression));
 
             return source.Provider.CreateQuery<TEntity>(resultExpression);
+        }
+
+        private static IQueryable<TEntity> OrderBySortExpression<TEntity>(
+            this IQueryable<TEntity> source,
+            ISortExpression<TEntity> sortExpression)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (sortExpression == null)
+            {
+                throw new ArgumentNullException(nameof(sortExpression));
+            }
+
+            if (sortExpression.IsDescending)
+            {
+                return source.OrderByDescending(sortExpression.Expression);
+            }
+            else
+            {
+                return source.OrderBy(sortExpression.Expression);
+            }
+        }
+
+        private static IOrderedQueryable<TEntity> ThenBySortExpression<TEntity>(
+            this IOrderedQueryable<TEntity> source,
+            ISortExpression<TEntity> sortExpression)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (sortExpression == null)
+            {
+                throw new ArgumentNullException(nameof(sortExpression));
+            }
+
+            if (sortExpression.IsDescending)
+            {
+                return source.ThenByDescending(sortExpression.Expression);
+            }
+            else
+            {
+                return source.ThenBy(sortExpression.Expression);
+            }
         }
     }
 }
