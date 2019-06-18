@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Extensions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
@@ -195,18 +196,22 @@ namespace Fluorite.Strainer.Services
                     }
                     else
                     {
-                        result = ApplyCustomMethod(
-                            result,
-                            filterTermName,
-                            Context.CustomMethods.Filter,
-                            new object[]
+                        var customMethod = Context.CustomMethods.Filter.Mapper.GetMethod<TEntity>(filterTermName);
+                        if (customMethod != null)
+                        {
+                            var context = new CustomFilterMethodContext<TEntity>
                             {
-                                result,
-                                filterTerm.Operator,
-                                filterTerm.Values
-                            },
-                            dataForCustomMethods);
-
+                                Source = result,
+                                Term = filterTerm,
+                            };
+                            result = customMethod.Function(context);
+                        }
+                        else
+                        {
+                            throw new StrainerMethodNotFoundException(
+                                filterTermName,
+                                $"{filterTermName} not found.");
+                        }
                     }
                 }
 
@@ -277,6 +282,12 @@ namespace Fluorite.Strainer.Services
                             Source = result,
                         };
                         result = customMethod.Function(context);
+                    }
+                    else
+                    {
+                        throw new StrainerMethodNotFoundException(
+                            sortTerm.Name,
+                            $"{sortTerm.Name} not found.");
                     }
                 }
 
@@ -351,70 +362,6 @@ namespace Fluorite.Strainer.Services
                     && (isFilteringRequired ? strainerAttribute.IsFilterable : true)
                     && ((strainerAttribute.DisplayName ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
             });
-        }
-
-        private IQueryable<TEntity> ApplyCustomMethod<TEntity>(
-            IQueryable<TEntity> result,
-            string name,
-            object parent,
-            object[] parameters,
-            object[] optionalParameters = null)
-        {
-            var customMethod = parent?.GetType()
-                .GetMethodExt(
-                    name,
-                    Context.Options.CaseSensitive
-                        ? BindingFlags.Default
-                        : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance,
-                    typeof(IQueryable<TEntity>));
-
-            if (customMethod != null)
-            {
-                try
-                {
-                    result = customMethod.Invoke(parent, parameters) as IQueryable<TEntity>;
-                }
-                catch (TargetParameterCountException)
-                {
-                    if (optionalParameters != null)
-                    {
-                        result = customMethod.Invoke(parent, parameters.Concat(optionalParameters).ToArray())
-                            as IQueryable<TEntity>;
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-            else
-            {
-                var incompatibleCustomMethod = parent?.GetType()
-                    .GetMethod(
-                        name,
-                        Context.Options.CaseSensitive
-                            ? BindingFlags.Default
-                            : BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-                if (incompatibleCustomMethod != null)
-                {
-                    var expected = typeof(IQueryable<TEntity>);
-                    var actual = incompatibleCustomMethod.ReturnType;
-
-                    throw new StrainerIncompatibleMethodException(
-                        name,
-                        expected,
-                        actual,
-                            $"{name} failed. Expected a custom method for type " +
-                            $"{expected} but only found for type {actual}");
-                }
-                else
-                {
-                    throw new StrainerMethodNotFoundException(name, $"{name} not found.");
-                }
-            }
-
-            return result;
         }
     }
 }

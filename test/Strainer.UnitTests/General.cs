@@ -37,10 +37,13 @@ namespace Fluorite.Strainer.UnitTests
             var sortTermParser = new SortTermParser(sortingWayFormatter);
             var sortingContext = new SortingContext(sortExpressionProvider, sortingWayFormatter, sortTermParser);
 
-            var customFilterMethods = new StrainerCustomFilterMethods();
-            var customSortMethodMapper = new CustomSortMethodMapper();
-            var customSortMethods = new ApplicationCustomSortMethodProvider(customSortMethodMapper);
-            var customMethodsContext = new StrainerCustomMethodsContext(customFilterMethods, customSortMethods);
+            var customFilterMethodMapper = new CustomFilterMethodMapper(options);
+            var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
+
+            var customSortMethodMapper = new CustomSortMethodMapper(options);
+            var customSortMethodProvider = new ApplicationCustomSortMethodProvider(customSortMethodMapper);
+
+            var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider, customSortMethodProvider);
 
             _context = new StrainerContext(
                 options,
@@ -284,7 +287,7 @@ namespace Fluorite.Strainer.UnitTests
         }
 
         [TestMethod]
-        public void CustomFiltersOnDifferentSourcesCanShareName()
+         public void CustomFiltersOnDifferentSourcesCanShareName()
         {
             var postModel = new StrainerModel()
             {
@@ -329,17 +332,6 @@ namespace Fluorite.Strainer.UnitTests
             };
 
             Assert.ThrowsException<StrainerMethodNotFoundException>(() => _processor.Apply(model, _posts));
-        }
-
-        [TestMethod]
-        public void IncompatibleMethodExceptionsWork()
-        {
-            var model = new StrainerModel()
-            {
-                Filters = "TestComment",
-            };
-
-            Assert.ThrowsException<StrainerIncompatibleMethodException>(() => _processor.Apply(model, _posts));
         }
 
         [TestMethod]

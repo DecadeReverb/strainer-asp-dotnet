@@ -12,8 +12,8 @@ namespace Fluorite.Extensions.DependencyInjection
 {
     public static class StrainerServiceCollectionExtensions
     {
-        public static IStrainerBuilder AddCustomFilterMethods<TFilterMethods>(this IStrainerBuilder builder)
-            where TFilterMethods : class, IStrainerCustomFilterMethods
+        public static IStrainerBuilder AddCustomFilterMethods<TProvider>(this IStrainerBuilder builder)
+            where TProvider : class, ICustomFilterMethodProvider
         {
             if (builder == null)
             {
@@ -21,13 +21,13 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             var options = builder.Services.GetStrainerOptions();
-            builder.Services.Add<IStrainerCustomFilterMethods, TFilterMethods>(options.ServiceLifetime);
+            builder.Services.Add<ICustomFilterMethodProvider, TProvider>(options.ServiceLifetime);
 
             return builder;
         }
 
-        public static IStrainerBuilder AddCustomSortMethods<TSortMethods>(this IStrainerBuilder builder)
-            where TSortMethods : class, ICustomSortMethodProvider
+        public static IStrainerBuilder AddCustomSortMethods<TProvider>(this IStrainerBuilder builder)
+            where TProvider : class, ICustomSortMethodProvider
         {
             if (builder == null)
             {
@@ -35,7 +35,7 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             var options = builder.Services.GetStrainerOptions();
-            builder.Services.Add<ICustomSortMethodProvider, TSortMethods>(options.ServiceLifetime);
+            builder.Services.Add<ICustomSortMethodProvider, TProvider>(options.ServiceLifetime);
 
             return builder;
         }
@@ -97,13 +97,12 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ISortTermParser, SortTermParser>(options.ServiceLifetime);
             services.Add<ISortingContext, SortingContext>(options.ServiceLifetime);
 
-            services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
-
+            services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(options.ServiceLifetime);
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(options.ServiceLifetime);
-            services.Add<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>(options.ServiceLifetime);
+            services.Add<ICustomMethodsContext, CustomMethodsContext>(options.ServiceLifetime);
 
+            services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
             services.Add<IStrainerContext, StrainerContext>(options.ServiceLifetime);
-
             services.Add<IStrainerProcessor, TProcessor>(options.ServiceLifetime);
 
             return new StrainerBuilder(services);

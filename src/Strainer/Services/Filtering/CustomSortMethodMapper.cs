@@ -1,24 +1,24 @@
 ﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Sorting;
+using Fluorite.Strainer.Models.Filtering;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fluorite.Strainer.Services.Sorting
+namespace Fluorite.Strainer.Services.Filtering
 {
-    public class CustomSortMethodMapper : ICustomSortMethodMapper
+    public class CustomFilterMethodMapper : ICustomFilterMethodMapper
     {
         private readonly Dictionary<Type, Dictionary<string, object>> _methods;
         private readonly StrainerOptions _options;
 
-        public CustomSortMethodMapper(IOptions<StrainerOptions> options)
+        public CustomFilterMethodMapper(IOptions<StrainerOptions> options)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
             _options = options.Value;
         }
 
-        public void AddMethod<TEntity>(ICustomSortMethod<TEntity> sortMethod)
+        public void AddMethod<TEntity>(ICustomFilterMethod<TEntity> sortMethod)
         {
             if (sortMethod == null)
             {
@@ -33,7 +33,7 @@ namespace Fluorite.Strainer.Services.Sorting
             _methods[typeof(TEntity)][sortMethod.Name] = sortMethod;
         }
 
-        public ICustomSortMethod<TEntity> GetMethod<TEntity>(string name)
+        public ICustomFilterMethod<TEntity> GetMethod<TEntity>(string name)
         {
             if (name == null)
             {
@@ -51,10 +51,10 @@ namespace Fluorite.Strainer.Services.Sorting
 
             return _methods[typeof(TEntity)]
                 .FirstOrDefault(pair => pair.Key.Equals(name, comparisonType))
-                .Value as ICustomSortMethod<TEntity>;
+                .Value as ICustomFilterMethod<TEntity>;
         }
 
-        public ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
+        public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -69,7 +69,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 _methods[typeof(TEntity)] = new Dictionary<string, object>();
             }
 
-            return new CustomSortMethodBuilder<TEntity>(this, name);
+            return new CustomFilterMethodBuilder<TEntity>(this, name);
         }
     }
 }

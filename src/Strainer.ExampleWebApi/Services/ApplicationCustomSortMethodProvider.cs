@@ -1,9 +1,9 @@
-﻿using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.ExampleWebApi.Entities;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.UnitTests.Entities;
 using System.Linq;
 
-namespace Fluorite.Strainer.UnitTests.Services
+namespace Fluorite.Strainer.ExampleWebApi.Services
 {
     public class ApplicationCustomSortMethodProvider : CustomSortMethodProvider
     {
@@ -11,17 +11,6 @@ namespace Fluorite.Strainer.UnitTests.Services
         {
 
         }
-
-        //public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc)
-        //{
-        //    var result = useThenBy
-        //        ? ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount)
-        //        : source.OrderBy(p => p.LikeCount)
-        //            .ThenBy(p => p.CommentCount)
-        //            .ThenBy(p => p.DateCreated);
-
-        //    return result;
-        //}
 
         public override void MapMethods(ICustomSortMethodMapper mapper)
         {

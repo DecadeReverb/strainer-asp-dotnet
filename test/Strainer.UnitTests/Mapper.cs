@@ -34,10 +34,13 @@ namespace Fluorite.Strainer.UnitTests
             var sortTermParser = new SortTermParser(sortingWayFormatter);
             var sortingContext = new SortingContext(sortExpressionProvider, sortingWayFormatter, sortTermParser);
 
-            var customFilterMethods = new StrainerCustomFilterMethods();
-            var customSortMethodMapper = new CustomSortMethodMapper();
-            var customSortMethods = new ApplicationCustomSortMethodProvider(customSortMethodMapper);
-            var customMethodsContext = new StrainerCustomMethodsContext(customFilterMethods, customSortMethods);
+            var customFilterMethodMapper = new CustomFilterMethodMapper(options);
+            var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
+
+            var customSortMethodMapper = new CustomSortMethodMapper(options);
+            var customSortMethodProvider = new ApplicationCustomSortMethodProvider(customSortMethodMapper);
+
+            var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider, customSortMethodProvider);
 
             _context = new StrainerContext(
                 options,
@@ -108,9 +111,3 @@ namespace Fluorite.Strainer.UnitTests
         }
     }
 }
-
-//
-//Sorts = "LikeCount",
-//Page = 1,
-//PageSize = 10
-//

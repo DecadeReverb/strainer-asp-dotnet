@@ -104,11 +104,11 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             var serviceProvider = services.BuildServiceProvider();
-            var preExtensionStrainerCustomFilterMethods = serviceProvider.GetService<IStrainerCustomFilterMethods>();
+            var preExtensionStrainerCustomFilterMethods = serviceProvider.GetService<ICustomFilterMethodProvider>();
             services.AddStrainer<StrainerProcessor>()
-                .AddCustomFilterMethods<StrainerCustomFilterMethods>();
+                .AddCustomFilterMethods<ApplicationCustomFilterMethodProvider>();
             serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainerCustomFilterMethods = serviceProvider.GetService<IStrainerCustomFilterMethods>();
+            var postExtensionStrainerCustomFilterMethods = serviceProvider.GetService<ICustomFilterMethodProvider>();
 
             // Assert
             preExtensionStrainerCustomFilterMethods

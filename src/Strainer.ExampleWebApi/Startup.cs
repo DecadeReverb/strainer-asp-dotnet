@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.ExampleWebApi
             });
 
             services.AddStrainer<ApplicationStrainerProcessor>()
-                .AddCustomFilterMethods<StrainerCustomFilterMethods>()
+                .AddCustomFilterMethods<ApplicationCustomFilterMethodProvider>()
                 .AddCustomSortMethods<ApplicationCustomSortMethodProvider>();
         }
 
