@@ -3,6 +3,7 @@ using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Extensions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using System;
 using System.ComponentModel;
@@ -197,7 +198,7 @@ namespace Fluorite.Strainer.Services
                         result = ApplyCustomMethod(
                             result,
                             filterTermName,
-                            Context.CustomMethods.FilterMethods,
+                            Context.CustomMethods.Filter,
                             new object[]
                             {
                                 result,
@@ -266,18 +267,19 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    result = ApplyCustomMethod(
-                        result,
-                        sortTerm.Name,
-                        Context.CustomMethods.SortMethods,
-                        new object[]
+                    var customMethod = Context.CustomMethods.Sort.Mapper.GetMethod<TEntity>(sortTerm.Name);
+                    if (customMethod != null)
+                    {
+                        var context = new CustomSortMethodContext<TEntity>
                         {
-                            result,
-                            useThenBy,
-                            sortTerm.IsDescending
-                        },
-                        dataForCustomMethods);
+                            IsDescending = sortTerm.IsDescending,
+                            IsSubsequent = useThenBy,
+                            Source = result,
+                        };
+                        result = customMethod.Function(context);
+                    }
                 }
+
                 useThenBy = true;
             }
 

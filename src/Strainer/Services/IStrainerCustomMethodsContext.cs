@@ -1,8 +1,10 @@
-﻿namespace Fluorite.Strainer.Services
+﻿using Fluorite.Strainer.Services.Sorting;
+
+namespace Fluorite.Strainer.Services
 {
     public interface IStrainerCustomMethodsContext
     {
-        IStrainerCustomFilterMethods FilterMethods { get; }
-        IStrainerCustomSortMethods SortMethods { get; }
+        IStrainerCustomFilterMethods Filter { get; }
+        ICustomSortMethodProvider Sort { get; }
     }
 }

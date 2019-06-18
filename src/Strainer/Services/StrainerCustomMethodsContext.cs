@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Strainer.Services
+﻿using Fluorite.Strainer.Services.Sorting;
+
+namespace Fluorite.Strainer.Services
 {
     public class StrainerCustomMethodsContext : IStrainerCustomMethodsContext
     {
@@ -9,22 +11,22 @@
 
         public StrainerCustomMethodsContext(IStrainerCustomFilterMethods filterMethods)
         {
-            FilterMethods = filterMethods;
+            Filter = filterMethods;
         }
 
-        public StrainerCustomMethodsContext(IStrainerCustomSortMethods sortMethods)
+        public StrainerCustomMethodsContext(ICustomSortMethodProvider sortMethods)
         {
-            SortMethods = sortMethods;
+            Sort = sortMethods;
         }
 
-        public StrainerCustomMethodsContext(IStrainerCustomFilterMethods filterMethods, IStrainerCustomSortMethods sortMethods)
+        public StrainerCustomMethodsContext(IStrainerCustomFilterMethods filterMethods, ICustomSortMethodProvider sortMethods)
         {
-            FilterMethods = filterMethods;
-            SortMethods = sortMethods;
+            Filter = filterMethods;
+            Sort = sortMethods;
         }
 
-        public IStrainerCustomFilterMethods FilterMethods { get; }
+        public IStrainerCustomFilterMethods Filter { get; }
 
-        public IStrainerCustomSortMethods SortMethods { get; }
+        public ICustomSortMethodProvider Sort { get; }
     }
 }

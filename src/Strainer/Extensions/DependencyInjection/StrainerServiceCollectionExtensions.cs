@@ -27,7 +27,7 @@ namespace Fluorite.Extensions.DependencyInjection
         }
 
         public static IStrainerBuilder AddCustomSortMethods<TSortMethods>(this IStrainerBuilder builder)
-            where TSortMethods : class, IStrainerCustomSortMethods
+            where TSortMethods : class, ICustomSortMethodProvider
         {
             if (builder == null)
             {
@@ -35,7 +35,7 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             var options = builder.Services.GetStrainerOptions();
-            builder.Services.Add<IStrainerCustomSortMethods, TSortMethods>(options.ServiceLifetime);
+            builder.Services.Add<ICustomSortMethodProvider, TSortMethods>(options.ServiceLifetime);
 
             return builder;
         }
@@ -99,6 +99,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
 
+            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(options.ServiceLifetime);
             services.Add<IStrainerCustomMethodsContext, StrainerCustomMethodsContext>(options.ServiceLifetime);
 
             services.Add<IStrainerContext, StrainerContext>(options.ServiceLifetime);

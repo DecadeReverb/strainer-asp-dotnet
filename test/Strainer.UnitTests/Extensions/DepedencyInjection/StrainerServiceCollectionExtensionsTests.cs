@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.UnitTests.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -128,11 +129,11 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             var serviceProvider = services.BuildServiceProvider();
-            var preExtensionStrainerCustomSortMethods = serviceProvider.GetService<IStrainerCustomSortMethods>();
+            var preExtensionStrainerCustomSortMethods = serviceProvider.GetService<ICustomSortMethodProvider>();
             services.AddStrainer<StrainerProcessor>()
-                .AddCustomSortMethods<StrainerCustomSortMethods>();
+                .AddCustomSortMethods<ApplicationCustomSortMethodProvider>();
             serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainerCustomSortMethods = serviceProvider.GetService<IStrainerCustomSortMethods>();
+            var postExtensionStrainerCustomSortMethods = serviceProvider.GetService<ICustomSortMethodProvider>();
 
             // Assert
             preExtensionStrainerCustomSortMethods

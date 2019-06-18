@@ -35,7 +35,8 @@ namespace Fluorite.Strainer.UnitTests
             var sortingContext = new SortingContext(sortExpressionProvider, sortingWayFormatter, sortTermParser);
 
             var customFilterMethods = new StrainerCustomFilterMethods();
-            var customSortMethods = new StrainerCustomSortMethods();
+            var customSortMethodMapper = new CustomSortMethodMapper();
+            var customSortMethods = new ApplicationCustomSortMethodProvider(customSortMethodMapper);
             var customMethodsContext = new StrainerCustomMethodsContext(customFilterMethods, customSortMethods);
 
             _context = new StrainerContext(
