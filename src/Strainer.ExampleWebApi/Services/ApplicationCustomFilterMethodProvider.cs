@@ -18,12 +18,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
                 .WithFunction(IsNew);
         }
 
-        private IQueryable<Post> IsNew(IQueryable<Post> source, string op, string[] values)
-            => source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
-
         private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
-        {
-            return context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
-        }
+            => context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
     }
 }
