@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
@@ -8,10 +6,12 @@ using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.UnitTests.Entities;
 using Fluorite.Strainer.UnitTests.Services;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 namespace Fluorite.Strainer.UnitTests
 {
-    [TestClass]
     public class Mapper
     {
         private readonly StrainerContext _context;
@@ -74,40 +74,40 @@ namespace Fluorite.Strainer.UnitTests
             }.AsQueryable();
         }
 
-        [TestMethod]
+        [Fact]
         public void MapperWorks()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "shortname@=A",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.AreEqual(result.First().ThisHasNoAttributeButIsAccessible, "A");
-
-            Assert.IsTrue(result.Count() == 1);
+            // Assert
+            result.Should().NotBeEmpty();
+            result.First().ThisHasNoAttribute.Should().Be("A");
         }
 
-        [TestMethod]
+        [Fact]
         public void MapperSortOnlyWorks()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "OnlySortableViaFluentApi@=50",
                 Sorts = "OnlySortableViaFluentApi"
             };
 
+            // Act
             var result = _processor.Apply(model, _posts, applyFiltering: false, applyPagination: false);
 
-            Assert.ThrowsException<StrainerMethodNotFoundException>(() =>
-            {
-                _processor.Apply(model, _posts);
-            });
-
-            Assert.AreEqual(result.First().Id, 3);
-
-            Assert.IsTrue(result.Count() == 3);
+            // Assert
+            Assert.Throws<StrainerMethodNotFoundException>(() => _processor.Apply(model, _posts));
+            result.Should().BeInAscendingOrder(post => post.OnlySortableViaFluentApi);
+            result.Should().HaveCount(3);
         }
     }
 }

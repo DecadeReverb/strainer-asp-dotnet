@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
@@ -9,11 +6,14 @@ using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.UnitTests.Entities;
 using Fluorite.Strainer.UnitTests.Services;
-using FluentAssertions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using Xunit;
 
 namespace Fluorite.Strainer.UnitTests
 {
-    [TestClass]
     public class General
     {
         private readonly StrainerContext _context;
@@ -103,7 +103,7 @@ namespace Fluorite.Strainer.UnitTests
                 new Comment() {
                     Id = 1,
                     DateCreated = DateTimeOffset.UtcNow.AddDays(-1),
-                    Text = "This is a fairly new comment."
+                    Text = "This is a fairly new comment. text"
                 },
                 new Comment() {
                     Id = 2,
@@ -113,60 +113,71 @@ namespace Fluorite.Strainer.UnitTests
             }.AsQueryable();
         }
 
-        [TestMethod]
+        [Fact]
         public void ContainsCanBeCaseInsensitive()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "Title@=*a"
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.AreEqual(result.First().Id, 0);
-            Assert.IsTrue(result.Count() == 1);
+            // Assert
+            result.Should().OnlyContain(p => p.Title.Contains("a", StringComparison.OrdinalIgnoreCase));
         }
 
-        [TestMethod]
+        [Fact]
         public void ContainsIsCaseSensitive()
         {
+            // Arrange
             var model = new StrainerModel()
             {
-                Filters = "Title@=a",
+                Filters = "Text@=text",
             };
 
-            var result = _processor.Apply(model, _posts);
+            // Act
+            var result = _processor.Apply(model, _comments);
 
-            Assert.IsTrue(result.Count() == 0);
+            // Assert
+            result.Should().OnlyContain(p => p.Text.Contains("text", StringComparison.Ordinal));
         }
 
-        [TestMethod]
+        [Fact]
         public void NotContainsWorks()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "Title!@=D",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.IsTrue(result.Count() == 3);
+            // Assert
+            result.Should().OnlyContain(p => !p.Title.Contains("D", StringComparison.Ordinal));
         }
 
-        [TestMethod]
+        [Fact]
         public void CanFilterBools()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "IsDraft==false"
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.IsTrue(result.Count() == 2);
+            // Assert
+            result.Should().OnlyContain(p => !p.IsDraft);
         }
 
-        [TestMethod]
+        [Fact]
         public void CanSortBools()
         {
             // Arrange
@@ -182,7 +193,7 @@ namespace Fluorite.Strainer.UnitTests
             result.Should().BeInDescendingOrder(p => p.IsDraft);
         }
 
-        [TestMethod]
+        [Fact]
         public void CanSortByMultipleProperties()
         {
             // Arrange
@@ -193,242 +204,272 @@ namespace Fluorite.Strainer.UnitTests
 
             // Act
             var result = _processor.Apply(model, _posts);
+            var sortedResult = _posts.OrderByDescending(p => p.IsDraft)
+                .ThenByDescending(p => p.LikeCount);
 
             // Assert
             result.Should().BeInDescendingOrder(p => p.IsDraft);
-            result.First().LikeCount.Should().Be(100);
+            result.Should().ContainInOrder(sortedResult);
         }
 
-        [TestMethod]
+        [Fact]
         public void CanFilterNullableInts()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "CategoryId==1"
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.IsTrue(result.Count() == 2);
+            // Assert
+            result.Should().OnlyContain(p => p.CategoryId == 1);
         }
 
-        [TestMethod]
+        [Fact]
         public void EqualsDoesntFailWithNonStringTypes()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "LikeCount==50",
             };
 
-            var parsedFilters = _context.Filtering.TermParser.GetParsedTerms(model.Filters);
-            Console.WriteLine(parsedFilters.First().Values);
-            Console.WriteLine(parsedFilters.First().Operator);
-
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.AreEqual(result.First().Id, 1);
-            Assert.IsTrue(result.Count() == 1);
+            // Assert
+            result.Should().OnlyContain(p => p.LikeCount == 50);
         }
 
-        [TestMethod]
+        [Fact]
         public void CustomFiltersWork()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "Isnew",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.IsFalse(result.Any(p => p.Id == 0));
-            Assert.IsTrue(result.Count() == 3);
+            // Assert
+            result.Should().OnlyContain(p => p.LikeCount < 100);
         }
 
-        [TestMethod]
+        [Fact]
         public void CustomFiltersWithOperatorsWork()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "HasInTitle==A",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.IsTrue(result.Any(p => p.Id == 0));
-            Assert.IsTrue(result.Count() == 1);
+            // Assert
+            result.Should().OnlyContain(p => p.Title.Contains("A"));
         }
 
-        [TestMethod]
+        [Fact]
         public void CustomFiltersMixedWithUsualWork1()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "Isnew,CategoryId==2",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.IsTrue(result.Any(p => p.Id == 3));
-            Assert.IsTrue(result.Count() == 1);
+            // Assert
+            result.Should().OnlyContain(p => p.LikeCount < 100);
+            result.Should().OnlyContain(p => p.CategoryId == 2);
         }
 
-        [TestMethod]
+        [Fact]
         public void CustomFiltersMixedWithUsualWork2()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "CategoryId==2,Isnew",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
 
-            Assert.IsTrue(result.Any(p => p.Id == 3));
-            Assert.IsTrue(result.Count() == 1);
+            // Assert
+            result.Should().OnlyContain(p => p.CategoryId == 2);
+            result.Should().OnlyContain(p => p.LikeCount < 100);
         }
 
-        [TestMethod]
-         public void CustomFiltersOnDifferentSourcesCanShareName()
+        [Fact]
+        public void CustomFiltersOnDifferentSourcesCanShareName()
         {
+            // Arrange
             var postModel = new StrainerModel()
             {
                 Filters = "CategoryId==2,Isnew",
             };
 
+            // Act
             var postResult = _processor.Apply(postModel, _posts);
 
-            Assert.IsTrue(postResult.Any(p => p.Id == 3));
-            Assert.AreEqual(1, postResult.Count());
+            // Assert
+            postResult.Should().OnlyContain(p => p.CategoryId == 2);
+            postResult.Should().OnlyContain(p => p.LikeCount < 100);
 
+            // ###
+
+            // Arrange
             var commentModel = new StrainerModel()
             {
                 Filters = "Isnew",
             };
 
+            // Act
             var commentResult = _processor.Apply(commentModel, _comments);
 
-            Assert.IsTrue(commentResult.Any(c => c.Id == 2));
-            Assert.AreEqual(2, commentResult.Count());
+            // Assert
+            commentResult.Should().OnlyContain(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
         }
 
-        [TestMethod]
+        [Fact]
         public void CustomSortsWork()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Sorts = "Popularity",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
+            var customSortResult = _posts.OrderBy(p => p.LikeCount)
+                    .ThenBy(p => p.CommentCount)
+                    .ThenBy(p => p.DateCreated);
 
-            Assert.IsFalse(result.First().Id == 0);
+            // Assert
+            result.Should().HaveSameCount(_posts);
+            result.Should().BeInAscendingOrder(p => p.LikeCount)
+                .And.ContainInOrder(customSortResult);
         }
 
-        [TestMethod]
+        [Fact]
         public void MethodNotFoundExceptionWork()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "does not exist",
             };
 
-            Assert.ThrowsException<StrainerMethodNotFoundException>(() => _processor.Apply(model, _posts));
+            // Assert
+            Assert.Throws<StrainerMethodNotFoundException>(() => _processor.Apply(model, _posts));
         }
 
-        [TestMethod]
+        [Fact]
         public void OrNameFilteringWorks()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "(Title|LikeCount)==3",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
-            var entry = result.FirstOrDefault();
-            var resultCount = result.Count();
 
-            Assert.IsNotNull(entry);
-            Assert.AreEqual(1, resultCount);
-            Assert.AreEqual(3, entry.Id);
+            // Assert
+            result.Should().OnlyContain(p => p.Title == "3" || p.LikeCount == 3);
         }
 
-        [TestMethod]
+        [Fact]
         public void OrValueFilteringWorks()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "Title==C|D",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
-            Assert.AreEqual(2, result.Count());
-            Assert.IsTrue(result.Any(p => p.Id == 2));
-            Assert.IsTrue(result.Any(p => p.Id == 3));
+
+            // Assert
+            result.Should().OnlyContain(p => p.Title == "C" || p.Title == "D");
         }
 
-        [TestMethod]
+        [Fact]
         public void OrValueFilteringWorks2()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "Text@=(|)",
             };
 
+            // Act
             var result = _processor.Apply(model, _comments);
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual(2, result.FirstOrDefault().Id);
+
+            // Assert
+            Assert.Equal(1, result.Count());
+            Assert.Equal(2, result.FirstOrDefault().Id);
         }
 
-        [TestMethod]
+        [Fact]
         public void NestedFilteringWorks()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Filters = "TopComment.Text!@=A",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
-            Assert.AreEqual(3, result.Count());
-            var posts = result.ToList();
-            Assert.IsTrue(posts[0].TopComment.Text.Contains("B"));
-            Assert.IsTrue(posts[1].TopComment.Text.Contains("C"));
-            Assert.IsTrue(posts[2].TopComment.Text.Contains("D"));
+
+            // Assert
+            result.Should().NotContain(p => p.TopComment.Text.Contains("A"));
         }
 
-        [TestMethod]
+        [Fact]
         public void NestedSortingWorks()
         {
+            // Arrange
             var model = new StrainerModel()
             {
                 Sorts = "TopComment.Id",
             };
 
+            // Act
             var result = _processor.Apply(model, _posts);
-            Assert.AreEqual(4, result.Count());
-            var posts = result.ToList();
-            Assert.AreEqual(posts[0].Id, 0);
-            Assert.AreEqual(posts[1].Id, 3);
-            Assert.AreEqual(posts[2].Id, 2);
-            Assert.AreEqual(posts[3].Id, 1);
+
+            // Assert
+            result.Should().BeInAscendingOrder(post => post.TopComment.Id);
         }
 
-        [TestMethod]
+        [Fact]
         public void NestedFilteringWithIdenticTypesWorks()
         {
+            // Arrange
             var model = new StrainerModel()
-            {
-                Filters = "(topc|featc)@=*2",
-            };
-
-            var result = _processor.Apply(model, _posts);
-            Assert.AreEqual(4, result.Count());
-
-            model = new StrainerModel()
             {
                 Filters = "(topc|featc)@=*B",
             };
 
-            result = _processor.Apply(model, _posts);
-            Assert.AreEqual(1, result.Count());
+            // Act
+            var result = _processor.Apply(model, _posts);
+
+            // Assert
+            result.Should().OnlyContain(p => p.TopComment.Text.Contains("B") || p.FeaturedComment.Text.Contains("B"));
         }
     }
 }
