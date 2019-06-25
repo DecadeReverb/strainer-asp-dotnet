@@ -52,8 +52,12 @@ Apply it to your data by injecting `StrainerProcessor` into the controller and u
 [HttpGet]
 public JsonResult GetPosts(StrainerModel strainerModel) 
 {
-    var result = _dbContext.Posts.AsNoTracking(); // Makes read-only queries faster
-    result = _strainerProcessor.Apply(strainerModel, result); // Returns `result` after applying the sort/filter/page query in `StrainerModel` to it
+    // Makes read-only queries faster
+    var result = _dbContext.Posts.AsNoTracking(); 
+
+    // Returns `result` after applying the sort/filter/page query in `StrainerModel` to it
+    result = _strainerProcessor.Apply(strainerModel, result); 
+
     return Json(result.ToList());
 }
 ```
@@ -72,39 +76,59 @@ For instance:
 
 ```cs
 services.AddStrainer<ApplicationStrainerProcessor>()
-    .AddCustomFilterMethods<StrainerCustomFilterMethods>()
-    .AddCustomSortMethods<StrainerCustomSortMethods>();
+    .AddCustomFilterMethods<ApplicationCustomFilterMethodProvider>()
+    .AddCustomSortMethods<ApplicationCustomSortMethodProvider>();
 ```
 
-Where `StrainerCustomSortMethodsOfPosts` for example is:
+Where `ApplicationCustomSortMethodProvider` for example is:
 
 ```cs
-public class StrainerCustomSortMethods : IStrainerCustomSortMethods
+public class ApplicationCustomSortMethodProvider : CustomSortMethodProvider
 {
-    public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc) // The method is given an indicator of weather to use ThenBy(), and if the query is descending 
+    public ApplicationCustomSortMethodProvider(ICustomSortMethodMapper mapper) : base(mapper)
     {
-        var result = useThenBy ?
-            ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount) : // ThenBy only works on IOrderedQueryable<TEntity>
-            source.OrderBy(p => p.LikeCount)
-            .ThenBy(p => p.CommentCount)
-            .ThenBy(p => p.DateCreated);
 
-        return result; // Must return modified IQueryable<TEntity>
+    }
+
+    public override void MapMethods(ICustomSortMethodMapper mapper)
+    {
+        mapper.CustomMethod<Post>(nameof(Popularity))
+            .WithFunction(Popularity);
+    }
+
+    private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
+    {
+        return context.IsSubsequent
+            ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
+            : context.Source.OrderBy(p => p.LikeCount)
+                .ThenBy(p => p.CommentCount)
+                .ThenBy(p => p.DateCreated);
     }
 }
 ```
 
-And `StrainerCustomFilterMethods`:
+And `ApplicationCustomFilterMethodProvider`:
 
 ```cs
-public class StrainerCustomFilterMethods : IStrainerCustomFilterMethods
+public class ApplicationCustomFilterMethodProvider : CustomFilterMethodProvider
 {
-    public IQueryable<Post> IsNew(IQueryable<Post> source, string op, string[] values) // The method is given the {Operator} & {Value}
+    public ApplicationCustomFilterMethodProvider(ICustomFilterMethodMapper mapper) : base(mapper)
     {
-        var result = source.Where(p => p.LikeCount < 100 &&
-                                        p.CommentCount < 5);
 
-        return result; // Must return modified IQueryable<TEntity>
+    }
+
+    public override void MapMethods(ICustomFilterMethodMapper mapper)
+    {
+        mapper.CustomMethod<Post>(nameof(IsNew))
+            .WithFunction(IsNew);
+    }
+
+    private IQueryable<Post> IsNew(IQueryable<Post> source, string op, string[] values)
+        => source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
+
+    private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
+    {
+        return context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
     }
 }
 ```
@@ -212,10 +236,9 @@ You can replace this DSL with your own (eg. use JSON instead) by implementing an
 
 ### Handle Strainer's exceptions
 
-Strainer will silently fail unless `ThrowExceptions` in the configuration is set to true. 3 kinds of custom exceptions can be thrown:
+Strainer will silently fail unless `ThrowExceptions` in the configuration is set to true. Following kinds of custom exceptions can be thrown:
 
 * `StrainerMethodNotFoundException` with a `MethodName`
-* `StrainerIncompatibleMethodException` with a `MethodName`, an `ExpectedType` and an `ActualType`
 * `StrainerException` which encapsulates any other exception types in its `InnerException`
 
 It is recommended that you write exception-handling middleware to globally handle Strainer's exceptions when using it with ASP.NET Core.
@@ -226,7 +249,7 @@ You can find an example project incorporating most Strainer concepts in [Straine
 
 ## Fluent API
 
-To use the Fluent API instead of attributes in marking properties, setup an alternative `StrainerProcessor` that overrides `MapProperties`. For example:
+You can use the Fluent API instead of attributes to mark properties. Setup an alternative `StrainerProcessor` that overrides `MapProperties()`. For example:
 
 ```cs
 public class ApplicationStrainerProcessor : StrainerProcessor
@@ -239,29 +262,40 @@ public class ApplicationStrainerProcessor : StrainerProcessor
     protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
     {
         mapper.Property<Post>(p => p.Title)
-            .CanFilter()
-            .HasName("a_different_query_name_here");
-
-        mapper.Property<Post>(p => p.CommentCount)
-            .CanSort();
-
-        mapper.Property<Post>(p => p.DateCreated)
             .CanSort()
             .CanFilter()
-            .HasName("created_on");
+            .HasDisplayName("CustomTitleName");
 
         return mapper;
     }
 }
 ```
 
-Now you should inject custom `StrainerProcessor`:
+### Custom Filter Operators
+
+Same manner as adding properties you can add new filter operators:
 
 ```cs
-services.AddStrainer<ApplicationStrainerProcessor>();
+public class ApplicationStrainerProcessor : StrainerProcessor
+{
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    {
+
+    }
+
+    protected override IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
+    {
+        mapper.AddOperator(symbol: "!=*")
+            .HasName("not equal to (case insensitive)")
+            .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
+            .IsCaseInsensitive();
+
+        return mapper;
+    }
+}
 ```
 
-## Migrating from Sieve to Strainer v3.0.0
+## Migrating from Sieve to Strainer
 
 A lot happened between Sieve v2* and Strainer v3*. Read the full migration guide [here](https://gitlab.com/fluorite/strainer/blob/master/docs/migration-guide-from-sieve-to-strainer.md).
 
