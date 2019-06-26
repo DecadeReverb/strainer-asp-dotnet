@@ -1,84 +1,121 @@
 ﻿using FluentAssertions;
-using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services;
 using Fluorite.Strainer.UnitTests.Entities;
-using Fluorite.Strainer.UnitTests.Services;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests
+namespace Fluorite.Strainer.UnitTests.Services
 {
-    public class StrainerPropertyMapperTests : StrainerFixtureBase
+    public class StrainerPropertyMapperTests
     {
-        private readonly IQueryable<Post> _posts;
-
-        public StrainerPropertyMapperTests(StrainerFactory factory) : base(factory)
+        [Fact]
+        public void Mapper_Returns_Null_WhenJustPropertyIsCalled()
         {
-            _posts = new List<Post>
-            {
-                new Post() {
-                    Id = 1,
-                    ThisHasNoAttributeButIsAccessible = "A",
-                    ThisHasNoAttribute = "A",
-                    OnlySortableViaFluentApi = 100
-                },
-                new Post() {
-                    Id = 2,
-                    ThisHasNoAttributeButIsAccessible = "B",
-                    ThisHasNoAttribute = "B",
-                    OnlySortableViaFluentApi = 50
-                },
-                new Post() {
-                    Id = 3,
-                    ThisHasNoAttributeButIsAccessible = "C",
-                    ThisHasNoAttribute = "C",
-                    OnlySortableViaFluentApi = 0
-                },
-            }.AsQueryable();
+            // Arrange
+            var mapper = new StrainerPropertyMapper();
+
+            // Act
+            mapper.Property<Post>(p => p.Id);
+            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+                canSortRequired: false,
+                canFilterRequired: false,
+                name: nameof(Post.Id),
+                isCaseSensitive: true);
+
+            // Assert
+            propertyName.Should().BeNull();
+            propertyInfo.Should().BeNull();
         }
 
         [Fact]
-        public void MapperWorks()
+        public void Mapper_Returns_Map_WhenMarkedAsFilterable()
         {
             // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "shortname@=A",
-            };
-            var processor = Factory.CreateProcessor(context => new ApplicationStrainerProcessor(context));
+            var mapper = new StrainerPropertyMapper();
 
             // Act
-            var result = processor.Apply(model, _posts);
+            mapper.Property<Post>(p => p.Id)
+                .CanFilter();
+            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+                canSortRequired: false,
+                canFilterRequired: false,
+                name: nameof(Post.Id),
+                isCaseSensitive: true);
 
             // Assert
-            result.Should().NotBeEmpty();
-            result.First().ThisHasNoAttribute.Should().Be("A");
+            propertyName.Should().Be(nameof(Post.Id));
+            propertyInfo.Should().BeSameAs(typeof(Post).GetProperty(propertyName));
         }
 
         [Fact]
-        public void MapperSortOnlyWorks()
+        public void Mapper_Returns_Map_WhenMarkedAsSortable()
         {
             // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "OnlySortableViaFluentApi@=50",
-                Sorts = "OnlySortableViaFluentApi"
-            };
-            var processor = Factory.CreateProcessor(context =>
-            {
-                context.Options.ThrowExceptions = true;
-
-                return new ApplicationStrainerProcessor(context);
-            });
+            var mapper = new StrainerPropertyMapper();
 
             // Act
-            var result = processor.Apply(model, _posts, applyFiltering: false, applyPagination: false);
+            mapper.Property<Post>(p => p.Id)
+                .CanSort();
+            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+                canSortRequired: false,
+                canFilterRequired: false,
+                name: nameof(Post.Id),
+                isCaseSensitive: true);
 
             // Assert
-            Assert.Throws<StrainerMethodNotFoundException>(() => processor.Apply(model, _posts));
-            result.Should().BeInAscendingOrder(post => post.OnlySortableViaFluentApi);
-            result.Should().HaveCount(3);
+            propertyName.Should().Be(nameof(Post.Id));
+            propertyInfo.Should().BeSameAs(typeof(Post).GetProperty(propertyName));
+        }
+
+        [Fact]
+        public void Mapper_Adds_Map()
+        {
+            // Arrange
+            var mapper = new StrainerPropertyMapper();
+            var metadata = new StrainerPropertyMetadata()
+            {
+                DisplayName = nameof(Post.Id),
+                Name = nameof(Post.Id),
+            };
+            var idPropertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
+
+            // Act
+            mapper.AddMap<Post>(idPropertyInfo, metadata);
+            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+                canSortRequired: false,
+                canFilterRequired: false,
+                name: nameof(Post.Id),
+                isCaseSensitive: true);
+
+            // Assert
+            propertyName.Should().Be(nameof(Post.Id));
+            propertyInfo.Should().BeSameAs(idPropertyInfo);
+        }
+
+        [Fact]
+        public void Mapper_Adds_AlreadyExistingMaps()
+        {
+            // Arrange
+            var mapper = new StrainerPropertyMapper();
+            var metadata = new StrainerPropertyMetadata()
+            {
+                DisplayName = nameof(Post.Id),
+                Name = nameof(Post.Id),
+            };
+            var idPropertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
+
+            // Act
+            mapper.AddMap<Post>(idPropertyInfo, metadata);
+            mapper.AddMap<Post>(idPropertyInfo, metadata);
+            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+                canSortRequired: false,
+                canFilterRequired: false,
+                name: nameof(Post.Id),
+                isCaseSensitive: true);
+
+            // Assert
+            propertyName.Should().Be(nameof(Post.Id));
+            propertyInfo.Should().BeSameAs(idPropertyInfo);
         }
     }
 }
