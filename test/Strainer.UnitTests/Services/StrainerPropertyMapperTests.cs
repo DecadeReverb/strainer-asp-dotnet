@@ -12,13 +12,13 @@ using Xunit;
 
 namespace Fluorite.Strainer.UnitTests
 {
-    public class Mapper
+    public class StrainerPropertyMapperTests
     {
         private readonly StrainerContext _context;
         private readonly ApplicationStrainerProcessor _processor;
         private readonly IQueryable<Post> _posts;
 
-        public Mapper()
+        public StrainerPropertyMapperTests()
         {
             var options = new StrainerOptionsAccessor();
             var mapper = new StrainerPropertyMapper();
