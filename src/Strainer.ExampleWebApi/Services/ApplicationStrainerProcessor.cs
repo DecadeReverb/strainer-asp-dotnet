@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         protected override IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
         {
-            mapper.AddOperator(symbol: "!=*")
+            mapper.Operator(symbol: "!=*")
                 .HasName("not equal to (case insensitive)")
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();

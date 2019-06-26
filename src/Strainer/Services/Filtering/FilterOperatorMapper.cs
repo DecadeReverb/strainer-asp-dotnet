@@ -8,20 +8,22 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterOperatorMapper : IFilterOperatorMapper
     {
-        private readonly Dictionary<string, IFilterOperator> _operators;
+        private readonly Dictionary<string, IFilterOperator> _map;
         private readonly IFilterOperatorValidator _validator;
 
         public FilterOperatorMapper(IFilterOperatorValidator validator)
         {
-            _operators = new Dictionary<string, IFilterOperator>();
+            _map = new Dictionary<string, IFilterOperator>();
             _validator = validator;
 
             AddInitialFilterOperators();
+
+            _validator.Validate(_map.Values);
         }
 
-        public IReadOnlyCollection<IFilterOperator> Operators => _operators.Values;
+        public IReadOnlyCollection<IFilterOperator> Operators => _map.Values;
 
-        public IReadOnlyCollection<string> Symbols => _operators.Keys;
+        public IReadOnlyCollection<string> Symbols => _map.Keys;
 
         public void AddMap(string symbol, IFilterOperator filterOperator)
         {
@@ -38,10 +40,10 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(filterOperator));
             }
 
-            _operators[symbol] = filterOperator;
+            _map[symbol] = filterOperator;
         }
 
-        public IFilterOperatorBuilder AddOperator(string symbol)
+        public IFilterOperatorBuilder Operator(string symbol)
         {
             if (string.IsNullOrWhiteSpace(symbol))
             {
@@ -54,9 +56,8 @@ namespace Fluorite.Strainer.Services.Filtering
             if (Symbols.Contains(symbol, StringComparer.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
-                    $"There is already existing operator with a symbol {symbol} " +
-                    $"in use.\n" +
-                    $"Use {nameof(UpdateOperator)} to overwrite existing operator.");
+                    $"There is already existing operator with a symbol {symbol}. " +
+                    $"Choose a different symbol.");
             }
 
             return new FilterOperatorBuilder(this, symbol);
@@ -69,32 +70,12 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(symbol));
             }
 
-            return _operators.Values.FirstOrDefault(f => f.Symbol.Equals(symbol, StringComparison.OrdinalIgnoreCase));
+            return _map.Values.FirstOrDefault(f => f.Symbol.Equals(symbol, StringComparison.OrdinalIgnoreCase));
         }
 
         public IFilterOperator GetDefault()
         {
-            return _operators.Values.FirstOrDefault(f => f.IsDefault);
-        }
-
-        public IFilterOperatorBuilder UpdateOperator(string symbol)
-        {
-            if (string.IsNullOrWhiteSpace(symbol))
-            {
-                throw new ArgumentException(
-                    $"{nameof(symbol)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(symbol));
-            }
-
-            if (!Symbols.Contains(symbol, StringComparer.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException(
-                    $"There is no registered operator with a symbol {symbol}." +
-                    $"Use {nameof(AddOperator)} to add new operator.");
-            }
-
-            return new FilterOperatorBuilder(this, symbol);
+            return _map.Values.FirstOrDefault(f => f.IsDefault);
         }
 
         private void AddInitialFilterOperators()

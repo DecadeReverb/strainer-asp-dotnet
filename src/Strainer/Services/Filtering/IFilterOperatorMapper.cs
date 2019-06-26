@@ -11,7 +11,6 @@ namespace Fluorite.Strainer.Services.Filtering
         void AddMap(string symbol, IFilterOperator filterOperator);
         IFilterOperator Find(string symbol);
         IFilterOperator GetDefault();
-        IFilterOperatorBuilder AddOperator(string symbol);
-        IFilterOperatorBuilder UpdateOperator(string symbol);
+        IFilterOperatorBuilder Operator(string symbol);
     }
 }
