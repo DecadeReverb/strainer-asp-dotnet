@@ -49,7 +49,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         public bool NegateExpression { get; set; }
 
         /// <summary>
-        /// Gets the <see cref="string"/> representation of operator.
+        /// Gets a <see cref="string"/> representation of the operator.
         /// </summary>
         public string Symbol { get; set; }
 

@@ -125,7 +125,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var secondExpression = sortExpressions.LastOrDefault();
 
             // Assert
-            sortExpressions.Count.Should().Be(2);
+            sortExpressions.Should().HaveCount(2);
             firstExpression.IsDescending.Should().BeTrue();
             firstExpression.IsSubsequent.Should().BeFalse();
             secondExpression.IsDescending.Should().BeFalse();

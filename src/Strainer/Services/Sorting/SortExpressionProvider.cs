@@ -5,6 +5,7 @@ using Fluorite.Strainer.Models.Sorting.Terms;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -39,27 +40,27 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(sortTerm));
             }
 
-            var (fullName, propertyInfo) = GetStrainerProperty<TEntity>(
+            var metadata = GetStrainerProperty<TEntity>(
                 isSortingRequired: true,
                 ifFileringRequired: false,
                 name: sortTerm.Name);
 
-            if (propertyInfo != null)
+            if (metadata != null)
             {
                 var parameter = Expression.Parameter(typeof(TEntity), "p");
                 Expression propertyValue = parameter;
 
-                if (fullName.Contains("."))
+                if (metadata.Name.Contains("."))
                 {
-                    var parts = fullName.Split('.');
+                    var parts = metadata.Name.Split('.');
                     for (var i = 0; i < parts.Length - 1; i++)
                     {
                         propertyValue = Expression.PropertyOrField(propertyValue, parts[i]);
                     }
                 }
 
-                var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
-                var conversion = Expression.Convert(propertyAccess, typeof(object));
+                //var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
+                var conversion = Expression.Convert(propertyValue, typeof(object));
                 var orderExpression = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
 
                 return new SortExpression<TEntity>
@@ -118,34 +119,30 @@ namespace Fluorite.Strainer.Services.Sorting
             return expressions;
         }
 
-        private (string, PropertyInfo) GetStrainerProperty<TEntity>(
+        private IStrainerPropertyMetadata GetStrainerProperty<TEntity>(
             bool isSortingRequired,
             bool ifFileringRequired,
             string name)
         {
-            var (fullName, propertyInfo) = _mapper.FindProperty<TEntity>(
+            var metadata = _mapper.FindProperty<TEntity>(
                 isSortingRequired,
                 ifFileringRequired,
                 name,
                 _options.CaseSensitive);
 
-            if (fullName == null || propertyInfo == null)
+            if (metadata == null)
             {
-                propertyInfo = FindPropertyByStrainerAttribute<TEntity>(
+                metadata = FindPropertyByStrainerAttribute<TEntity>(
                     isSortingRequired,
                     ifFileringRequired,
                     name,
                     _options.CaseSensitive);
+            }
 
-                return (propertyInfo?.Name, propertyInfo);
-            }
-            else
-            {
-                return (fullName, propertyInfo);
-            }
+            return metadata;
         }
 
-        private PropertyInfo FindPropertyByStrainerAttribute<TEntity>(
+        private IStrainerPropertyMetadata FindPropertyByStrainerAttribute<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,
             string name,
@@ -154,17 +151,39 @@ namespace Fluorite.Strainer.Services.Sorting
             var stringComparisonMethod = isCaseSensitive
                 ? StringComparison.Ordinal
                 : StringComparison.OrdinalIgnoreCase;
-            var properties = typeof(TEntity).GetProperties();
 
-            return Array.Find(properties, propertyInfo =>
+            var modelType = typeof(TEntity);
+            var keyValue = modelType
+                .GetProperties()
+                .Select(propertyInfo =>
+                {
+                    var attribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
+
+                    return new KeyValuePair<PropertyInfo, StrainerAttribute>(propertyInfo, attribute);
+                })
+                .Where(pair => pair.Value != null)
+                .FirstOrDefault(pair =>
+                {
+                    var propertyInfo = pair.Key;
+                    var attribute = pair.Value;
+
+                    return (isSortingRequired ? attribute.IsSortable : true)
+                        && (isFilteringRequired ? attribute.IsFilterable : true)
+                        && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
+                });
+
+            if (keyValue.Value != null)
             {
-                var strainerAttribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
+                if (string.IsNullOrEmpty(keyValue.Value.Name))
+                {
+                    keyValue.Value.Name = keyValue.Key.Name;
+                }
 
-                return strainerAttribute != null
-                    && (isSortingRequired ? strainerAttribute.IsSortable : true)
-                    && (isFilteringRequired ? strainerAttribute.IsFilterable : true)
-                    && ((strainerAttribute.DisplayName ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
-            });
+                keyValue.Value.PropertyInfo = keyValue.Key;
+                keyValue.Value.Type = modelType;
+            }
+
+            return keyValue.Value;
         }
     }
 }
