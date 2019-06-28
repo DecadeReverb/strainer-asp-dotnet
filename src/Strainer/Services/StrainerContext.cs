@@ -12,12 +12,14 @@ namespace Fluorite.Strainer.Services
             IFilteringContext filteringContext,
             ISortingContext sortingContext,
             IStrainerPropertyMapper mapper,
+            IStrainerPropertyMetadataProvider metadataProvider,
             ICustomMethodsContext customMethodsContext)
         {
             CustomMethods = customMethodsContext;
             Filtering = filteringContext;
             Sorting = sortingContext;
             Mapper = mapper;
+            MetadataProvider = metadataProvider;
             Options = options.Value;
         }
 
@@ -26,6 +28,8 @@ namespace Fluorite.Strainer.Services
         public IFilteringContext Filtering { get; }
 
         public IStrainerPropertyMapper Mapper { get; }
+
+        public IStrainerPropertyMetadataProvider MetadataProvider { get; }
 
         public StrainerOptions Options { get; }
 

@@ -136,7 +136,7 @@ namespace Fluorite.Strainer.Services
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var metadata = GetStrainerProperty<TEntity>(
+                    var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
                         isSortingRequired: false,
                         ifFileringRequired: true,
                         name: filterTermName);
@@ -263,7 +263,7 @@ namespace Fluorite.Strainer.Services
             var useThenBy = false;
             foreach (var sortTerm in parsedTerms)
             {
-                var metadata = GetStrainerProperty<TEntity>(
+                var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
                     isSortingRequired: true,
                     ifFileringRequired: false,
                     name: sortTerm.Name);
@@ -321,73 +321,6 @@ namespace Fluorite.Strainer.Services
             }
 
             return result;
-        }
-
-        private IStrainerPropertyMetadata GetStrainerProperty<TEntity>(
-            bool isSortingRequired,
-            bool ifFileringRequired,
-            string name)
-        {
-            var metadata = Context.Mapper.FindProperty<TEntity>(
-                isSortingRequired,
-                ifFileringRequired,
-                name,
-                Context.Options.CaseSensitive);
-
-            if (metadata == null)
-            {
-                metadata = FindPropertyByStrainerAttribute<TEntity>(
-                    isSortingRequired,
-                    ifFileringRequired,
-                    name,
-                    Context.Options.CaseSensitive);
-            }
-
-            return metadata;
-        }
-
-        private IStrainerPropertyMetadata FindPropertyByStrainerAttribute<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
-            string name,
-            bool isCaseSensitive)
-        {
-            var stringComparisonMethod = isCaseSensitive
-                ? StringComparison.Ordinal
-                : StringComparison.OrdinalIgnoreCase;
-
-            var modelType = typeof(TEntity);
-            var keyValue = modelType
-                .GetProperties()
-                .Select(propertyInfo =>
-                {
-                    var attribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
-
-                    return new KeyValuePair<PropertyInfo, StrainerAttribute>(propertyInfo, attribute);
-                })
-                .Where(pair => pair.Value != null)
-                .FirstOrDefault(pair =>
-                {
-                    var propertyInfo = pair.Key;
-                    var attribute = pair.Value;
-
-                    return (isSortingRequired ? attribute.IsSortable : true)
-                        && (isFilteringRequired ? attribute.IsFilterable : true)
-                        && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
-                });
-
-            if (keyValue.Value != null)
-            {
-                if (string.IsNullOrEmpty(keyValue.Value.Name))
-                {
-                    keyValue.Value.Name = keyValue.Key.Name;
-                }
-
-                keyValue.Value.PropertyInfo = keyValue.Key;
-                keyValue.Value.Type = modelType;
-            }
-
-            return keyValue.Value;
         }
     }
 }

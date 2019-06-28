@@ -22,15 +22,15 @@ namespace Fluorite.Strainer.Services.Sorting
     public class SortExpressionProvider : ISortExpressionProvider
     {
         private readonly IStrainerPropertyMapper _mapper;
-        private readonly StrainerOptions _options;
+        private readonly IStrainerPropertyMetadataProvider _metadataProvider;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IStrainerPropertyMapper mapper, IOptions<StrainerOptions> options)
+        public SortExpressionProvider(IStrainerPropertyMapper mapper, IStrainerPropertyMetadataProvider metadataProvider)
         {
             _mapper = mapper;
-            _options = options.Value;
+            _metadataProvider = metadataProvider;
         }
 
         public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isFirst)
@@ -45,7 +45,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(sortTerm));
             }
 
-            var metadata = GetStrainerProperty<TEntity>(
+            var metadata = _metadataProvider.GetMetadata<TEntity>(
                 isSortingRequired: true,
                 ifFileringRequired: false,
                 name: sortTerm.Name);
@@ -122,73 +122,6 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             return expressions;
-        }
-
-        private IStrainerPropertyMetadata GetStrainerProperty<TEntity>(
-            bool isSortingRequired,
-            bool ifFileringRequired,
-            string name)
-        {
-            var metadata = _mapper.FindProperty<TEntity>(
-                isSortingRequired,
-                ifFileringRequired,
-                name,
-                _options.CaseSensitive);
-
-            if (metadata == null)
-            {
-                metadata = FindPropertyByStrainerAttribute<TEntity>(
-                    isSortingRequired,
-                    ifFileringRequired,
-                    name,
-                    _options.CaseSensitive);
-            }
-
-            return metadata;
-        }
-
-        private IStrainerPropertyMetadata FindPropertyByStrainerAttribute<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
-            string name,
-            bool isCaseSensitive)
-        {
-            var stringComparisonMethod = isCaseSensitive
-                ? StringComparison.Ordinal
-                : StringComparison.OrdinalIgnoreCase;
-
-            var modelType = typeof(TEntity);
-            var keyValue = modelType
-                .GetProperties()
-                .Select(propertyInfo =>
-                {
-                    var attribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
-
-                    return new KeyValuePair<PropertyInfo, StrainerAttribute>(propertyInfo, attribute);
-                })
-                .Where(pair => pair.Value != null)
-                .FirstOrDefault(pair =>
-                {
-                    var propertyInfo = pair.Key;
-                    var attribute = pair.Value;
-
-                    return (isSortingRequired ? attribute.IsSortable : true)
-                        && (isFilteringRequired ? attribute.IsFilterable : true)
-                        && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
-                });
-
-            if (keyValue.Value != null)
-            {
-                if (string.IsNullOrEmpty(keyValue.Value.Name))
-                {
-                    keyValue.Value.Name = keyValue.Key.Name;
-                }
-
-                keyValue.Value.PropertyInfo = keyValue.Key;
-                keyValue.Value.Type = modelType;
-            }
-
-            return keyValue.Value;
         }
     }
 }

@@ -32,7 +32,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var mapper = new StrainerPropertyMapper();
             mapper.Property<Comment>(c => c.Text).CanSort();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
@@ -61,7 +62,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
             var mapper = new StrainerPropertyMapper();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
@@ -88,7 +90,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var mapper = new StrainerPropertyMapper();
             mapper.Property<Post>(c => c.TopComment.Text.Length).CanSort();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Post>(sortTerms);
@@ -131,7 +134,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             mapper.Property<Comment>(c => c.Id).CanSort();
             mapper.Property<Comment>(c => c.DateCreated).CanSort();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
