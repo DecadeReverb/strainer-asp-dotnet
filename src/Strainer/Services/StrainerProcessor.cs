@@ -143,7 +143,7 @@ namespace Fluorite.Strainer.Services
 
                     if (metadata != null)
                     {
-                        var converter = TypeDescriptor.GetConverter(metadata.PropertyInfo);
+                        var converter = TypeDescriptor.GetConverter(metadata.PropertyInfo.PropertyType);
                         Expression propertyValue = parameterExpression;
                         foreach (var part in metadata.Name.Split('.'))
                         {
@@ -270,7 +270,7 @@ namespace Fluorite.Strainer.Services
 
                 if (metadata != null)
                 {
-                    var sortExpression = Context.Sorting.ExpressionProvider.GetExpression<TEntity>(sortTerm, isFirst: !useThenBy);
+                    var sortExpression = Context.Sorting.ExpressionProvider.GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isFirst: !useThenBy);
                     if (sortExpression != null)
                     {
                         result = result.OrderWithSortExpression(sortExpression);

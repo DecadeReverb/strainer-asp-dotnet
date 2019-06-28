@@ -33,8 +33,13 @@ namespace Fluorite.Strainer.Services.Sorting
             _options = options.Value;
         }
 
-        public ISortExpression<TEntity> GetExpression<TEntity>(ISortTerm sortTerm, bool isFirst)
+        public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isFirst)
         {
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
             if (sortTerm == null)
             {
                 throw new ArgumentNullException(nameof(sortTerm));
@@ -59,8 +64,8 @@ namespace Fluorite.Strainer.Services.Sorting
                     }
                 }
 
-                //var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
-                var conversion = Expression.Convert(propertyValue, typeof(object));
+                var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
+                var conversion = Expression.Convert(propertyAccess, typeof(object));
                 var orderExpression = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
 
                 return new SortExpression<TEntity>
@@ -84,7 +89,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// The type of entity for which the expression is for.
         /// </typeparam>
         /// <param name="sortTerms">
-        /// A list of sort terms.
+        /// A list of property info paired with sort terms.
         /// </param>
         /// <returns>
         /// A list of <see cref="ISortExpression{TEntity}"/>.
@@ -92,7 +97,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <exception cref="ArgumentNullException">
         /// <paramref name="sortTerms"/> is <see langword="null"/>.
         /// </exception>
-        public IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IList<ISortTerm> sortTerms)
+        public IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
         {
             if (sortTerms == null)
             {
@@ -101,9 +106,9 @@ namespace Fluorite.Strainer.Services.Sorting
 
             var expressions = new List<ISortExpression<TEntity>>();
             var isFirst = true;
-            foreach (var sortTerm in sortTerms)
+            foreach (var pair in sortTerms)
             {
-                var sortExpression = GetExpression<TEntity>(sortTerm, isFirst);
+                var sortExpression = GetExpression<TEntity>(pair.Key, pair.Value, isFirst);
                 if (sortExpression != null)
                 {
                     expressions.Add(sortExpression);
