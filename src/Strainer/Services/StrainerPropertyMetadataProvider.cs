@@ -76,7 +76,6 @@ namespace Fluorite.Strainer.Services
                 }
 
                 keyValue.Value.PropertyInfo = keyValue.Key;
-                keyValue.Value.Type = modelType;
             }
 
             return keyValue.Value;

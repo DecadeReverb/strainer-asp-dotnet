@@ -17,6 +17,5 @@ namespace Fluorite.Strainer.Attributes
         public bool IsFilterable { get; set; }
         public string Name { get; set; }
         public PropertyInfo PropertyInfo { get; set; }
-        public Type Type { get; set; }
     }
 }

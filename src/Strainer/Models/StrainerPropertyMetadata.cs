@@ -16,7 +16,6 @@ namespace Fluorite.Strainer.Models
         public bool IsSortable { get; set; }
         public string Name { get; set; }
         public PropertyInfo PropertyInfo { get; set; }
-        public Type Type { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -30,19 +29,17 @@ namespace Fluorite.Strainer.Models
                    IsFilterable == other.IsFilterable &&
                    IsSortable == other.IsSortable &&
                    Name == other.Name &&
-                   EqualityComparer<PropertyInfo>.Default.Equals(PropertyInfo, other.PropertyInfo) &&
-                   EqualityComparer<Type>.Default.Equals(Type, other.Type);
+                   EqualityComparer<PropertyInfo>.Default.Equals(PropertyInfo, other.PropertyInfo);
         }
 
         public override int GetHashCode()
         {
-            var hashCode = 245385513;
+            var hashCode = -1500598692;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(DisplayName);
             hashCode = hashCode * -1521134295 + IsFilterable.GetHashCode();
             hashCode = hashCode * -1521134295 + IsSortable.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             hashCode = hashCode * -1521134295 + EqualityComparer<PropertyInfo>.Default.GetHashCode(PropertyInfo);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Type>.Default.GetHashCode(Type);
             return hashCode;
         }
 

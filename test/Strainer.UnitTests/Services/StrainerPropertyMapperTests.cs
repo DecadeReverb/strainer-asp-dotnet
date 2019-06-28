@@ -44,7 +44,6 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Assert
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-            metadata.Type.Should().BeSameAs(typeof(Post));
         }
 
         [Fact]
@@ -65,7 +64,6 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Assert
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-            metadata.Type.Should().BeSameAs(typeof(Post));
         }
 
         [Fact]
@@ -78,7 +76,6 @@ namespace Fluorite.Strainer.UnitTests.Services
                 DisplayName = nameof(Post.Id),
                 Name = nameof(Post.Id),
                 PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
-                Type = typeof(Post),
             };
 
             // Act
@@ -92,7 +89,6 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Assert
             result.Name.Should().Be(nameof(Post.Id));
             result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-            result.Type.Should().BeSameAs(typeof(Post));
         }
 
         [Fact]
@@ -105,7 +101,6 @@ namespace Fluorite.Strainer.UnitTests.Services
                 DisplayName = nameof(Post.Id),
                 Name = nameof(Post.Id),
                 PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
-                Type = typeof(Post),
             };
             var idPropertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
 
@@ -121,7 +116,6 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Assert
             result.Name.Should().Be(nameof(Post.Id));
             result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-            result.Type.Should().BeSameAs(typeof(Post));
         }
     }
 }

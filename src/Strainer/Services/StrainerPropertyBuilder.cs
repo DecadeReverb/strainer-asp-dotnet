@@ -71,7 +71,6 @@ namespace Fluorite.Strainer.Services
                 IsSortable = IsSortable,
                 Name = Name,
                 PropertyInfo = PropertyInfo,
-                Type = PropertyInfo.DeclaringType,
             };
 
             Mapper.AddMap<TEntity>(metadata);
