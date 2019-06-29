@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using System;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Attributes
 {
@@ -15,5 +16,6 @@ namespace Fluorite.Strainer.Attributes
         public bool IsSortable { get; set; }
         public bool IsFilterable { get; set; }
         public string Name { get; set; }
+        public PropertyInfo PropertyInfo { get; set; }
     }
 }

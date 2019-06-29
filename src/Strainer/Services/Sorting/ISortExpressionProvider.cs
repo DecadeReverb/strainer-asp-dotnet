@@ -1,6 +1,7 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
@@ -14,7 +15,7 @@ namespace Fluorite.Strainer.Services.Sorting
     /// </summary>
     public interface ISortExpressionProvider
     {
-        ISortExpression<TEntity> GetExpression<TEntity>(ISortTerm sortTerm, bool isFirst);
+        ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isFirst);
 
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
@@ -29,6 +30,6 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <returns>
         /// A list of <see cref="ISortExpression{TEntity}"/>.
         /// </returns>
-        IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IList<ISortTerm> sortTerms);
+        IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms);
     }
 }

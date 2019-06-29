@@ -16,15 +16,14 @@ namespace Fluorite.Strainer.UnitTests.Services
 
             // Act
             mapper.Property<Post>(p => p.Id);
-            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+            var metadata = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
                 name: nameof(Post.Id),
                 isCaseSensitive: true);
 
             // Assert
-            propertyName.Should().BeNull();
-            propertyInfo.Should().BeNull();
+            metadata.Should().BeNull();
         }
 
         [Fact]
@@ -36,15 +35,15 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Act
             mapper.Property<Post>(p => p.Id)
                 .CanFilter();
-            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+            var metadata = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
                 name: nameof(Post.Id),
                 isCaseSensitive: true);
 
             // Assert
-            propertyName.Should().Be(nameof(Post.Id));
-            propertyInfo.Should().BeSameAs(typeof(Post).GetProperty(propertyName));
+            metadata.Name.Should().Be(nameof(Post.Id));
+            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
         }
 
         [Fact]
@@ -56,19 +55,19 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Act
             mapper.Property<Post>(p => p.Id)
                 .CanSort();
-            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+            var metadata = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
                 name: nameof(Post.Id),
                 isCaseSensitive: true);
 
             // Assert
-            propertyName.Should().Be(nameof(Post.Id));
-            propertyInfo.Should().BeSameAs(typeof(Post).GetProperty(propertyName));
+            metadata.Name.Should().Be(nameof(Post.Id));
+            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
         }
 
         [Fact]
-        public void Mapper_Adds_Map()
+        public void Mapper_Adds_Map_Via_AddMap()
         {
             // Arrange
             var mapper = new StrainerPropertyMapper();
@@ -76,24 +75,24 @@ namespace Fluorite.Strainer.UnitTests.Services
             {
                 DisplayName = nameof(Post.Id),
                 Name = nameof(Post.Id),
+                PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
             };
-            var idPropertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
 
             // Act
-            mapper.AddMap<Post>(idPropertyInfo, metadata);
-            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+            mapper.AddMap<Post>(metadata);
+            var result = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
                 name: nameof(Post.Id),
                 isCaseSensitive: true);
 
             // Assert
-            propertyName.Should().Be(nameof(Post.Id));
-            propertyInfo.Should().BeSameAs(idPropertyInfo);
+            result.Name.Should().Be(nameof(Post.Id));
+            result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
         }
 
         [Fact]
-        public void Mapper_Adds_AlreadyExistingMaps()
+        public void Mapper_Adds_AlreadyExistingMaps_Via_AddMap()
         {
             // Arrange
             var mapper = new StrainerPropertyMapper();
@@ -101,21 +100,22 @@ namespace Fluorite.Strainer.UnitTests.Services
             {
                 DisplayName = nameof(Post.Id),
                 Name = nameof(Post.Id),
+                PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
             };
             var idPropertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
 
             // Act
-            mapper.AddMap<Post>(idPropertyInfo, metadata);
-            mapper.AddMap<Post>(idPropertyInfo, metadata);
-            var (propertyName, propertyInfo) = mapper.FindProperty<Post>(
+            mapper.AddMap<Post>(metadata);
+            mapper.AddMap<Post>(metadata);
+            var result = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
                 name: nameof(Post.Id),
                 isCaseSensitive: true);
 
             // Assert
-            propertyName.Should().Be(nameof(Post.Id));
-            propertyInfo.Should().BeSameAs(idPropertyInfo);
+            result.Name.Should().Be(nameof(Post.Id));
+            result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
         }
     }
 }

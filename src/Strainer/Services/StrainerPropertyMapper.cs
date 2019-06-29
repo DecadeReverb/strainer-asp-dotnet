@@ -3,41 +3,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {
-	public class StrainerPropertyMapper : IStrainerPropertyMapper
+    public class StrainerPropertyMapper : IStrainerPropertyMapper
     {
-        private readonly Dictionary<Type, ISet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>> _map;
+        private readonly Dictionary<Type, ISet<IStrainerPropertyMetadata>> _map;
 
         public StrainerPropertyMapper()
         {
-            _map = new Dictionary<Type, ISet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>>();
+            _map = new Dictionary<Type, ISet<IStrainerPropertyMetadata>>();
         }
 
-        public void AddMap<TEntity>(PropertyInfo propertyInfo, IStrainerPropertyMetadata metadata)
+        public void AddMap<TEntity>(IStrainerPropertyMetadata metadata)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
             if (metadata == null)
             {
                 throw new ArgumentNullException(nameof(metadata));
             }
 
-            var pair = new KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>(propertyInfo, metadata);
             if (!_map.Keys.Contains(typeof(TEntity)))
             {
-                _map[typeof(TEntity)] = new HashSet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>();
+                _map[typeof(TEntity)] = new HashSet<IStrainerPropertyMetadata>();
             }
 
-            _map[typeof(TEntity)].Add(pair);
+            _map[typeof(TEntity)].Add(metadata);
         }
 
-        public (string, PropertyInfo) FindProperty<TEntity>(
+        public IStrainerPropertyMetadata FindProperty<TEntity>(
             bool canSortRequired,
             bool canFilterRequired,
             string name,
@@ -48,17 +41,16 @@ namespace Fluorite.Strainer.Services
                 var comparisonMethod = isCaseSensitive
                     ? StringComparison.Ordinal
                     : StringComparison.OrdinalIgnoreCase;
-                var result = _map[typeof(TEntity)]
-                    .FirstOrDefault(pair =>
-                        pair.Value.DisplayName.Equals(name, comparisonMethod)
-                        && (!canSortRequired || pair.Value.IsSortable)
-                        && (!canFilterRequired || pair.Value.IsFilterable));
 
-                return (result.Value?.Name, result.Key);
+                return _map[typeof(TEntity)]
+                    .FirstOrDefault(metadata =>
+                        metadata.DisplayName.Equals(name, comparisonMethod)
+                        && (!canSortRequired || metadata.IsSortable)
+                        && (!canFilterRequired || metadata.IsFilterable));
             }
             catch (Exception ex) when (ex is KeyNotFoundException || ex is ArgumentNullException)
             {
-                return (null, null);
+                return null;
             }
         }
 
@@ -71,7 +63,7 @@ namespace Fluorite.Strainer.Services
 
             if (!_map.ContainsKey(typeof(TEntity)))
             {
-                _map[typeof(TEntity)] = new HashSet<KeyValuePair<PropertyInfo, IStrainerPropertyMetadata>>();
+                _map[typeof(TEntity)] = new HashSet<IStrainerPropertyMetadata>();
             }
 
             return new StrainerPropertyBuilder<TEntity>(this, expression);

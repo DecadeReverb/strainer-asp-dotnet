@@ -7,6 +7,7 @@ using Fluorite.Strainer.UnitTests.Entities;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Sorting
@@ -17,19 +18,22 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         public void Provider_ReturnsListOfSortExpressions()
         {
             // Arrange
-            var sortTerms = new List<ISortTerm>
+            var sortTerm = new SortTerm
             {
-                new SortTerm
-                {
-                    Input = "Text",
-                    IsDescending = false,
-                    Name = "Text"
-                },
+                Input = "Text",
+                IsDescending = false,
+                Name = "Text"
+            };
+            var propertyInfo = typeof(Comment).GetProperty(nameof(Comment.Text));
+            var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
+            {
+                { propertyInfo, sortTerm },
             };
             var mapper = new StrainerPropertyMapper();
             mapper.Property<Comment>(c => c.Text).CanSort();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
@@ -45,18 +49,21 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         public void Provider_ReturnsEmptyListOfSortExpressions_WhenNoMatchingPropertyIsFound()
         {
             // Arrange
-            var sortTerms = new List<ISortTerm>
+            var sortTerm = new SortTerm
             {
-                new SortTerm
-                {
-                    Input = "Text",
-                    IsDescending = false,
-                    Name = "Text"
-                },
+                Input = "Text",
+                IsDescending = false,
+                Name = "Text"
+            };
+            var propertyInfo = typeof(Comment).GetProperty(nameof(Comment.Text));
+            var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
+            {
+                { propertyInfo, sortTerm },
             };
             var mapper = new StrainerPropertyMapper();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
@@ -69,19 +76,22 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         public void Provider_ReturnsListOfSortExpressions_ForNestedProperty()
         {
             // Arrange
-            var sortTerms = new List<ISortTerm>
+            var sortTerm = new SortTerm
             {
-                new SortTerm
-                {
-                    Input = "-TopComment.Text.Length",
-                    IsDescending = true,
-                    Name = "TopComment.Text.Length"
-                },
+                Input = "-TopComment.Text.Length",
+                IsDescending = true,
+                Name = "TopComment.Text.Length"
+            };
+            var propertyInfo = typeof(string).GetProperty(nameof(string.Length));
+            var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
+            {
+                { propertyInfo, sortTerm },
             };
             var mapper = new StrainerPropertyMapper();
             mapper.Property<Post>(c => c.TopComment.Text.Length).CanSort();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Post>(sortTerms);
@@ -97,7 +107,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         public void Provider_ReturnsListOfSortExpressions_ForSubsequentSorting()
         {
             // Arrange
-            var sortTerms = new List<ISortTerm>
+            var termsList = new List<ISortTerm>
             {
                 new SortTerm
                 {
@@ -112,12 +122,20 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                     Name = "Id"
                 },
             };
+            var properties = new PropertyInfo[]
+            {
+                typeof(Comment).GetProperty(nameof(Comment.Text)),
+                typeof(Comment).GetProperty(nameof(Comment.Id)),
+            };
+            var sortTerms = properties.Zip(termsList, (prop, term) => new { prop, term })
+                .ToDictionary(x => x.prop, x => x.term);
             var mapper = new StrainerPropertyMapper();
             mapper.Property<Comment>(c => c.Text).CanSort();
             mapper.Property<Comment>(c => c.Id).CanSort();
             mapper.Property<Comment>(c => c.DateCreated).CanSort();
             var options = Options.Create(new StrainerOptions());
-            var provider = new SortExpressionProvider(mapper, options);
+            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
@@ -125,7 +143,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var secondExpression = sortExpressions.LastOrDefault();
 
             // Assert
-            sortExpressions.Count.Should().Be(2);
+            sortExpressions.Should().HaveCount(2);
             firstExpression.IsDescending.Should().BeTrue();
             firstExpression.IsSubsequent.Should().BeFalse();
             secondExpression.IsDescending.Should().BeFalse();

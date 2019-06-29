@@ -5,6 +5,7 @@ using Fluorite.Strainer.Models.Sorting.Terms;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -21,37 +22,42 @@ namespace Fluorite.Strainer.Services.Sorting
     public class SortExpressionProvider : ISortExpressionProvider
     {
         private readonly IStrainerPropertyMapper _mapper;
-        private readonly StrainerOptions _options;
+        private readonly IStrainerPropertyMetadataProvider _metadataProvider;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IStrainerPropertyMapper mapper, IOptions<StrainerOptions> options)
+        public SortExpressionProvider(IStrainerPropertyMapper mapper, IStrainerPropertyMetadataProvider metadataProvider)
         {
             _mapper = mapper;
-            _options = options.Value;
+            _metadataProvider = metadataProvider;
         }
 
-        public ISortExpression<TEntity> GetExpression<TEntity>(ISortTerm sortTerm, bool isFirst)
+        public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isFirst)
         {
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
             if (sortTerm == null)
             {
                 throw new ArgumentNullException(nameof(sortTerm));
             }
 
-            var (fullName, propertyInfo) = GetStrainerProperty<TEntity>(
+            var metadata = _metadataProvider.GetMetadata<TEntity>(
                 isSortingRequired: true,
                 ifFileringRequired: false,
                 name: sortTerm.Name);
 
-            if (propertyInfo != null)
+            if (metadata != null)
             {
                 var parameter = Expression.Parameter(typeof(TEntity), "p");
                 Expression propertyValue = parameter;
 
-                if (fullName.Contains("."))
+                if (metadata.Name.Contains("."))
                 {
-                    var parts = fullName.Split('.');
+                    var parts = metadata.Name.Split('.');
                     for (var i = 0; i < parts.Length - 1; i++)
                     {
                         propertyValue = Expression.PropertyOrField(propertyValue, parts[i]);
@@ -83,7 +89,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// The type of entity for which the expression is for.
         /// </typeparam>
         /// <param name="sortTerms">
-        /// A list of sort terms.
+        /// A list of property info paired with sort terms.
         /// </param>
         /// <returns>
         /// A list of <see cref="ISortExpression{TEntity}"/>.
@@ -91,7 +97,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <exception cref="ArgumentNullException">
         /// <paramref name="sortTerms"/> is <see langword="null"/>.
         /// </exception>
-        public IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IList<ISortTerm> sortTerms)
+        public IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
         {
             if (sortTerms == null)
             {
@@ -100,9 +106,9 @@ namespace Fluorite.Strainer.Services.Sorting
 
             var expressions = new List<ISortExpression<TEntity>>();
             var isFirst = true;
-            foreach (var sortTerm in sortTerms)
+            foreach (var pair in sortTerms)
             {
-                var sortExpression = GetExpression<TEntity>(sortTerm, isFirst);
+                var sortExpression = GetExpression<TEntity>(pair.Key, pair.Value, isFirst);
                 if (sortExpression != null)
                 {
                     expressions.Add(sortExpression);
@@ -116,55 +122,6 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             return expressions;
-        }
-
-        private (string, PropertyInfo) GetStrainerProperty<TEntity>(
-            bool isSortingRequired,
-            bool ifFileringRequired,
-            string name)
-        {
-            var (fullName, propertyInfo) = _mapper.FindProperty<TEntity>(
-                isSortingRequired,
-                ifFileringRequired,
-                name,
-                _options.CaseSensitive);
-
-            if (fullName == null || propertyInfo == null)
-            {
-                propertyInfo = FindPropertyByStrainerAttribute<TEntity>(
-                    isSortingRequired,
-                    ifFileringRequired,
-                    name,
-                    _options.CaseSensitive);
-
-                return (propertyInfo?.Name, propertyInfo);
-            }
-            else
-            {
-                return (fullName, propertyInfo);
-            }
-        }
-
-        private PropertyInfo FindPropertyByStrainerAttribute<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
-            string name,
-            bool isCaseSensitive)
-        {
-            var stringComparisonMethod = isCaseSensitive
-                ? StringComparison.Ordinal
-                : StringComparison.OrdinalIgnoreCase;
-            var properties = typeof(TEntity).GetProperties();
-
-            return Array.Find(properties, propertyInfo =>
-            {
-                var strainerAttribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
-
-                return strainerAttribute != null
-                    && (isSortingRequired ? strainerAttribute.IsSortable : true)
-                    && (isFilteringRequired ? strainerAttribute.IsFilterable : true)
-                    && ((strainerAttribute.DisplayName ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
-            });
         }
     }
 }

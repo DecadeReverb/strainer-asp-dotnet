@@ -70,9 +70,10 @@ namespace Fluorite.Strainer.Services
                 IsFilterable = IsFilterable,
                 IsSortable = IsSortable,
                 Name = Name,
+                PropertyInfo = PropertyInfo,
             };
 
-            Mapper.AddMap<TEntity>(PropertyInfo, metadata);
+            Mapper.AddMap<TEntity>(metadata);
         }
 
         private static (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)

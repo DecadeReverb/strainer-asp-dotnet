@@ -9,6 +9,7 @@ namespace Fluorite.Strainer.Services
         ICustomMethodsContext CustomMethods { get; }
         IFilteringContext Filtering { get; }
         IStrainerPropertyMapper Mapper { get; }
+        IStrainerPropertyMetadataProvider MetadataProvider { get; }
         StrainerOptions Options { get; }
         ISortingContext Sorting { get; }
     }

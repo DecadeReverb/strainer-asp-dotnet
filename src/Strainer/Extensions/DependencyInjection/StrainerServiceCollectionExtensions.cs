@@ -102,6 +102,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomMethodsContext, CustomMethodsContext>(options.ServiceLifetime);
 
             services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
+            services.Add<IStrainerPropertyMetadataProvider, StrainerPropertyMetadataProvider>(options.ServiceLifetime);
             services.Add<IStrainerContext, StrainerContext>(options.ServiceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(options.ServiceLifetime);
 
