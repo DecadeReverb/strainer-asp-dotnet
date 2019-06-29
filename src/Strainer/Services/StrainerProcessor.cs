@@ -1,5 +1,4 @@
-﻿using Fluorite.Strainer.Attributes;
-using Fluorite.Strainer.Exceptions;
+﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Extensions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
@@ -7,11 +6,9 @@ using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {
@@ -46,7 +43,6 @@ namespace Fluorite.Strainer.Services
         public IQueryable<TEntity> Apply<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source,
-            object[] dataForCustomMethods = null,
             bool applyFiltering = true,
             bool applySorting = true,
             bool applyPagination = true)
@@ -63,13 +59,13 @@ namespace Fluorite.Strainer.Services
                 // Filter
                 if (applyFiltering)
                 {
-                    result = ApplyFiltering(model, result, dataForCustomMethods);
+                    result = ApplyFiltering(model, result);
                 }
 
                 // Sort
                 if (applySorting)
                 {
-                    result = ApplySorting(model, result, dataForCustomMethods);
+                    result = ApplySorting(model, result);
                 }
 
                 // Paginate
@@ -120,8 +116,7 @@ namespace Fluorite.Strainer.Services
 
         private IQueryable<TEntity> ApplyFiltering<TEntity>(
             IStrainerModel model,
-            IQueryable<TEntity> result,
-            object[] dataForCustomMethods = null)
+            IQueryable<TEntity> result)
         {
             var parsedFilters = Context.Filtering.TermParser.GetParsedTerms(model.Filters);
             if (parsedFilters == null)
@@ -240,19 +235,29 @@ namespace Fluorite.Strainer.Services
                 : result.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
         }
 
-        // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
-        // See https://github.com/aspnet/EntityFrameworkCore/issues/3361
-        // Expression.Constant passed the target type to allow Nullable comparison
-        // See http://bradwilson.typepad.com/blog/2008/07/creating-nullab.html
-        private Expression GetClosureOverConstant<T>(T constant, Type targetType)
+        private IQueryable<TEntity> ApplyPagination<TEntity>(
+            IStrainerModel model,
+            IQueryable<TEntity> result)
         {
-            return Expression.Constant(constant, targetType);
+            var page = model?.Page ?? Context.Options.DefaultPageNumber;
+            var pageSize = model?.PageSize ?? Context.Options.DefaultPageSize;
+            var maxPageSize = Context.Options.MaxPageSize > 0
+                ? Context.Options.MaxPageSize
+                : pageSize;
+
+            result = result.Skip((page - 1) * pageSize);
+
+            if (pageSize > 0)
+            {
+                result = result.Take(Math.Min(pageSize, maxPageSize));
+            }
+
+            return result;
         }
 
         private IQueryable<TEntity> ApplySorting<TEntity>(
             IStrainerModel model,
-            IQueryable<TEntity> result,
-            object[] dataForCustomMethods = null)
+            IQueryable<TEntity> result)
         {
             var parsedTerms = Context.Sorting.TermParser.GetParsedTerms(model.Sorts);
             if (parsedTerms.Count == 0)
@@ -303,24 +308,13 @@ namespace Fluorite.Strainer.Services
             return result;
         }
 
-        private IQueryable<TEntity> ApplyPagination<TEntity>(
-            IStrainerModel model,
-            IQueryable<TEntity> result)
+        // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
+        // See https://github.com/aspnet/EntityFrameworkCore/issues/3361
+        // Expression.Constant passed the target type to allow Nullable comparison
+        // See http://bradwilson.typepad.com/blog/2008/07/creating-nullab.html
+        private Expression GetClosureOverConstant<T>(T constant, Type targetType)
         {
-            var page = model?.Page ?? Context.Options.DefaultPageNumber;
-            var pageSize = model?.PageSize ?? Context.Options.DefaultPageSize;
-            var maxPageSize = Context.Options.MaxPageSize > 0
-                ? Context.Options.MaxPageSize
-                : pageSize;
-
-            result = result.Skip((page - 1) * pageSize);
-
-            if (pageSize > 0)
-            {
-                result = result.Take(Math.Min(pageSize, maxPageSize));
-            }
-
-            return result;
+            return Expression.Constant(constant, targetType);
         }
     }
 }
