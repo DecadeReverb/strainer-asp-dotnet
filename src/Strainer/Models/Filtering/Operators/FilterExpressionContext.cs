@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Models.Filtering.Operators
 {
@@ -6,8 +7,8 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
     {
         public FilterExpressionContext(Expression filterValue, Expression propertyValue)
         {
-            FilterValue = filterValue ?? throw new System.ArgumentNullException(nameof(filterValue));
-            PropertyValue = propertyValue ?? throw new System.ArgumentNullException(nameof(propertyValue));
+            FilterValue = filterValue ?? throw new ArgumentNullException(nameof(filterValue));
+            PropertyValue = propertyValue ?? throw new ArgumentNullException(nameof(propertyValue));
         }
 
         public Expression FilterValue { get; }

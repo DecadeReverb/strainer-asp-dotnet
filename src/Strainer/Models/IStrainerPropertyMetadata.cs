@@ -1,11 +1,9 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Fluorite.Strainer.Models
 {
     /// <summary>
-    /// Provides metadata about property used by Strainer for filtering
-    /// or sorting.
+    /// Provides metadata about properties used by Strainer.
     /// </summary>
     public interface IStrainerPropertyMetadata
     {

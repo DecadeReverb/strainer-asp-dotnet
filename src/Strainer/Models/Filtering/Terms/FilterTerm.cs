@@ -41,22 +41,65 @@ namespace Fluorite.Strainer.Models.Filtering.Terms
         public IList<string> Values { get; set; }
 
         /// <summary>
-        /// Checks if current instance of <see cref="FilterTerm"/> is equal
-        /// to other <see cref="FilterTerm"/> instance.
+        /// Checks if current instance of <see cref="FilterTerm"/>
+        /// is equal to other <see cref="object"/> instance.
         /// </summary>
-        /// <param name="other">
-        /// Other <see cref="FilterTerm"/> instance.
+        /// <param name="obj">
+        /// Other <see cref="object"/> instance.
         /// </param>
         /// <returns>
         /// <see langword="true"/> if provided other <see cref="object"/>
         /// instance is equal to the current one; otherwise <see langword="false"/>.
         /// </returns>
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as FilterTerm);
+        }
+
+        /// <summary>
+        /// Checks if current instance of <see cref="FilterTerm"/>
+        /// is equal to other <see cref="FilterTerm"/> instance.
+        /// </summary>
+        /// <param name="other">
+        /// Other <see cref="FilterTerm"/> instance.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if provided other <see cref="FilterTerm"/>
+        /// instance is equal to the current one; otherwise <see langword="false"/>.
+        /// </returns>
         public bool Equals(FilterTerm other)
         {
-            return other != null
-                && Names.SequenceEqual(other.Names)
-                && Operator == other.Operator
-                && Values.SequenceEqual(other.Values);
+            return other != null &&
+                   Names.SequenceEqual(other.Names) &&
+                   EqualityComparer<IFilterOperator>.Default.Equals(Operator, other.Operator) &&
+                   Values.SequenceEqual(other.Values);
+
+        }
+
+        /// <summary>
+        /// Gets <see cref="int"/> hash code representation of current
+        /// <see cref="FilterTerm"/>.
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="FilterTerm"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            var hashCode = 215681951;
+            hashCode = hashCode * -1521134295 + EqualityComparer<IList<string>>.Default.GetHashCode(Names);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IFilterOperator>.Default.GetHashCode(Operator);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IList<string>>.Default.GetHashCode(Values);
+            return hashCode;
+        }
+
+        public static bool operator ==(FilterTerm term1, FilterTerm term2)
+        {
+            return EqualityComparer<FilterTerm>.Default.Equals(term1, term2);
+        }
+
+        public static bool operator !=(FilterTerm term1, FilterTerm term2)
+        {
+            return !(term1 == term2);
         }
     }
 }
