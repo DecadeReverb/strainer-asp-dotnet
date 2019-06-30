@@ -1,9 +1,9 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.UnitTests.Entities;
+using Fluorite.Strainer.TestModels;
 using System.Linq;
 
-namespace Fluorite.Strainer.UnitTests.Services
+namespace Fluorite.Strainer.IntegrationTests.Services
 {
     public class ApplicationCustomSortMethodProvider : CustomSortMethodProvider
     {

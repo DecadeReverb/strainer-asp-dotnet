@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AssemblyName>Fluorite.Strainer.TestModels</AssemblyName>
+    <RootNamespace>Fluorite.Strainer.TestModels</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Strainer\Strainer.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,16 +2,12 @@
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.UnitTests.Services;
+using Fluorite.Strainer.IntegrationTests.Services;
 using Microsoft.Extensions.Options;
 using System;
 
-namespace Fluorite.Strainer.UnitTests
+namespace Fluorite.Strainer.IntegrationTests
 {
-    /// <summary>
-    /// Factory for bootstrapping Parking Lot Web Applciation in memory
-    /// for functional end to end tests.
-    /// </summary>
     public class StrainerFactory
     {
         public StrainerFactory()

@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace Fluorite.Strainer.UnitTests
+namespace Fluorite.Strainer.IntegrationTests
 {
     public abstract class StrainerFixtureBase : IClassFixture<StrainerFactory>
     {

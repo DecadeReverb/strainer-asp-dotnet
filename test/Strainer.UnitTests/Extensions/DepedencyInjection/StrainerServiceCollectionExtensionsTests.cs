@@ -106,7 +106,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var serviceProvider = services.BuildServiceProvider();
             var preExtensionStrainerCustomFilterMethods = serviceProvider.GetService<ICustomFilterMethodProvider>();
             services.AddStrainer<StrainerProcessor>()
-                .AddCustomFilterMethods<ApplicationCustomFilterMethodProvider>();
+                .AddCustomFilterMethods<_CustomFilterMethodProvider>();
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainerCustomFilterMethods = serviceProvider.GetService<ICustomFilterMethodProvider>();
 
@@ -131,7 +131,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var serviceProvider = services.BuildServiceProvider();
             var preExtensionStrainerCustomSortMethods = serviceProvider.GetService<ICustomSortMethodProvider>();
             services.AddStrainer<StrainerProcessor>()
-                .AddCustomSortMethods<ApplicationCustomSortMethodProvider>();
+                .AddCustomSortMethods<_CustomSortMethodProvider>();
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainerCustomSortMethods = serviceProvider.GetService<ICustomSortMethodProvider>();
 
@@ -146,9 +146,29 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         }
     }
 
+    internal class _CustomSortMethodProvider : ICustomSortMethodProvider
+    {
+        public ICustomSortMethodMapper Mapper => throw new NotImplementedException();
+
+        public void MapMethods(ICustomSortMethodMapper mapper)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     internal class _TestFilterTermParser : IFilterTermParser
     {
         public IList<IFilterTerm> GetParsedTerms(string input)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class _CustomFilterMethodProvider : ICustomFilterMethodProvider
+    {
+        public ICustomFilterMethodMapper Mapper => throw new NotImplementedException();
+
+        public void MapMethods(ICustomFilterMethodMapper mapper)
         {
             throw new NotImplementedException();
         }

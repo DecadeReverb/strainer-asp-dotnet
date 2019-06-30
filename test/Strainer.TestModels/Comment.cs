@@ -1,7 +1,7 @@
 ﻿using System;
 using Fluorite.Strainer.Attributes;
 
-namespace Fluorite.Strainer.UnitTests.Entities
+namespace Fluorite.Strainer.TestModels
 {
 	public class Comment
     {

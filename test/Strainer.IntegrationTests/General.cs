@@ -1,18 +1,17 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Exceptions;
+using Fluorite.Strainer.IntegrationTests.Services;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.UnitTests.Entities;
-using Fluorite.Strainer.UnitTests.Services;
+using Fluorite.Strainer.TestModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests
+namespace Fluorite.Strainer.IntegrationTests
 {
     public class General
     {

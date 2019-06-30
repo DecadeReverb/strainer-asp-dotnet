@@ -1,10 +1,10 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.UnitTests.Entities;
+using Fluorite.Strainer.TestModels;
 using System;
 using System.Linq;
 
-namespace Fluorite.Strainer.UnitTests.Services
+namespace Fluorite.Strainer.IntegrationTests.Services
 {
     public class ApplicationCustomFilterMethodProvider : CustomFilterMethodProvider
     {

@@ -1,7 +1,7 @@
 ﻿using Fluorite.Strainer.Services;
-using Fluorite.Strainer.UnitTests.Entities;
+using Fluorite.Strainer.TestModels;
 
-namespace Fluorite.Strainer.UnitTests.Services
+namespace Fluorite.Strainer.IntegrationTests.Services
 {
     public class ApplicationStrainerProcessor : StrainerProcessor
     {

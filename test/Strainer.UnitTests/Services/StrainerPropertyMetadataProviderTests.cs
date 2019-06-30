@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.UnitTests.Entities;
+using Fluorite.Strainer.TestModels;
 using Microsoft.Extensions.Options;
 using Xunit;
 

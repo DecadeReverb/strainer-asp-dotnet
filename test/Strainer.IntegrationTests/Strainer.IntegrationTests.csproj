@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AssemblyName>Fluorite.Strainer.UnitTests</AssemblyName>
-    <RootNamespace>Fluorite.Strainer.UnitTests</RootNamespace>
+    <AssemblyName>Fluorite.Strainer.IntegrationTests</AssemblyName>
+    <RootNamespace>Fluorite.Strainer.IntegrationTests</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

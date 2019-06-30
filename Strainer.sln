@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.UnitTests", "test\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.ExampleWebApi", "src\Strainer.ExampleWebApi\Strainer.ExampleWebApi.csproj", "{EF1628CD-DA1F-4315-AA50-7FA423EFE7AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strainer.IntegrationTests", "test\Strainer.IntegrationTests\Strainer.IntegrationTests.csproj", "{0995D0CE-7A1D-42C6-9196-3028616DB828}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strainer.TestModels", "test\Strainer.TestModels\Strainer.TestModels.csproj", "{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +45,14 @@ Global
 		{EF1628CD-DA1F-4315-AA50-7FA423EFE7AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF1628CD-DA1F-4315-AA50-7FA423EFE7AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF1628CD-DA1F-4315-AA50-7FA423EFE7AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0995D0CE-7A1D-42C6-9196-3028616DB828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0995D0CE-7A1D-42C6-9196-3028616DB828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0995D0CE-7A1D-42C6-9196-3028616DB828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0995D0CE-7A1D-42C6-9196-3028616DB828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +60,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D1DB24FC-52FB-41D7-BC3F-29D90C12FC34} = {00542765-0364-4DA4-946E-7759481C4D72}
 		{EF1628CD-DA1F-4315-AA50-7FA423EFE7AF} = {19D3EA3A-5F1B-4650-8261-A5D82C5A1F4D}
+		{0995D0CE-7A1D-42C6-9196-3028616DB828} = {00542765-0364-4DA4-946E-7759481C4D72}
+		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB} = {00542765-0364-4DA4-946E-7759481C4D72}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6D7C2175-439A-434B-94C1-C819129D948E}

@@ -1,6 +1,7 @@
 image: microsoft/dotnet:2.2-sdk
 
 variables:
+ INTEGRATION_TESTS_PROJECT_NAME: 'Strainer.IntegrationTests'
  UNIT_TESTS_PROJECT_NAME: 'Strainer.UnitTests'
  SOURCE_CODE_DIRECTORY: 'src'
  TEST_DIRECTORY: 'test'
@@ -40,5 +41,12 @@ unit tests:
  stage: test
  script:
   - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
+ dependencies:
+  - build
+
+integration tests:
+ stage: test
+ script:
+  - 'dotnet test ${TEST_DIRECTORY}/${INTEGRATION_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
  dependencies:
   - build
