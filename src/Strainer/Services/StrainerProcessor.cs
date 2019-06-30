@@ -131,9 +131,9 @@ namespace Fluorite.Strainer.Services
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
+                    var metadata = GetPropertyMetadata<TEntity>(
                         isSortingRequired: false,
-                        ifFileringRequired: true,
+                        isFilteringRequired: true,
                         name: filterTermName);
 
                     if (metadata != null)
@@ -268,9 +268,9 @@ namespace Fluorite.Strainer.Services
             var useThenBy = false;
             foreach (var sortTerm in parsedTerms)
             {
-                var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
+                var metadata = GetPropertyMetadata<TEntity>(
                     isSortingRequired: true,
-                    ifFileringRequired: false,
+                    isFilteringRequired: false,
                     name: sortTerm.Name);
 
                 if (metadata != null)
@@ -315,6 +315,21 @@ namespace Fluorite.Strainer.Services
         private Expression GetClosureOverConstant<T>(T constant, Type targetType)
         {
             return Expression.Constant(constant, targetType);
+        }
+
+        private IStrainerPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
+        {
+            var metadata = Context.Mapper.FindProperty<TEntity>(
+                isSortingRequired,
+                isFilteringRequired,
+                name);
+
+            if (metadata == null)
+            {
+                return Context.MetadataProvider.GetMetadataFromAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+            }
+
+            return metadata;
         }
     }
 }

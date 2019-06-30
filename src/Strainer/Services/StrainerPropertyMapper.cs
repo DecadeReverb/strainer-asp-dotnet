@@ -1,4 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,12 @@ namespace Fluorite.Strainer.Services
     public class StrainerPropertyMapper : IStrainerPropertyMapper
     {
         private readonly Dictionary<Type, ISet<IStrainerPropertyMetadata>> _map;
+        private readonly StrainerOptions _options;
 
-        public StrainerPropertyMapper()
+        public StrainerPropertyMapper(IOptions<StrainerOptions> options)
         {
             _map = new Dictionary<Type, ISet<IStrainerPropertyMetadata>>();
+            _options = options.Value;
         }
 
         public void AddMap<TEntity>(IStrainerPropertyMetadata metadata)
@@ -33,12 +36,11 @@ namespace Fluorite.Strainer.Services
         public IStrainerPropertyMetadata FindProperty<TEntity>(
             bool canSortRequired,
             bool canFilterRequired,
-            string name,
-            bool isCaseSensitive)
+            string name)
         {
             try
             {
-                var comparisonMethod = isCaseSensitive
+                var comparisonMethod = _options.CaseSensitive
                     ? StringComparison.Ordinal
                     : StringComparison.OrdinalIgnoreCase;
 

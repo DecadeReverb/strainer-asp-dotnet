@@ -19,26 +19,6 @@ namespace Fluorite.Strainer.Services
             _options = options.Value;
         }
 
-        public IStrainerPropertyMetadata GetMetadata<TEntity>(
-            bool isSortingRequired,
-            bool ifFileringRequired,
-            string name,
-            bool includeAttributes = true)
-        {
-            var metadata = _mapper.FindProperty<TEntity>(
-                isSortingRequired,
-                ifFileringRequired,
-                name,
-                _options.CaseSensitive);
-
-            if (metadata == null && includeAttributes)
-            {
-                return GetMetadataFromAttribute<TEntity>(isSortingRequired, ifFileringRequired, name);
-            }
-
-            return metadata;
-        }
-
         public IStrainerPropertyMetadata GetMetadataFromAttribute<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,

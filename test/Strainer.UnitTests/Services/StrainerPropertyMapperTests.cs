@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.UnitTests.Entities;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services
@@ -12,15 +13,15 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Null_WhenJustPropertyIsCalled()
         {
             // Arrange
-            var mapper = new StrainerPropertyMapper();
+            var options = Options.Create(new StrainerOptions());
+            var mapper = new StrainerPropertyMapper(options);
 
             // Act
             mapper.Property<Post>(p => p.Id);
             var metadata = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
-                name: nameof(Post.Id),
-                isCaseSensitive: true);
+                name: nameof(Post.Id));
 
             // Assert
             metadata.Should().BeNull();
@@ -30,7 +31,8 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Map_WhenMarkedAsFilterable()
         {
             // Arrange
-            var mapper = new StrainerPropertyMapper();
+            var options = Options.Create(new StrainerOptions());
+            var mapper = new StrainerPropertyMapper(options);
 
             // Act
             mapper.Property<Post>(p => p.Id)
@@ -38,8 +40,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var metadata = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
-                name: nameof(Post.Id),
-                isCaseSensitive: true);
+                name: nameof(Post.Id));
 
             // Assert
             metadata.Name.Should().Be(nameof(Post.Id));
@@ -50,7 +51,8 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Map_WhenMarkedAsSortable()
         {
             // Arrange
-            var mapper = new StrainerPropertyMapper();
+            var options = Options.Create(new StrainerOptions());
+            var mapper = new StrainerPropertyMapper(options);
 
             // Act
             mapper.Property<Post>(p => p.Id)
@@ -58,8 +60,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var metadata = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
-                name: nameof(Post.Id),
-                isCaseSensitive: true);
+                name: nameof(Post.Id));
 
             // Assert
             metadata.Name.Should().Be(nameof(Post.Id));
@@ -70,7 +71,8 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_Map_Via_AddMap()
         {
             // Arrange
-            var mapper = new StrainerPropertyMapper();
+            var options = Options.Create(new StrainerOptions());
+            var mapper = new StrainerPropertyMapper(options);
             var metadata = new StrainerPropertyMetadata()
             {
                 DisplayName = nameof(Post.Id),
@@ -83,8 +85,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var result = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
-                name: nameof(Post.Id),
-                isCaseSensitive: true);
+                name: nameof(Post.Id));
 
             // Assert
             result.Name.Should().Be(nameof(Post.Id));
@@ -95,7 +96,8 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_AlreadyExistingMaps_Via_AddMap()
         {
             // Arrange
-            var mapper = new StrainerPropertyMapper();
+            var options = Options.Create(new StrainerOptions());
+            var mapper = new StrainerPropertyMapper(options);
             var metadata = new StrainerPropertyMetadata()
             {
                 DisplayName = nameof(Post.Id),
@@ -110,8 +112,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var result = mapper.FindProperty<Post>(
                 canSortRequired: false,
                 canFilterRequired: false,
-                name: nameof(Post.Id),
-                isCaseSensitive: true);
+                name: nameof(Post.Id));
 
             // Assert
             result.Name.Should().Be(nameof(Post.Id));

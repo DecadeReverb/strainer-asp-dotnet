@@ -24,7 +24,7 @@ namespace Fluorite.Strainer.UnitTests
         public General()
         {
             var options = new StrainerOptionsAccessor();
-            var mapper = new StrainerPropertyMapper();
+            var mapper = new StrainerPropertyMapper(options);
             var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
 
             var filterOperatorValidator = new FilterOperatorValidator();

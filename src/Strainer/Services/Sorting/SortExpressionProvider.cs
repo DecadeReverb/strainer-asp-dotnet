@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using System;
 using System.Collections.Generic;
@@ -41,9 +42,9 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(sortTerm));
             }
 
-            var metadata = _metadataProvider.GetMetadata<TEntity>(
+            var metadata = GetPropertyMetadata<TEntity>(
                 isSortingRequired: true,
-                ifFileringRequired: false,
+                isFilteringRequired: false,
                 name: sortTerm.Name);
 
             if (metadata != null)
@@ -118,6 +119,21 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             return expressions;
+        }
+
+        private IStrainerPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
+        {
+            var metadata = _mapper.FindProperty<TEntity>(
+                isSortingRequired,
+                isFilteringRequired,
+                name);
+
+            if (metadata == null)
+            {
+                return _metadataProvider.GetMetadataFromAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+            }
+
+            return metadata;
         }
     }
 }

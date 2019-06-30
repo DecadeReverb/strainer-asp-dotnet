@@ -54,7 +54,7 @@ namespace Fluorite.Strainer.UnitTests
         protected IStrainerContext CreateDefaultContext()
         {
             var options = Options.Create(new StrainerOptions());
-            var propertyMapper = new StrainerPropertyMapper();
+            var propertyMapper = new StrainerPropertyMapper(options);
             var propertyMetadataProvider = new StrainerPropertyMetadataProvider(propertyMapper, options);
 
             var filterOperatorValidator = new FilterOperatorValidator();

@@ -7,7 +7,7 @@ namespace Fluorite.Strainer.Services
     public interface IStrainerPropertyMapper
     {
         void AddMap<TEntity>(IStrainerPropertyMetadata metadata);
-        IStrainerPropertyMetadata FindProperty<TEntity>(bool canSortRequired, bool canFilterRequired, string name, bool isCaseSensitive);
+        IStrainerPropertyMetadata FindProperty<TEntity>(bool canSortRequired, bool canFilterRequired, string name);
         IStrainerPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);
     }
 }
