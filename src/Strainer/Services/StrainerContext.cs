@@ -5,8 +5,14 @@ using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.Services
 {
+    /// <summary>
+    /// Represents wrapper over main services used by Strainer.
+    /// </summary>
     public class StrainerContext : IStrainerContext
     {
+        /// <summary>
+        /// Initializes new instance of <see cref="StrainerContext"/> class.
+        /// </summary>
         public StrainerContext(
             IOptions<StrainerOptions> options,
             IFilteringContext filteringContext,
@@ -23,16 +29,34 @@ namespace Fluorite.Strainer.Services
             Options = options.Value;
         }
 
+        /// <summary>
+        /// Gets the context for custom methods.
+        /// </summary>
         public ICustomMethodsContext CustomMethods { get; }
 
+        /// <summary>
+        /// Gets the filtering context.
+        /// </summary>
         public IFilteringContext Filtering { get; }
 
+        /// <summary>
+        /// Gets the property mapper.
+        /// </summary>
         public IStrainerPropertyMapper Mapper { get; }
 
+        /// <summary>
+        /// Gets the property metadata provider.
+        /// </summary>
         public IStrainerPropertyMetadataProvider MetadataProvider { get; }
 
+        /// <summary>
+        /// Gets the Strainer options.
+        /// </summary>
         public StrainerOptions Options { get; }
 
+        /// <summary>
+        /// Gets the sorting context.
+        /// </summary>
         public ISortingContext Sorting { get; }
     }
 }
