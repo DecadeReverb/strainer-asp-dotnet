@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Fluorite.Strainer.Models.Sorting.Terms;
+using System.Linq;
 
 namespace Fluorite.Strainer.Models.Sorting
 {
@@ -30,5 +31,10 @@ namespace Fluorite.Strainer.Models.Sorting
         /// Gets the source collection.
         /// </summary>
         IQueryable<TEntity> Source { get; }
+
+        /// <summary>
+        /// Gets the sort term.
+        /// </summary>
+        ISortTerm Term { get; }
     }
 }

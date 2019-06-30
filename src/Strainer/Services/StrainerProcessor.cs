@@ -118,15 +118,15 @@ namespace Fluorite.Strainer.Services
             IStrainerModel model,
             IQueryable<TEntity> result)
         {
-            var parsedFilters = Context.Filtering.TermParser.GetParsedTerms(model.Filters);
-            if (parsedFilters == null)
+            var parsedTerms = Context.Filtering.TermParser.GetParsedTerms(model.Filters);
+            if (parsedTerms == null)
             {
                 return result;
             }
 
             Expression outerExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
-            foreach (var filterTerm in parsedFilters)
+            foreach (var filterTerm in parsedTerms)
             {
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
@@ -291,6 +291,7 @@ namespace Fluorite.Strainer.Services
                             IsDescending = sortTerm.IsDescending,
                             IsSubsequent = useThenBy,
                             Source = result,
+                            Term = sortTerm,
                         };
                         result = customMethod.Function(context);
                     }
