@@ -5,7 +5,6 @@ using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.UnitTests.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -57,7 +56,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             });
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
-            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
+            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>().Value;
 
             // Assert
             postExtensionStrainer
@@ -65,7 +64,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .NotBeNull("Because extension method should add " +
                         "Strainer to the service collection.");
             postExtensionStrainerOptions
-                ?.DefaultPageSize
+                .DefaultPageSize
                 .Should()
                 .Be(defaultPageSize);
         }

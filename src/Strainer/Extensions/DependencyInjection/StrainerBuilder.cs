@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 
-namespace Fluorite.Strainer.Services
+namespace Fluorite.Extensions.DependencyInjection
 {
     public class StrainerBuilder : IStrainerBuilder
     {
         public StrainerBuilder(IServiceCollection services)
         {
-            Services = services ?? throw new System.ArgumentNullException(nameof(services));
+            Services = services ?? throw new ArgumentNullException(nameof(services));
         }
 
         public IServiceCollection Services { get; }
