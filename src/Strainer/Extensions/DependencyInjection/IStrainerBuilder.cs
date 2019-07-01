@@ -8,6 +8,9 @@ namespace Fluorite.Extensions.DependencyInjection
     /// </summary>
     public interface IStrainerBuilder
     {
+        /// <summary>
+        /// Gets the services collection.
+        /// </summary>
         IServiceCollection Services { get; }
     }
 }
