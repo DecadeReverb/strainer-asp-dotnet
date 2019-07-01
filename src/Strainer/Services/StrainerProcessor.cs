@@ -1,5 +1,5 @@
-﻿using Fluorite.Strainer.Exceptions;
-using Fluorite.Strainer.Extensions;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Filtering.Operators;
