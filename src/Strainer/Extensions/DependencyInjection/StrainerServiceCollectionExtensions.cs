@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System;
+using System.Linq;
 
 namespace Fluorite.Extensions.DependencyInjection
 {
@@ -53,8 +53,8 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(options));
             }
 
+            services.Configure(options);
             var builder = services.AddStrainer<TProcessor>();
-            builder.Services.PostConfigure(options);
 
             return builder;
         }
@@ -109,11 +109,9 @@ namespace Fluorite.Extensions.DependencyInjection
             return new StrainerBuilder(services);
         }
 
-        private static IServiceCollection Add<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
+        private static void Add<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
         {
             services.Add(new ServiceDescriptor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime));
-
-            return services;
         }
 
         private static bool ContainsServiceOfType<TImplementationType>(this IServiceCollection services)
