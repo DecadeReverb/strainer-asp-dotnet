@@ -30,7 +30,7 @@ namespace Fluorite.Strainer.Services.Sorting
             _metadataProvider = metadataProvider;
         }
 
-        public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isFirst)
+        public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isSubsequent)
         {
             if (propertyInfo == null)
             {
@@ -69,7 +69,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 {
                     Expression = orderExpression,
                     IsDescending = sortTerm.IsDescending,
-                    IsSubsequent = !isFirst,
+                    IsSubsequent = isSubsequent,
                 };
             }
             else
@@ -102,10 +102,10 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             var expressions = new List<ISortExpression<TEntity>>();
-            var isFirst = true;
+            var isSubqequent = false;
             foreach (var pair in sortTerms)
             {
-                var sortExpression = GetExpression<TEntity>(pair.Key, pair.Value, isFirst);
+                var sortExpression = GetExpression<TEntity>(pair.Key, pair.Value, isSubqequent);
                 if (sortExpression != null)
                 {
                     expressions.Add(sortExpression);
@@ -115,7 +115,7 @@ namespace Fluorite.Strainer.Services.Sorting
                     continue;
                 }
 
-                isFirst = false;
+                isSubqequent = true;
             }
 
             return expressions;

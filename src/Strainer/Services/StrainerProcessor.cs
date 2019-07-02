@@ -265,7 +265,7 @@ namespace Fluorite.Strainer.Services
                 return result;
             }
 
-            var useThenBy = false;
+            var isSubsequent = false;
             foreach (var sortTerm in parsedTerms)
             {
                 var metadata = GetPropertyMetadata<TEntity>(
@@ -275,7 +275,7 @@ namespace Fluorite.Strainer.Services
 
                 if (metadata != null)
                 {
-                    var sortExpression = Context.Sorting.ExpressionProvider.GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isFirst: !useThenBy);
+                    var sortExpression = Context.Sorting.ExpressionProvider.GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isSubsequent);
                     if (sortExpression != null)
                     {
                         result = result.OrderWithSortExpression(sortExpression);
@@ -289,7 +289,7 @@ namespace Fluorite.Strainer.Services
                         var context = new CustomSortMethodContext<TEntity>
                         {
                             IsDescending = sortTerm.IsDescending,
-                            IsSubsequent = useThenBy,
+                            IsSubsequent = isSubsequent,
                             Source = result,
                             Term = sortTerm,
                         };
@@ -303,7 +303,7 @@ namespace Fluorite.Strainer.Services
                     }
                 }
 
-                useThenBy = true;
+                isSubsequent = true;
             }
 
             return result;

@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.Services.Sorting
     /// </summary>
     public interface ISortExpressionProvider
     {
-        ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isFirst);
+        ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isSubsequent);
 
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
