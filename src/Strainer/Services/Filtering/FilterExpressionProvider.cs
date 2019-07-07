@@ -10,15 +10,6 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionProvider : IFilterExpressionProvider
     {
-        //private readonly IStrainerPropertyMapper _mapper;
-        //private readonly IStrainerPropertyMetadataProvider _metadataProvider;
-
-        //public FilterExpressionProvider(IStrainerPropertyMapper mapper, IStrainerPropertyMetadataProvider metadataProvider)
-        //{
-        //    _mapper = mapper;
-        //    _metadataProvider = metadataProvider;
-        //}
-
         public FilterExpressionProvider()
         {
 
