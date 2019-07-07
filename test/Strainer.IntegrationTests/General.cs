@@ -26,11 +26,12 @@ namespace Fluorite.Strainer.IntegrationTests
             var mapper = new StrainerPropertyMapper(options);
             var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
 
+            var filterExpressionProvider = new FilterExpressionProvider();
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterOperatorMapper = new FilterOperatorMapper(filterOperatorValidator);
             var filterOperatorParser = new FilterOperatorParser(filterOperatorMapper);
             var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorMapper);
-            var filteringContext = new FilteringContext(filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
+            var filteringContext = new FilteringContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
 
             var sortExpressionProvider = new SortExpressionProvider(mapper, metadataProvider);
             var sortingWayFormatter = new SortingWayFormatter();
