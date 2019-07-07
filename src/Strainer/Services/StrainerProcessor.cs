@@ -140,7 +140,7 @@ namespace Fluorite.Strainer.Services
                     }
                     else
                     {
-                        var customMethod = Context.CustomMethods.Filter.Mapper.GetMethod<TEntity>(filterTermName);
+                        var customMethod = Context.CustomMethods.Filter?.Mapper.GetMethod<TEntity>(filterTermName);
                         if (customMethod != null)
                         {
                             var context = new CustomFilterMethodContext<TEntity>
@@ -226,7 +226,7 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    var customMethod = Context.CustomMethods.Sort.Mapper.GetMethod<TEntity>(sortTerm.Name);
+                    var customMethod = Context.CustomMethods.Sort?.Mapper.GetMethod<TEntity>(sortTerm.Name);
                     if (customMethod != null)
                     {
                         var context = new CustomSortMethodContext<TEntity>

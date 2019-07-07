@@ -65,13 +65,7 @@ namespace Fluorite.Strainer.IntegrationTests
             var sortTermParser = new SortTermParser(sortingWayFormatter);
             var sortingContext = new SortingContext(sortExpressionProvider, sortingWayFormatter, sortTermParser);
 
-            var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-            var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
-
-            var customSortMethodMapper = new CustomSortMethodMapper(options);
-            var customSortMethodProvider = new ApplicationCustomSortMethodProvider(customSortMethodMapper);
-
-            var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider, customSortMethodProvider);
+            var customMethodsContext = new CustomMethodsContext();
 
             return new StrainerContext(
                 options,
