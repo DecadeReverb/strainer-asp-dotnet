@@ -45,11 +45,14 @@ namespace Fluorite.Strainer.Services
             bool applySorting = true,
             bool applyPagination = true)
         {
-            var result = source;
-
             if (model == null)
             {
-                return result;
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
             }
 
             try
@@ -57,22 +60,22 @@ namespace Fluorite.Strainer.Services
                 // Filter
                 if (applyFiltering)
                 {
-                    result = ApplyFiltering(model, result);
+                    source = ApplyFiltering(model, source);
                 }
 
                 // Sort
                 if (applySorting)
                 {
-                    result = ApplySorting(model, result);
+                    source = ApplySorting(model, source);
                 }
 
                 // Paginate
                 if (applyPagination)
                 {
-                    result = ApplyPagination(model, result);
+                    source = ApplyPagination(model, source);
                 }
 
-                return result;
+                return source;
             }
             catch (Exception ex)
             {
@@ -87,7 +90,7 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    return result;
+                    return source;
                 }
             }
         }
@@ -114,12 +117,22 @@ namespace Fluorite.Strainer.Services
 
         private IQueryable<TEntity> ApplyFiltering<TEntity>(
             IStrainerModel model,
-            IQueryable<TEntity> result)
+            IQueryable<TEntity> source)
         {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             var parsedTerms = Context.Filtering.TermParser.GetParsedTerms(model.Filters);
             if (parsedTerms == null)
             {
-                return result;
+                return source;
             }
 
             Expression outerExpression = null;
@@ -145,10 +158,10 @@ namespace Fluorite.Strainer.Services
                         {
                             var context = new CustomFilterMethodContext<TEntity>
                             {
-                                Source = result,
+                                Source = source,
                                 Term = filterTerm,
                             };
-                            result = customMethod.Function(context);
+                            source = customMethod.Function(context);
                         }
                         else
                         {
@@ -174,38 +187,58 @@ namespace Fluorite.Strainer.Services
             }
 
             return outerExpression == null
-                ? result
-                : result.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
+                ? source
+                : source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
         }
 
         private IQueryable<TEntity> ApplyPagination<TEntity>(
             IStrainerModel model,
-            IQueryable<TEntity> result)
+            IQueryable<TEntity> source)
         {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             var page = model?.Page ?? Context.Options.DefaultPageNumber;
             var pageSize = model?.PageSize ?? Context.Options.DefaultPageSize;
             var maxPageSize = Context.Options.MaxPageSize > 0
                 ? Context.Options.MaxPageSize
                 : pageSize;
 
-            result = result.Skip((page - 1) * pageSize);
+            source = source.Skip((page - 1) * pageSize);
 
             if (pageSize > 0)
             {
-                result = result.Take(Math.Min(pageSize, maxPageSize));
+                source = source.Take(Math.Min(pageSize, maxPageSize));
             }
 
-            return result;
+            return source;
         }
 
         private IQueryable<TEntity> ApplySorting<TEntity>(
             IStrainerModel model,
-            IQueryable<TEntity> result)
+            IQueryable<TEntity> source)
         {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             var parsedTerms = Context.Sorting.TermParser.GetParsedTerms(model.Sorts);
             if (parsedTerms.Count == 0)
             {
-                return result;
+                return source;
             }
 
             var isSubsequent = false;
@@ -221,7 +254,7 @@ namespace Fluorite.Strainer.Services
                     var sortExpression = Context.Sorting.ExpressionProvider.GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isSubsequent);
                     if (sortExpression != null)
                     {
-                        result = result.OrderWithSortExpression(sortExpression);
+                        source = source.OrderWithSortExpression(sortExpression);
                     }
                 }
                 else
@@ -233,10 +266,10 @@ namespace Fluorite.Strainer.Services
                         {
                             IsDescending = sortTerm.IsDescending,
                             IsSubsequent = isSubsequent,
-                            Source = result,
+                            Source = source,
                             Term = sortTerm,
                         };
-                        result = customMethod.Function(context);
+                        source = customMethod.Function(context);
                     }
                     else
                     {
@@ -249,7 +282,7 @@ namespace Fluorite.Strainer.Services
                 isSubsequent = true;
             }
 
-            return result;
+            return source;
         }
 
         // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
