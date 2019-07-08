@@ -95,27 +95,7 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
-        {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
-
-            return mapper;
-        }
-
-        protected virtual IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
-        {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
-
-            return mapper;
-        }
-
-        private IQueryable<TEntity> ApplyFiltering<TEntity>(
+        public IQueryable<TEntity> ApplyFiltering<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source)
         {
@@ -191,7 +171,7 @@ namespace Fluorite.Strainer.Services
                 : source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
         }
 
-        private IQueryable<TEntity> ApplyPagination<TEntity>(
+        public IQueryable<TEntity> ApplyPagination<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source)
         {
@@ -221,7 +201,7 @@ namespace Fluorite.Strainer.Services
             return source;
         }
 
-        private IQueryable<TEntity> ApplySorting<TEntity>(
+        public IQueryable<TEntity> ApplySorting<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source)
         {
@@ -283,6 +263,26 @@ namespace Fluorite.Strainer.Services
             }
 
             return source;
+        }
+
+        protected virtual IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
+        {
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
+
+            return mapper;
+        }
+
+        protected virtual IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+        {
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
+
+            return mapper;
         }
 
         // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
