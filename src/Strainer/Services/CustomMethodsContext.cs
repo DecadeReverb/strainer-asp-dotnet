@@ -1,29 +1,57 @@
-﻿using Fluorite.Strainer.Services.Filtering;
+﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
+using Microsoft.Extensions.Options;
+using System;
 
 namespace Fluorite.Strainer.Services
 {
     public class CustomMethodsContext : ICustomMethodsContext
     {
-        public CustomMethodsContext()
+        public CustomMethodsContext(IOptions<StrainerOptions> options)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
 
+            var filterMapper = new CustomFilterMethodMapper(options);
+            Filter = new CustomFilterMethodProvider(filterMapper);
+
+            var sortMapper = new CustomSortMethodMapper(options);
+            Sort = new CustomSortMethodProvider(sortMapper);
         }
 
-        public CustomMethodsContext(ICustomFilterMethodProvider filterMethods)
+        public CustomMethodsContext(IOptions<StrainerOptions> options, ICustomFilterMethodProvider filterMethods)
         {
-            Filter = filterMethods;
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
+
+            var mapper = new CustomSortMethodMapper(options);
+            Sort = new CustomSortMethodProvider(mapper);
         }
 
-        public CustomMethodsContext(ICustomSortMethodProvider sortMethods)
+        public CustomMethodsContext(IOptions<StrainerOptions> options, ICustomSortMethodProvider sortMethods)
         {
-            Sort = sortMethods;
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
+
+            var mapper = new CustomFilterMethodMapper(options);
+            Filter = new CustomFilterMethodProvider(mapper);
         }
 
-        public CustomMethodsContext(ICustomFilterMethodProvider filterMethods, ICustomSortMethodProvider sortMethods)
+        public CustomMethodsContext(IOptions<StrainerOptions> options, ICustomFilterMethodProvider filterMethods, ICustomSortMethodProvider sortMethods)
         {
-            Filter = filterMethods;
-            Sort = sortMethods;
+            Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
+            Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
         }
 
         public ICustomFilterMethodProvider Filter { get; }

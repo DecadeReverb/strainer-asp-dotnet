@@ -12,34 +12,6 @@ namespace Fluorite.Extensions.DependencyInjection
 {
     public static class StrainerServiceCollectionExtensions
     {
-        public static IStrainerBuilder AddCustomFilterMethods<TProvider>(this IStrainerBuilder builder)
-            where TProvider : class, ICustomFilterMethodProvider
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            var options = builder.Services.GetStrainerOptions();
-            builder.Services.Add<ICustomFilterMethodProvider, TProvider>(options.ServiceLifetime);
-
-            return builder;
-        }
-
-        public static IStrainerBuilder AddCustomSortMethods<TProvider>(this IStrainerBuilder builder)
-            where TProvider : class, ICustomSortMethodProvider
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            var options = builder.Services.GetStrainerOptions();
-            builder.Services.Add<ICustomSortMethodProvider, TProvider>(options.ServiceLifetime);
-
-            return builder;
-        }
-
         public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, Action<StrainerOptions> options)
             where TProcessor : class, IStrainerProcessor
         {

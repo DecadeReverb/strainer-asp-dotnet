@@ -231,8 +231,8 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = Options.Create(new StrainerOptions());
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider);
+                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
+                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
                     context.Filtering,
@@ -263,8 +263,8 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = Options.Create(new StrainerOptions());
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider);
+                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
+                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
                     context.Filtering,
@@ -295,8 +295,8 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = Options.Create(new StrainerOptions());
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider);
+                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
+                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
                     context.Filtering,
@@ -328,8 +328,8 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = Options.Create(new StrainerOptions());
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider);
+                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
+                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
                     context.Filtering,
@@ -361,8 +361,8 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = Options.Create(new StrainerOptions());
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new ApplicationCustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(customFilterMethodProvider);
+                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
+                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
                     context.Filtering,
@@ -408,8 +408,8 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = Options.Create(new StrainerOptions());
                 var customSortMethodMapper = new CustomSortMethodMapper(options);
-                var customSortMethodProvider = new ApplicationCustomSortMethodProvider(customSortMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(customSortMethodProvider);
+                var customSortMethodProvider = new  CustomSortMethodProvider(customSortMethodMapper);
+                var customMethodsContext = new CustomMethodsContext(options, customSortMethodProvider);
                 var newContext = new StrainerContext(
                     options,
                     context.Filtering,

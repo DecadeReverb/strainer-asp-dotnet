@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.Services.Sorting
             _options = options.Value;
         }
 
-        public void AddMethod<TEntity>(ICustomSortMethod<TEntity> sortMethod)
+        public void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod)
         {
             if (sortMethod == null)
             {

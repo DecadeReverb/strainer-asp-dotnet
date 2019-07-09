@@ -28,7 +28,7 @@ namespace Fluorite.Strainer.Models.Sorting
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether current
-        /// ordering is a subsequent one and not a first one.
+        /// ordering is a subsequent one - not a first one.
         /// <para/>
         /// If <see langword="true"/>, then a subsequent
         /// ordering calls should be executed on source collection

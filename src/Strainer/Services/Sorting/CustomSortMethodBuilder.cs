@@ -28,7 +28,7 @@ namespace Fluorite.Strainer.Services.Sorting
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
 
-            Mapper.AddMethod(Build());
+            Mapper.AddMap(Build());
 
             return this;
         }

@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -20,6 +21,8 @@ namespace Fluorite.Strainer.Services
             Context.Filtering.OperatorValidator.Validate(Context.Filtering.OperatorMapper.Operators);
 
             MapProperties(context.Mapper);
+            MapCustomFilterMethods(context.CustomMethods.Filter.Mapper);
+            MapCustomSortMethods(context.CustomMethods.Sort.Mapper);
         }
 
         /// <summary>
@@ -263,6 +266,22 @@ namespace Fluorite.Strainer.Services
             }
 
             return source;
+        }
+
+        protected virtual void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
+        {
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
+        }
+
+        protected virtual void MapCustomSortMethods(ICustomSortMethodMapper mapper)
+        {
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
         }
 
         protected virtual IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)

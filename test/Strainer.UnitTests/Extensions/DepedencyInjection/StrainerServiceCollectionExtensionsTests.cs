@@ -93,81 +93,11 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .BeAssignableTo<_TestFilterTermParser>(
                     "Because DI container should return service that was registered last.");
         }
-
-        [Fact]
-        public void ExtensionMethod_AddsCustomFilterMethods()
-        {
-            // Arrange
-            IConfiguration configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
-            var services = new ServiceCollection().AddSingleton(configuration);
-
-            // Act
-            var serviceProvider = services.BuildServiceProvider();
-            var preExtensionStrainerCustomFilterMethods = serviceProvider.GetService<ICustomFilterMethodProvider>();
-            services.AddStrainer<StrainerProcessor>()
-                .AddCustomFilterMethods<_CustomFilterMethodProvider>();
-            serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainerCustomFilterMethods = serviceProvider.GetService<ICustomFilterMethodProvider>();
-
-            // Assert
-            preExtensionStrainerCustomFilterMethods
-                .Should()
-                .BeNull("Because Strainer has not been registered yet.");
-            postExtensionStrainerCustomFilterMethods
-                .Should()
-                .NotBeNull("Because extension method should add Stariner " +
-                        "custom filter methods to the service collection.");
-        }
-
-        [Fact]
-        public void ExtensionMethod_AddsCustomSortMethods()
-        {
-            // Arrange
-            IConfiguration configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
-            var services = new ServiceCollection().AddSingleton(configuration);
-
-            // Act
-            var serviceProvider = services.BuildServiceProvider();
-            var preExtensionStrainerCustomSortMethods = serviceProvider.GetService<ICustomSortMethodProvider>();
-            services.AddStrainer<StrainerProcessor>()
-                .AddCustomSortMethods<_CustomSortMethodProvider>();
-            serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainerCustomSortMethods = serviceProvider.GetService<ICustomSortMethodProvider>();
-
-            // Assert
-            preExtensionStrainerCustomSortMethods
-                .Should()
-                .BeNull("Because Strainer has not been registered yet.");
-            postExtensionStrainerCustomSortMethods
-                .Should()
-                .NotBeNull("Because extension method should add Stariner " +
-                        "custom sort methods to the service collection.");
-        }
-    }
-
-    internal class _CustomSortMethodProvider : ICustomSortMethodProvider
-    {
-        public ICustomSortMethodMapper Mapper => throw new NotImplementedException();
-
-        public void MapMethods(ICustomSortMethodMapper mapper)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     internal class _TestFilterTermParser : IFilterTermParser
     {
         public IList<IFilterTerm> GetParsedTerms(string input)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class _CustomFilterMethodProvider : ICustomFilterMethodProvider
-    {
-        public ICustomFilterMethodMapper Mapper => throw new NotImplementedException();
-
-        public void MapMethods(ICustomFilterMethodMapper mapper)
         {
             throw new NotImplementedException();
         }

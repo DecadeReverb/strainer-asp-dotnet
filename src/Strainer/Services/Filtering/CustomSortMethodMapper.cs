@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.Services.Filtering
             _options = options.Value;
         }
 
-        public void AddMethod<TEntity>(ICustomFilterMethod<TEntity> sortMethod)
+        public void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod)
         {
             if (sortMethod == null)
             {

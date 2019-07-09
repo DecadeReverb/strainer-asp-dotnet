@@ -34,9 +34,7 @@ namespace Fluorite.Strainer.ExampleWebApi
                 options.UseInMemoryDatabase("InMemoryDatabase");
             });
 
-            services.AddStrainer<ApplicationStrainerProcessor>()
-                .AddCustomFilterMethods<ApplicationCustomFilterMethodProvider>()
-                .AddCustomSortMethods<ApplicationCustomSortMethodProvider>();
+            services.AddStrainer<ApplicationStrainerProcessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

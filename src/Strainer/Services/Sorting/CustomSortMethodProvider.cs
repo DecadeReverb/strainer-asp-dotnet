@@ -1,16 +1,24 @@
-﻿namespace Fluorite.Strainer.Services.Sorting
+﻿using System;
+
+namespace Fluorite.Strainer.Services.Sorting
 {
-    public abstract class CustomSortMethodProvider : ICustomSortMethodProvider
+    public class CustomSortMethodProvider : ICustomSortMethodProvider
     {
         public CustomSortMethodProvider(ICustomSortMethodMapper mapper)
         {
-            Mapper = mapper;
+            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
             MapMethods(mapper);
         }
 
         public ICustomSortMethodMapper Mapper { get; }
 
-        public abstract void MapMethods(ICustomSortMethodMapper mapper);
+        protected virtual void MapMethods(ICustomSortMethodMapper mapper)
+        {
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
+        }
     }
 }
