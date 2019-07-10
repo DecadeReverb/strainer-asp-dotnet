@@ -66,31 +66,44 @@ You can also explicitly specify if only filtering, sorting, and/or pagination sh
 
 ### 4. Send a request
 
-[Send a request](#send-a-request)
+[Send a request](#sample-request-query)
 
 ## Custom methods
 
-If you want to add custom sort/filter methods, add custom implementation holding sort/filter methods that Strainer will search through.
+If you want to add custom sort/filter methods, override appropriate mapping method in your custom Strainer processor.
 
-For instance:
-
-```cs
-services.AddStrainer<ApplicationStrainerProcessor>()
-    .AddCustomFilterMethods<ApplicationCustomFilterMethodProvider>()
-    .AddCustomSortMethods<ApplicationCustomSortMethodProvider>();
-```
-
-Where `ApplicationCustomSortMethodProvider` for example is:
+### Custom filter methods
 
 ```cs
-public class ApplicationCustomSortMethodProvider : CustomSortMethodProvider
+public class ApplicationStrainerProcessor : StrainerProcessor
 {
-    public ApplicationCustomSortMethodProvider(ICustomSortMethodMapper mapper) : base(mapper)
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
     {
 
     }
 
-    public override void MapMethods(ICustomSortMethodMapper mapper)
+    protected override void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
+    {
+        mapper.CustomMethod<Post>(nameof(IsNew))
+            .WithFunction(IsNew);
+    }
+
+    private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
+        => context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
+}
+```
+
+### Custom sort methods
+
+```cs
+public class ApplicationStrainerProcessor : StrainerProcessor
+{
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    {
+
+    }
+
+    protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
     {
         mapper.CustomMethod<Post>(nameof(Popularity))
             .WithFunction(Popularity);
@@ -103,32 +116,6 @@ public class ApplicationCustomSortMethodProvider : CustomSortMethodProvider
             : context.Source.OrderBy(p => p.LikeCount)
                 .ThenBy(p => p.CommentCount)
                 .ThenBy(p => p.DateCreated);
-    }
-}
-```
-
-And `ApplicationCustomFilterMethodProvider`:
-
-```cs
-public class ApplicationCustomFilterMethodProvider : CustomFilterMethodProvider
-{
-    public ApplicationCustomFilterMethodProvider(ICustomFilterMethodMapper mapper) : base(mapper)
-    {
-
-    }
-
-    public override void MapMethods(ICustomFilterMethodMapper mapper)
-    {
-        mapper.CustomMethod<Post>(nameof(IsNew))
-            .WithFunction(IsNew);
-    }
-
-    private IQueryable<Post> IsNew(IQueryable<Post> source, string op, string[] values)
-        => source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
-
-    private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
-    {
-        return context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
     }
 }
 ```
@@ -172,9 +159,9 @@ Then you can add the configuration:
 services.AddStrainer<StrainerProcessor>(options => options.DefaultPageSize = 20);
 ```
 
-## Send a request
+## Sample request query
 
-With all the above in place, you can now send a GET request that includes a sort/filter/page query. An example:
+Below you can fine a GET request that includes a sort/filter/page query:
 
 ```curl
 GET /GetPosts
@@ -203,7 +190,7 @@ Notes:
 * Here's a [good example on how to work with enumerables](https://github.com/Biarity/Sieve/issues/2)
 * Another example on [how to do OR logic](https://github.com/Biarity/Sieve/issues/8)
 
-### Nested objects
+## Nested objects
 
 You can filter/sort on a nested object's property by marking the property using the Fluent API. Marking via attributes not currently supported.
 
@@ -246,7 +233,9 @@ Now you can make requests such as: `filters=User.Name==specific_name`.
 
 You can replace this DSL with your own (eg. use JSON instead) by implementing an [IStrainerModel](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs). You can use the default [StrainerModel](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/StrainerModel.cs) for reference.
 
-### Operators
+## Filter operators
+
+Strainer supports following filter opererators by default:
 
 | Operator   | Meaning                                      |
 |------------|----------------------------------------------|
@@ -266,18 +255,38 @@ You can replace this DSL with your own (eg. use JSON instead) by implementing an
 | `!@=*`     | Does not contain _(case-insensitive)_        |
 | `!_=*`     | Does not start with _(case-insensitive)_     |
 
-### Handle Strainer's exceptions
+### Custom Filter Operators
 
-Strainer will silently fail unless `ThrowExceptions` in the configuration is set to true. Following kinds of custom exceptions can be thrown:
+Same manner as adding properties you can add new filter operators. Override a mapping method in a custom Stariner processor:
+
+```cs
+public class ApplicationStrainerProcessor : StrainerProcessor
+{
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    {
+
+    }
+
+    protected override IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
+    {
+        mapper.AddOperator(symbol: "!=*")
+            .HasName("not equal to (case insensitive)")
+            .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
+            .IsCaseInsensitive();
+
+        return mapper;
+    }
+}
+```
+
+## Strainer's exceptions
+
+Strainer will silently fail unless [`ThrowExceptions`](#configure-strainer) in the configuration is set to true. Following kinds of custom exceptions can be thrown:
 
 * `StrainerMethodNotFoundException` with a `MethodName`
 * `StrainerException` which encapsulates any other exception types in its `InnerException`
 
 It is recommended that you write exception-handling middleware to globally handle Strainer's exceptions when using it with ASP.NET Core.
-
-### Example project
-
-You can find an example project incorporating most Strainer concepts in [Strainer.ExampleWebApi](https://gitlab.com/fluorite/strainer/tree/master/src/Strainer.ExampleWebApi).
 
 ## Fluent API
 
@@ -303,29 +312,15 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 }
 ```
 
-### Custom Filter Operators
+Fluent API also allows you to:
 
-Same manner as adding properties you can add new filter operators:
+ - add [custom filter operators](#custom-filter-operators);
+ - add [custom filter methods](#custom-filter-methods);
+ - add [custom sort methods](#custom-sort-methods).
 
-```cs
-public class ApplicationStrainerProcessor : StrainerProcessor
-{
-    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
-    {
+## Examples
 
-    }
-
-    protected override IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
-    {
-        mapper.AddOperator(symbol: "!=*")
-            .HasName("not equal to (case insensitive)")
-            .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
-            .IsCaseInsensitive();
-
-        return mapper;
-    }
-}
-```
+You can find an example project incorporating most Strainer concepts in [Strainer.ExampleWebApi](https://gitlab.com/fluorite/strainer/tree/master/src/Strainer.ExampleWebApi).
 
 ## Migrating from Sieve to Strainer
 
