@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions
     public class StringExtensionsTests
     {
         [Fact]
-        public void Extension_ChecksIfStringIsAPartOfOtherString()
+        public void Extension_Checks_IfStringIsAPartOfOtherString()
         {
             // Arrange
             var value = "foo";
@@ -22,7 +22,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions
         }
 
         [Fact]
-        public void Extension_ChecksIfStringIsAPartOfOtherString_WorksWithEmptyStrings()
+        public void Extension_Checks_IfStringIsAPartOfOtherString_WorksWithEmptyStrings()
         {
             // Arrange
             var value = string.Empty;
@@ -36,7 +36,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions
         }
 
         [Fact]
-        public void Extension_ThrowsExceptionWhenCurrentInstanceIsNull()
+        public void Extension_ThrowsException_WhenCurrentInstanceIsNull()
         {
             // Arrange
             string value = null;
@@ -47,7 +47,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions
         }
 
         [Fact]
-        public void Extension_ThrowsExceptionWhenArgumentInstanceIsNull()
+        public void Extension_ThrowsException_WhenArgumentInstanceIsNull()
         {
             // Arrange
             var value = "foo";

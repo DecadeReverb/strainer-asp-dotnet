@@ -4,7 +4,6 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -20,15 +19,15 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         public void ExtensionMethod_AddsStrainer()
         {
             // Arrange
-            IConfiguration configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
-            var services = new ServiceCollection().AddSingleton(configuration);
-
-            // Act
+            var services = new ServiceCollection();
             var serviceProvider = services.BuildServiceProvider();
             var preExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
+
+            // Act
             services.AddStrainer<StrainerProcessor>();
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
+            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
 
             // Assert
             preExtensionStrainer
@@ -38,22 +37,21 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .Should()
                 .NotBeNull("Because extension method should add " +
                         "Strainer to the service collection.");
+            postExtensionStrainerOptions
+                .Should()
+                .NotBeNull();
         }
 
         [Fact]
-        public void ExtensionMethod_AddsStrainerWithCustomOptions()
+        public void ExtensionMethod_AddsStrainer_WithCustomOptions_ViaAction()
         {
             // Arrange
             var defaultPageSize = 20;
-            IConfiguration configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
-            var services = new ServiceCollection().AddSingleton(configuration);
+            var services = new ServiceCollection();
+            var serviceProvider = services.BuildServiceProvider();
 
             // Act
-            var serviceProvider = services.BuildServiceProvider();
-            services.AddStrainer<StrainerProcessor>(options =>
-            {
-                options.DefaultPageSize = defaultPageSize;
-            });
+            services.AddStrainer<StrainerProcessor>(options => options.DefaultPageSize = defaultPageSize);
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>().Value;
@@ -70,11 +68,67 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         }
 
         [Fact]
-        public void ExtensionMethod_AddsStrainerWithCustomService_FilterTermParser()
+        public void ExtensionMethod_AddsStrainer_WithCustomOptions_ViaConfiguration()
         {
             // Arrange
-            IConfiguration configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
-            var services = new ServiceCollection().AddSingleton(configuration);
+            var defaultPageSize = 20;
+            var services = new ServiceCollection();
+            var strainerOptions = new Dictionary<string, string>
+            {
+                { nameof(StrainerOptions.DefaultPageSize) , defaultPageSize.ToString() },
+            };
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(strainerOptions)
+                .Build();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Act
+            services.AddStrainer<StrainerProcessor>(configuration);
+            serviceProvider = services.BuildServiceProvider();
+            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
+            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>().Value;
+
+            // Assert
+            postExtensionStrainer
+                .Should()
+                .NotBeNull("Because extension method should add " +
+                        "Strainer to the service collection.");
+            postExtensionStrainerOptions
+                .DefaultPageSize
+                .Should()
+                .Be(defaultPageSize);
+        }
+
+        [Fact]
+        public void ExtensionMethod_AddsStrainer_WithCustomServiceLifetime()
+        {
+            // Arrange
+            var serviceLifetime = ServiceLifetime.Singleton;
+            var services = new ServiceCollection();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Act
+            services.AddStrainer<StrainerProcessor>(options => options.ServiceLifetime = serviceLifetime);
+            serviceProvider = services.BuildServiceProvider();
+            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
+            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>().Value;
+
+            // Assert
+            postExtensionStrainer
+                .Should()
+                .NotBeNull("Because extension method should add " +
+                        "Strainer to the service collection.");
+            postExtensionStrainerOptions
+                .ServiceLifetime
+                .Should()
+                .Be(serviceLifetime);
+        }
+
+        [Fact]
+        public void ExtensionMethod_AddsStrainer_WithCustomService_FilterTermParser()
+        {
+            // Arrange
+            var services = new ServiceCollection();
 
             // Act
             services.AddStrainer<StrainerProcessor>();
