@@ -125,7 +125,7 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 Strainer comes with following [`options`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/StrainerOptions.cs):
 
 | Name | Type | Default value | Description |
-| --- | --- |
+| --- | --- | --- | --- |
 | CaseSensitive | `bool` | false | A `bool` value indictating whether Strainer should operatre in case sensitive mode. This affects for example the way of comparing value of incoming filters with names of properties marked as filterable. |
 | DefaultPageNumber | `int` | 1 | Default page number. |
 | DefaultPageSize | `int` | 10 | Default page size. |
