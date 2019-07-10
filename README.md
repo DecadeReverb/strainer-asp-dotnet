@@ -219,11 +219,25 @@ public class User {
 }
 ```
 
-Mark `Post.User` to be filterable:
+Mark `Post.User` to be filterable with [Fluent API]:
+
 ```cs
-// in MapProperties
-mapper.Property<Post>(p => p.Creator.Name)
-    .CanFilter();
+public class ApplicationStrainerProcessor : StrainerProcessor
+{
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    {
+
+    }
+
+    protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+    {
+
+        mapper.Property<Post>(p => p.Creator.Name)
+            .CanFilter();
+
+        return mapper;
+    }
+}
 ```
 
 Now you can make requests such as: `filters=User.Name==specific_name`.
