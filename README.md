@@ -68,7 +68,7 @@ You can also explicitly specify if only filtering, sorting, and/or pagination sh
 
 [Send a request](#send-a-request)
 
-### Add custom sort/filter methods
+## Custom methods
 
 If you want to add custom sort/filter methods, add custom implementation holding sort/filter methods that Strainer will search through.
 
@@ -135,23 +135,41 @@ public class ApplicationCustomFilterMethodProvider : CustomFilterMethodProvider
 
 ## Configure Strainer
 
-Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) with `StrainerOptions` to tell Strainer where to look for configuration. For example:
+Strainer comes with following [`options`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/StrainerOptions.cs):
+
+| Name | Type | Default value | Description |
+| --- | --- |
+| CaseSensitive | `bool` | false | A `bool` value indictating whether Strainer should operatre in case sensitive mode. This affects for example the way of comparing value of incoming filters with names of properties marked as filterable. |
+| DefaultPageNumber | `int` | 1 | Default page number. |
+| DefaultPageSize | `int` | 10 | Default page size. |
+| MaxPageSize | `int` | 50 | Maximum page number. |
+| ThrowExceptions | `bool` | false | A `bool` value indictating whether Strainer should throw [StrainerExceptions](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Exceptions/StrainerException.cs) and the like. |
+
+Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) to tell Strainer where to look for configuration. For example:
 
 ```cs
-services.Configure<StrainerOptions>(Configuration.GetSection("Strainer"));
+services.AddStrainer<StrainerProcessor>(Configuration.GetSection("Strainer"));
 ```
 
 Then you can add the configuration:
 
 ```json
 {
-    "Strainer": {
-        "CaseSensitive": "boolean: should property names be case-sensitive? Defaults to false",
-        "DefaultPageSize": "int number: optional number to fallback to when no page argument is given. Set <=0 to disable paging if no pageSize is specified (default).",
-        "MaxPageSize": "int number: maximum allowed page size. Set <=0 to make infinite (default)",
-        "ThrowExceptions": "boolean: should Strainer throw exceptions instead of silently failing? Defaults to false"
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
     }
+  },
+   "Strainer": {
+    "DefaultPageSize": 20
+  }
 }
+```
+
+...or configure Strainer via [`Action`](https://docs.microsoft.com/dotnet/api/system.action-1):
+
+```cs
+services.AddStrainer<StrainerProcessor>(options => options.DefaultPageSize = 20);
 ```
 
 ## Send a request
