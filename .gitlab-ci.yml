@@ -9,10 +9,15 @@ variables:
  OBJECTS_DIRECTORY: 'obj'
  BUILD_CONFIGURATION: 'Release'
  NUGET_PACKAGES_DIRECTORY: '.nuget'
+ NUGET_SERVER_URL: 'https://api.nuget.org/v3/index.json'
+
 
 stages:
   - build
   - test
+  - pack
+  - deploy
+
 
 cache:
  key: '${CI_JOB_STAGE}-${CI_COMMIT_REF_SLUG}'
@@ -50,3 +55,53 @@ integration tests:
   - 'dotnet test ${TEST_DIRECTORY}/${INTEGRATION_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
  dependencies:
   - build
+
+pack Strainer:
+ stage: pack
+ only:
+  - master
+  - tags
+ script:
+  - 'dotnet pack ${SOURCE_CODE_DIRECTORY}/Strainer --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
+ artifacts:
+  paths:
+   - '${SOURCE_CODE_DIRECTORY}/*/${BINARIES_DIRECTORY}'
+   - '${SOURCE_CODE_DIRECTORY}/*/${OBJECTS_DIRECTORY}'
+ dependencies:
+  - build
+
+pack Strainer.AspNetCore:
+ stage: pack
+ only:
+  - master
+  - tags
+ script:
+  - 'dotnet pack ${SOURCE_CODE_DIRECTORY}/Strainer.AspNetCore --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
+ artifacts:
+  paths:
+   - '${SOURCE_CODE_DIRECTORY}/*/${BINARIES_DIRECTORY}'
+   - '${SOURCE_CODE_DIRECTORY}/*/${OBJECTS_DIRECTORY}'
+ dependencies:
+  - build
+
+deploy Strainer:
+ stage: deploy
+ only:
+  - master
+  - tags
+ script:
+  - 'NUGET_PACKAGE_PATH=$(find $SOURCE_CODE_DIRECTORY/Strainer/${BINARIES_DIRECTORY}/${BUILD_CONFIGURATION} -maxdepth 1 -type f -name "*.nupkg" -printf "%h/%f\n")'
+  - 'dotnet nuget push ${NUGET_PACKAGE_PATH} --api-key ${NUGET_API_KEY} --source ${NUGET_SERVER_URL}'
+ dependencies:
+  - pack Strainer
+
+deploy Strainer.AspNetCore:
+ stage: deploy
+ only:
+  - master
+  - tags
+ script:
+  - 'NUGET_PACKAGE_PATH=$(find $SOURCE_CODE_DIRECTORY/Strainer.AspNetCore/${BINARIES_DIRECTORY}/${BUILD_CONFIGURATION} -maxdepth 1 -type f -name "*.nupkg" -printf "%h/%f\n")'
+  - 'dotnet nuget push ${NUGET_PACKAGE_PATH} --api-key ${NUGET_API_KEY} --source ${NUGET_SERVER_URL}'
+ dependencies:
+  - pack Strainer.AspNetCore
