@@ -6,7 +6,6 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.TestModels;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -229,7 +228,7 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = Options.Create(new StrainerOptions());
+                var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
                 var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
@@ -261,7 +260,7 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = Options.Create(new StrainerOptions());
+                var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
                 var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
@@ -293,7 +292,7 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = Options.Create(new StrainerOptions());
+                var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
                 var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
@@ -326,7 +325,7 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = Options.Create(new StrainerOptions());
+                var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
                 var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
@@ -359,7 +358,7 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = Options.Create(new StrainerOptions());
+                var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
                 var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
@@ -406,7 +405,7 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = Options.Create(new StrainerOptions());
+                var options = new StrainerOptions();
                 var customSortMethodMapper = new CustomSortMethodMapper(options);
                 var customSortMethodProvider = new  CustomSortMethodProvider(customSortMethodMapper);
                 var customMethodsContext = new CustomMethodsContext(options, customSortMethodProvider);

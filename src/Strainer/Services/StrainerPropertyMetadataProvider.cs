@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +12,10 @@ namespace Fluorite.Strainer.Services
         private readonly IStrainerPropertyMapper _mapper;
         private readonly StrainerOptions _options;
 
-        public StrainerPropertyMetadataProvider(IStrainerPropertyMapper mapper, IOptions<StrainerOptions> options)
+        public StrainerPropertyMetadataProvider(IStrainerPropertyMapper mapper, StrainerOptions options)
         {
             _mapper = mapper;
-            _options = options.Value;
+            _options = options;
         }
 
         public IStrainerPropertyMetadata GetMetadataFromAttribute<TEntity>(

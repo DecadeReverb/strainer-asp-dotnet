@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Fluorite.Strainer.Models
+﻿namespace Fluorite.Strainer.Models
 {
     /// <summary>
     /// Represents set of options for used by Strainer.
@@ -50,13 +48,6 @@ namespace Fluorite.Strainer.Models
         /// Defaults to 50.
         /// </summary>
         public int MaxPageSize { get; set; } = 50;
-
-        /// <summary>
-        /// Gets or sets the lifetime of Strainer services.
-        /// <para/>
-        /// Defaults to <see cref="ServiceLifetime.Scoped"/>.
-        /// </summary>
-        public ServiceLifetime ServiceLifetime { get; set; } = ServiceLifetime.Scoped;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether

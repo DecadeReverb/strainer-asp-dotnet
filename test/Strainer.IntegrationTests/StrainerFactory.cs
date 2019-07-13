@@ -3,7 +3,6 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.IntegrationTests.Services;
-using Microsoft.Extensions.Options;
 using System;
 
 namespace Fluorite.Strainer.IntegrationTests
@@ -49,7 +48,7 @@ namespace Fluorite.Strainer.IntegrationTests
 
         protected IStrainerContext CreateDefaultContext()
         {
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var propertyMapper = new StrainerPropertyMapper(options);
             var propertyMetadataProvider = new StrainerPropertyMetadataProvider(propertyMapper, options);
 

@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +11,10 @@ namespace Fluorite.Strainer.Services.Filtering
         private readonly Dictionary<Type, Dictionary<string, object>> _methods;
         private readonly StrainerOptions _options;
 
-        public CustomFilterMethodMapper(IOptions<StrainerOptions> options)
+        public CustomFilterMethodMapper(StrainerOptions options)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
-            _options = options.Value;
+            _options = options;
         }
 
         public void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod)

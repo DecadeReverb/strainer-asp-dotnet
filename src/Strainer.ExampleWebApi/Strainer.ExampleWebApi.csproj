@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Strainer\Strainer.csproj" />
+    <ProjectReference Include="..\Strainer.AspNetCore\Strainer.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

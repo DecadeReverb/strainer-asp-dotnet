@@ -2,7 +2,6 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.TestModels;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services
@@ -13,7 +12,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Null_WhenJustPropertyIsCalled()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
 
             // Act
@@ -31,7 +30,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Map_WhenMarkedAsFilterable()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
 
             // Act
@@ -51,7 +50,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Map_WhenMarkedAsSortable()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
 
             // Act
@@ -71,7 +70,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_Map_Via_AddMap()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             var metadata = new StrainerPropertyMetadata()
             {
@@ -96,7 +95,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_AlreadyExistingMaps_Via_AddMap()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             var metadata = new StrainerPropertyMetadata()
             {

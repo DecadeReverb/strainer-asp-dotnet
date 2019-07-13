@@ -4,7 +4,6 @@ using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.TestModels;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -29,7 +28,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 { propertyInfo, sortTerm },
             };
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             mapper.Property<Comment>(c => c.Text).CanSort();
             var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
@@ -60,7 +59,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 { propertyInfo, sortTerm },
             };
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
@@ -87,7 +86,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 { propertyInfo, sortTerm },
             };
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             mapper.Property<Post>(c => c.TopComment.Text.Length).CanSort();
             var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
@@ -129,7 +128,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
             var sortTerms = properties.Zip(termsList, (prop, term) => new { prop, term })
                 .ToDictionary(x => x.prop, x => x.term);
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             mapper.Property<Comment>(c => c.Text).CanSort();
             mapper.Property<Comment>(c => c.Id).CanSort();

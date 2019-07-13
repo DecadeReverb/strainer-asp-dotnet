@@ -1,14 +1,13 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
-using Microsoft.Extensions.Options;
 using System;
 
 namespace Fluorite.Strainer.Services
 {
     public class CustomMethodsContext : ICustomMethodsContext
     {
-        public CustomMethodsContext(IOptions<StrainerOptions> options)
+        public CustomMethodsContext(StrainerOptions options)
         {
             if (options == null)
             {
@@ -22,7 +21,7 @@ namespace Fluorite.Strainer.Services
             Sort = new CustomSortMethodProvider(sortMapper);
         }
 
-        public CustomMethodsContext(IOptions<StrainerOptions> options, ICustomFilterMethodProvider filterMethods)
+        public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods)
         {
             if (options == null)
             {
@@ -35,7 +34,7 @@ namespace Fluorite.Strainer.Services
             Sort = new CustomSortMethodProvider(mapper);
         }
 
-        public CustomMethodsContext(IOptions<StrainerOptions> options, ICustomSortMethodProvider sortMethods)
+        public CustomMethodsContext(StrainerOptions options, ICustomSortMethodProvider sortMethods)
         {
             if (options == null)
             {
@@ -48,7 +47,7 @@ namespace Fluorite.Strainer.Services
             Filter = new CustomFilterMethodProvider(mapper);
         }
 
-        public CustomMethodsContext(IOptions<StrainerOptions> options, ICustomFilterMethodProvider filterMethods, ICustomSortMethodProvider sortMethods)
+        public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods, ICustomSortMethodProvider sortMethods)
         {
             Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
             Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));

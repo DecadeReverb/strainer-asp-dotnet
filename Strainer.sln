@@ -23,9 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.UnitTests", "test\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.ExampleWebApi", "src\Strainer.ExampleWebApi\Strainer.ExampleWebApi.csproj", "{EF1628CD-DA1F-4315-AA50-7FA423EFE7AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strainer.IntegrationTests", "test\Strainer.IntegrationTests\Strainer.IntegrationTests.csproj", "{0995D0CE-7A1D-42C6-9196-3028616DB828}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.IntegrationTests", "test\Strainer.IntegrationTests\Strainer.IntegrationTests.csproj", "{0995D0CE-7A1D-42C6-9196-3028616DB828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strainer.TestModels", "test\Strainer.TestModels\Strainer.TestModels.csproj", "{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.TestModels", "test\Strainer.TestModels\Strainer.TestModels.csproj", "{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strainer.AspNetCore", "src\Strainer.AspNetCore\Strainer.AspNetCore.csproj", "{B14505AD-4C49-400F-AC10-21A5EA31A93B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B14505AD-4C49-400F-AC10-21A5EA31A93B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B14505AD-4C49-400F-AC10-21A5EA31A93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B14505AD-4C49-400F-AC10-21A5EA31A93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B14505AD-4C49-400F-AC10-21A5EA31A93B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

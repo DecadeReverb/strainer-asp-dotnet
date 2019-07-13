@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Strainer.AspNetCore\Strainer.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Strainer\Strainer.csproj" />
     <ProjectReference Include="..\Strainer.TestModels\Strainer.TestModels.csproj" />
   </ItemGroup>

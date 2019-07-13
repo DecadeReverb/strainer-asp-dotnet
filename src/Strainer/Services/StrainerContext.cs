@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 
@@ -14,7 +13,7 @@ namespace Fluorite.Strainer.Services
         /// Initializes new instance of <see cref="StrainerContext"/> class.
         /// </summary>
         public StrainerContext(
-            IOptions<StrainerOptions> options,
+            StrainerOptions options,
             IFilteringContext filteringContext,
             ISortingContext sortingContext,
             IStrainerPropertyMapper mapper,
@@ -26,7 +25,7 @@ namespace Fluorite.Strainer.Services
             Sorting = sortingContext;
             Mapper = mapper;
             MetadataProvider = metadataProvider;
-            Options = options.Value;
+            Options = options;
         }
 
         /// <summary>

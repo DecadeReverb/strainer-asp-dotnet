@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +11,10 @@ namespace Fluorite.Strainer.Services.Sorting
         private readonly Dictionary<Type, Dictionary<string, object>> _methods;
         private readonly StrainerOptions _options;
 
-        public CustomSortMethodMapper(IOptions<StrainerOptions> options)
+        public CustomSortMethodMapper(StrainerOptions options)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
-            _options = options.Value;
+            _options = options;
         }
 
         public void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod)

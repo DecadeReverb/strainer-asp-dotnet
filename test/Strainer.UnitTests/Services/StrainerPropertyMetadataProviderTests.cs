@@ -2,7 +2,6 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.TestModels;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services
@@ -13,7 +12,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Provider_Returns_NoPropertyMetadata_WhenRegistredWithFluentApi()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             var provider = new StrainerPropertyMetadataProvider(mapper, options);
 
@@ -31,7 +30,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Provider_Returns_NoPropertyMetadata_WhenNoneAreMatchingConditions()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             var provider = new StrainerPropertyMetadataProvider(mapper, options);
 
@@ -49,7 +48,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Provider_Returns_PropertyMetadata_FromStrainerAttribute()
         {
             // Arrange
-            var options = Options.Create(new StrainerOptions());
+            var options = new StrainerOptions();
             var mapper = new StrainerPropertyMapper(options);
             var provider = new StrainerPropertyMetadataProvider(mapper, options);
 

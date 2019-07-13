@@ -12,6 +12,8 @@ namespace Fluorite.Extensions.DependencyInjection
 {
     public static class StrainerServiceCollectionExtensions
     {
+        public const ServiceLifetime DefaultServiceLifetime = ServiceLifetime.Scoped;
+
         public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, IConfiguration configuration)
             where TProcessor : class, IStrainerProcessor
         {
@@ -25,14 +27,19 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            services.AddOptions<StrainerOptions>();
-            services.Configure<StrainerOptions>(configuration);
+            var options = new StrainerOptions();
+            configuration.Bind(options);
+            services.AddSingleton(options);
+
+            services.AddOptions<AspNetCoreStrainerOptions>();
+            services.Configure<AspNetCoreStrainerOptions>(configuration);
+
             var builder = services.AddStrainer<TProcessor>();
 
             return builder;
         }
 
-        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, Action<StrainerOptions> options)
+        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, Action<AspNetCoreStrainerOptions> configure)
             where TProcessor : class, IStrainerProcessor
         {
             if (services == null)
@@ -40,12 +47,17 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (options == null)
+            if (configure == null)
             {
-                throw new ArgumentNullException(nameof(options));
+                throw new ArgumentNullException(nameof(configure));
             }
 
-            services.AddOptions<StrainerOptions>().Configure(options);
+            var options = new AspNetCoreStrainerOptions();
+            configure(options);
+            services.AddSingleton<StrainerOptions>(options);
+
+            services.AddOptions<AspNetCoreStrainerOptions>().Configure(configure);
+
             var builder = services.AddStrainer<TProcessor>();
 
             return builder;
@@ -67,33 +79,34 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             // Add Strainer options only if they weren't configured yet.
-            if (!services.ContainsServiceOfType(typeof(IOptionsFactory<>)))
+            if (!services.ContainsServiceOfType<StrainerOptions>())
             {
                 services.AddOptions();
+                services.AddSingleton<StrainerOptions>();
             }
 
-            var options = services.GetStrainerOptions();
+            var serviceLifetime = services.GetStrainerLifetime();
 
-            services.Add<IFilterExpressionProvider, FilterExpressionProvider>(options.ServiceLifetime);
-            services.Add<IFilterOperatorMapper, FilterOperatorMapper>(options.ServiceLifetime);
-            services.Add<IFilterOperatorParser, FilterOperatorParser>(options.ServiceLifetime);
-            services.Add<IFilterOperatorValidator, FilterOperatorValidator>(options.ServiceLifetime);
-            services.Add<IFilterTermParser, FilterTermParser>(options.ServiceLifetime);
-            services.Add<IFilteringContext, FilteringContext>(options.ServiceLifetime);
+            services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
+            services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
+            services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
+            services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
+            services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
+            services.Add<IFilteringContext, FilteringContext>(serviceLifetime);
 
-            services.Add<ISortExpressionProvider, SortExpressionProvider>(options.ServiceLifetime);
-            services.Add<ISortingWayFormatter, SortingWayFormatter>(options.ServiceLifetime);
-            services.Add<ISortTermParser, SortTermParser>(options.ServiceLifetime);
-            services.Add<ISortingContext, SortingContext>(options.ServiceLifetime);
+            services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
+            services.Add<ISortingWayFormatter, SortingWayFormatter>(serviceLifetime);
+            services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
+            services.Add<ISortingContext, SortingContext>(serviceLifetime);
 
-            services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(options.ServiceLifetime);
-            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(options.ServiceLifetime);
-            services.Add<ICustomMethodsContext, CustomMethodsContext>(options.ServiceLifetime);
+            services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
+            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
+            services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
-            services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(options.ServiceLifetime);
-            services.Add<IStrainerPropertyMetadataProvider, StrainerPropertyMetadataProvider>(options.ServiceLifetime);
-            services.Add<IStrainerContext, StrainerContext>(options.ServiceLifetime);
-            services.Add<IStrainerProcessor, TProcessor>(options.ServiceLifetime);
+            services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(serviceLifetime);
+            services.Add<IStrainerPropertyMetadataProvider, StrainerPropertyMetadataProvider>(serviceLifetime);
+            services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
+            services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
 
             return new StrainerBuilder(services);
         }
@@ -113,11 +126,12 @@ namespace Fluorite.Extensions.DependencyInjection
             return services.Any(d => d.ServiceType == implementationType);
         }
 
-        private static StrainerOptions GetStrainerOptions(this IServiceCollection services)
+        private static ServiceLifetime GetStrainerLifetime(this IServiceCollection services)
         {
             using (var provider = services.BuildServiceProvider())
             {
-                return provider.GetRequiredService<IOptions<StrainerOptions>>().Value;
+                return provider.GetService<IOptions<AspNetCoreStrainerOptions>>()?.Value.ServiceLifetime
+                    ?? DefaultServiceLifetime;
             }
         }
     }
