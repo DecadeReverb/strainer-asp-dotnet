@@ -5,17 +5,17 @@ namespace Fluorite.Strainer.Exceptions
 {
     public class StrainerException : Exception
     {
+        public StrainerException()
+        {
+
+        }
+
         public StrainerException(string message) : base(message)
         {
 
         }
 
         public StrainerException(string message, Exception innerException) : base(message, innerException)
-        {
-
-        }
-
-        public StrainerException()
         {
 
         }
