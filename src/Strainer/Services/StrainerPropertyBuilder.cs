@@ -8,6 +8,8 @@ namespace Fluorite.Strainer.Services
 {
     public class StrainerPropertyBuilder<TEntity> : IStrainerPropertyBuilder<TEntity>
     {
+        private readonly StrainerPropertyMetadata _propertyMetadata;
+
         public StrainerPropertyBuilder(IStrainerPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
@@ -16,23 +18,23 @@ namespace Fluorite.Strainer.Services
             }
 
             Mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
-            (Name, PropertyInfo) = GetPropertyInfo(expression);
-            DisplayName = Name;
-            IsFilterable = false;
-            IsSortable = false;
+            var (name, propertyInfo) = GetPropertyInfo(expression);
+            PropertyInfo = propertyInfo;
+            _propertyMetadata = new StrainerPropertyMetadata
+            {
+                Name = name,
+                PropertyInfo = PropertyInfo,
+            };
         }
-
-        public string DisplayName { get; protected set; }
-        public bool IsFilterable { get; protected set; }
-        public bool IsSortable { get; protected set; }
-        public string Name { get; protected set; }
 
         protected PropertyInfo PropertyInfo { get; }
         protected IStrainerPropertyMapper Mapper { get; }
 
+        public IStrainerPropertyMetadata Build() => _propertyMetadata;
+
         public IStrainerPropertyBuilder<TEntity> CanFilter()
         {
-            IsFilterable = true;
+            _propertyMetadata.IsFilterable = true;
             UpdateMap();
 
             return this;
@@ -40,7 +42,7 @@ namespace Fluorite.Strainer.Services
 
         public IStrainerPropertyBuilder<TEntity> CanSort()
         {
-            IsSortable = true;
+            _propertyMetadata.IsSortable = true;
             UpdateMap();
 
             return this;
@@ -56,7 +58,7 @@ namespace Fluorite.Strainer.Services
                     nameof(displayName));
             }
 
-            DisplayName = displayName;
+            _propertyMetadata.DisplayName = displayName;
             UpdateMap();
 
             return this;
@@ -64,16 +66,7 @@ namespace Fluorite.Strainer.Services
 
         private void UpdateMap()
         {
-            var metadata = new StrainerPropertyMetadata()
-            {
-                DisplayName = DisplayName,
-                IsFilterable = IsFilterable,
-                IsSortable = IsSortable,
-                Name = Name,
-                PropertyInfo = PropertyInfo,
-            };
-
-            Mapper.AddMap<TEntity>(metadata);
+            Mapper.AddMap<TEntity>(_propertyMetadata);
         }
 
         private static (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)

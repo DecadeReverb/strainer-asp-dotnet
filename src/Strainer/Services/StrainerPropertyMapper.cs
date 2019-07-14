@@ -45,7 +45,7 @@ namespace Fluorite.Strainer.Services
 
                 return _map[typeof(TEntity)]
                     .FirstOrDefault(metadata =>
-                        metadata.DisplayName.Equals(name, comparisonMethod)
+                        (metadata.DisplayName ?? metadata.Name).Equals(name, comparisonMethod)
                         && (!canSortRequired || metadata.IsSortable)
                         && (!canFilterRequired || metadata.IsFilterable));
             }
