@@ -94,7 +94,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <exception cref="ArgumentNullException">
         /// <paramref name="sortTerms"/> is <see langword="null"/>.
         /// </exception>
-        public IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
+        public IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
         {
             if (sortTerms == null)
             {
@@ -118,7 +118,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 isSubqequent = true;
             }
 
-            return expressions;
+            return expressions.AsReadOnly();
         }
 
         private IStrainerPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)

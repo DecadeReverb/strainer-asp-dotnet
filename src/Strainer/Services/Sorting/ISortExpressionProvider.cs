@@ -30,6 +30,6 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <returns>
         /// A list of <see cref="ISortExpression{TEntity}"/>.
         /// </returns>
-        IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms);
+        IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms);
     }
 }
