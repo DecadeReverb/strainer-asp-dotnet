@@ -32,6 +32,24 @@ namespace Fluorite.Strainer.Services.Filtering
             _methods[typeof(TEntity)][sortMethod.Name] = sortMethod;
         }
 
+        public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(
+                    $"{nameof(name)} cannot be null, empty " +
+                    $"or contain only whitespace characaters.",
+                    nameof(name));
+            }
+
+            if (!_methods.ContainsKey(typeof(TEntity)))
+            {
+                _methods[typeof(TEntity)] = new Dictionary<string, object>();
+            }
+
+            return new CustomFilterMethodBuilder<TEntity>(this, name);
+        }
+
         public ICustomFilterMethod<TEntity> GetMethod<TEntity>(string name)
         {
             if (name == null)
@@ -51,24 +69,6 @@ namespace Fluorite.Strainer.Services.Filtering
             return _methods[typeof(TEntity)]
                 .FirstOrDefault(pair => pair.Key.Equals(name, comparisonType))
                 .Value as ICustomFilterMethod<TEntity>;
-        }
-
-        public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException(
-                    $"{nameof(name)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(name));
-            }
-
-            if (!_methods.ContainsKey(typeof(TEntity)))
-            {
-                _methods[typeof(TEntity)] = new Dictionary<string, object>();
-            }
-
-            return new CustomFilterMethodBuilder<TEntity>(this, name);
         }
     }
 }
