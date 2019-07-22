@@ -60,9 +60,10 @@ namespace Fluorite.Strainer.IntegrationTests
             var filteringContext = new FilteringContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
 
             var sortExpressionProvider = new SortExpressionProvider(propertyMapper, propertyMetadataProvider);
+            var sortExpressionValidator = new SortExpressionValidator();
             var sortingWayFormatter = new SortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter);
-            var sortingContext = new SortingContext(sortExpressionProvider, sortingWayFormatter, sortTermParser);
+            var sortingContext = new SortingContext(sortExpressionProvider, sortExpressionValidator, sortingWayFormatter, sortTermParser);
 
             var customMethodsContext = new CustomMethodsContext(options);
 

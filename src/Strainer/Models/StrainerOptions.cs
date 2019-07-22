@@ -57,5 +57,18 @@
         /// Defaults to <see langword="false"/>.
         /// </summary>
         public bool ThrowExceptions { get; set; } = false;
+
+        ///// <summary>
+        ///// Gets or sets a <see cref="bool"/> value indictating whether
+        ///// Strainer should check whether every entity with at least single
+        ///// property marked as sortable has defined default sort expression
+        ///// acting as a fallback ordering.
+        ///// <para/>
+        ///// When enabled an <see cref="Exceptions.StrainerSortingExpressionValidatorException"/>
+        ///// is thrown for every entity without default sort expression.
+        ///// <para/>
+        ///// Defaults to <see langword="true"/>.
+        ///// </summary>
+        //public bool ValidateDefaultSortRules { get; set; } = true;
     }
 }

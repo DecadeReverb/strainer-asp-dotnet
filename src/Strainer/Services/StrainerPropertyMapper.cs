@@ -1,6 +1,7 @@
 ﻿using Fluorite.Strainer.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -15,6 +16,16 @@ namespace Fluorite.Strainer.Services
         {
             _map = new Dictionary<Type, ISet<IStrainerPropertyMetadata>>();
             _options = options;
+        }
+
+        public IReadOnlyDictionary<Type, IEnumerable<IStrainerPropertyMetadata>> Properties
+        {
+            get
+            {
+                var newdict = _map.ToDictionary(k => k.Key, v => v.Value as IEnumerable<IStrainerPropertyMetadata>);
+
+                return new ReadOnlyDictionary<Type, IEnumerable<IStrainerPropertyMetadata>>(newdict);
+            }
         }
 
         public void AddMap<TEntity>(IStrainerPropertyMetadata metadata)

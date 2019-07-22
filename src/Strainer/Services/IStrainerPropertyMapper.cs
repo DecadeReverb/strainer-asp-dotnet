@@ -1,11 +1,14 @@
 ﻿using Fluorite.Strainer.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services
 {
     public interface IStrainerPropertyMapper
     {
+        IReadOnlyDictionary<Type, IEnumerable<IStrainerPropertyMetadata>> Properties { get; }
+
         void AddMap<TEntity>(IStrainerPropertyMetadata metadata);
         IStrainerPropertyMetadata FindProperty<TEntity>(bool canSortRequired, bool canFilterRequired, string name);
         IStrainerPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);

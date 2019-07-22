@@ -3,6 +3,7 @@ using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -28,6 +29,27 @@ namespace Fluorite.Strainer.Services.Sorting
         {
             _mapper = mapper;
             _metadataProvider = metadataProvider;
+        }
+
+        public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
+        {
+            var metadata = _mapper
+                .Properties
+                .Where(pair => pair.Key == typeof(TEntity))
+                .FirstOrDefault(pair => pair.Value.Any(p => p.IsDefaultSortOrder))
+                .Value
+                ?.FirstOrDefault();
+            if (metadata == null)
+            {
+                return null;
+            }
+
+            var sortTerm = new SortTerm
+            {
+                Name = metadata.DisplayName ?? metadata.Name
+            };
+
+            return GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isSubsequent: false);
         }
 
         public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isSubsequent)

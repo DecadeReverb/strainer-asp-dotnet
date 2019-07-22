@@ -1,54 +1,49 @@
-﻿using System;
+﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Sorting;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using Fluorite.Strainer.Models;
 
 namespace Fluorite.Strainer.Services
 {
     public class StrainerPropertyBuilder<TEntity> : IStrainerPropertyBuilder<TEntity>
     {
+        private readonly Expression<Func<TEntity, object>> _expression;
+        private readonly IStrainerPropertyMapper _mapper;
         private readonly StrainerPropertyMetadata _propertyMetadata;
 
         public StrainerPropertyBuilder(IStrainerPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            Mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
+            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            _mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
             var (name, propertyInfo) = GetPropertyInfo(expression);
-            PropertyInfo = propertyInfo;
             _propertyMetadata = new StrainerPropertyMetadata
             {
                 Name = name,
-                PropertyInfo = PropertyInfo,
+                PropertyInfo = propertyInfo,
             };
         }
 
-        protected PropertyInfo PropertyInfo { get; }
-        protected IStrainerPropertyMapper Mapper { get; }
+        public virtual IStrainerPropertyMetadata Build() => _propertyMetadata;
 
-        public IStrainerPropertyMetadata Build() => _propertyMetadata;
-
-        public IStrainerPropertyBuilder<TEntity> CanFilter()
+        public virtual IStrainerPropertyBuilder<TEntity> CanFilter()
         {
             _propertyMetadata.IsFilterable = true;
-            UpdateMap();
+            UpdateMap(_propertyMetadata);
 
             return this;
         }
 
-        public IStrainerPropertyBuilder<TEntity> CanSort()
+        public virtual ISortPropertyBuilder<TEntity> CanSort()
         {
             _propertyMetadata.IsSortable = true;
-            UpdateMap();
+            UpdateMap(_propertyMetadata);
 
-            return this;
+            return new SortPropertyBuilder<TEntity>(_mapper, _expression, _propertyMetadata);
         }
 
-        public IStrainerPropertyBuilder<TEntity> HasDisplayName(string displayName)
+        public virtual IStrainerPropertyBuilder<TEntity> HasDisplayName(string displayName)
         {
             if (string.IsNullOrWhiteSpace(displayName))
             {
@@ -59,18 +54,28 @@ namespace Fluorite.Strainer.Services
             }
 
             _propertyMetadata.DisplayName = displayName;
-            UpdateMap();
+            UpdateMap(_propertyMetadata);
 
             return this;
         }
 
-        private void UpdateMap()
+        protected void UpdateMap(IStrainerPropertyMetadata propertyMetadata)
         {
-            Mapper.AddMap<TEntity>(_propertyMetadata);
+            if (propertyMetadata == null)
+            {
+                throw new ArgumentNullException(nameof(propertyMetadata));
+            }
+
+            _mapper.AddMap<TEntity>(propertyMetadata);
         }
 
-        private static (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
+        private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
         {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             if (!(expression.Body is MemberExpression body))
             {
                 var ubody = expression.Body as UnaryExpression;

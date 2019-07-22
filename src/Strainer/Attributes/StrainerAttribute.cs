@@ -13,8 +13,10 @@ namespace Fluorite.Strainer.Attributes
         }
 
         public string DisplayName { get; set; }
-        public bool IsSortable { get; set; }
+        public bool IsDefaultSortOrder { get; set; }
+        public bool IsDefaultSortOrderAscending { get; set; }
         public bool IsFilterable { get; set; }
+        public bool IsSortable { get; set; }
         public string Name { get; set; }
         public PropertyInfo PropertyInfo { get; set; }
     }

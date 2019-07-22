@@ -1,4 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.Services
 {
@@ -6,7 +7,7 @@ namespace Fluorite.Strainer.Services
     {
         IStrainerPropertyMetadata Build();
         IStrainerPropertyBuilder<TEntity> CanFilter();
-        IStrainerPropertyBuilder<TEntity> CanSort();
+        ISortPropertyBuilder<TEntity> CanSort();
         IStrainerPropertyBuilder<TEntity> HasDisplayName(string displayName);
     }
 }

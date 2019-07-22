@@ -18,9 +18,22 @@ namespace Fluorite.Strainer.Services
             Context = context;
 
             MapFilterOperators(context.Filtering.OperatorMapper);
+
+            // TODO:
+            // Move filter operator validation to service injection.
             Context.Filtering.OperatorValidator.Validate(Context.Filtering.OperatorMapper.Operators);
 
             MapProperties(context.Mapper);
+
+            // TODO:
+            // Move sort expression validation to service injection.
+            var properties = Context.Mapper.Properties;
+            foreach (var type in properties.Keys)
+            {
+                dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
+                //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
+            }
+
             MapCustomFilterMethods(context.CustomMethods.Filter.Mapper);
             MapCustomSortMethods(context.CustomMethods.Sort.Mapper);
         }
@@ -219,12 +232,9 @@ namespace Fluorite.Strainer.Services
             }
 
             var parsedTerms = Context.Sorting.TermParser.GetParsedTerms(model.Sorts);
-            if (parsedTerms.Count == 0)
-            {
-                return source;
-            }
-
             var isSubsequent = false;
+            var sortingPerformed = false;
+
             foreach (var sortTerm in parsedTerms)
             {
                 var metadata = GetPropertyMetadata<TEntity>(
@@ -238,6 +248,7 @@ namespace Fluorite.Strainer.Services
                     if (sortExpression != null)
                     {
                         source = source.OrderWithSortExpression(sortExpression);
+                        sortingPerformed = true;
                     }
                 }
                 else
@@ -253,6 +264,7 @@ namespace Fluorite.Strainer.Services
                             Term = sortTerm,
                         };
                         source = customMethod.Function(context);
+                        sortingPerformed = true;
                     }
                     else
                     {
@@ -263,6 +275,16 @@ namespace Fluorite.Strainer.Services
                 }
 
                 isSubsequent = true;
+            }
+
+            if (!sortingPerformed)
+            {
+                var defaultSortExpression = Context.Sorting.ExpressionProvider.GetDefaultExpression<TEntity>();
+                if (defaultSortExpression != null)
+                {
+                    source = source.OrderWithSortExpression(defaultSortExpression);
+                    sortingPerformed = true;
+                }
             }
 
             return source;

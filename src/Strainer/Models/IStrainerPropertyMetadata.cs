@@ -12,6 +12,10 @@ namespace Fluorite.Strainer.Models
         /// </summary>
         string DisplayName { get; }
 
+        bool IsDefaultSortOrder { get; }
+
+        bool IsDefaultSortOrderAscending { get; }
+
         /// <summary>
         /// Gets a <see cref="bool"/> value indicating whether related
         /// property is marked as filterable for Strainer.
