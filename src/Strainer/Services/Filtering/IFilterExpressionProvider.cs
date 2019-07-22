@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         //Expression<Func<TEntity, bool>> GetExpression<TEntity>(IEnumerable<IFilterTerm> filterTerms);
         //Expression<Func<TEntity, bool>> GetExpression<TEntity>(IFilterTerm filterTerm);
-        Expression GetExpression(IStrainerPropertyMetadata metadata, IFilterTerm filterTerm, ParameterExpression parameterExpression, Expression innerExpression);
+        Expression GetExpression(IPropertyMetadata metadata, IFilterTerm filterTerm, ParameterExpression parameterExpression, Expression innerExpression);
 
     }
 }

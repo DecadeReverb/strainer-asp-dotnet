@@ -2,9 +2,9 @@
 
 namespace Fluorite.Strainer.Services
 {
-    public interface IStrainerPropertyMetadataProvider
+    public interface IPropertyMetadataProvider
     {
-        IStrainerPropertyMetadata GetMetadataFromAttribute<TEntity>(
+        IPropertyMetadata GetMetadataFromAttribute<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,
             string name);

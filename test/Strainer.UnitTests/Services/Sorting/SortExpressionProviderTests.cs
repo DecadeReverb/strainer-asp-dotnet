@@ -29,9 +29,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                 { propertyInfo, sortTerm },
             };
             var options = new StrainerOptions();
-            var mapper = new StrainerPropertyMapper(options);
+            var mapper = new PropertyMapper(options);
             mapper.Property<Comment>(c => c.Text).CanSort();
-            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var metadataProvider = new PropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
@@ -60,8 +60,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                 { propertyInfo, sortTerm },
             };
             var options = new StrainerOptions();
-            var mapper = new StrainerPropertyMapper(options);
-            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var mapper = new PropertyMapper(options);
+            var metadataProvider = new PropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
@@ -87,9 +87,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                 { propertyInfo, sortTerm },
             };
             var options = new StrainerOptions();
-            var mapper = new StrainerPropertyMapper(options);
+            var mapper = new PropertyMapper(options);
             mapper.Property<Post>(c => c.TopComment.Text.Length).CanSort();
-            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var metadataProvider = new PropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
@@ -129,11 +129,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var sortTerms = properties.Zip(termsList, (prop, term) => new { prop, term })
                 .ToDictionary(x => x.prop, x => x.term);
             var options = new StrainerOptions();
-            var mapper = new StrainerPropertyMapper(options);
+            var mapper = new PropertyMapper(options);
             mapper.Property<Comment>(c => c.Text).CanSort();
             mapper.Property<Comment>(c => c.Id).CanSort();
             mapper.Property<Comment>(c => c.DateCreated).CanSort();
-            var metadataProvider = new StrainerPropertyMetadataProvider(mapper, options);
+            var metadataProvider = new PropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act

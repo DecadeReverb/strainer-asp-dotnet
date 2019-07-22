@@ -19,13 +19,13 @@ namespace Fluorite.Strainer.Services.Sorting
     /// </summary>
     public class SortExpressionProvider : ISortExpressionProvider
     {
-        private readonly IStrainerPropertyMapper _mapper;
-        private readonly IStrainerPropertyMetadataProvider _metadataProvider;
+        private readonly IPropertyMapper _mapper;
+        private readonly IPropertyMetadataProvider _metadataProvider;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IStrainerPropertyMapper mapper, IStrainerPropertyMetadataProvider metadataProvider)
+        public SortExpressionProvider(IPropertyMapper mapper, IPropertyMetadataProvider metadataProvider)
         {
             _mapper = mapper;
             _metadataProvider = metadataProvider;
@@ -102,7 +102,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
-        /// list of sort terms used to associate names from <see cref="IStrainerPropertyMapper"/>.
+        /// list of sort terms used to associate names from <see cref="IPropertyMapper"/>.
         /// </summary>
         /// <typeparam name="TEntity">
         /// The type of entity for which the expression is for.
@@ -143,7 +143,7 @@ namespace Fluorite.Strainer.Services.Sorting
             return expressions.AsReadOnly();
         }
 
-        private IStrainerPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
+        private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
             var metadata = _mapper.FindProperty<TEntity>(
                 isSortingRequired,

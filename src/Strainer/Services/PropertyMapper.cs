@@ -7,28 +7,28 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services
 {
-    public class StrainerPropertyMapper : IStrainerPropertyMapper
+    public class PropertyMapper : IPropertyMapper
     {
-        private readonly Dictionary<Type, ISet<IStrainerPropertyMetadata>> _map;
+        private readonly Dictionary<Type, ISet<IPropertyMetadata>> _map;
         private readonly StrainerOptions _options;
 
-        public StrainerPropertyMapper(StrainerOptions options)
+        public PropertyMapper(StrainerOptions options)
         {
-            _map = new Dictionary<Type, ISet<IStrainerPropertyMetadata>>();
+            _map = new Dictionary<Type, ISet<IPropertyMetadata>>();
             _options = options;
         }
 
-        public IReadOnlyDictionary<Type, IEnumerable<IStrainerPropertyMetadata>> Properties
+        public IReadOnlyDictionary<Type, IEnumerable<IPropertyMetadata>> Properties
         {
             get
             {
-                var newdict = _map.ToDictionary(k => k.Key, v => v.Value as IEnumerable<IStrainerPropertyMetadata>);
+                var newdict = _map.ToDictionary(k => k.Key, v => v.Value as IEnumerable<IPropertyMetadata>);
 
-                return new ReadOnlyDictionary<Type, IEnumerable<IStrainerPropertyMetadata>>(newdict);
+                return new ReadOnlyDictionary<Type, IEnumerable<IPropertyMetadata>>(newdict);
             }
         }
 
-        public void AddMap<TEntity>(IStrainerPropertyMetadata metadata)
+        public void AddMap<TEntity>(IPropertyMetadata metadata)
         {
             if (metadata == null)
             {
@@ -37,13 +37,13 @@ namespace Fluorite.Strainer.Services
 
             if (!_map.Keys.Contains(typeof(TEntity)))
             {
-                _map[typeof(TEntity)] = new HashSet<IStrainerPropertyMetadata>();
+                _map[typeof(TEntity)] = new HashSet<IPropertyMetadata>();
             }
 
             _map[typeof(TEntity)].Add(metadata);
         }
 
-        public IStrainerPropertyMetadata FindProperty<TEntity>(
+        public IPropertyMetadata FindProperty<TEntity>(
             bool canSortRequired,
             bool canFilterRequired,
             string name)
@@ -66,7 +66,7 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        public IStrainerPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
+        public IPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
         {
             if (expression == null)
             {
@@ -75,10 +75,10 @@ namespace Fluorite.Strainer.Services
 
             if (!_map.ContainsKey(typeof(TEntity)))
             {
-                _map[typeof(TEntity)] = new HashSet<IStrainerPropertyMetadata>();
+                _map[typeof(TEntity)] = new HashSet<IPropertyMetadata>();
             }
 
-            return new StrainerPropertyBuilder<TEntity>(this, expression);
+            return new PropertyBuilder<TEntity>(this, expression);
         }
     }
 }

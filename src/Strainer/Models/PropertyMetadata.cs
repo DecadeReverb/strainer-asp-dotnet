@@ -9,12 +9,12 @@ namespace Fluorite.Strainer.Models
     /// Represents default property metadata model used by Strainer.
     /// </summary>
     [DebuggerDisplay("\\{" + nameof(Name) + " = " + "{" + nameof(Name) + "} \\}")]
-    public class StrainerPropertyMetadata : IStrainerPropertyMetadata, IEquatable<StrainerPropertyMetadata>
+    public class PropertyMetadata : IPropertyMetadata, IEquatable<PropertyMetadata>
     {
         /// <summary>
         /// Initializes new instance of <see cref="StrainerModel"/> class.
         /// </summary>
-        public StrainerPropertyMetadata()
+        public PropertyMetadata()
         {
 
         }
@@ -52,7 +52,7 @@ namespace Fluorite.Strainer.Models
         public PropertyInfo PropertyInfo { get; set; }
 
         /// <summary>
-        /// Checks if current instance of <see cref="StrainerPropertyMetadata"/>
+        /// Checks if current instance of <see cref="PropertyMetadata"/>
         /// is equal to other <see cref="object"/> instance.
         /// </summary>
         /// <param name="obj">
@@ -64,21 +64,21 @@ namespace Fluorite.Strainer.Models
         /// </returns>
         public override bool Equals(object obj)
         {
-            return Equals(obj as StrainerPropertyMetadata);
+            return Equals(obj as PropertyMetadata);
         }
 
         /// <summary>
-        /// Checks if current instance of <see cref="StrainerPropertyMetadata"/>
-        /// is equal to other <see cref="StrainerPropertyMetadata"/> instance.
+        /// Checks if current instance of <see cref="PropertyMetadata"/>
+        /// is equal to other <see cref="PropertyMetadata"/> instance.
         /// </summary>
         /// <param name="other">
-        /// Other <see cref="StrainerPropertyMetadata"/> instance.
+        /// Other <see cref="PropertyMetadata"/> instance.
         /// </param>
         /// <returns>
-        /// <see langword="true"/> if provided other <see cref="StrainerPropertyMetadata"/>
+        /// <see langword="true"/> if provided other <see cref="PropertyMetadata"/>
         /// instance is equal to the current one; otherwise <see langword="false"/>.
         /// </returns>
-        public bool Equals(StrainerPropertyMetadata other)
+        public bool Equals(PropertyMetadata other)
         {
             return other != null &&
                    DisplayName == other.DisplayName &&
@@ -92,10 +92,10 @@ namespace Fluorite.Strainer.Models
 
         /// <summary>
         /// Gets <see cref="int"/> hash code representation of current
-        /// <see cref="StrainerPropertyMetadata"/>.
+        /// <see cref="PropertyMetadata"/>.
         /// </summary>
         /// <returns>
-        /// A hash code for the current <see cref="StrainerPropertyMetadata"/>.
+        /// A hash code for the current <see cref="PropertyMetadata"/>.
         /// </returns>
         public override int GetHashCode()
         {
@@ -110,12 +110,12 @@ namespace Fluorite.Strainer.Models
             return hashCode;
         }
 
-        public static bool operator ==(StrainerPropertyMetadata metadata1, StrainerPropertyMetadata metadata2)
+        public static bool operator ==(PropertyMetadata metadata1, PropertyMetadata metadata2)
         {
-            return EqualityComparer<StrainerPropertyMetadata>.Default.Equals(metadata1, metadata2);
+            return EqualityComparer<PropertyMetadata>.Default.Equals(metadata1, metadata2);
         }
 
-        public static bool operator !=(StrainerPropertyMetadata metadata1, StrainerPropertyMetadata metadata2)
+        public static bool operator !=(PropertyMetadata metadata1, PropertyMetadata metadata2)
         {
             return !(metadata1 == metadata2);
         }

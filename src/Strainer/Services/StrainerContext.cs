@@ -16,8 +16,8 @@ namespace Fluorite.Strainer.Services
             StrainerOptions options,
             IFilteringContext filteringContext,
             ISortingContext sortingContext,
-            IStrainerPropertyMapper mapper,
-            IStrainerPropertyMetadataProvider metadataProvider,
+            IPropertyMapper mapper,
+            IPropertyMetadataProvider metadataProvider,
             ICustomMethodsContext customMethodsContext)
         {
             CustomMethods = customMethodsContext;
@@ -41,12 +41,12 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the property mapper.
         /// </summary>
-        public IStrainerPropertyMapper Mapper { get; }
+        public IPropertyMapper Mapper { get; }
 
         /// <summary>
         /// Gets the property metadata provider.
         /// </summary>
-        public IStrainerPropertyMetadataProvider MetadataProvider { get; }
+        public IPropertyMetadataProvider MetadataProvider { get; }
 
         /// <summary>
         /// Gets the Strainer options.

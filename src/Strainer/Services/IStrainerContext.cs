@@ -22,12 +22,12 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the property mapper.
         /// </summary>
-        IStrainerPropertyMapper Mapper { get; }
+        IPropertyMapper Mapper { get; }
 
         /// <summary>
         /// Gets the property metadata provider.
         /// </summary>
-        IStrainerPropertyMetadataProvider MetadataProvider { get; }
+        IPropertyMetadataProvider MetadataProvider { get; }
 
         /// <summary>
         /// Gets the Strainer options.

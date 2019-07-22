@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         }
 
-        public Expression GetExpression(IStrainerPropertyMetadata metadata, IFilterTerm filterTerm, ParameterExpression parameterExpression, Expression innerExpression)
+        public Expression GetExpression(IPropertyMetadata metadata, IFilterTerm filterTerm, ParameterExpression parameterExpression, Expression innerExpression)
         {
             if (metadata == null)
             {

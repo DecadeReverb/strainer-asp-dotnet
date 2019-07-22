@@ -104,8 +104,8 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
             services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
-            services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(serviceLifetime);
-            services.Add<IStrainerPropertyMetadataProvider, StrainerPropertyMetadataProvider>(serviceLifetime);
+            services.Add<IPropertyMapper, PropertyMapper>(serviceLifetime);
+            services.Add<IPropertyMetadataProvider, PropertyMetadataProvider>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
 

@@ -49,8 +49,8 @@ namespace Fluorite.Strainer.IntegrationTests
         protected IStrainerContext CreateDefaultContext()
         {
             var options = new StrainerOptions();
-            var propertyMapper = new StrainerPropertyMapper(options);
-            var propertyMetadataProvider = new StrainerPropertyMetadataProvider(propertyMapper, options);
+            var propertyMapper = new PropertyMapper(options);
+            var propertyMetadataProvider = new PropertyMetadataProvider(propertyMapper, options);
 
             var filterExpressionProvider = new FilterExpressionProvider();
             var filterOperatorValidator = new FilterOperatorValidator();

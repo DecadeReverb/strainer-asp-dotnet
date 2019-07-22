@@ -21,7 +21,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
-        /// list of sort terms used to associate names from <see cref="IStrainerPropertyMapper"/>.
+        /// list of sort terms used to associate names from <see cref="IPropertyMapper"/>.
         /// </summary>
         /// <typeparam name="TEntity">
         /// The type of entity for which the expression is for.

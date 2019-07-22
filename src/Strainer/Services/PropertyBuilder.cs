@@ -7,27 +7,27 @@ using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {
-    public class StrainerPropertyBuilder<TEntity> : IStrainerPropertyBuilder<TEntity>
+    public class PropertyBuilder<TEntity> : IPropertyBuilder<TEntity>
     {
         private readonly Expression<Func<TEntity, object>> _expression;
-        private readonly IStrainerPropertyMapper _mapper;
-        private readonly StrainerPropertyMetadata _propertyMetadata;
+        private readonly IPropertyMapper _mapper;
+        private readonly PropertyMetadata _propertyMetadata;
 
-        public StrainerPropertyBuilder(IStrainerPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
+        public PropertyBuilder(IPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             _mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
             var (name, propertyInfo) = GetPropertyInfo(expression);
-            _propertyMetadata = new StrainerPropertyMetadata
+            _propertyMetadata = new PropertyMetadata
             {
                 Name = name,
                 PropertyInfo = propertyInfo,
             };
         }
 
-        public virtual IStrainerPropertyMetadata Build() => _propertyMetadata;
+        public virtual IPropertyMetadata Build() => _propertyMetadata;
 
-        public virtual IStrainerPropertyBuilder<TEntity> CanFilter()
+        public virtual IPropertyBuilder<TEntity> CanFilter()
         {
             _propertyMetadata.IsFilterable = true;
             UpdateMap(_propertyMetadata);
@@ -43,7 +43,7 @@ namespace Fluorite.Strainer.Services
             return new SortPropertyBuilder<TEntity>(_mapper, _expression, _propertyMetadata);
         }
 
-        public virtual IStrainerPropertyBuilder<TEntity> HasDisplayName(string displayName)
+        public virtual IPropertyBuilder<TEntity> HasDisplayName(string displayName)
         {
             if (string.IsNullOrWhiteSpace(displayName))
             {
@@ -59,7 +59,7 @@ namespace Fluorite.Strainer.Services
             return this;
         }
 
-        protected void UpdateMap(IStrainerPropertyMetadata propertyMetadata)
+        protected void UpdateMap(IPropertyMetadata propertyMetadata)
         {
             if (propertyMetadata == null)
             {

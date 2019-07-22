@@ -314,7 +314,7 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual void MapProperties(IStrainerPropertyMapper mapper)
+        protected virtual void MapProperties(IPropertyMapper mapper)
         {
             if (mapper == null)
             {
@@ -331,7 +331,7 @@ namespace Fluorite.Strainer.Services
             return Expression.Constant(constant, targetType);
         }
 
-        private IStrainerPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
+        private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
             var metadata = Context.Mapper.FindProperty<TEntity>(
                 isSortingRequired,

@@ -7,18 +7,18 @@ using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {
-    public class StrainerPropertyMetadataProvider : IStrainerPropertyMetadataProvider
+    public class PropertyMetadataProvider : IPropertyMetadataProvider
     {
-        private readonly IStrainerPropertyMapper _mapper;
+        private readonly IPropertyMapper _mapper;
         private readonly StrainerOptions _options;
 
-        public StrainerPropertyMetadataProvider(IStrainerPropertyMapper mapper, StrainerOptions options)
+        public PropertyMetadataProvider(IPropertyMapper mapper, StrainerOptions options)
         {
             _mapper = mapper;
             _options = options;
         }
 
-        public IStrainerPropertyMetadata GetMetadataFromAttribute<TEntity>(
+        public IPropertyMetadata GetMetadataFromAttribute<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,
             string name)

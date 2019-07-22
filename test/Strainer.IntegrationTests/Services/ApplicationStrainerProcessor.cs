@@ -34,7 +34,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services
                 .WithFunction(Popularity);
         }
 
-        protected override void MapProperties(IStrainerPropertyMapper mapper)
+        protected override void MapProperties(IPropertyMapper mapper)
         {
             mapper.Property<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .CanSort()
