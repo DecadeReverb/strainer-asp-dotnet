@@ -28,25 +28,21 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
                 .WithFunction(Popularity);
         }
 
-        protected override IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
+        protected override void MapFilterOperators(IFilterOperatorMapper mapper)
         {
             mapper.Operator(symbol: "!=*")
                 .HasName("not equal to (case insensitive)")
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
-
-            return mapper;
         }
 
-        protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+        protected override void MapProperties(IPropertyMapper mapper)
         {
 
             mapper.Property<Post>(p => p.Title)
                 .CanSort()
                 .CanFilter()
                 .HasDisplayName("CustomTitleName");
-
-            return mapper;
         }
 
         private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)

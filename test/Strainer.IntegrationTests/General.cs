@@ -234,7 +234,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
-                    context.Filtering,
+                    context.Filter,
                     context.Sorting,
                     context.Mapper,
                     context.MetadataProvider,
@@ -266,7 +266,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
-                    context.Filtering,
+                    context.Filter,
                     context.Sorting,
                     context.Mapper,
                     context.MetadataProvider,
@@ -298,7 +298,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
-                    context.Filtering,
+                    context.Filter,
                     context.Sorting,
                     context.Mapper,
                     context.MetadataProvider,
@@ -331,7 +331,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
-                    context.Filtering,
+                    context.Filter,
                     context.Sorting,
                     context.Mapper,
                     context.MetadataProvider,
@@ -364,7 +364,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
                 var newContext = new StrainerContext(
                     options,
-                    context.Filtering,
+                    context.Filter,
                     context.Sorting,
                     context.Mapper,
                     context.MetadataProvider,
@@ -411,7 +411,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 var customMethodsContext = new CustomMethodsContext(options, customSortMethodProvider);
                 var newContext = new StrainerContext(
                     options,
-                    context.Filtering,
+                    context.Filter,
                     context.Sorting,
                     context.Mapper,
                     context.MetadataProvider,

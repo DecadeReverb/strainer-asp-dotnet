@@ -15,6 +15,12 @@
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether related
+        /// expression should be used as a default one.
+        /// </summary>
+        public bool IsDefault { get; set; }
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> value indictating whether related
         /// expression should be used for ordering in descending way.
         /// </summary>
         public bool IsDescending { get; set; }

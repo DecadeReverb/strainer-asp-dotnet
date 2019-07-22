@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Models.Filtering.Operators
+namespace Fluorite.Strainer.Models.Filter.Operators
 {
     public class FilterExpressionContext : IFilterExpressionContext
     {

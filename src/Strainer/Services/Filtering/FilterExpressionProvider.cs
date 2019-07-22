@@ -1,5 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models.Filter.Operators;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using System;
 using System.ComponentModel;
@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         }
 
-        public Expression GetExpression(IStrainerPropertyMetadata metadata, IFilterTerm filterTerm, ParameterExpression parameterExpression, Expression innerExpression)
+        public Expression GetExpression(IPropertyMetadata metadata, IFilterTerm filterTerm, ParameterExpression parameterExpression, Expression innerExpression)
         {
             if (metadata == null)
             {

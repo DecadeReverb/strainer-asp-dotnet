@@ -216,13 +216,11 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 
     }
 
-    protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+    protected override void MapProperties(IStrainerPropertyMapper mapper)
     {
 
         mapper.Property<Post>(p => p.Creator.Name)
             .CanFilter();
-
-        return mapper;
     }
 }
 ```
@@ -267,14 +265,12 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 
     }
 
-    protected override IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
+    protected override void MapFilterOperators(IFilterOperatorMapper mapper)
     {
         mapper.AddOperator(symbol: "!=*")
             .HasName("not equal to (case insensitive)")
             .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
             .IsCaseInsensitive();
-
-        return mapper;
     }
 }
 ```
@@ -300,14 +296,12 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 
     }
 
-    protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+    protected override void MapProperties(IStrainerPropertyMapper mapper)
     {
         mapper.Property<Post>(p => p.Title)
             .CanSort()
             .CanFilter()
             .HasDisplayName("CustomTitleName");
-
-        return mapper;
     }
 }
 ```

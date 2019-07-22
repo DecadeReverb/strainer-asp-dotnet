@@ -49,20 +49,21 @@ namespace Fluorite.Strainer.IntegrationTests
         protected IStrainerContext CreateDefaultContext()
         {
             var options = new StrainerOptions();
-            var propertyMapper = new StrainerPropertyMapper(options);
-            var propertyMetadataProvider = new StrainerPropertyMetadataProvider(propertyMapper, options);
+            var propertyMapper = new PropertyMapper(options);
+            var propertyMetadataProvider = new PropertyMetadataProvider(propertyMapper, options);
 
             var filterExpressionProvider = new FilterExpressionProvider();
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterOperatorMapper = new FilterOperatorMapper(filterOperatorValidator);
             var filterOperatorParser = new FilterOperatorParser(filterOperatorMapper);
             var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorMapper);
-            var filteringContext = new FilteringContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
+            var filteringContext = new FilterContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
 
             var sortExpressionProvider = new SortExpressionProvider(propertyMapper, propertyMetadataProvider);
+            var sortExpressionValidator = new SortExpressionValidator();
             var sortingWayFormatter = new SortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter);
-            var sortingContext = new SortingContext(sortExpressionProvider, sortingWayFormatter, sortTermParser);
+            var sortingContext = new SortingContext(sortExpressionProvider, sortExpressionValidator, sortingWayFormatter, sortTermParser);
 
             var customMethodsContext = new CustomMethodsContext(options);
 

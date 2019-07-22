@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Models.Filtering.Operators
+namespace Fluorite.Strainer.Models.Filter.Operators
 {
     public interface IFilterExpressionContext
     {

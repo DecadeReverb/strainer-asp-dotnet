@@ -92,9 +92,10 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
             services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
             services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
-            services.Add<IFilteringContext, FilteringContext>(serviceLifetime);
+            services.Add<IFilterContext, FilterContext>(serviceLifetime);
 
             services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
+            services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
             services.Add<ISortingWayFormatter, SortingWayFormatter>(serviceLifetime);
             services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
             services.Add<ISortingContext, SortingContext>(serviceLifetime);
@@ -103,8 +104,8 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
             services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
-            services.Add<IStrainerPropertyMapper, StrainerPropertyMapper>(serviceLifetime);
-            services.Add<IStrainerPropertyMetadataProvider, StrainerPropertyMetadataProvider>(serviceLifetime);
+            services.Add<IPropertyMapper, PropertyMapper>(serviceLifetime);
+            services.Add<IPropertyMetadataProvider, PropertyMetadataProvider>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
 

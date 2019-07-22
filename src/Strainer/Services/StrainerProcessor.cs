@@ -17,10 +17,23 @@ namespace Fluorite.Strainer.Services
         {
             Context = context;
 
-            MapFilterOperators(context.Filtering.OperatorMapper);
-            Context.Filtering.OperatorValidator.Validate(Context.Filtering.OperatorMapper.Operators);
+            MapFilterOperators(context.Filter.OperatorMapper);
+
+            // TODO:
+            // Move filter operator validation to service injection.
+            Context.Filter.OperatorValidator.Validate(Context.Filter.OperatorMapper.Operators);
 
             MapProperties(context.Mapper);
+
+            // TODO:
+            // Move sort expression validation to service injection.
+            var properties = Context.Mapper.Properties;
+            foreach (var type in properties.Keys)
+            {
+                dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
+                //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
+            }
+
             MapCustomFilterMethods(context.CustomMethods.Filter.Mapper);
             MapCustomSortMethods(context.CustomMethods.Sort.Mapper);
         }
@@ -112,7 +125,7 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var parsedTerms = Context.Filtering.TermParser.GetParsedTerms(model.Filters);
+            var parsedTerms = Context.Filter.TermParser.GetParsedTerms(model.Filters);
             if (parsedTerms == null)
             {
                 return source;
@@ -132,7 +145,7 @@ namespace Fluorite.Strainer.Services
 
                     if (metadata != null)
                     {
-                        innerExpression = Context.Filtering.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
+                        innerExpression = Context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
                     }
                     else
                     {
@@ -148,9 +161,12 @@ namespace Fluorite.Strainer.Services
                         }
                         else
                         {
-                            throw new StrainerMethodNotFoundException(
-                                filterTermName,
-                                $"{filterTermName} not found.");
+                            if (Context.Options.ThrowExceptions)
+                            {
+                                throw new StrainerMethodNotFoundException(
+                                    filterTermName,
+                                    $"{filterTermName} not found.");
+                            }
                         }
                     }
                 }
@@ -219,12 +235,9 @@ namespace Fluorite.Strainer.Services
             }
 
             var parsedTerms = Context.Sorting.TermParser.GetParsedTerms(model.Sorts);
-            if (parsedTerms.Count == 0)
-            {
-                return source;
-            }
-
             var isSubsequent = false;
+            var sortingPerformed = false;
+
             foreach (var sortTerm in parsedTerms)
             {
                 var metadata = GetPropertyMetadata<TEntity>(
@@ -238,6 +251,7 @@ namespace Fluorite.Strainer.Services
                     if (sortExpression != null)
                     {
                         source = source.OrderWithSortExpression(sortExpression);
+                        sortingPerformed = true;
                     }
                 }
                 else
@@ -253,16 +267,30 @@ namespace Fluorite.Strainer.Services
                             Term = sortTerm,
                         };
                         source = customMethod.Function(context);
+                        sortingPerformed = true;
                     }
                     else
                     {
-                        throw new StrainerMethodNotFoundException(
-                            sortTerm.Name,
-                            $"{sortTerm.Name} not found.");
+                        if (Context.Options.ThrowExceptions)
+                        {
+                            throw new StrainerMethodNotFoundException(
+                                sortTerm.Name,
+                                $"{sortTerm.Name} not found.");
+                        }
                     }
                 }
 
                 isSubsequent = true;
+            }
+
+            if (!sortingPerformed)
+            {
+                var defaultSortExpression = Context.Sorting.ExpressionProvider.GetDefaultExpression<TEntity>();
+                if (defaultSortExpression != null)
+                {
+                    source = source.OrderWithSortExpression(defaultSortExpression);
+                    sortingPerformed = true;
+                }
             }
 
             return source;
@@ -284,24 +312,20 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
+        protected virtual void MapFilterOperators(IFilterOperatorMapper mapper)
         {
             if (mapper == null)
             {
                 throw new ArgumentNullException(nameof(mapper));
             }
-
-            return mapper;
         }
 
-        protected virtual IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+        protected virtual void MapProperties(IPropertyMapper mapper)
         {
             if (mapper == null)
             {
                 throw new ArgumentNullException(nameof(mapper));
             }
-
-            return mapper;
         }
 
         // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
@@ -313,7 +337,7 @@ namespace Fluorite.Strainer.Services
             return Expression.Constant(constant, targetType);
         }
 
-        private IStrainerPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
+        private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
             var metadata = Context.Mapper.FindProperty<TEntity>(
                 isSortingRequired,

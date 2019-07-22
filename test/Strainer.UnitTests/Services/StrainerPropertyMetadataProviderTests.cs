@@ -13,8 +13,8 @@ namespace Fluorite.Strainer.UnitTests.Services
         {
             // Arrange
             var options = new StrainerOptions();
-            var mapper = new StrainerPropertyMapper(options);
-            var provider = new StrainerPropertyMetadataProvider(mapper, options);
+            var mapper = new PropertyMapper(options);
+            var provider = new PropertyMetadataProvider(mapper, options);
 
             // Act
             var result = provider.GetMetadataFromAttribute<Post>(
@@ -31,8 +31,8 @@ namespace Fluorite.Strainer.UnitTests.Services
         {
             // Arrange
             var options = new StrainerOptions();
-            var mapper = new StrainerPropertyMapper(options);
-            var provider = new StrainerPropertyMetadataProvider(mapper, options);
+            var mapper = new PropertyMapper(options);
+            var provider = new PropertyMetadataProvider(mapper, options);
 
             // Act
             var result = provider.GetMetadataFromAttribute<Post>(
@@ -49,8 +49,8 @@ namespace Fluorite.Strainer.UnitTests.Services
         {
             // Arrange
             var options = new StrainerOptions();
-            var mapper = new StrainerPropertyMapper(options);
-            var provider = new StrainerPropertyMetadataProvider(mapper, options);
+            var mapper = new PropertyMapper(options);
+            var provider = new PropertyMetadataProvider(mapper, options);
 
             // Act
             var result = provider.GetMetadataFromAttribute<Post>(

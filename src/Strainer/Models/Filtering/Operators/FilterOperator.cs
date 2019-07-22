@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Models.Filtering.Operators
+namespace Fluorite.Strainer.Models.Filter.Operators
 {
     /// <summary>
     /// Represents filter operator.

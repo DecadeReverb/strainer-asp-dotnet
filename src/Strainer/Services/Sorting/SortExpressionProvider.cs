@@ -3,6 +3,7 @@ using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -18,16 +19,37 @@ namespace Fluorite.Strainer.Services.Sorting
     /// </summary>
     public class SortExpressionProvider : ISortExpressionProvider
     {
-        private readonly IStrainerPropertyMapper _mapper;
-        private readonly IStrainerPropertyMetadataProvider _metadataProvider;
+        private readonly IPropertyMapper _mapper;
+        private readonly IPropertyMetadataProvider _metadataProvider;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IStrainerPropertyMapper mapper, IStrainerPropertyMetadataProvider metadataProvider)
+        public SortExpressionProvider(IPropertyMapper mapper, IPropertyMetadataProvider metadataProvider)
         {
             _mapper = mapper;
             _metadataProvider = metadataProvider;
+        }
+
+        public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
+        {
+            var metadata = _mapper
+                .Properties
+                .Where(pair => pair.Key == typeof(TEntity))
+                .FirstOrDefault(pair => pair.Value.Any(p => p.IsDefaultSorting))
+                .Value
+                ?.FirstOrDefault();
+            if (metadata == null)
+            {
+                return null;
+            }
+
+            var sortTerm = new SortTerm
+            {
+                Name = metadata.DisplayName ?? metadata.Name
+            };
+
+            return GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isSubsequent: false);
         }
 
         public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isSubsequent)
@@ -80,7 +102,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
-        /// list of sort terms used to associate names from <see cref="IStrainerPropertyMapper"/>.
+        /// list of sort terms used to associate names from <see cref="IPropertyMapper"/>.
         /// </summary>
         /// <typeparam name="TEntity">
         /// The type of entity for which the expression is for.
@@ -94,7 +116,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <exception cref="ArgumentNullException">
         /// <paramref name="sortTerms"/> is <see langword="null"/>.
         /// </exception>
-        public IList<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
+        public IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
         {
             if (sortTerms == null)
             {
@@ -118,10 +140,10 @@ namespace Fluorite.Strainer.Services.Sorting
                 isSubqequent = true;
             }
 
-            return expressions;
+            return expressions.AsReadOnly();
         }
 
-        private IStrainerPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
+        private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
             var metadata = _mapper.FindProperty<TEntity>(
                 isSortingRequired,
