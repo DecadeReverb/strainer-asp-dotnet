@@ -34,7 +34,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services
                 .WithFunction(Popularity);
         }
 
-        protected override IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+        protected override void MapProperties(IStrainerPropertyMapper mapper)
         {
             mapper.Property<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .CanSort()
@@ -57,8 +57,6 @@ namespace Fluorite.Strainer.IntegrationTests.Services
             mapper.Property<Post>(p => p.FeaturedComment.Text)
                 .CanFilter()
                 .HasDisplayName("featc");
-
-            return mapper;
         }
 
         #region custom filter methods

@@ -306,24 +306,20 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual IFilterOperatorMapper MapFilterOperators(IFilterOperatorMapper mapper)
+        protected virtual void MapFilterOperators(IFilterOperatorMapper mapper)
         {
             if (mapper == null)
             {
                 throw new ArgumentNullException(nameof(mapper));
             }
-
-            return mapper;
         }
 
-        protected virtual IStrainerPropertyMapper MapProperties(IStrainerPropertyMapper mapper)
+        protected virtual void MapProperties(IStrainerPropertyMapper mapper)
         {
             if (mapper == null)
             {
                 throw new ArgumentNullException(nameof(mapper));
             }
-
-            return mapper;
         }
 
         // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
