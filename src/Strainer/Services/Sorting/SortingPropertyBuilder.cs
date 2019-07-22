@@ -4,11 +4,11 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public class SortPropertyBuilder<TEntity> : PropertyBuilder<TEntity>, ISortPropertyBuilder<TEntity>, IPropertyBuilder<TEntity>
+    public class SortingPropertyBuilder<TEntity> : PropertyBuilder<TEntity>, ISortPropertyBuilder<TEntity>, IPropertyBuilder<TEntity>
     {
         private readonly PropertyMetadata _propertyMetadata;
 
-        public SortPropertyBuilder(
+        public SortingPropertyBuilder(
             IPropertyMapper strainerPropertyMapper,
             Expression<Func<TEntity, object>> expression,
             IPropertyMetadata basePropertyMetadata)

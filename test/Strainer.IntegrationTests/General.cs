@@ -406,8 +406,8 @@ namespace Fluorite.Strainer.IntegrationTests
             var processor = Factory.CreateProcessor((context) =>
             {
                 var options = new StrainerOptions();
-                var customSortMethodMapper = new CustomSortMethodMapper(options);
-                var customSortMethodProvider = new  CustomSortMethodProvider(customSortMethodMapper);
+                var customSortMethodMapper = new CustomSortingMethodMapper(options);
+                var customSortMethodProvider = new  CustomSortingMethodProvider(customSortMethodMapper);
                 var customMethodsContext = new CustomMethodsContext(options, customSortMethodProvider);
                 var newContext = new StrainerContext(
                     options,

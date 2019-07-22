@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public class CustomSortMethodMapper : ICustomSortMethodMapper
+    public class CustomSortingMethodMapper : ICustomSortingMethodMapper
     {
         private readonly Dictionary<Type, Dictionary<string, object>> _methods;
         private readonly StrainerOptions _options;
 
-        public CustomSortMethodMapper(StrainerOptions options)
+        public CustomSortingMethodMapper(StrainerOptions options)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
             _options = options;
@@ -53,7 +53,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 .Value as ICustomSortMethod<TEntity>;
         }
 
-        public ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
+        public ICustomSortingMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -68,7 +68,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 _methods[typeof(TEntity)] = new Dictionary<string, object>();
             }
 
-            return new CustomSortMethodBuilder<TEntity>(this, name);
+            return new CustomSortingMethodBuilder<TEntity>(this, name);
         }
     }
 }

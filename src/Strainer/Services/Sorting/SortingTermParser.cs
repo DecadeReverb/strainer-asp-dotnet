@@ -5,13 +5,13 @@ using System.Text.RegularExpressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public class SortTermParser : ISortTermParser
+    public class SortingTermParser : ISortingTermParser
     {
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
 
         private readonly ISortingWayFormatter _formatter;
 
-        public SortTermParser(ISortingWayFormatter formatter)
+        public SortingTermParser(ISortingWayFormatter formatter)
         {
             _formatter = formatter;
         }

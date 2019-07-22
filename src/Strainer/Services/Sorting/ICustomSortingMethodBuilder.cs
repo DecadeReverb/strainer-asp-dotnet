@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public interface ICustomSortMethodBuilder<TEntity>
+    public interface ICustomSortingMethodBuilder<TEntity>
     {
         Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> Function { get; }
         string Name { get; }
 
         ICustomSortMethod<TEntity> Build();
-        ICustomSortMethodBuilder<TEntity> WithFunction(Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function);
+        ICustomSortingMethodBuilder<TEntity> WithFunction(Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function);
     }
 }

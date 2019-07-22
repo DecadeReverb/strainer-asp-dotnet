@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity>
+    public class CustomSortingMethodBuilder<TEntity> : ICustomSortingMethodBuilder<TEntity>
     {
-        public CustomSortMethodBuilder(ICustomSortMethodMapper mapper, string name)
+        public CustomSortingMethodBuilder(ICustomSortingMethodMapper mapper, string name)
         {
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -16,7 +16,7 @@ namespace Fluorite.Strainer.Services.Sorting
         public Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> Function { get; protected set; }
         public string Name { get; protected set; }
 
-        protected ICustomSortMethodMapper Mapper { get; }
+        protected ICustomSortingMethodMapper Mapper { get; }
 
         public ICustomSortMethod<TEntity> Build() => new CustomSortMethod<TEntity>
         {
@@ -24,7 +24,7 @@ namespace Fluorite.Strainer.Services.Sorting
             Name = Name,
         };
 
-        public ICustomSortMethodBuilder<TEntity> WithFunction(Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function)
+        public ICustomSortingMethodBuilder<TEntity> WithFunction(Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
 

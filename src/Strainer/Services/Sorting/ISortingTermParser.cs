@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public interface ISortTermParser
+    public interface ISortingTermParser
     {
         IList<ISortTerm> GetParsedTerms(string input);
     }

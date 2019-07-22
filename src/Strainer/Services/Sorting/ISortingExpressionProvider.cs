@@ -13,7 +13,7 @@ namespace Fluorite.Strainer.Services.Sorting
     /// In other words - provides list of expressions which later can be used
     /// as arguments for ordering <see cref="System.Linq.IQueryable{T}"/> functions.
     /// </summary>
-    public interface ISortExpressionProvider
+    public interface ISortingExpressionProvider
     {
         ISortExpression<TEntity> GetDefaultExpression<TEntity>();
 

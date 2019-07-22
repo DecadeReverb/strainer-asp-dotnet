@@ -22,7 +22,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
                 .WithFunction(IsNew);
         }
 
-        protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
+        protected override void MapCustomSortMethods(ICustomSortingMethodMapper mapper)
         {
             mapper.CustomMethod<Post>(nameof(Popularity))
                 .WithFunction(Popularity);

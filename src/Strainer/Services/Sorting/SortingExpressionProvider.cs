@@ -17,15 +17,15 @@ namespace Fluorite.Strainer.Services.Sorting
     /// In other words - provides list of expressions which later can be used
     /// as arguments for ordering <see cref="System.Linq.IQueryable{T}"/> functions.
     /// </summary>
-    public class SortExpressionProvider : ISortExpressionProvider
+    public class SortingExpressionProvider : ISortingExpressionProvider
     {
         private readonly IPropertyMapper _mapper;
         private readonly IPropertyMetadataProvider _metadataProvider;
 
         /// <summary>
-        /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
+        /// Initializes new instance of <see cref="SortingExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IPropertyMapper mapper, IPropertyMetadataProvider metadataProvider)
+        public SortingExpressionProvider(IPropertyMapper mapper, IPropertyMetadataProvider metadataProvider)
         {
             _mapper = mapper;
             _metadataProvider = metadataProvider;

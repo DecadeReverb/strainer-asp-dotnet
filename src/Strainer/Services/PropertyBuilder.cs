@@ -40,7 +40,7 @@ namespace Fluorite.Strainer.Services
             _propertyMetadata.IsSortable = true;
             UpdateMap(_propertyMetadata);
 
-            return new SortPropertyBuilder<TEntity>(_mapper, _expression, _propertyMetadata);
+            return new SortingPropertyBuilder<TEntity>(_mapper, _expression, _propertyMetadata);
         }
 
         public virtual IPropertyBuilder<TEntity> HasDisplayName(string displayName)

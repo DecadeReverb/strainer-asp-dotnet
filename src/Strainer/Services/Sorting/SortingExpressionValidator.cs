@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public class SortExpressionValidator : ISortExpressionValidator
+    public class SortingExpressionValidator : ISortingExpressionValidator
     {
-        public SortExpressionValidator()
+        public SortingExpressionValidator()
         {
 
         }

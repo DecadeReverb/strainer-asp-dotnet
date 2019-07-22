@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public interface ISortExpressionValidator
+    public interface ISortingExpressionValidator
     {
         void Validate<TEntity>(IEnumerable<ISortExpression<TEntity>> sortExpressions);
     }

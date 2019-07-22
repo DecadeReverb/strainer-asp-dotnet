@@ -17,8 +17,8 @@ namespace Fluorite.Strainer.Services
             var filterMapper = new CustomFilterMethodMapper(options);
             Filter = new CustomFilterMethodProvider(filterMapper);
 
-            var sortMapper = new CustomSortMethodMapper(options);
-            Sort = new CustomSortMethodProvider(sortMapper);
+            var sortMapper = new CustomSortingMethodMapper(options);
+            Sorting = new CustomSortingMethodProvider(sortMapper);
         }
 
         public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods)
@@ -30,31 +30,31 @@ namespace Fluorite.Strainer.Services
 
             Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
 
-            var mapper = new CustomSortMethodMapper(options);
-            Sort = new CustomSortMethodProvider(mapper);
+            var mapper = new CustomSortingMethodMapper(options);
+            Sorting = new CustomSortingMethodProvider(mapper);
         }
 
-        public CustomMethodsContext(StrainerOptions options, ICustomSortMethodProvider sortMethods)
+        public CustomMethodsContext(StrainerOptions options, ICustomSortingMethodProvider sortMethods)
         {
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
 
-            Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
+            Sorting = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
 
             var mapper = new CustomFilterMethodMapper(options);
             Filter = new CustomFilterMethodProvider(mapper);
         }
 
-        public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods, ICustomSortMethodProvider sortMethods)
+        public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods, ICustomSortingMethodProvider sortMethods)
         {
             Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
-            Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
+            Sorting = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
         }
 
         public ICustomFilterMethodProvider Filter { get; }
 
-        public ICustomSortMethodProvider Sort { get; }
+        public ICustomSortingMethodProvider Sorting { get; }
     }
 }

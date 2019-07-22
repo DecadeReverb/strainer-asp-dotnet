@@ -2,10 +2,10 @@
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public interface ICustomSortMethodMapper
+    public interface ICustomSortingMethodMapper
     {
         void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod);
         ICustomSortMethod<TEntity> GetMethod<TEntity>(string name);
-        ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
+        ICustomSortingMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
     }
 }

@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.Services
             }
 
             MapCustomFilterMethods(context.CustomMethods.Filter.Mapper);
-            MapCustomSortMethods(context.CustomMethods.Sort.Mapper);
+            MapCustomSortMethods(context.CustomMethods.Sorting.Mapper);
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    var customMethod = Context.CustomMethods.Sort?.Mapper.GetMethod<TEntity>(sortTerm.Name);
+                    var customMethod = Context.CustomMethods.Sorting?.Mapper.GetMethod<TEntity>(sortTerm.Name);
                     if (customMethod != null)
                     {
                         var context = new CustomSortMethodContext<TEntity>
@@ -304,7 +304,7 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual void MapCustomSortMethods(ICustomSortMethodMapper mapper)
+        protected virtual void MapCustomSortMethods(ICustomSortingMethodMapper mapper)
         {
             if (mapper == null)
             {
