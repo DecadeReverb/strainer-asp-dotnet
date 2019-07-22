@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Services
         /// </summary>
         public StrainerContext(
             StrainerOptions options,
-            IFilteringContext filteringContext,
+            IFilterContext filteringContext,
             ISortingContext sortingContext,
             IPropertyMapper mapper,
             IPropertyMetadataProvider metadataProvider,
@@ -36,7 +36,7 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the filtering context.
         /// </summary>
-        public IFilteringContext Filtering { get; }
+        public IFilterContext Filtering { get; }
 
         /// <summary>
         /// Gets the property mapper.

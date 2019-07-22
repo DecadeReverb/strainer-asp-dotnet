@@ -1,6 +1,6 @@
 ﻿namespace Fluorite.Strainer.Services.Filtering
 {
-    public interface IFilteringContext
+    public interface IFilterContext
     {
         IFilterExpressionProvider ExpressionProvider { get; }
         IFilterOperatorMapper OperatorMapper { get; }

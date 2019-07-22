@@ -1,8 +1,8 @@
 ﻿namespace Fluorite.Strainer.Services.Filtering
 {
-    public class FilteringContext : IFilteringContext
+    public class FilterContext : IFilterContext
     {
-        public FilteringContext(
+        public FilterContext(
             IFilterExpressionProvider expressionProvider,
             IFilterOperatorMapper operatorMapper,
             IFilterOperatorParser operatorParser,

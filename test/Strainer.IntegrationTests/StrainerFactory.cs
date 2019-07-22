@@ -57,7 +57,7 @@ namespace Fluorite.Strainer.IntegrationTests
             var filterOperatorMapper = new FilterOperatorMapper(filterOperatorValidator);
             var filterOperatorParser = new FilterOperatorParser(filterOperatorMapper);
             var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorMapper);
-            var filteringContext = new FilteringContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
+            var filteringContext = new FilterContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
 
             var sortExpressionProvider = new SortingExpressionProvider(propertyMapper, propertyMetadataProvider);
             var sortExpressionValidator = new SortingExpressionValidator();

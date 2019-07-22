@@ -17,7 +17,7 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the filtering context.
         /// </summary>
-        IFilteringContext Filtering { get; }
+        IFilterContext Filtering { get; }
 
         /// <summary>
         /// Gets the property mapper.
