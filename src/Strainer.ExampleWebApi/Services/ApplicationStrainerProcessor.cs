@@ -2,7 +2,7 @@
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Filter;
 using Fluorite.Strainer.Services.Sorting;
 using System.Linq;
 using System.Linq.Expressions;

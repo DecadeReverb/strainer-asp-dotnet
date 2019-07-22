@@ -3,7 +3,7 @@ using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Filter;
 using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Linq;
