@@ -161,9 +161,12 @@ namespace Fluorite.Strainer.Services
                         }
                         else
                         {
-                            throw new StrainerMethodNotFoundException(
-                                filterTermName,
-                                $"{filterTermName} not found.");
+                            if (Context.Options.ThrowExceptions)
+                            {
+                                throw new StrainerMethodNotFoundException(
+                                    filterTermName,
+                                    $"{filterTermName} not found.");
+                            }
                         }
                     }
                 }
@@ -268,9 +271,12 @@ namespace Fluorite.Strainer.Services
                     }
                     else
                     {
-                        throw new StrainerMethodNotFoundException(
-                            sortTerm.Name,
-                            $"{sortTerm.Name} not found.");
+                        if (Context.Options.ThrowExceptions)
+                        {
+                            throw new StrainerMethodNotFoundException(
+                                sortTerm.Name,
+                                $"{sortTerm.Name} not found.");
+                        }
                     }
                 }
 
