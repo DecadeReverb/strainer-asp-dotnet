@@ -1,7 +1,7 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filter;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.TestModels;
 using System;
@@ -28,7 +28,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services
                 .WithFunction(TestComment);
         }
 
-        protected override void MapCustomSortMethods(ICustomSortingMethodMapper mapper)
+        protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
         {
             mapper.CustomMethod<Post>(nameof(Popularity))
                 .WithFunction(Popularity);

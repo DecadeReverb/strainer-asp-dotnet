@@ -1,5 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Services.Filter;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.Services
@@ -17,7 +17,7 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the filtering context.
         /// </summary>
-        IFilterContext Filtering { get; }
+        IFilterContext Filter { get; }
 
         /// <summary>
         /// Gets the property mapper.

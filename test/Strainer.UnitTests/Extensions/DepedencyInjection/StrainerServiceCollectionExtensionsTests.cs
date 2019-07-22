@@ -3,7 +3,7 @@ using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filter;
+using Fluorite.Strainer.Services.Filtering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

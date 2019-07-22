@@ -24,9 +24,9 @@ namespace Fluorite.Strainer.Models
         /// </summary>
         public string DisplayName { get; set; }
 
-        public bool IsDefaultSortOrder { get; set; }
+        public bool IsDefaultSorting { get; set; }
 
-        public bool IsDefaultSortOrderAscending { get; set; }
+        public bool IsDefaultSortingAscending { get; set; }
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indicating whether related
@@ -82,8 +82,8 @@ namespace Fluorite.Strainer.Models
         {
             return other != null &&
                    DisplayName == other.DisplayName &&
-                   IsDefaultSortOrder == other.IsDefaultSortOrder &&
-                   IsDefaultSortOrderAscending == other.IsDefaultSortOrderAscending &&
+                   IsDefaultSorting == other.IsDefaultSorting &&
+                   IsDefaultSortingAscending == other.IsDefaultSortingAscending &&
                    IsFilterable == other.IsFilterable &&
                    IsSortable == other.IsSortable &&
                    Name == other.Name &&
@@ -101,8 +101,8 @@ namespace Fluorite.Strainer.Models
         {
             var hashCode = -1500598692;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(DisplayName);
-            hashCode = hashCode * -1521134295 + IsDefaultSortOrder.GetHashCode();
-            hashCode = hashCode * -1521134295 + IsDefaultSortOrderAscending.GetHashCode();
+            hashCode = hashCode * -1521134295 + IsDefaultSorting.GetHashCode();
+            hashCode = hashCode * -1521134295 + IsDefaultSortingAscending.GetHashCode();
             hashCode = hashCode * -1521134295 + IsFilterable.GetHashCode();
             hashCode = hashCode * -1521134295 + IsSortable.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);

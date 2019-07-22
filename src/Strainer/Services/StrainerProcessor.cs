@@ -3,7 +3,7 @@ using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services.Filter;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Linq;
@@ -17,11 +17,11 @@ namespace Fluorite.Strainer.Services
         {
             Context = context;
 
-            MapFilterOperators(context.Filtering.OperatorMapper);
+            MapFilterOperators(context.Filter.OperatorMapper);
 
             // TODO:
             // Move filter operator validation to service injection.
-            Context.Filtering.OperatorValidator.Validate(Context.Filtering.OperatorMapper.Operators);
+            Context.Filter.OperatorValidator.Validate(Context.Filter.OperatorMapper.Operators);
 
             MapProperties(context.Mapper);
 
@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.Services
             }
 
             MapCustomFilterMethods(context.CustomMethods.Filter.Mapper);
-            MapCustomSortMethods(context.CustomMethods.Sorting.Mapper);
+            MapCustomSortMethods(context.CustomMethods.Sort.Mapper);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var parsedTerms = Context.Filtering.TermParser.GetParsedTerms(model.Filters);
+            var parsedTerms = Context.Filter.TermParser.GetParsedTerms(model.Filters);
             if (parsedTerms == null)
             {
                 return source;
@@ -145,7 +145,7 @@ namespace Fluorite.Strainer.Services
 
                     if (metadata != null)
                     {
-                        innerExpression = Context.Filtering.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
+                        innerExpression = Context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
                     }
                     else
                     {
@@ -256,7 +256,7 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    var customMethod = Context.CustomMethods.Sorting?.Mapper.GetMethod<TEntity>(sortTerm.Name);
+                    var customMethod = Context.CustomMethods.Sort?.Mapper.GetMethod<TEntity>(sortTerm.Name);
                     if (customMethod != null)
                     {
                         var context = new CustomSortMethodContext<TEntity>
@@ -304,7 +304,7 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual void MapCustomSortMethods(ICustomSortingMethodMapper mapper)
+        protected virtual void MapCustomSortMethods(ICustomSortMethodMapper mapper)
         {
             if (mapper == null)
             {

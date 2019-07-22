@@ -2,9 +2,9 @@
 {
     public interface ISortingContext
     {
-        ISortingExpressionProvider ExpressionProvider { get; }
-        ISortingExpressionValidator ExpressionValidator { get; }
+        ISortExpressionProvider ExpressionProvider { get; }
+        ISortExpressionValidator ExpressionValidator { get; }
         ISortingWayFormatter Formatter { get; }
-        ISortingTermParser TermParser { get; }
+        ISortTermParser TermParser { get; }
     }
 }

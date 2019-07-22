@@ -32,7 +32,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var mapper = new PropertyMapper(options);
             mapper.Property<Comment>(c => c.Text).CanSort();
             var metadataProvider = new PropertyMetadataProvider(mapper, options);
-            var provider = new SortingExpressionProvider(mapper, metadataProvider);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
@@ -62,7 +62,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var options = new StrainerOptions();
             var mapper = new PropertyMapper(options);
             var metadataProvider = new PropertyMetadataProvider(mapper, options);
-            var provider = new SortingExpressionProvider(mapper, metadataProvider);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
@@ -90,7 +90,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var mapper = new PropertyMapper(options);
             mapper.Property<Post>(c => c.TopComment.Text.Length).CanSort();
             var metadataProvider = new PropertyMetadataProvider(mapper, options);
-            var provider = new SortingExpressionProvider(mapper, metadataProvider);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Post>(sortTerms);
@@ -134,7 +134,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             mapper.Property<Comment>(c => c.Id).CanSort();
             mapper.Property<Comment>(c => c.DateCreated).CanSort();
             var metadataProvider = new PropertyMetadataProvider(mapper, options);
-            var provider = new SortingExpressionProvider(mapper, metadataProvider);
+            var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
             var sortExpressions = provider.GetExpressions<Comment>(sortTerms);

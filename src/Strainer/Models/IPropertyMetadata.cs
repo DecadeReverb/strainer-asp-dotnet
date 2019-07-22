@@ -12,9 +12,9 @@ namespace Fluorite.Strainer.Models
         /// </summary>
         string DisplayName { get; }
 
-        bool IsDefaultSortOrder { get; }
+        bool IsDefaultSorting { get; }
 
-        bool IsDefaultSortOrderAscending { get; }
+        bool IsDefaultSortingAscending { get; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indicating whether related

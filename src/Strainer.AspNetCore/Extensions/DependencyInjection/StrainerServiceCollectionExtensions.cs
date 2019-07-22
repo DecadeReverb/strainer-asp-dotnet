@@ -1,6 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filter;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,14 +94,14 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
             services.Add<IFilterContext, FilterContext>(serviceLifetime);
 
-            services.Add<ISortingExpressionProvider, SortingExpressionProvider>(serviceLifetime);
-            services.Add<ISortingExpressionValidator, SortingExpressionValidator>(serviceLifetime);
+            services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
+            services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
             services.Add<ISortingWayFormatter, SortingWayFormatter>(serviceLifetime);
-            services.Add<ISortingTermParser, SortingTermParser>(serviceLifetime);
+            services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
             services.Add<ISortingContext, SortingContext>(serviceLifetime);
 
             services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
-            services.Add<ICustomSortingMethodMapper, CustomSortingMethodMapper>(serviceLifetime);
+            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
             services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
             services.Add<IPropertyMapper, PropertyMapper>(serviceLifetime);

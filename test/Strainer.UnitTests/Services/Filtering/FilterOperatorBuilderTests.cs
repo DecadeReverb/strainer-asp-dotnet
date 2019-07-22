@@ -1,4 +1,4 @@
-﻿using Fluorite.Strainer.Services.Filter;
+﻿using Fluorite.Strainer.Services.Filtering;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering

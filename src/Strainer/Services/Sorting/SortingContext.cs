@@ -3,10 +3,10 @@
     public class SortingContext : ISortingContext
     {
         public SortingContext(
-            ISortingExpressionProvider expressionProvider,
-            ISortingExpressionValidator expressionValidator,
+            ISortExpressionProvider expressionProvider,
+            ISortExpressionValidator expressionValidator,
             ISortingWayFormatter formatter,
-            ISortingTermParser parser)
+            ISortTermParser parser)
         {
             ExpressionProvider = expressionProvider;
             ExpressionValidator = expressionValidator;
@@ -14,12 +14,12 @@
             TermParser = parser;
         }
 
-        public ISortingExpressionProvider ExpressionProvider { get; set; }
+        public ISortExpressionProvider ExpressionProvider { get; set; }
 
-        public ISortingExpressionValidator ExpressionValidator { get; set; }
+        public ISortExpressionValidator ExpressionValidator { get; set; }
 
         public ISortingWayFormatter Formatter { get; }
 
-        public ISortingTermParser TermParser { get; }
+        public ISortTermParser TermParser { get; }
     }
 }

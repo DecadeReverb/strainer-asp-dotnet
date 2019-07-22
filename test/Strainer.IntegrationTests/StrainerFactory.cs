@@ -1,6 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filter;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.IntegrationTests.Services;
 using System;
@@ -59,10 +59,10 @@ namespace Fluorite.Strainer.IntegrationTests
             var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorMapper);
             var filteringContext = new FilterContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
 
-            var sortExpressionProvider = new SortingExpressionProvider(propertyMapper, propertyMetadataProvider);
-            var sortExpressionValidator = new SortingExpressionValidator();
+            var sortExpressionProvider = new SortExpressionProvider(propertyMapper, propertyMetadataProvider);
+            var sortExpressionValidator = new SortExpressionValidator();
             var sortingWayFormatter = new SortingWayFormatter();
-            var sortTermParser = new SortingTermParser(sortingWayFormatter);
+            var sortTermParser = new SortTermParser(sortingWayFormatter);
             var sortingContext = new SortingContext(sortExpressionProvider, sortExpressionValidator, sortingWayFormatter, sortTermParser);
 
             var customMethodsContext = new CustomMethodsContext(options);
