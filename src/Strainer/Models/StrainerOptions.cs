@@ -1,7 +1,7 @@
 ﻿namespace Fluorite.Strainer.Models
 {
     /// <summary>
-    /// Represents set of options for used by Strainer.
+    /// Represents options used by Strainer.
     /// </summary>
 	public class StrainerOptions
     {
