@@ -17,7 +17,7 @@ namespace Fluorite.Strainer.Attributes
         public bool IsDefaultSortingAscending { get; set; }
         public bool IsFilterable { get; set; }
         public bool IsSortable { get; set; }
-        public string Name { get; set; }
+        public string Name => PropertyInfo?.Name;
         public PropertyInfo PropertyInfo { get; set; }
     }
 }

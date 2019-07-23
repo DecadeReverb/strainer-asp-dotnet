@@ -49,12 +49,10 @@ namespace Fluorite.Strainer.Services
 
             if (keyValue.Value != null)
             {
-                if (string.IsNullOrEmpty(keyValue.Value.Name))
+                if (keyValue.Value.PropertyInfo == null)
                 {
-                    keyValue.Value.Name = keyValue.Key.Name;
+                    keyValue.Value.PropertyInfo = keyValue.Key;
                 }
-
-                keyValue.Value.PropertyInfo = keyValue.Key;
             }
 
             return keyValue.Value;
