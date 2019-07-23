@@ -1,70 +1,127 @@
 # Strainer
 
-Strainer is a simple, clean, and extensible framework for .NET Core that **adds sorting, filtering, and pagination functionality out of the box**. 
-Most common use case would be for serving ASP.NET Core GET queries.
+Strainer is a simple, clean, and extensible framework based on .NET Standard that enables **sorting, filtering, and pagination functionality**.
 
-**Note:** This project is a fork from repository named [Sieve](https://github.com/Biarity/Sieve) with its author [Biarity](https://github.com/Biarity).
+**Note:** This project is a port of [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
 
-## Usage for ASP.NET Core
+## Packages
 
-In this example, consider an app with a `Post` entity. 
-We'll use Strainer to add sorting, filtering, and pagination capabilities when GET-ing all available posts.
+Strainer is divided into following [NuGet](https://docs.microsoft.com/nuget/what-is-nuget) packages:
 
-### 1. Add required services
+| Name | Framework | Version |
+| --- | --- | --- |
+| Strainer | .NET Standard 2.0 | [![Nuget](https://img.shields.io/nuget/v/Fluorite.Strainer.svg)](https://www.nuget.org/packages/Fluorite.Strainer/)
+| Strainer.AspNetCore | .NET Standard 2.0 | [![Nuget](https://img.shields.io/nuget/v/Fluorite.Strainer.AspNetCore.svg)](https://www.nuget.org/packages/Fluorite.Strainer.AspNetCore/)
 
-Inject the `StrainerProcessor` service. So in `Startup.cs` add:
+## Installation
+
+Using .NET Core CLI:
+
+```bash
+dotnet add package Fluorite.Strainer.AspNetCore
+```
+
+Using NuGet Package Manager Console:
+
+```bash
+Install-Package Fluorite.Strainer.AspNetCore
+```
+
+## Usage
+
+### Add required services
+
+In `Startup` inject Strainer services specifying implementation of [`IStrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/IStrainerProcessor.cs). For starters you can use default implementation - [`StrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/StrainerProcessor.cs):
 
 ```cs
 services.AddStrainer<StrainerProcessor>();
 ```
 
-### 2. Tell Strainer which properties you'd like to sort/filter in your models
+Strainer can be configured, see available [options](#configure-strainer).
 
-Strainer will only sort/filter properties that have the attribute `[Strainer(CanSort = true, CanFilter = true)]` on them (they don't have to be both true).
-So for our `Post` entity model example:
+### Tell Strainer which properties to use
+
+Strainer will only sort/filter by properties that have applied [`[Strainer]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerAttribute.cs) attribute on them. In order to mark a property as **filterable** apply the `[Strainer]` attribute:
 
 ```cs
+[Strainer(CanFilter = true)]
 public int Id { get; set; }
-
-[Strainer(CanFilter = true, CanSort = true)]
-public string Title { get; set; }
-
-[Strainer(CanFilter = true, CanSort = true)]
-public int LikeCount { get; set; }
-
-[Strainer(CanFilter = true, CanSort = true)]
-public int CommentCount { get; set; }
-
-[Strainer(CanFilter = true, CanSort = true, Name = "created")]
-public DateTimeOffset DateCreated { get; set; } = DateTimeOffset.UtcNow;
 ```
 
-There is also the `Name` parameter that you can use to have a different name for use by clients.
+and accordingly as **sortable**:
+
+```cs
+[Strainer(CanSort = true)]
+public int Id { get; set; }
+```
+
+For **filterable** and **sortable** property, combine both:
+
+```cs
+[Strainer(CanFilter = true, CanSort = true)]
+public int Id { get; set; }
+```
+
+`Strainer` attribute allows setting custom display name:
+
+```cs
+[Strainer(CanFilter = true, CanSort = true, DisplayName = "created")]
+public int Id { get; set; }
+
+```
 
 Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is especially useful if you don't want to use attributes or have multiple APIs. 
 
-### 3. Get sort/filter/page queries by using the Strainer model in your controllers
-
-In the action that handles returning Posts, use `StrainerModel` to get the sort/filter/page query. 
-Apply it to your data by injecting `StrainerProcessor` into the controller and using its `Apply<TEntity>` method. So for instance:
+### Use Stariner to filter/sort/paginate
 
 ```cs
+private readonly ApplicationDbContext _dbContext;
+private readonly IStrainerProcessor _strainerProcessor;
+
+public PostsController(IStrainerProcessor strainerProcessor, ApplicationDbContext dbContext)
+{
+    _dbContext = dbContext;
+    _strainerProcessor = strainerProcessor;
+}
+
 [HttpGet]
 public JsonResult GetPosts(StrainerModel strainerModel) 
 {
-    // Makes read-only queries faster
-    var result = _dbContext.Posts.AsNoTracking(); 
+    var result = _strainerProcessor.Apply(strainerModel, _dbContext.Posts); 
 
-    // Returns `result` after applying the sort/filter/page query in `StrainerModel` to it
-    result = _strainerProcessor.Apply(strainerModel, result); 
-
-    return Json(result.ToList());
+    return Json(result);
 }
 ```
 
 You can also explicitly specify if only filtering, sorting, and/or pagination should be applied via optional arguments.
 
-### 4. Send a request
+## Fluent API
+
+You can use Fluent API instead of attributes to mark properties and even more. Setup custom `StrainerProcessor` that overrides `MapProperties()`, for example:
+
+```cs
+public class ApplicationStrainerProcessor : StrainerProcessor
+{
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    {
+
+    }
+
+    protected override void MapProperties(IStrainerPropertyMapper mapper)
+    {
+        mapper.Property<Post>(p => p.Title)
+            .CanSort()
+            .CanFilter()
+            .HasDisplayName("CustomTitleName");
+    }
+}
+```
+
+Fluent API - as opposed to attributes - allows you to:
+
+ - add [custom filter operators](#custom-filter-operators);
+ - add [custom filter methods](#custom-filter-methods);
+ - add [custom sort methods](#custom-sort-methods).
 
 [Send a request](#sample-request-query)
 
@@ -255,7 +312,7 @@ Strainer supports following filter opererators by default:
 
 ### Custom Filter Operators
 
-Same manner as adding properties you can add new filter operators. Override a mapping method in a custom Stariner processor:
+Same manner as adding properties you can add new filter operators. Override a mapping method in a custom Strainer processor:
 
 ```cs
 public class ApplicationStrainerProcessor : StrainerProcessor
@@ -284,33 +341,7 @@ Strainer will silently fail unless [`ThrowExceptions`](#configure-strainer) in t
 
 It is recommended that you write exception-handling middleware to globally handle Strainer's exceptions when using it with ASP.NET Core.
 
-## Fluent API
 
-You can use the Fluent API instead of attributes to mark properties. Setup an alternative `StrainerProcessor` that overrides `MapProperties()`. For example:
-
-```cs
-public class ApplicationStrainerProcessor : StrainerProcessor
-{
-    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
-    {
-
-    }
-
-    protected override void MapProperties(IStrainerPropertyMapper mapper)
-    {
-        mapper.Property<Post>(p => p.Title)
-            .CanSort()
-            .CanFilter()
-            .HasDisplayName("CustomTitleName");
-    }
-}
-```
-
-Fluent API also allows you to:
-
- - add [custom filter operators](#custom-filter-operators);
- - add [custom filter methods](#custom-filter-methods);
- - add [custom sort methods](#custom-sort-methods).
 
 ## Examples
 
