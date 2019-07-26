@@ -27,28 +27,30 @@ Using NuGet Package Manager Console:
 Install-Package Fluorite.Strainer.AspNetCore
 ```
 
-## Usage
+## Usage in ASP.NET Core
 
 ### Add required services
 
-In `Startup` inject Strainer services specifying implementation of [`IStrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/IStrainerProcessor.cs). For starters you can use default implementation - [`StrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/StrainerProcessor.cs):
+In `Startup` inject Strainer services while specifying the implementation of [`IStrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/IStrainerProcessor.cs). For starters, you can use the default implementation - [`StrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/StrainerProcessor.cs).
 
 ```cs
 services.AddStrainer<StrainerProcessor>();
 ```
 
-Strainer can be configured, see available [options](#configure-strainer).
+While adding Strainer, you can configure it with available [options](#configure-strainer).
 
 ### Tell Strainer which properties to use
 
-Strainer will only sort/filter by properties that have applied [`[Strainer]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerAttribute.cs) attribute on them. In order to mark a property as **filterable** apply the `[Strainer]` attribute:
+Strainer will only sort/filter by properties that have applied [`[Strainer]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerAttribute.cs) attribute on them. 
+
+In order to mark a property as **filterable** apply the `[Strainer]` attribute with `CanFilter` property set to `true`:
 
 ```cs
 [Strainer(CanFilter = true)]
 public int Id { get; set; }
 ```
 
-and accordingly as **sortable**:
+Similarly **sortable** property:
 
 ```cs
 [Strainer(CanSort = true)]
@@ -62,17 +64,18 @@ For **filterable** and **sortable** property, combine both:
 public int Id { get; set; }
 ```
 
-`Strainer` attribute allows setting custom display name:
+Set a custom display name:
 
 ```cs
-[Strainer(CanFilter = true, CanSort = true, DisplayName = "created")]
+[Strainer(CanFilter = true, CanSort = true, DisplayName = "identifier")]
 public int Id { get; set; }
-
 ```
 
-Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is especially useful if you don't want to use attributes or have multiple APIs. 
+Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is especially useful if you don't want to use attributes or have multiple APIs.
 
-### Use Stariner to filter/sort/paginate
+### Use Strainer to filter/sort/paginate
+
+Calling `Apply()` will filter, sort and/or paginate the source `IQueryable` depending on model configuration.
 
 ```cs
 private readonly ApplicationDbContext _dbContext;
@@ -93,7 +96,22 @@ public JsonResult GetPosts(StrainerModel strainerModel)
 }
 ```
 
-You can also explicitly specify if only filtering, sorting, and/or pagination should be applied via optional arguments.
+You can also explicitly specify if only filtering, sorting, and/or pagination should be applied via optional `bool` arguments:
+
+```cs
+var result = _strainerProcessor.Apply(
+    strainerModel,
+    source,
+    applyFiltering: true,
+    applySorting: true,
+    applyPagination: false);
+```
+
+or just call only one desired processing method:
+
+```
+var result = _strainerProcessor.ApplyPagination(strainerModel, source);
+```
 
 ## Fluent API
 
@@ -123,11 +141,9 @@ Fluent API - as opposed to attributes - allows you to:
  - add [custom filter methods](#custom-filter-methods);
  - add [custom sort methods](#custom-sort-methods).
 
-[Send a request](#sample-request-query)
-
 ## Custom methods
 
-If you want to add custom sort/filter methods, override appropriate mapping method in your custom Strainer processor.
+In order to add custom sort/filter methods, override appropriate mapping method in your Strainer processor.
 
 ### Custom filter methods
 
@@ -177,6 +193,8 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 }
 ```
 
+Notice how conditional ordering is being performed depending on whether context's `IsSubsequent` property have `true` value. That's because Strainer supports sorting by multiple properties with no exception for custom sorting.
+
 ## Configure Strainer
 
 Strainer comes with following [`options`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/StrainerOptions.cs):
@@ -195,7 +213,7 @@ Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/c
 services.AddStrainer<StrainerProcessor>(Configuration.GetSection("Strainer"));
 ```
 
-Then you can add the configuration:
+Then you can add Strainer configuration to `appsetting.json`:
 
 ```json
 {
@@ -210,7 +228,7 @@ Then you can add the configuration:
 }
 ```
 
-...or configure Strainer via [`Action`](https://docs.microsoft.com/dotnet/api/system.action-1):
+Strainer can be also configured via [`Action`](https://docs.microsoft.com/dotnet/api/system.action-1):
 
 ```cs
 services.AddStrainer<StrainerProcessor>(options => options.DefaultPageSize = 20);
@@ -218,40 +236,59 @@ services.AddStrainer<StrainerProcessor>(options => options.DefaultPageSize = 20)
 
 ## Sample request query
 
-Below you can fine a GET request that includes a sort/filter/page query:
+Below you can fine a **HTTP GET** request that includes a sort/filter/page query:
 
 ```curl
-GET /GetPosts
-
-?sorts=     LikeCount,CommentCount,-created         // sort by likes, then comments, then descendingly by date created 
-&filters=   LikeCount>10, Title@=awesome title,     // filter to posts with more than 10 likes, and a title that contains the phrase "awesome title"
-&page=      1                                       // get the first page...
-&pageSize=  10                                      // ...which contains 10 posts
-
+GET /GetPosts?sorts=LikeCount,CommentCount,-created&filters=LikeCount>10,Title@=awesome title&page=1&pageSize=10
 ```
-More formally:
-* `sorts` is a comma-delimited ordered list of property names to sort by. Adding a `-` before the name switches to sorting descendingly.
+
+That request will be translated by Strainer to:
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| sorts | LikeCount,CommentCount,-created | Sort ascendingly by likes count, then ascendingly by comment count and then descendingly by creation date. |
+| filters | LikeCount>10,Title@=awesome title | Filter to posts with more then 10 likes and with title containing the phrase _"awesome title"_. |
+| page | 1 | Select the first page of resulted collection. |
+| pageSize | 10 | Split the resulted collection into a 10-element pages. |
+
+## Strainer model
+
+Default Strainer model contains 4 properties:
+
+### Sorts
+
+* `Sorts` should be a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly. Adding a dash prefix (`-`) before the property name switches to sorting descendingly.
+
+### Filters
+
 * `filters` is a comma-delimited list of `{Name}{Operator}{Value}` where
     * `{Name}` is the name of a property with the Strainer attribute or the name of a custom filter method for TEntity
         * You can also have multiple names (for OR logic) by enclosing them in brackets and using a pipe delimiter, eg. `(LikeCount|CommentCount)>10` asks if `LikeCount` or `CommentCount` is `>10`
     * `{Operator}` is one of the [Operators](#operators)
     * `{Value}` is the value to use for filtering
         * You can also have multiple values (for OR logic) by using a pipe delimiter, eg. `Title@=new|hot` will return posts with titles that contain the text "`new`" or "`hot`"
+
+### Page
+
 * `page` is the number of page to return
+
+### PageSize
+
 * `pageSize` is the number of items returned per page 
 
-Notes:
-* You can use backslashes to escape commas and pipes within value fields
-* You can have spaces anywhere except *within* `{Name}` or `{Operator}` fields
-* If you need to look at the data before applying pagination (eg. get total count), use the optional paramters on `Apply` to defer pagination (an [example](https://github.com/Biarity/Sieve/issues/34))
-* Here's a [good example on how to work with enumerables](https://github.com/Biarity/Sieve/issues/2)
-* Another example on [how to do OR logic](https://github.com/Biarity/Sieve/issues/8)
+#### Notes
+
+* You can use backslashes (`\`) to escape commas and pipes (`|`) within value fields to enable conditional filtering;
+* You can have spaces anywhere except **within** `{Name}` or `{Operator}` fields;
+* If you need to look at the data before applying pagination (eg. get total count), use the optional paramters on `Apply` to defer pagination or explicitly call `ApplyPagination()` after manually counting resulted collection (an [example](https://github.com/Biarity/Sieve/issues/34));
+* Here's a good example on how to work with [enumerables](https://github.com/Biarity/Sieve/issues/2);
+* Another example on [how to do OR logic using pipes (`|`)](https://github.com/Biarity/Sieve/issues/8).
 
 ## Nested objects
 
-You can filter/sort on a nested object's property by marking the property using the Fluent API. Marking via attributes not currently supported.
+Strainer supports filtering and sorting on nested objects' properties. Mark the property using the [Fluent API](#fluent-api). Marking via attributes is not currently supported.
 
-For example, using this object model:
+For example, using `Post` and `User` models:
 
 ```cs
 public class Post {
@@ -263,26 +300,19 @@ public class User {
 }
 ```
 
-Mark `Post.User` to be filterable with [Fluent API]:
+in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to property:
 
 ```cs
-public class ApplicationStrainerProcessor : StrainerProcessor
+protected override void MapProperties(IStrainerPropertyMapper mapper)
 {
-    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
-    {
-
-    }
-
-    protected override void MapProperties(IStrainerPropertyMapper mapper)
-    {
-
-        mapper.Property<Post>(p => p.Creator.Name)
-            .CanFilter();
-    }
+    mapper.Property<Post>(p => p.Creator.Name)
+        .CanFilter();
 }
 ```
 
-Now you can make requests such as: `filters=User.Name==specific_name`.
+With such configuration, requests with `Filters` set to `User.Name==John_Doe` with tell Strainer to filter to posts with creator name being exactly _"John Doe"_.
+
+Notice how property name is not just `Name` but it's constructed using full property path resulting in `User.Name`.
 
 ### Creating your own DSL
 
@@ -290,7 +320,7 @@ You can replace this DSL with your own (eg. use JSON instead) by implementing an
 
 ## Filter operators
 
-Strainer supports following filter opererators by default:
+Strainer comes with following filter operators:
 
 | Operator   | Meaning                                      |
 |------------|----------------------------------------------|
@@ -334,14 +364,12 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 
 ## Strainer's exceptions
 
-Strainer will silently fail unless [`ThrowExceptions`](#configure-strainer) in the configuration is set to true. Following kinds of custom exceptions can be thrown:
+Strainer will silently fail unless [`ThrowExceptions`](#configure-strainer) in the configuration is set to `true`. Following kinds of custom exceptions can be thrown:
 
 * `StrainerMethodNotFoundException` with a `MethodName`
 * `StrainerException` which encapsulates any other exception types in its `InnerException`
 
 It is recommended that you write exception-handling middleware to globally handle Strainer's exceptions when using it with ASP.NET Core.
-
-
 
 ## Examples
 
