@@ -41,33 +41,33 @@ While adding Strainer, you can configure it with available [options](#configure-
 
 ### Tell Strainer which properties to use
 
-Strainer will only sort/filter by properties that have applied [`[Strainer]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerAttribute.cs) attribute on them. 
+Strainer will only sort/filter by properties that have applied [`[StrainerProperty]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerPropertyAttribute.cs) attribute on them. 
 
-In order to mark a property as **filterable** apply the `[Strainer]` attribute with `IsFilterable` property set to `true`:
+In order to mark a property as **filterable** apply the `[StrainerProperty]` attribute with `IsFilterable` property set to `true`:
 
 ```cs
-[Strainer(IsFilterable = true)]
+[StrainerProperty(IsFilterable = true)]
 public int Id { get; set; }
 ```
 
 Similarly **sortable** property:
 
 ```cs
-[Strainer(IsSortable = true)]
+[StrainerProperty(IsSortable = true)]
 public int Id { get; set; }
 ```
 
 For **filterable** and **sortable** property, combine both:
 
 ```cs
-[Strainer(IsFilterable = true, IsSortable = true)]
+[StrainerProperty(IsFilterable = true, IsSortable = true)]
 public int Id { get; set; }
 ```
 
 Set a custom display name:
 
 ```cs
-[Strainer(IsFilterable = true, IsSortable = true, DisplayName = "identifier")]
+[StrainerProperty(IsFilterable = true, IsSortable = true, DisplayName = "identifier")]
 public int Id { get; set; }
 ```
 
@@ -235,7 +235,7 @@ Stariner model is based on four properties:
 
 `Filters` is a comma-delimited list of `{Name}{Operator}{Value}` where
 
-* `{Name}` is the name of a property with the Strainer attribute or the name of a custom filter method for TEntity
+* `{Name}` is the name of a property with the `StrainerProperty` attribute or the name of a custom filter method for TEntity
   * You can also have multiple names (for OR logic) by enclosing them in brackets and using a pipe delimiter, eg. `(LikeCount|CommentCount)>10` asks if `LikeCount` or `CommentCount` is `>10`
 * `{Operator}` is one of the [Operators](#operators)
 * `{Value}` is the value to use for filtering

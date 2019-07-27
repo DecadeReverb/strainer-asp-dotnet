@@ -32,9 +32,9 @@ namespace Fluorite.Strainer.Services
                 .GetProperties()
                 .Select(propertyInfo =>
                 {
-                    var attribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
+                    var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: true);
 
-                    return new KeyValuePair<PropertyInfo, StrainerAttribute>(propertyInfo, attribute);
+                    return new KeyValuePair<PropertyInfo, StrainerPropertyAttribute>(propertyInfo, attribute);
                 })
                 .Where(pair => pair.Value != null)
                 .FirstOrDefault(pair =>

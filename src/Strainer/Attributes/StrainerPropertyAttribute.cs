@@ -5,9 +5,9 @@ using System.Reflection;
 namespace Fluorite.Strainer.Attributes
 {
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class StrainerAttribute : Attribute, IPropertyMetadata
+    public class StrainerPropertyAttribute : Attribute, IPropertyMetadata
     {
-        public StrainerAttribute()
+        public StrainerPropertyAttribute()
         {
 
         }
