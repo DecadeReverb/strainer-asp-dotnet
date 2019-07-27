@@ -72,7 +72,7 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting.WayFormatting
         protected override void MapProperties(IPropertyMapper mapper)
         {
             mapper.Property<_TestEntity>(e => e.Name)
-                .CanSort()
+                .IsSortable()
                 .IsDefaultSort();
         }
     }

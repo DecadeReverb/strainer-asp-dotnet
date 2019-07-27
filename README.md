@@ -43,31 +43,31 @@ While adding Strainer, you can configure it with available [options](#configure-
 
 Strainer will only sort/filter by properties that have applied [`[Strainer]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerAttribute.cs) attribute on them. 
 
-In order to mark a property as **filterable** apply the `[Strainer]` attribute with `CanFilter` property set to `true`:
+In order to mark a property as **filterable** apply the `[Strainer]` attribute with `IsFilterable` property set to `true`:
 
 ```cs
-[Strainer(CanFilter = true)]
+[Strainer(IsFilterable = true)]
 public int Id { get; set; }
 ```
 
 Similarly **sortable** property:
 
 ```cs
-[Strainer(CanSort = true)]
+[Strainer(IsSortable = true)]
 public int Id { get; set; }
 ```
 
 For **filterable** and **sortable** property, combine both:
 
 ```cs
-[Strainer(CanFilter = true, CanSort = true)]
+[Strainer(IsFilterable = true, IsSortable = true)]
 public int Id { get; set; }
 ```
 
 Set a custom display name:
 
 ```cs
-[Strainer(CanFilter = true, CanSort = true, DisplayName = "identifier")]
+[Strainer(IsFilterable = true, IsSortable = true, DisplayName = "identifier")]
 public int Id { get; set; }
 ```
 
@@ -154,8 +154,8 @@ public class ApplicationStrainerProcessor : StrainerProcessor
     protected override void MapProperties(IStrainerPropertyMapper mapper)
     {
         mapper.Property<Post>(p => p.Title)
-            .CanSort()
-            .CanFilter()
+            .IsSortable()
+            .IsFilterable()
             .HasDisplayName("CustomTitleName");
     }
 }
@@ -295,7 +295,7 @@ in order to `Post.User` to be filterable, override `MapProperties` in your custo
 protected override void MapProperties(IStrainerPropertyMapper mapper)
 {
     mapper.Property<Post>(p => p.Creator.Name)
-        .CanFilter();
+        .IsFilterable();
 }
 ```
 

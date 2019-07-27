@@ -10,7 +10,7 @@ namespace Fluorite.Strainer.Services
         IReadOnlyDictionary<Type, IEnumerable<IPropertyMetadata>> Properties { get; }
 
         void AddMap<TEntity>(IPropertyMetadata metadata);
-        IPropertyMetadata FindProperty<TEntity>(bool canSortRequired, bool canFilterRequired, string name);
+        IPropertyMetadata FindProperty<TEntity>(bool isSortableRequired, bool isFilterableRequired, string name);
         IPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);
     }
 }

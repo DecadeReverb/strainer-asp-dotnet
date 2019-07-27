@@ -18,8 +18,8 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Act
             mapper.Property<Post>(p => p.Id);
             var metadata = mapper.FindProperty<Post>(
-                canSortRequired: false,
-                canFilterRequired: false,
+                isSortableRequired: false,
+                isFilterableRequired: false,
                 name: nameof(Post.Id));
 
             // Assert
@@ -35,10 +35,10 @@ namespace Fluorite.Strainer.UnitTests.Services
 
             // Act
             mapper.Property<Post>(p => p.Id)
-                .CanFilter();
+                .IsFilterable();
             var metadata = mapper.FindProperty<Post>(
-                canSortRequired: false,
-                canFilterRequired: false,
+                isSortableRequired: false,
+                isFilterableRequired: false,
                 name: nameof(Post.Id));
 
             // Assert
@@ -55,10 +55,10 @@ namespace Fluorite.Strainer.UnitTests.Services
 
             // Act
             mapper.Property<Post>(p => p.Id)
-                .CanSort();
+                .IsSortable();
             var metadata = mapper.FindProperty<Post>(
-                canSortRequired: false,
-                canFilterRequired: false,
+                isSortableRequired: false,
+                isFilterableRequired: false,
                 name: nameof(Post.Id));
 
             // Assert
@@ -82,8 +82,8 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Act
             mapper.AddMap<Post>(metadata);
             var result = mapper.FindProperty<Post>(
-                canSortRequired: false,
-                canFilterRequired: false,
+                isSortableRequired: false,
+                isFilterableRequired: false,
                 name: nameof(Post.Id));
 
             // Assert
@@ -109,8 +109,8 @@ namespace Fluorite.Strainer.UnitTests.Services
             mapper.AddMap<Post>(metadata);
             mapper.AddMap<Post>(metadata);
             var result = mapper.FindProperty<Post>(
-                canSortRequired: false,
-                canFilterRequired: false,
+                isSortableRequired: false,
+                isFilterableRequired: false,
                 name: nameof(Post.Id));
 
             // Assert

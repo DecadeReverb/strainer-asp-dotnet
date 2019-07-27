@@ -108,7 +108,7 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting.Default
         protected override void MapProperties(IPropertyMapper mapper)
         {
             mapper.Property<_TestEntity>(e => e.Name)
-                .CanSort()
+                .IsSortable()
                 .IsDefaultSort();
         }
     }

@@ -27,7 +27,7 @@ namespace Fluorite.Strainer.Services
 
         public virtual IPropertyMetadata Build() => _propertyMetadata;
 
-        public virtual IPropertyBuilder<TEntity> CanFilter()
+        public virtual IPropertyBuilder<TEntity> IsFilterable()
         {
             _propertyMetadata.IsFilterable = true;
             UpdateMap(_propertyMetadata);
@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.Services
             return this;
         }
 
-        public virtual ISortPropertyBuilder<TEntity> CanSort()
+        public virtual ISortPropertyBuilder<TEntity> IsSortable()
         {
             _propertyMetadata.IsSortable = true;
             UpdateMap(_propertyMetadata);
