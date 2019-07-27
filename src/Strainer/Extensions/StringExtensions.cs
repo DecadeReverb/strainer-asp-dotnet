@@ -178,7 +178,7 @@ namespace Fluorite.Extensions
         }
 
         /// <summary>
-        /// Trims only one leading occurences of specified string in current string.
+        /// Trims only one leading occurence of specified string in current string.
         /// </summary>
         /// <param name="source">
         /// Current <see cref="string"/> instance.

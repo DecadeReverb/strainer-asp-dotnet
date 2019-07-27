@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fluorite.Extensions;
+using System;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
@@ -51,9 +52,7 @@ namespace Fluorite.Strainer.Services.Sorting
             }
             else
             {
-                return input.StartsWith(DescendingWaySortingPrefix)
-                    ? input.Substring(1)
-                    : input;
+                return input.TrimStartOnce(DescendingWaySortingPrefix);
             }
         }
     }
