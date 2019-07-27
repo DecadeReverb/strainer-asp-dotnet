@@ -83,7 +83,7 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting.Default
         {
             mapper.Property<_TestBlog>(e => e.Name)
                 .IsSortable()
-                .IsDefaultSort(isAscending: false);
+                .IsDefaultSort(isDescending: true);
         }
     }
 

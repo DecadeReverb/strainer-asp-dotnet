@@ -2,6 +2,6 @@
 {
     public interface ISortPropertyBuilder<TEntity> : IPropertyBuilder<TEntity>
     {
-        ISortPropertyBuilder<TEntity> IsDefaultSort(bool isAscending = true);
+        ISortPropertyBuilder<TEntity> IsDefaultSort(bool isDescending = false);
     }
 }

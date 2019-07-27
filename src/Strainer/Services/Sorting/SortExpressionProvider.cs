@@ -45,7 +45,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             var sortTerm = new SortTerm
             {
-                IsDescending = !metadata.IsDefaultSortingAscending,
+                IsDescending = metadata.IsDefaultSortingDescending,
                 Name = metadata.DisplayName ?? metadata.Name
             };
 

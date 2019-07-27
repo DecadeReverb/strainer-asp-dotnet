@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.Services.Sorting
             {
                 DisplayName = basePropertyMetadata.DisplayName,
                 IsDefaultSorting = basePropertyMetadata.IsDefaultSorting,
-                IsDefaultSortingAscending = basePropertyMetadata.IsDefaultSortingAscending,
+                IsDefaultSortingDescending = basePropertyMetadata.IsDefaultSortingDescending,
                 IsFilterable = basePropertyMetadata.IsFilterable,
                 IsSortable = basePropertyMetadata.IsSortable,
                 Name = basePropertyMetadata.Name,
@@ -26,10 +26,10 @@ namespace Fluorite.Strainer.Services.Sorting
             };
         }
 
-        public ISortPropertyBuilder<TEntity> IsDefaultSort(bool isAscending = true)
+        public ISortPropertyBuilder<TEntity> IsDefaultSort(bool isDescending = false)
         {
             _propertyMetadata.IsDefaultSorting = true;
-            _propertyMetadata.IsDefaultSortingAscending = isAscending;
+            _propertyMetadata.IsDefaultSortingDescending = isDescending;
             UpdateMap(_propertyMetadata);
 
             return this;
