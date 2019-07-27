@@ -35,10 +35,9 @@ namespace Fluorite.Strainer.Services.Sorting
         {
             var metadata = _mapper
                 .Properties
-                .Where(pair => pair.Key == typeof(TEntity))
-                .FirstOrDefault(pair => pair.Value.Any(p => p.IsDefaultSorting))
+                .FirstOrDefault(pair => pair.Key == typeof(TEntity))
                 .Value
-                ?.FirstOrDefault();
+                ?.FirstOrDefault(p => p.IsDefaultSorting);
             if (metadata == null)
             {
                 return null;
@@ -46,6 +45,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             var sortTerm = new SortTerm
             {
+                IsDescending = !metadata.IsDefaultSortingAscending,
                 Name = metadata.DisplayName ?? metadata.Name
             };
 
