@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Fluorite.Extensions
 {
-    public static partial class LinqExtentions
+    public static class LinqExtentions
     {
         public static IQueryable<TEntity> OrderWithSortExpression<TEntity>(
             this IQueryable<TEntity> source,
