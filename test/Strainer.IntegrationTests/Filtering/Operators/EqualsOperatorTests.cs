@@ -77,5 +77,37 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
             // Assert
             result.Should().OnlyContain(b => b.Text.Equals("foo", StringComparison.Ordinal));
         }
+
+        [Fact]
+        public void Equals_Works_For_NonStringValues()
+        {
+            // Arrange
+            var source = new[]
+            {
+                new Post
+                {
+                    LikeCount = 20,
+                },
+                new Post
+                {
+                    LikeCount = 10,
+                },
+                new Post
+                {
+                    LikeCount = 50,
+                },
+            }.AsQueryable();
+            var processor = Factory.CreateDefaultProcessor(options => options.CaseSensitive = true);
+            var model = new StrainerModel
+            {
+                Filters = "LikeCount==20",
+            };
+
+            // Act
+            var result = processor.ApplyFiltering(model, source);
+
+            // Assert
+            result.Should().OnlyContain(p => p.LikeCount.Equals(20));
+        }
     }
 }

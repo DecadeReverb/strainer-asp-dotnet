@@ -202,23 +202,6 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void EqualsDoesntFailWithNonStringTypes()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "LikeCount==50",
-            };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.LikeCount == 50);
-        }
-
-        [Fact]
         public void CustomFiltersWork()
         {
             // Arrange
