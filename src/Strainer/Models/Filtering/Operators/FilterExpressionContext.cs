@@ -3,16 +3,41 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Models.Filter.Operators
 {
+    /// <summary>
+    /// Represents default information context for filter expression.
+    /// </summary>
     public class FilterExpressionContext : IFilterExpressionContext
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="FilterExpressionContext"/>
+        /// class.
+        /// </summary>
+        /// <param name="filterValue">
+        /// The filter value expression.
+        /// </param>
+        /// <param name="propertyValue">
+        /// The property access expression.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="filterValue"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="propertyValue"/> is <see langword="null"/>.
+        /// </exception>
         public FilterExpressionContext(Expression filterValue, Expression propertyValue)
         {
             FilterValue = filterValue ?? throw new ArgumentNullException(nameof(filterValue));
-            PropertyValue = propertyValue ?? throw new ArgumentNullException(nameof(propertyValue));
+            Property = propertyValue ?? throw new ArgumentNullException(nameof(propertyValue));
         }
 
+        /// <summary>
+        /// Gets the expression for filter value being processed.
+        /// </summary>
         public Expression FilterValue { get; }
 
-        public Expression PropertyValue { get; }
+        /// <summary>
+        /// Get the expression for property access.
+        /// </summary>
+        public Expression Property { get; }
     }
 }
