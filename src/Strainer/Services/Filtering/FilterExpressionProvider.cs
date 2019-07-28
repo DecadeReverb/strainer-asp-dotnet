@@ -15,7 +15,11 @@ namespace Fluorite.Strainer.Services.Filtering
 
         }
 
-        public Expression GetExpression(IPropertyMetadata metadata, IFilterTerm filterTerm, ParameterExpression parameterExpression, Expression innerExpression)
+        public Expression GetExpression(
+            IPropertyMetadata metadata,
+            IFilterTerm filterTerm,
+            ParameterExpression parameterExpression,
+            Expression innerExpression)
         {
             if (metadata == null)
             {
@@ -32,11 +36,11 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(parameterExpression));
             }
 
-            var converter = TypeDescriptor.GetConverter(metadata.PropertyInfo.PropertyType);
-            Expression propertyValue = parameterExpression;
+            Expression propertyValueExpresssion = parameterExpression;
+
             foreach (var part in metadata.Name.Split('.'))
             {
-                propertyValue = Expression.PropertyOrField(propertyValue, part);
+                propertyValueExpresssion = Expression.PropertyOrField(propertyValueExpresssion, part);
             }
 
             if (filterTerm.Values == null)
@@ -44,12 +48,27 @@ namespace Fluorite.Strainer.Services.Filtering
                 return null;
             }
 
+            return CreateInnerExpression(
+                metadata,
+                filterTerm,
+                innerExpression,
+                propertyValueExpresssion);
+        }
+
+        private Expression CreateInnerExpression(
+            IPropertyMetadata metadata,
+            IFilterTerm filterTerm,
+            Expression innerExpression,
+            Expression propertyValue)
+        {
+            var typeConverter = GetTypeConverter(metadata);
+
             foreach (var filterTermValue in filterTerm.Values)
             {
                 object constantVal = null;
-                if (converter.CanConvertFrom(typeof(string)))
+                if (typeConverter.CanConvertFrom(typeof(string)))
                 {
-                    constantVal = converter.ConvertFrom(filterTermValue);
+                    constantVal = typeConverter.ConvertFrom(filterTermValue);
                 }
                 else
                 {
@@ -99,6 +118,11 @@ namespace Fluorite.Strainer.Services.Filtering
         private Expression GetClosureOverConstant<T>(T constant, Type targetType)
         {
             return Expression.Constant(constant, targetType);
+        }
+
+        private static TypeConverter GetTypeConverter(IPropertyMetadata metadata)
+        {
+            return TypeDescriptor.GetConverter(metadata.PropertyInfo.PropertyType);
         }
     }
 }
