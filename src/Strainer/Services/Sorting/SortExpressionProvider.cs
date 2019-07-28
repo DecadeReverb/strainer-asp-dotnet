@@ -152,7 +152,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             if (metadata == null)
             {
-                return _metadataProvider.GetMetadataFromAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return _metadataProvider.GetMetadataFromAttributes<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

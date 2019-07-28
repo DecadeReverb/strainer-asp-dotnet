@@ -18,7 +18,59 @@ namespace Fluorite.Strainer.Services
             _options = options;
         }
 
-        public IPropertyMetadata GetMetadataFromAttribute<TEntity>(
+        public IPropertyMetadata GetMetadataFromAttributes<TEntity>(
+            bool isSortingRequired,
+            bool isFilteringRequired,
+            string name)
+        {
+            var modelType = typeof(TEntity);
+            var propertyMetadata = GetPropertyMetadata(modelType, isSortingRequired, isFilteringRequired, name);
+            if (propertyMetadata == null)
+            {
+                propertyMetadata = GetPropertyMetadataFromObject(modelType, isSortingRequired, isFilteringRequired, name);
+            }
+
+            return propertyMetadata;
+        }
+
+        private IPropertyMetadata GetPropertyMetadataFromObject(
+            Type modelType,
+            bool isSortingRequired,
+            bool isFilteringRequired,
+            string name)
+        {
+            var currentType = modelType;
+
+            do
+            {
+                var propertyInfo = modelType
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .FirstOrDefault(p => p.Name == name);
+                var attribute = currentType.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
+
+                if (attribute != null
+                    && propertyInfo != null
+                    && (isSortingRequired ? attribute.IsSortable : true)
+                    && (isFilteringRequired ? attribute.IsFilterable : true))
+                {
+                    return new PropertyMetadata
+                    {
+                        IsFilterable = attribute.IsFilterable,
+                        IsSortable = attribute.IsSortable,
+                        Name = propertyInfo.Name,
+                        PropertyInfo = propertyInfo,
+                    };
+                }
+
+                currentType = currentType.BaseType;
+
+            } while (currentType != typeof(object) && currentType != typeof(ValueType));
+
+            return null;
+        }
+
+        private IPropertyMetadata GetPropertyMetadata(
+            Type modelType,
             bool isSortingRequired,
             bool isFilteringRequired,
             string name)
@@ -27,7 +79,6 @@ namespace Fluorite.Strainer.Services
                 ? StringComparison.Ordinal
                 : StringComparison.OrdinalIgnoreCase;
 
-            var modelType = typeof(TEntity);
             var keyValue = modelType
                 .GetProperties()
                 .Select(propertyInfo =>
