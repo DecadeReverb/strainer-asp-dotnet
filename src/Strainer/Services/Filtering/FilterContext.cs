@@ -9,11 +9,11 @@
             IFilterOperatorValidator operatorValidator,
             IFilterTermParser termParser)
         {
-            ExpressionProvider = expressionProvider;
-            OperatorMapper = operatorMapper;
-            OperatorParser = operatorParser;
-            OperatorValidator = operatorValidator;
-            TermParser = termParser;
+            ExpressionProvider = expressionProvider ?? throw new System.ArgumentNullException(nameof(expressionProvider));
+            OperatorMapper = operatorMapper ?? throw new System.ArgumentNullException(nameof(operatorMapper));
+            OperatorParser = operatorParser ?? throw new System.ArgumentNullException(nameof(operatorParser));
+            OperatorValidator = operatorValidator ?? throw new System.ArgumentNullException(nameof(operatorValidator));
+            TermParser = termParser ?? throw new System.ArgumentNullException(nameof(termParser));
         }
 
         public IFilterExpressionProvider ExpressionProvider { get; }
