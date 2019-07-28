@@ -24,6 +24,8 @@ namespace Fluorite.Strainer.Services.Filtering
             {
                 Symbol = symbol,
             };
+
+            UpdateMap();
         }
 
         protected IFilterOperatorMapper Mapper { get; }
