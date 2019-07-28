@@ -14,8 +14,8 @@ namespace Fluorite.Strainer.Services
 
         public PropertyMetadataProvider(IPropertyMapper mapper, StrainerOptions options)
         {
-            _mapper = mapper;
-            _options = options;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         public IPropertyMetadata GetMetadataFromAttributes<TEntity>(

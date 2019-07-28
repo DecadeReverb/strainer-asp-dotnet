@@ -18,11 +18,12 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(symbol));
             }
 
+            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+
             _filterOperator = new FilterOperator
             {
                 Symbol = symbol,
             };
-            Mapper = mapper;
         }
 
         protected IFilterOperatorMapper Mapper { get; }
@@ -31,12 +32,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            _filterOperator.Expression = expression;
+            _filterOperator.Expression = expression ?? throw new ArgumentNullException(nameof(expression));
             UpdateMap();
 
             return this;

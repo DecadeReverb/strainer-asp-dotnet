@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.Services
         public PropertyMapper(StrainerOptions options)
         {
             _map = new Dictionary<Type, ISet<IPropertyMetadata>>();
-            _options = options;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         public IReadOnlyDictionary<Type, IEnumerable<IPropertyMetadata>> Properties

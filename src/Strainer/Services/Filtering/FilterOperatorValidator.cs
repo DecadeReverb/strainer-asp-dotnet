@@ -42,6 +42,11 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(filterOperators));
             }
 
+            if (!filterOperators.Any())
+            {
+                return;
+            }
+
             foreach (var @operator in filterOperators)
             {
                 Validate(@operator);

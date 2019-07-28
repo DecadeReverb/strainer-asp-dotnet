@@ -8,10 +8,10 @@
             ISortingWayFormatter formatter,
             ISortTermParser parser)
         {
-            ExpressionProvider = expressionProvider;
-            ExpressionValidator = expressionValidator;
-            Formatter = formatter;
-            TermParser = parser;
+            ExpressionProvider = expressionProvider ?? throw new System.ArgumentNullException(nameof(expressionProvider));
+            ExpressionValidator = expressionValidator ?? throw new System.ArgumentNullException(nameof(expressionValidator));
+            Formatter = formatter ?? throw new System.ArgumentNullException(nameof(formatter));
+            TermParser = parser ?? throw new System.ArgumentNullException(nameof(parser));
         }
 
         public ISortExpressionProvider ExpressionProvider { get; set; }

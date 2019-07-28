@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Services.Filtering
         public FilterOperatorMapper(IFilterOperatorValidator validator)
         {
             _map = new Dictionary<string, IFilterOperator>();
-            _validator = validator;
+            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
 
             AddInitialFilterOperators();
 
@@ -35,12 +35,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(symbol));
             }
 
-            if (filterOperator == null)
-            {
-                throw new ArgumentNullException(nameof(filterOperator));
-            }
-
-            _map[symbol] = filterOperator;
+            _map[symbol] = filterOperator ?? throw new ArgumentNullException(nameof(filterOperator));
         }
 
         public IFilterOperatorBuilder Operator(string symbol)

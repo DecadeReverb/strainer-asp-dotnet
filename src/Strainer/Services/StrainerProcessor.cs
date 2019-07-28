@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.Services
     {
         public StrainerProcessor(IStrainerContext context)
         {
-            Context = context;
+            Context = context ?? throw new ArgumentNullException(nameof(context));
 
             MapFilterOperators(context.Filter.OperatorMapper);
 

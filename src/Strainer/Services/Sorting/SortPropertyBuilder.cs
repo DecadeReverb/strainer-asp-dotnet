@@ -14,6 +14,21 @@ namespace Fluorite.Strainer.Services.Sorting
             IPropertyMetadata basePropertyMetadata)
             : base(strainerPropertyMapper, expression)
         {
+            if (strainerPropertyMapper == null)
+            {
+                throw new ArgumentNullException(nameof(strainerPropertyMapper));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (basePropertyMetadata == null)
+            {
+                throw new ArgumentNullException(nameof(basePropertyMetadata));
+            }
+
             _propertyMetadata = new PropertyMetadata
             {
                 DisplayName = basePropertyMetadata.DisplayName,

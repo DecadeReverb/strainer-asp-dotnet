@@ -49,6 +49,11 @@ namespace Fluorite.Strainer.Services
 
         public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods, ICustomSortMethodProvider sortMethods)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
             Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
         }

@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         public FilterOperatorParser(IFilterOperatorMapper mapper)
         {
-            Mapper = mapper;
+            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         protected IFilterOperatorMapper Mapper { get; }
