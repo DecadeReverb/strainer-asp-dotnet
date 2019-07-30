@@ -11,36 +11,50 @@ namespace Fluorite.Strainer.Services
     {
         private readonly Expression<Func<TEntity, object>> _expression;
         private readonly IPropertyMapper _mapper;
-        private readonly PropertyMetadata _propertyMetadata;
 
         public PropertyBuilder(IPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             _mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
-            var (name, propertyInfo) = GetPropertyInfo(expression);
-            _propertyMetadata = new PropertyMetadata
+            (NameProperty, PropertyInfoProperty) = GetPropertyInfo(expression);
+        }
+
+        protected string DisplayNameProperty { get; set; }
+        protected bool IsDefaultSortingProperty { get; set; }
+        protected bool IsDefaultSortingDescendingProperty { get; set; }
+        protected bool IsFilterableProperty { get; set; }
+        protected bool IsSortableProperty { get; set; }
+        protected string NameProperty { get; set; }
+        protected PropertyInfo PropertyInfoProperty { get; set; }
+
+        public virtual IPropertyMetadata Build()
+        {
+            return new PropertyMetadata
             {
-                Name = name,
-                PropertyInfo = propertyInfo,
+                DisplayName = DisplayNameProperty,
+                IsDefaultSorting = IsDefaultSortingProperty,
+                IsDefaultSortingDescending = IsDefaultSortingDescendingProperty,
+                IsFilterable = IsFilterableProperty,
+                IsSortable = IsSortableProperty,
+                Name = NameProperty,
+                PropertyInfo = PropertyInfoProperty,
             };
         }
 
-        public virtual IPropertyMetadata Build() => _propertyMetadata;
-
         public virtual IPropertyBuilder<TEntity> IsFilterable()
         {
-            _propertyMetadata.IsFilterable = true;
-            UpdateMap(_propertyMetadata);
+            IsFilterableProperty = true;
+            UpdateMap(Build());
 
             return this;
         }
 
         public virtual ISortPropertyBuilder<TEntity> IsSortable()
         {
-            _propertyMetadata.IsSortable = true;
-            UpdateMap(_propertyMetadata);
+            IsSortableProperty = true;
+            UpdateMap(Build());
 
-            return new SortPropertyBuilder<TEntity>(_mapper, _expression, _propertyMetadata);
+            return new SortPropertyBuilder<TEntity>(_mapper, _expression, Build());
         }
 
         public virtual IPropertyBuilder<TEntity> HasDisplayName(string displayName)
@@ -53,8 +67,8 @@ namespace Fluorite.Strainer.Services
                     nameof(displayName));
             }
 
-            _propertyMetadata.DisplayName = displayName;
-            UpdateMap(_propertyMetadata);
+            DisplayNameProperty = displayName;
+            UpdateMap(Build());
 
             return this;
         }
