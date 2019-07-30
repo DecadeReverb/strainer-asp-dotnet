@@ -12,38 +12,38 @@ namespace Fluorite.Strainer.Services
         private readonly Expression<Func<TEntity, object>> _expression;
         private readonly IPropertyMapper _mapper;
 
+        protected string displayName;
+        protected bool isDefaultSorting;
+        protected bool isDefaultSortingDescending;
+        protected bool isFilterable;
+        protected bool isSortable;
+        protected string name;
+        protected PropertyInfo propertyInfo;
+
         public PropertyBuilder(IPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             _mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
-            (NameProperty, PropertyInfoProperty) = GetPropertyInfo(expression);
+            (name, propertyInfo) = GetPropertyInfo(expression);
         }
-
-        protected string DisplayNameProperty { get; set; }
-        protected bool IsDefaultSortingProperty { get; set; }
-        protected bool IsDefaultSortingDescendingProperty { get; set; }
-        protected bool IsFilterableProperty { get; set; }
-        protected bool IsSortableProperty { get; set; }
-        protected string NameProperty { get; set; }
-        protected PropertyInfo PropertyInfoProperty { get; set; }
 
         public virtual IPropertyMetadata Build()
         {
             return new PropertyMetadata
             {
-                DisplayName = DisplayNameProperty,
-                IsDefaultSorting = IsDefaultSortingProperty,
-                IsDefaultSortingDescending = IsDefaultSortingDescendingProperty,
-                IsFilterable = IsFilterableProperty,
-                IsSortable = IsSortableProperty,
-                Name = NameProperty,
-                PropertyInfo = PropertyInfoProperty,
+                DisplayName = displayName,
+                IsDefaultSorting = isDefaultSorting,
+                IsDefaultSortingDescending = isDefaultSortingDescending,
+                IsFilterable = isFilterable,
+                IsSortable = isSortable,
+                Name = name,
+                PropertyInfo = propertyInfo,
             };
         }
 
         public virtual IPropertyBuilder<TEntity> IsFilterable()
         {
-            IsFilterableProperty = true;
+            isFilterable = true;
             UpdateMap(Build());
 
             return this;
@@ -51,7 +51,7 @@ namespace Fluorite.Strainer.Services
 
         public virtual ISortPropertyBuilder<TEntity> IsSortable()
         {
-            IsSortableProperty = true;
+            isSortable = true;
             UpdateMap(Build());
 
             return new SortPropertyBuilder<TEntity>(_mapper, _expression, Build());
@@ -67,7 +67,7 @@ namespace Fluorite.Strainer.Services
                     nameof(displayName));
             }
 
-            DisplayNameProperty = displayName;
+            this.displayName = displayName;
             UpdateMap(Build());
 
             return this;
