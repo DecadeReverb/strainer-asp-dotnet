@@ -225,7 +225,7 @@ That request will be translated by Strainer to:
 
 ## Strainer model
 
-Stariner model is based on four properties:
+Strainer model is based on four properties:
 
 ### Sorts
 
