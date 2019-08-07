@@ -1,13 +1,13 @@
 ﻿namespace Fluorite.Strainer.Models
 {
     /// <summary>
-    /// Represents stariner model used to bind filtering, sorting
-    /// and pagination data.
+    /// Represents Strainer model used to bind filtering, sorting
+    /// and pagination parameters.
     /// </summary>
     public interface IStrainerModel
     {
         /// <summary>
-        /// Gets the filters.
+        /// Gets the filter parameters.
         /// </summary>
         string Filters { get; }
 
@@ -22,7 +22,7 @@
         int? PageSize { get; }
 
         /// <summary>
-        /// Gets the sortings.
+        /// Gets the sorting parameters.
         /// </summary>
         string Sorts { get; }
     }

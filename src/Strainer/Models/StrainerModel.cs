@@ -1,8 +1,8 @@
 ﻿namespace Fluorite.Strainer.Models
 {
     /// <summary>
-    /// Represents default strainer model used to bind filtering, sorting
-    /// and pagination data.
+    /// Represents default Strainer model used to bind filtering, sorting
+    /// and pagination parameters.
     /// </summary>
     public class StrainerModel : IStrainerModel
     {
