@@ -75,7 +75,7 @@ Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is esp
 
 ### Use Strainer to filter/sort/paginate
 
-In example below, Strainer processor is injected in a controller. Then, in `GetPost()` Strainer will process the source collection by calling `Apply()`. It will filter, sort and/or paginate the source `IQueryable` depending on model configuration.
+In example below, Strainer processor is injected in a controller. Then, in `GetPost()` Strainer will process the source collection by calling `Apply()`. It will filter, sort and/or paginate the source `IQueryable` depending on model parameters.
 
 ```cs
 private readonly ApplicationDbContext _dbContext;
@@ -118,12 +118,12 @@ This is particulary useful when you want to count the resulted collection before
 ```cs
 var result = _strainerProcessor.Apply(strainerModel, questions, applyPagination: false);
 Request.HttpContext.Response.Headers.Add("X-Total-Count", result.Count().ToString());
-result = _strainerProcessor.Apply(strainerModel, result, applyFiltering: false, applySorting: false);
+result = _strainerProcessor.ApplyPagination(strainerModel, result);
 ```
 
 ## Fluent API
 
-You can use Fluent API instead of attributes to mark properties and even more. Implement your own processor deriving from `StrainerProcessor`:
+You can use Fluent API instead of attributes to mark properties and even more. Start with implementing your own processor deriving from `StrainerProcessor`:
 
 ```cs
 public class ApplicationStrainerProcessor : StrainerProcessor
@@ -235,19 +235,19 @@ Strainer model is based on four properties:
 
 `Filters` is a comma-delimited list of `{Name}{Operator}{Value}` where
 
-* `{Name}` is the name of a property with the `StrainerProperty` attribute or the name of a custom filter method for TEntity
-  * You can also have multiple names (for OR logic) by enclosing them in brackets and using a pipe delimiter, eg. `(LikeCount|CommentCount)>10` asks if `LikeCount` or `CommentCount` is `>10`
-* `{Operator}` is one of the [Operators](#operators)
+* `{Name}` is the name of a property with the `StrainerProperty` attribute or the name of a custom filter method;
+  * You can also have multiple names (for OR logic) by enclosing them in brackets and using a pipe delimiter, eg. `(LikeCount|CommentCount)>10` filters to posts where `LikeCount` or `CommentCount` is greater than `10`;
+* `{Operator}` is one of the [Operators](#filter-operators);
 * `{Value}` is the value to use for filtering
-    * You can also have multiple values (for OR logic) by using a pipe delimiter, eg. `Title@=new|hot` will return posts with titles that contain the text "`new`" or "`hot`"
+    * You can also have multiple values (for OR logic) by using a pipe delimiter, eg. `Title@=new|hot` filters to posts with titles that contain the phrase _"new"_ or _"hot"_.
 
 ### Page
 
-`Page` is the number of page to return. Can be null.
+`Page` is the number of page to return.
 
 ### PageSize
 
-`PageSize` is the number of elements returned per page. Can be null.
+`PageSize` is the number of elements returned per page.
 
 #### Notes
 
@@ -259,14 +259,14 @@ Strainer model is based on four properties:
 
 ## Creating your own model
 
-You can replace default model `StrainerModel` with your own  by implementing [`IStrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs) interface. See [`StrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/StrainerModel.cs) for reference.
+You can replace default `StrainerModel` with your own  by implementing [`IStrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs) interface. See [`StrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/StrainerModel.cs) for reference.
 
 ## Validation
 
-`StrainerModel` comes with **no initial validation**, so in order to add your own validation rules you should [implement your own model](#creating-your-own-model) or implement a class deriving from `StrainerModel` and then override desired property. For example:
+`StrainerModel` comes with **no initial validation**, so in order to add your own validation rules you should [implement your own model](#creating-your-own-model) or implement a class deriving from `StrainerModel` and then override desired properties. For example:
 
 ```cs
-public class MyStrainerModel : StrainerModel
+public class ValidatedStrainerModel : StrainerModel
 {
     [Range(1, 50)]
     public override int? PageSize { get; set; }
@@ -289,7 +289,7 @@ public class User {
 }
 ```
 
-in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to property:
+in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to the nested property:
 
 ```cs
 protected override void MapProperties(IStrainerPropertyMapper mapper)
@@ -305,7 +305,7 @@ Notice how nested property name is not just `Name` but it's constructed using fu
 
 ## Custom methods
 
-In order to add custom sort/filter methods, override appropriate mapping method in your Strainer processor.
+In order to add custom sort or filter methods, override appropriate mapping method in your custom Strainer processor.
 
 #### Custom filter methods
 
@@ -333,7 +333,7 @@ private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> contex
 }
 ```
 
-Notice how conditional ordering is being performed depending on whether context's `IsSubsequent` property is `true`. That's because Strainer supports subsequent sorting (by multiple properties) with no exception for custom sorting.
+Notice how conditional ordering is being performed depending on whether context's `IsSubsequent` property is `true`. That's because Strainer supports subsequent sorting (by multiple properties) with no exception for custom sorting. You can chain them all together.
 
 ## Filter operators
 
