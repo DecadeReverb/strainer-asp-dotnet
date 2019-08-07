@@ -27,18 +27,17 @@ namespace Fluorite.Strainer.Services.Sorting
         /// </summary>
         public SortExpressionProvider(IPropertyMapper mapper, IPropertyMetadataProvider metadataProvider)
         {
-            _mapper = mapper;
-            _metadataProvider = metadataProvider;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
         }
 
         public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
         {
             var metadata = _mapper
                 .Properties
-                .Where(pair => pair.Key == typeof(TEntity))
-                .FirstOrDefault(pair => pair.Value.Any(p => p.IsDefaultSorting))
+                .FirstOrDefault(pair => pair.Key == typeof(TEntity))
                 .Value
-                ?.FirstOrDefault();
+                ?.FirstOrDefault(p => p.IsDefaultSorting);
             if (metadata == null)
             {
                 return null;
@@ -46,6 +45,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             var sortTerm = new SortTerm
             {
+                IsDescending = metadata.IsDefaultSortingDescending,
                 Name = metadata.DisplayName ?? metadata.Name
             };
 
@@ -69,35 +69,34 @@ namespace Fluorite.Strainer.Services.Sorting
                 isFilteringRequired: false,
                 name: sortTerm.Name);
 
-            if (metadata != null)
-            {
-                var parameter = Expression.Parameter(typeof(TEntity), "p");
-                Expression propertyValue = parameter;
-
-                if (metadata.Name.Contains("."))
-                {
-                    var parts = metadata.Name.Split('.');
-                    for (var i = 0; i < parts.Length - 1; i++)
-                    {
-                        propertyValue = Expression.PropertyOrField(propertyValue, parts[i]);
-                    }
-                }
-
-                var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
-                var conversion = Expression.Convert(propertyAccess, typeof(object));
-                var orderExpression = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
-
-                return new SortExpression<TEntity>
-                {
-                    Expression = orderExpression,
-                    IsDescending = sortTerm.IsDescending,
-                    IsSubsequent = isSubsequent,
-                };
-            }
-            else
+            if (metadata == null)
             {
                 return null;
             }
+
+            var parameter = Expression.Parameter(typeof(TEntity), "p");
+            Expression propertyValue = parameter;
+
+            if (metadata.Name.Contains("."))
+            {
+                var parts = metadata.Name.Split('.');
+
+                for (var i = 0; i < parts.Length - 1; i++)
+                {
+                    propertyValue = Expression.PropertyOrField(propertyValue, parts[i]);
+                }
+            }
+
+            var propertyAccess = Expression.MakeMemberAccess(propertyValue, propertyInfo);
+            var conversion = Expression.Convert(propertyAccess, typeof(object));
+            var orderExpression = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
+
+            return new SortExpression<TEntity>
+            {
+                Expression = orderExpression,
+                IsDescending = sortTerm.IsDescending,
+                IsSubsequent = isSubsequent,
+            };
         }
 
         /// <summary>
@@ -125,6 +124,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             var expressions = new List<ISortExpression<TEntity>>();
             var isSubqequent = false;
+
             foreach (var pair in sortTerms)
             {
                 var sortExpression = GetExpression<TEntity>(pair.Key, pair.Value, isSubqequent);
@@ -152,7 +152,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             if (metadata == null)
             {
-                return _metadataProvider.GetMetadataFromAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return _metadataProvider.GetMetadataFromAttributes<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

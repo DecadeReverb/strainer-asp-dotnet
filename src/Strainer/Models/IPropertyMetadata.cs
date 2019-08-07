@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Models
 
         bool IsDefaultSorting { get; }
 
-        bool IsDefaultSortingAscending { get; }
+        bool IsDefaultSortingDescending { get; }
 
         /// <summary>
         /// Gets a <see cref="bool"/> value indicating whether related

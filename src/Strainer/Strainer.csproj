@@ -5,9 +5,9 @@
     <AssemblyName>Fluorite.Strainer</AssemblyName>
     <RootNamespace>Fluorite.Strainer</RootNamespace>
     <Authors>Fluorite</Authors>
-    <Version>3.0.0-preview2</Version>
+    <Version>3.0.0-preview3</Version>
     <Description>
-      Strainer is a simple, clean, and extensible framework for .NET Core that adds sorting, filtering, and pagination functionality out of the box. Most common use case would be for serving ASP.NET Core GET queries. Documentation available on GitLab: https://gitlab.com/fluorite/strainer/
+      Strainer is a simple, clean, and extensible framework based on .NET Standard that enables sorting, filtering, and pagination functionality. Documentation available on GitLab: https://gitlab.com/fluorite/strainer/
     </Description>
     <Copyright>Copyright 2019</Copyright>
     <PackageTags>strainer,sorting,filtering,pagination,fluorite</PackageTags>

@@ -13,8 +13,8 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public FilterTermParser(IFilterOperatorParser parser, IFilterOperatorMapper mapper)
         {
-            Mapper = mapper;
-            Parser = parser;
+            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            Parser = parser ?? throw new ArgumentNullException(nameof(parser));
         }
 
         protected IFilterOperatorMapper Mapper { get; }

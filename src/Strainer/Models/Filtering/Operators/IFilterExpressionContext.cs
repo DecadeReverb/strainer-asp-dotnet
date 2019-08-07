@@ -2,9 +2,19 @@
 
 namespace Fluorite.Strainer.Models.Filter.Operators
 {
+    /// <summary>
+    /// Represents information context for filter expression.
+    /// </summary>
     public interface IFilterExpressionContext
     {
+        /// <summary>
+        /// Gets the expression for filter value being processed.
+        /// </summary>
         Expression FilterValue { get; }
-        Expression PropertyValue { get; }
+
+        /// <summary>
+        /// Get the expression for property access.
+        /// </summary>
+        Expression Property { get; }
     }
 }

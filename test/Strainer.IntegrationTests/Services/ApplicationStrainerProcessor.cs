@@ -37,25 +37,25 @@ namespace Fluorite.Strainer.IntegrationTests.Services
         protected override void MapProperties(IPropertyMapper mapper)
         {
             mapper.Property<Post>(p => p.ThisHasNoAttributeButIsAccessible)
-                .CanSort()
-                .CanFilter()
+                .IsSortable()
+                .IsFilterable()
                 .HasDisplayName("shortname");
 
             mapper.Property<Post>(p => p.TopComment.Text)
-                .CanFilter();
+                .IsFilterable();
 
             mapper.Property<Post>(p => p.TopComment.Id)
-                .CanSort();
+                .IsSortable();
 
             mapper.Property<Post>(p => p.OnlySortableViaFluentApi)
-                .CanSort();
+                .IsSortable();
 
             mapper.Property<Post>(p => p.TopComment.Text)
-                .CanFilter()
+                .IsFilterable()
                 .HasDisplayName("topc");
 
             mapper.Property<Post>(p => p.FeaturedComment.Text)
-                .CanFilter()
+                .IsFilterable()
                 .HasDisplayName("featc");
         }
 

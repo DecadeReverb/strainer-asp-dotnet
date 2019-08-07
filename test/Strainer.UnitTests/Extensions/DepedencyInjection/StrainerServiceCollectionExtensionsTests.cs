@@ -4,9 +4,9 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,11 +148,45 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .BeAssignableTo<_TestFilterTermParser>(
                     "Because DI container should return service that was registered last.");
         }
+
+        [Fact]
+        public void CustomSortingWayFormatter_Works_When_AddedToServiceCollection()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            services.AddStrainer<StrainerProcessor>();
+            services.AddScoped<ISortingWayFormatter, _TestSortingWayFormatter>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Act
+            var formatter = serviceProvider.GetRequiredService<ISortingWayFormatter>();
+
+            // Assert
+            formatter.Should().BeAssignableTo<_TestSortingWayFormatter>();
+        }
     }
 
     internal class _TestFilterTermParser : IFilterTermParser
     {
         public IList<IFilterTerm> GetParsedTerms(string input)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class _TestSortingWayFormatter : ISortingWayFormatter
+    {
+        public string Format(string input, bool isDescending)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsDescending(string input)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Unformat(string input)
         {
             throw new NotImplementedException();
         }

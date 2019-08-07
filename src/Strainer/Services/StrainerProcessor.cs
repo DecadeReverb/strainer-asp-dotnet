@@ -11,11 +11,25 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services
 {
+    /// <summary>
+    /// Default implementation of Strainer main service taking care of filtering,
+    /// sorting and pagination.
+    /// </summary>
     public class StrainerProcessor : IStrainerProcessor
     {
+        /// <summary>
+        /// Initializes new instance of <see cref="StrainerProcessor"/> class
+        /// with specified context.
+        /// </summary>
+        /// <param name="context">
+        /// The Strainer context.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
         public StrainerProcessor(IStrainerContext context)
         {
-            Context = context;
+            Context = context ?? throw new ArgumentNullException(nameof(context));
 
             MapFilterOperators(context.Filter.OperatorMapper);
 
@@ -44,16 +58,48 @@ namespace Fluorite.Strainer.Services
         protected IStrainerContext Context { get; }
 
         /// <summary>
-        /// Apply filtering, sorting, and pagination parameters found in `model` to `source`
+        /// Applies filtering, sorting and pagination (in that order)
+        /// to source collection based on parameters found in provided model.
+        /// <para/>
+        /// Can throw <see cref="StrainerException"/> if <see cref="StrainerOptions.ThrowExceptions"/>
+        /// is set to <see langword="true"/>.
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="model">An instance of IStrainerModel</param>
-        /// <param name="source">Data source</param>
-        /// <param name="dataForCustomMethods">Additional data that will be passed down to custom methods</param>
-        /// <param name="applyFiltering">Should the data be filtered? Defaults to true.</param>
-        /// <param name="applySorting">Should the data be sorted? Defaults to true.</param>
-        /// <param name="applyPagination">Should the data be paginated? Defaults to true.</param>
-        /// <returns>Returns a transformed version of `source`</returns>
+        /// <typeparam name="TEntity">
+        /// The type of entity stored in source collection.
+        /// </typeparam>
+        /// <param name="model">
+        /// The model containing filtering, sorting and pagination parameters.
+        /// </param>
+        /// <param name="source">
+        /// The source collection.
+        /// </param>
+        /// <param name="applyFiltering">
+        /// A <see cref="bool"/> value indicating whether source collection
+        /// should be filtered.
+        /// <para/>
+        /// Defaults to <see langword="true"/>.
+        /// </param>
+        /// <param name="applySorting">
+        /// A <see cref="bool"/> value indicating whether source collection
+        /// should be sorted.
+        /// <para/>
+        /// Defaults to <see langword="true"/>.
+        /// </param>
+        /// <param name="applyPagination">
+        /// A <see cref="bool"/> value indicating whether source collection
+        /// should be paginated.
+        /// <para/>
+        /// Defaults to <see langword="true"/>.
+        /// </param>
+        /// <returns>
+        /// A transformed version of source collection.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="model"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
         public IQueryable<TEntity> Apply<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source,
@@ -111,6 +157,31 @@ namespace Fluorite.Strainer.Services
             }
         }
 
+        /// <summary>
+        /// Applies filtering to source collection based on parameters
+        /// found in provided model.
+        /// <para/>
+        /// Can throw <see cref="StrainerException"/> if <see cref="StrainerOptions.ThrowExceptions"/>
+        /// is set to <see langword="true"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// The type of entity stored in source collection.
+        /// </typeparam>
+        /// <param name="model">
+        /// The model containing filtering, sorting and pagination parameters.
+        /// </param>
+        /// <param name="source">
+        /// The source collection.
+        /// </param>
+        /// <returns>
+        /// A filtered version of source collection.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="model"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
         public IQueryable<TEntity> ApplyFiltering<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source)
@@ -190,6 +261,28 @@ namespace Fluorite.Strainer.Services
                 : source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
         }
 
+        /// <summary>
+        /// Applies pagination to source collection based on parameters
+        /// found in provided model.
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// The type of entity stored in source collection.
+        /// </typeparam>
+        /// <param name="model">
+        /// The model containing filtering, sorting and pagination parameters.
+        /// </param>
+        /// <param name="source">
+        /// The source collection.
+        /// </param>
+        /// <returns>
+        /// A paginated version of source collection.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="model"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
         public IQueryable<TEntity> ApplyPagination<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source)
@@ -220,6 +313,31 @@ namespace Fluorite.Strainer.Services
             return source;
         }
 
+        /// <summary>
+        /// Applies sorting to source collection based on parameters
+        /// found in provided model.
+        /// <para/>
+        /// Can throw <see cref="StrainerException"/> if <see cref="StrainerOptions.ThrowExceptions"/>
+        /// is set to <see langword="true"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// The type of entity stored in source collection.
+        /// </typeparam>
+        /// <param name="model">
+        /// The model containing filtering, sorting and pagination parameters.
+        /// </param>
+        /// <param name="source">
+        /// The source collection.
+        /// </param>
+        /// <returns>
+        /// A sorted version of source collection.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="model"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
         public IQueryable<TEntity> ApplySorting<TEntity>(
             IStrainerModel model,
             IQueryable<TEntity> source)
@@ -346,7 +464,7 @@ namespace Fluorite.Strainer.Services
 
             if (metadata == null)
             {
-                return Context.MetadataProvider.GetMetadataFromAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return Context.MetadataProvider.GetMetadataFromAttributes<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

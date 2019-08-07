@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Services.Filtering
         public CustomFilterMethodMapper(StrainerOptions options)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
-            _options = options;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         public void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod)

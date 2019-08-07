@@ -5,12 +5,12 @@ namespace Fluorite.Strainer.TestModels
 {
     public class Comment
     {
-        [Strainer(IsFilterable = true, IsSortable = true)]
+        [StrainerProperty(IsFilterable = true, IsSortable = true)]
         public DateTimeOffset DateCreated { get; set; }
 
         public int Id { get; set; }
 
-        [Strainer(IsFilterable = true)]
+        [StrainerProperty(IsFilterable = true)]
         public string Text { get; set; }
     }
 }

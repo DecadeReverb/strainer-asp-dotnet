@@ -6,8 +6,8 @@ namespace Fluorite.Strainer.Services
     public interface IPropertyBuilder<TEntity>
     {
         IPropertyMetadata Build();
-        IPropertyBuilder<TEntity> CanFilter();
-        ISortPropertyBuilder<TEntity> CanSort();
+        IPropertyBuilder<TEntity> IsFilterable();
+        ISortPropertyBuilder<TEntity> IsSortable();
         IPropertyBuilder<TEntity> HasDisplayName(string displayName);
     }
 }

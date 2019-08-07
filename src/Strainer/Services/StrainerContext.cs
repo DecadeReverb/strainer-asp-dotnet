@@ -20,12 +20,12 @@ namespace Fluorite.Strainer.Services
             IPropertyMetadataProvider metadataProvider,
             ICustomMethodsContext customMethodsContext)
         {
-            CustomMethods = customMethodsContext;
-            Filter = filteringContext;
-            Sorting = sortingContext;
-            Mapper = mapper;
-            MetadataProvider = metadataProvider;
-            Options = options;
+            CustomMethods = customMethodsContext ?? throw new System.ArgumentNullException(nameof(customMethodsContext));
+            Filter = filteringContext ?? throw new System.ArgumentNullException(nameof(filteringContext));
+            Sorting = sortingContext ?? throw new System.ArgumentNullException(nameof(sortingContext));
+            Mapper = mapper ?? throw new System.ArgumentNullException(nameof(mapper));
+            MetadataProvider = metadataProvider ?? throw new System.ArgumentNullException(nameof(metadataProvider));
+            Options = options ?? throw new System.ArgumentNullException(nameof(options));
         }
 
         /// <summary>

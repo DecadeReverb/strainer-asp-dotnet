@@ -8,8 +8,16 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         public CustomFilterMethodBuilder(ICustomFilterMethodMapper mapper, string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(
+                    $"{nameof(name)} cannot be null, empty " +
+                    $"or contain only whitespace characaters.",
+                    nameof(name));
+            }
+
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Name = name;
             Function = context => context.Source;
         }
 

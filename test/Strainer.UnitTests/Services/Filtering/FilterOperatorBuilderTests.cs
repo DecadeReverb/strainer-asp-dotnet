@@ -1,4 +1,7 @@
-﻿using Fluorite.Strainer.Services.Filtering;
+﻿using FluentAssertions;
+using Fluorite.Strainer.Models.Filter.Operators;
+using Fluorite.Strainer.Services.Filtering;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
@@ -6,16 +9,34 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
     public class FilterOperatorBuilderTests
     {
         [Fact]
-        public void Builder_works()
+        public void Builder_Adds_Operator_WithSymbol()
         {
             // Arrange
             var validator = new FilterOperatorValidator();
             var mapper = new FilterOperatorMapper(validator);
 
             // Act
-            var builder = new FilterOperatorBuilder(mapper, symbol: "!=");
+            new FilterOperatorBuilder(mapper, symbol: "===");
 
             // Assert
+            mapper.Symbols.Should().Contain("===");
+        }
+
+        [Fact]
+        public void Builder_Adds_Operator_WithSymbol_And_Expression()
+        {
+            // Arrange
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
+
+            // Act
+            var filterOperator = new FilterOperatorBuilder(mapper, symbol: "===")
+                .HasExpression(context => Expression.Empty())
+                .Build();
+
+            // Assert
+            mapper.Symbols.Should().Contain("===");
+            mapper.Operators.Should().Contain(f => f.Expression == filterOperator.Expression);
         }
     }
 }

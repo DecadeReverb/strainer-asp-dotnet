@@ -4,7 +4,7 @@ namespace Fluorite.Strainer.Services
 {
     public interface IPropertyMetadataProvider
     {
-        IPropertyMetadata GetMetadataFromAttribute<TEntity>(
+        IPropertyMetadata GetMetadataFromAttributes<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,
             string name);

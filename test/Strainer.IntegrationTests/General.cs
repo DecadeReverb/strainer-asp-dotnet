@@ -131,7 +131,7 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void CanFilterBools()
+        public void IsFilterableBools()
         {
             // Arrange
             var model = new StrainerModel()
@@ -148,7 +148,7 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void CanSortBools()
+        public void IsSortableBools()
         {
             // Arrange
             var model = new StrainerModel()
@@ -165,7 +165,7 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void CanSortByMultipleProperties()
+        public void IsSortableByMultipleProperties()
         {
             // Arrange
             var model = new StrainerModel()
@@ -185,7 +185,7 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void CanFilterNullableInts()
+        public void IsFilterableNullableInts()
         {
             // Arrange
             var model = new StrainerModel()
@@ -199,23 +199,6 @@ namespace Fluorite.Strainer.IntegrationTests
 
             // Assert
             result.Should().OnlyContain(p => p.CategoryId == 1);
-        }
-
-        [Fact]
-        public void EqualsDoesntFailWithNonStringTypes()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "LikeCount==50",
-            };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.LikeCount == 50);
         }
 
         [Fact]

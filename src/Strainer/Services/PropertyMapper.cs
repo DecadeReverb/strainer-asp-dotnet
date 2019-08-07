@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.Services
         public PropertyMapper(StrainerOptions options)
         {
             _map = new Dictionary<Type, ISet<IPropertyMetadata>>();
-            _options = options;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         public IReadOnlyDictionary<Type, IEnumerable<IPropertyMetadata>> Properties
@@ -44,8 +44,8 @@ namespace Fluorite.Strainer.Services
         }
 
         public IPropertyMetadata FindProperty<TEntity>(
-            bool canSortRequired,
-            bool canFilterRequired,
+            bool isSortableRequired,
+            bool isFilterableRequired,
             string name)
         {
             try
@@ -57,8 +57,8 @@ namespace Fluorite.Strainer.Services
                 return _map[typeof(TEntity)]
                     .FirstOrDefault(metadata =>
                         (metadata.DisplayName ?? metadata.Name).Equals(name, comparisonMethod)
-                        && (!canSortRequired || metadata.IsSortable)
-                        && (!canFilterRequired || metadata.IsFilterable));
+                        && (!isSortableRequired || metadata.IsSortable)
+                        && (!isFilterableRequired || metadata.IsFilterable));
             }
             catch (Exception ex) when (ex is KeyNotFoundException || ex is ArgumentNullException)
             {

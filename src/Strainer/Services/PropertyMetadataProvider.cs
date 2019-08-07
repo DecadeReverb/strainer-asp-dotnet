@@ -14,11 +14,63 @@ namespace Fluorite.Strainer.Services
 
         public PropertyMetadataProvider(IPropertyMapper mapper, StrainerOptions options)
         {
-            _mapper = mapper;
-            _options = options;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public IPropertyMetadata GetMetadataFromAttribute<TEntity>(
+        public IPropertyMetadata GetMetadataFromAttributes<TEntity>(
+            bool isSortingRequired,
+            bool isFilteringRequired,
+            string name)
+        {
+            var modelType = typeof(TEntity);
+            var propertyMetadata = GetPropertyMetadata(modelType, isSortingRequired, isFilteringRequired, name);
+            if (propertyMetadata == null)
+            {
+                propertyMetadata = GetPropertyMetadataFromObject(modelType, isSortingRequired, isFilteringRequired, name);
+            }
+
+            return propertyMetadata;
+        }
+
+        private IPropertyMetadata GetPropertyMetadataFromObject(
+            Type modelType,
+            bool isSortingRequired,
+            bool isFilteringRequired,
+            string name)
+        {
+            var currentType = modelType;
+
+            do
+            {
+                var propertyInfo = modelType
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .FirstOrDefault(p => p.Name == name);
+                var attribute = currentType.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
+
+                if (attribute != null
+                    && propertyInfo != null
+                    && (isSortingRequired ? attribute.IsSortable : true)
+                    && (isFilteringRequired ? attribute.IsFilterable : true))
+                {
+                    return new PropertyMetadata
+                    {
+                        IsFilterable = attribute.IsFilterable,
+                        IsSortable = attribute.IsSortable,
+                        Name = propertyInfo.Name,
+                        PropertyInfo = propertyInfo,
+                    };
+                }
+
+                currentType = currentType.BaseType;
+
+            } while (currentType != typeof(object) && currentType != typeof(ValueType));
+
+            return null;
+        }
+
+        private IPropertyMetadata GetPropertyMetadata(
+            Type modelType,
             bool isSortingRequired,
             bool isFilteringRequired,
             string name)
@@ -27,14 +79,13 @@ namespace Fluorite.Strainer.Services
                 ? StringComparison.Ordinal
                 : StringComparison.OrdinalIgnoreCase;
 
-            var modelType = typeof(TEntity);
             var keyValue = modelType
                 .GetProperties()
                 .Select(propertyInfo =>
                 {
-                    var attribute = propertyInfo.GetCustomAttribute<StrainerAttribute>(inherit: true);
+                    var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: true);
 
-                    return new KeyValuePair<PropertyInfo, StrainerAttribute>(propertyInfo, attribute);
+                    return new KeyValuePair<PropertyInfo, StrainerPropertyAttribute>(propertyInfo, attribute);
                 })
                 .Where(pair => pair.Value != null)
                 .FirstOrDefault(pair =>
@@ -49,12 +100,10 @@ namespace Fluorite.Strainer.Services
 
             if (keyValue.Value != null)
             {
-                if (string.IsNullOrEmpty(keyValue.Value.Name))
+                if (keyValue.Value.PropertyInfo == null)
                 {
-                    keyValue.Value.Name = keyValue.Key.Name;
+                    keyValue.Value.PropertyInfo = keyValue.Key;
                 }
-
-                keyValue.Value.PropertyInfo = keyValue.Key;
             }
 
             return keyValue.Value;

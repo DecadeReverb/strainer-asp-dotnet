@@ -13,7 +13,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
         public SortTermParser(ISortingWayFormatter formatter)
         {
-            _formatter = formatter;
+            _formatter = formatter ?? throw new System.ArgumentNullException(nameof(formatter));
         }
 
         public IList<ISortTerm> GetParsedTerms(string input)
@@ -24,8 +24,8 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             input = input.Trim();
-
             var value = new List<ISortTerm>();
+
             foreach (var part in Regex.Split(input, EscapedCommaPattern))
             {
                 if (string.IsNullOrWhiteSpace(part))

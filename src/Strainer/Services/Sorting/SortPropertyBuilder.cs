@@ -6,31 +6,41 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortPropertyBuilder<TEntity> : PropertyBuilder<TEntity>, ISortPropertyBuilder<TEntity>, IPropertyBuilder<TEntity>
     {
-        private readonly PropertyMetadata _propertyMetadata;
-
         public SortPropertyBuilder(
             IPropertyMapper strainerPropertyMapper,
             Expression<Func<TEntity, object>> expression,
             IPropertyMetadata basePropertyMetadata)
             : base(strainerPropertyMapper, expression)
         {
-            _propertyMetadata = new PropertyMetadata
+            if (strainerPropertyMapper == null)
             {
-                DisplayName = basePropertyMetadata.DisplayName,
-                IsDefaultSorting = basePropertyMetadata.IsDefaultSorting,
-                IsDefaultSortingAscending = basePropertyMetadata.IsDefaultSortingAscending,
-                IsFilterable = basePropertyMetadata.IsFilterable,
-                IsSortable = basePropertyMetadata.IsSortable,
-                Name = basePropertyMetadata.Name,
-                 PropertyInfo = basePropertyMetadata.PropertyInfo,
-            };
+                throw new ArgumentNullException(nameof(strainerPropertyMapper));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (basePropertyMetadata == null)
+            {
+                throw new ArgumentNullException(nameof(basePropertyMetadata));
+            }
+
+            displayName = basePropertyMetadata.DisplayName;
+            isDefaultSorting = basePropertyMetadata.IsDefaultSorting;
+            isDefaultSortingDescending = basePropertyMetadata.IsDefaultSortingDescending;
+            isFilterable = basePropertyMetadata.IsFilterable;
+            isSortable = basePropertyMetadata.IsSortable;
+            name = basePropertyMetadata.Name;
+            propertyInfo = basePropertyMetadata.PropertyInfo;
         }
 
-        public ISortPropertyBuilder<TEntity> IsDefaultSort(bool isAscending = true)
+        public ISortPropertyBuilder<TEntity> IsDefaultSort(bool isDescending = false)
         {
-            _propertyMetadata.IsDefaultSorting = true;
-            _propertyMetadata.IsDefaultSortingAscending = isAscending;
-            UpdateMap(_propertyMetadata);
+            isDefaultSorting = true;
+            isDefaultSortingDescending = isDescending;
+            UpdateMap(Build());
 
             return this;
         }

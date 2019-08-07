@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests.Services.Sorting
+namespace Fluorite.Strainer.UnitTests.Services.Sorting.Expressions
 {
     public class SortExpressionProviderTests
     {
@@ -30,7 +30,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
             var options = new StrainerOptions();
             var mapper = new PropertyMapper(options);
-            mapper.Property<Comment>(c => c.Text).CanSort();
+            mapper.Property<Comment>(c => c.Text).IsSortable();
             var metadataProvider = new PropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
@@ -88,7 +88,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
             var options = new StrainerOptions();
             var mapper = new PropertyMapper(options);
-            mapper.Property<Post>(c => c.TopComment.Text.Length).CanSort();
+            mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
             var metadataProvider = new PropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
@@ -130,9 +130,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                 .ToDictionary(x => x.prop, x => x.term);
             var options = new StrainerOptions();
             var mapper = new PropertyMapper(options);
-            mapper.Property<Comment>(c => c.Text).CanSort();
-            mapper.Property<Comment>(c => c.Id).CanSort();
-            mapper.Property<Comment>(c => c.DateCreated).CanSort();
+            mapper.Property<Comment>(c => c.Text).IsSortable();
+            mapper.Property<Comment>(c => c.Id).IsSortable();
+            mapper.Property<Comment>(c => c.DateCreated).IsSortable();
             var metadataProvider = new PropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 

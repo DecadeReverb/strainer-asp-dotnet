@@ -17,7 +17,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var provider = new PropertyMetadataProvider(mapper, options);
 
             // Act
-            var result = provider.GetMetadataFromAttribute<Post>(
+            var result = provider.GetMetadataFromAttributes<Post>(
                 isSortingRequired: false,
                 isFilteringRequired: true,
                 name: nameof(Post.Id));
@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var provider = new PropertyMetadataProvider(mapper, options);
 
             // Act
-            var result = provider.GetMetadataFromAttribute<Post>(
+            var result = provider.GetMetadataFromAttributes<Post>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Post.Id));
@@ -53,7 +53,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var provider = new PropertyMetadataProvider(mapper, options);
 
             // Act
-            var result = provider.GetMetadataFromAttribute<Post>(
+            var result = provider.GetMetadataFromAttributes<Post>(
                 isSortingRequired: false,
                 isFilteringRequired: true,
                 name: nameof(Post.Title));
