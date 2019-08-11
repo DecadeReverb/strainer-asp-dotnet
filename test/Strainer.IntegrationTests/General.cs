@@ -213,8 +213,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var customMethodsContext = new CustomMethodsContext(options);
                 var newContext = new StrainerContext(
                     options,
                     context.Filter,
@@ -245,8 +244,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var customMethodsContext = new CustomMethodsContext(options);
                 var newContext = new StrainerContext(
                     options,
                     context.Filter,
@@ -277,8 +275,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var customMethodsContext = new CustomMethodsContext(options);
                 var newContext = new StrainerContext(
                     options,
                     context.Filter,
@@ -310,8 +307,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var customMethodsContext = new CustomMethodsContext(options);
                 var newContext = new StrainerContext(
                     options,
                     context.Filter,
@@ -343,8 +339,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = new StrainerOptions();
                 var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var customMethodsContext = new CustomMethodsContext(options);
                 var newContext = new StrainerContext(
                     options,
                     context.Filter,
@@ -390,8 +385,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 var options = new StrainerOptions();
                 var customSortMethodMapper = new CustomSortMethodMapper(options);
-                var customSortMethodProvider = new  CustomSortMethodProvider(customSortMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customSortMethodProvider);
+                var customMethodsContext = new CustomMethodsContext(options);
                 var newContext = new StrainerContext(
                     options,
                     context.Filter,

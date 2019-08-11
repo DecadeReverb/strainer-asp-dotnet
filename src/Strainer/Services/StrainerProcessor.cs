@@ -48,8 +48,8 @@ namespace Fluorite.Strainer.Services
                 //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
             }
 
-            MapCustomFilterMethods(context.CustomMethods.Filter.Mapper);
-            MapCustomSortMethods(context.CustomMethods.Sort.Mapper);
+            MapCustomFilterMethods(context.CustomMethods.Filter);
+            MapCustomSortMethods(context.CustomMethods.Sort);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Fluorite.Strainer.Services
                     }
                     else
                     {
-                        var customMethod = Context.CustomMethods.Filter?.Mapper.GetMethod<TEntity>(filterTermName);
+                        var customMethod = Context.CustomMethods.Filter.GetMethod<TEntity>(filterTermName);
                         if (customMethod != null)
                         {
                             var context = new CustomFilterMethodContext<TEntity>
@@ -374,7 +374,7 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    var customMethod = Context.CustomMethods.Sort?.Mapper.GetMethod<TEntity>(sortTerm.Name);
+                    var customMethod = Context.CustomMethods.Sort.GetMethod<TEntity>(sortTerm.Name);
                     if (customMethod != null)
                     {
                         var context = new CustomSortMethodContext<TEntity>

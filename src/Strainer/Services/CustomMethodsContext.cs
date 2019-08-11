@@ -14,52 +14,12 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(options));
             }
 
-            var filterMapper = new CustomFilterMethodMapper(options);
-            Filter = new CustomFilterMethodProvider(filterMapper);
-
-            var sortMapper = new CustomSortMethodMapper(options);
-            Sort = new CustomSortMethodProvider(sortMapper);
+            Filter = new CustomFilterMethodMapper(options);
+            Sort = new CustomSortMethodMapper(options);
         }
 
-        public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods)
-        {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+        public ICustomFilterMethodMapper Filter { get; }
 
-            Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
-
-            var mapper = new CustomSortMethodMapper(options);
-            Sort = new CustomSortMethodProvider(mapper);
-        }
-
-        public CustomMethodsContext(StrainerOptions options, ICustomSortMethodProvider sortMethods)
-        {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
-
-            var mapper = new CustomFilterMethodMapper(options);
-            Filter = new CustomFilterMethodProvider(mapper);
-        }
-
-        public CustomMethodsContext(StrainerOptions options, ICustomFilterMethodProvider filterMethods, ICustomSortMethodProvider sortMethods)
-        {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            Filter = filterMethods ?? throw new ArgumentNullException(nameof(filterMethods));
-            Sort = sortMethods ?? throw new ArgumentNullException(nameof(sortMethods));
-        }
-
-        public ICustomFilterMethodProvider Filter { get; }
-
-        public ICustomSortMethodProvider Sort { get; }
+        public ICustomSortMethodMapper Sort { get; }
     }
 }
