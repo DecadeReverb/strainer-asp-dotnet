@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests.Services.Sorting.Expressions
+namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortExpressionProviderTests
     {

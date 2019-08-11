@@ -2,7 +2,7 @@
 using Fluorite.Strainer.Services.Sorting;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests.Services.Sorting.Parsers
+namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortTermParserTests
     {

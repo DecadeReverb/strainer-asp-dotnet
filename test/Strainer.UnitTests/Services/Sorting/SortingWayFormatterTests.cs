@@ -2,7 +2,7 @@
 using Fluorite.Strainer.Services.Sorting;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests.Services.Sorting.WayFormatting
+namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortingWayFormatterTests
     {
