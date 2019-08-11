@@ -4,11 +4,11 @@ using Fluorite.Strainer.Services;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Sorting.Default
+namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
 {
-    public class DefaultSortingTests : StrainerFixtureBase
+    public class DescendingDefaultSortingTests : StrainerFixtureBase
     {
-        public DefaultSortingTests(StrainerFactory factory) : base(factory)
+        public DescendingDefaultSortingTests(StrainerFactory factory) : base(factory)
         {
 
         }
@@ -19,23 +19,23 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new _TestEntity
+                new _TestBlog
                 {
                     Name = "Foo",
                 },
-                new _TestEntity
+                new _TestBlog
                 {
                     Name = "Bar",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateProcessor(context => new _TestStrainerProcessor(context));
+            var processor = Factory.CreateProcessor(context => new _TestDescendingStrainerProcessor(context));
             var model = new StrainerModel();
 
             // Act
             var result = processor.ApplySorting(model, source);
 
             // Assert
-            result.Should().BeInAscendingOrder(e => e.Name);
+            result.Should().BeInDescendingOrder(e => e.Name);
         }
 
         [Fact]
@@ -44,11 +44,11 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new _TestEntity
+                new _TestBlog
                 {
                     Name = "Foo",
                 },
-                new _TestEntity
+                new _TestBlog
                 {
                     Name = "Bar",
                 },
@@ -57,7 +57,7 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting.Default
             {
                 context.Options.ThrowExceptions = false;
 
-                return new _TestStrainerProcessor(context);
+                return new _TestDescendingStrainerProcessor(context);
             });
             var model = new StrainerModel
             {
@@ -68,52 +68,26 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting.Default
             var result = processor.ApplySorting(model, source);
 
             // Assert
-            result.Should().BeInAscendingOrder(e => e.Name);
-        }
-
-        [Fact]
-        public void DefaultSorting_DoesNotWork_When_NoDefaultSortingIsDefined()
-        {
-            // Arrange
-            var source = new[]
-            {
-                new _TestEntity
-                {
-                    Name = "Foo",
-                },
-                new _TestEntity
-                {
-                    Name = "Bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel();
-
-            // Act
-            var result = processor.ApplySorting(model, source);
-
-            // Assert
-            result.Should().BeEquivalentTo(source);
             result.Should().BeInDescendingOrder(e => e.Name);
         }
     }
 
-    class _TestStrainerProcessor : StrainerProcessor
+    class _TestDescendingStrainerProcessor : StrainerProcessor
     {
-        public _TestStrainerProcessor(IStrainerContext context) : base(context)
+        public _TestDescendingStrainerProcessor(IStrainerContext context) : base(context)
         {
 
         }
 
         protected override void MapProperties(IPropertyMapper mapper)
         {
-            mapper.Property<_TestEntity>(e => e.Name)
+            mapper.Property<_TestBlog>(e => e.Name)
                 .IsSortable()
-                .IsDefaultSort();
+                .IsDefaultSort(isDescending: true);
         }
     }
 
-    class _TestEntity
+    class _TestBlog
     {
         public string Name { get; set; }
     }

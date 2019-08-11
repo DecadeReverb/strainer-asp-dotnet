@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Sorting.WayFormatting
+namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
 {
     public class SortingWayFormatterTest : StrainerFixtureBase
     {
