@@ -33,7 +33,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
                     Text = "FOO",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.CaseSensitive = false);
+            var processor = Factory.CreateDefaultProcessor(options => options.IsCaseSensitiveForValues = false);
             var model = new StrainerModel
             {
                 Filters = "Text==*foo",
@@ -47,7 +47,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
         }
 
         [Fact]
-        public void EqualsCaseInsensitive_Works_When_CaseSensivity_IsEnabled()
+        public void EqualsCaseInsensitive_Works_Even_When_CaseSensivity_IsEnabled()
         {
             // Arrange
             var source = new[]
@@ -65,7 +65,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
                     Text = "FOO",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.CaseSensitive = true);
+            var processor = Factory.CreateDefaultProcessor(options => options.IsCaseSensitiveForValues = true);
             var model = new StrainerModel
             {
                 Filters = "Text==*foo",

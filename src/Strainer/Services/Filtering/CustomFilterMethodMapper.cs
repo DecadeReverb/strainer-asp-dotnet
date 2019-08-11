@@ -75,7 +75,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 return null;
             }
 
-            var comparisonType = _options.CaseSensitive
+            var comparisonType = _options.IsCaseSensitiveForNames
                 ? StringComparison.Ordinal
                 : StringComparison.OrdinalIgnoreCase;
 

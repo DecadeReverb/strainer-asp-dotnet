@@ -50,7 +50,7 @@ namespace Fluorite.Strainer.Services
         {
             try
             {
-                var comparisonMethod = _options.CaseSensitive
+                var comparisonMethod = _options.IsCaseSensitiveForNames
                     ? StringComparison.Ordinal
                     : StringComparison.OrdinalIgnoreCase;
 

@@ -75,7 +75,7 @@ namespace Fluorite.Strainer.Services
             bool isFilteringRequired,
             string name)
         {
-            var stringComparisonMethod = _options.CaseSensitive
+            var stringComparisonMethod = _options.IsCaseSensitiveForNames
                 ? StringComparison.Ordinal
                 : StringComparison.OrdinalIgnoreCase;
 

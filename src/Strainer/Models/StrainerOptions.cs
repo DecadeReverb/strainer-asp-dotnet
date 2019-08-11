@@ -18,17 +18,6 @@
         }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indictating whether
-        /// Strainer should operatre in case sensitive mode.
-        /// <para/>
-        /// This affects for example the way of comparing value of incoming filters
-        /// with names of properties marked as filterable.
-        /// <para/>
-        /// Defaults to <see langword="false"/>.
-        /// </summary>
-        public bool CaseSensitive { get; set; } = false;
-
-        /// <summary>
         /// Gets or sets a default page number.
         /// <para/>
         /// Defaults to 1.
@@ -41,6 +30,28 @@
         /// Defaults to 10.
         /// </summary>
         public int DefaultPageSize { get; set; } = 10;
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> value indictating whether
+        /// Strainer should operatre in case sensitive mode when comparing names.
+        /// <para/>
+        /// This affects for example the way of comparing name of incoming filter
+        /// with property name.
+        /// <para/>
+        /// Defaults to <see langword="false"/>.
+        /// </summary>
+        public bool IsCaseSensitiveForNames { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> value indictating whether
+        /// Strainer should operatre in case sensitive mode when comparing values.
+        /// <para/>
+        /// This affects for example the way of comparing value of incoming filter
+        /// with actual property value.
+        /// <para/>
+        /// Defaults to <see langword="false"/>.
+        /// </summary>
+        public bool IsCaseSensitiveForValues { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a maximum page number.
