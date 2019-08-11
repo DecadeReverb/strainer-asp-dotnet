@@ -7,33 +7,33 @@ using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {
-    public class PropertyMetadataProvider : IPropertyMetadataProvider
+    public class AttributePropertyMetadataProvider : IAttributePropertyMetadataProvider
     {
         private readonly IPropertyMapper _mapper;
         private readonly StrainerOptions _options;
 
-        public PropertyMetadataProvider(IPropertyMapper mapper, StrainerOptions options)
+        public AttributePropertyMetadataProvider(IPropertyMapper mapper, StrainerOptions options)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public IPropertyMetadata GetMetadataFromAttributes<TEntity>(
+        public IPropertyMetadata GetPropertyMetadata<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,
             string name)
         {
             var modelType = typeof(TEntity);
-            var propertyMetadata = GetPropertyMetadata(modelType, isSortingRequired, isFilteringRequired, name);
+            var propertyMetadata = GetPropertyMetadataFromPropertyAttribute(modelType, isSortingRequired, isFilteringRequired, name);
             if (propertyMetadata == null)
             {
-                propertyMetadata = GetPropertyMetadataFromObject(modelType, isSortingRequired, isFilteringRequired, name);
+                propertyMetadata = GetPropertyMetadataFromObjectAttribute(modelType, isSortingRequired, isFilteringRequired, name);
             }
 
             return propertyMetadata;
         }
 
-        private IPropertyMetadata GetPropertyMetadataFromObject(
+        private IPropertyMetadata GetPropertyMetadataFromObjectAttribute(
             Type modelType,
             bool isSortingRequired,
             bool isFilteringRequired,
@@ -69,7 +69,7 @@ namespace Fluorite.Strainer.Services
             return null;
         }
 
-        private IPropertyMetadata GetPropertyMetadata(
+        private IPropertyMetadata GetPropertyMetadataFromPropertyAttribute(
             Type modelType,
             bool isSortingRequired,
             bool isFilteringRequired,

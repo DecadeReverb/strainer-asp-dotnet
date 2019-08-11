@@ -31,7 +31,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting.Expressions
             var options = new StrainerOptions();
             var mapper = new PropertyMapper(options);
             mapper.Property<Comment>(c => c.Text).IsSortable();
-            var metadataProvider = new PropertyMetadataProvider(mapper, options);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
@@ -61,7 +61,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting.Expressions
             };
             var options = new StrainerOptions();
             var mapper = new PropertyMapper(options);
-            var metadataProvider = new PropertyMetadataProvider(mapper, options);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
@@ -89,7 +89,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting.Expressions
             var options = new StrainerOptions();
             var mapper = new PropertyMapper(options);
             mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
-            var metadataProvider = new PropertyMetadataProvider(mapper, options);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
@@ -133,7 +133,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting.Expressions
             mapper.Property<Comment>(c => c.Text).IsSortable();
             mapper.Property<Comment>(c => c.Id).IsSortable();
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();
-            var metadataProvider = new PropertyMetadataProvider(mapper, options);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
             var provider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act

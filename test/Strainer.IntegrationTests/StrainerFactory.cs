@@ -50,7 +50,7 @@ namespace Fluorite.Strainer.IntegrationTests
         {
             var options = new StrainerOptions();
             var propertyMapper = new PropertyMapper(options);
-            var propertyMetadataProvider = new PropertyMetadataProvider(propertyMapper, options);
+            var propertyMetadataProvider = new AttributePropertyMetadataProvider(propertyMapper, options);
 
             var filterExpressionProvider = new FilterExpressionProvider();
             var filterOperatorValidator = new FilterOperatorValidator();
