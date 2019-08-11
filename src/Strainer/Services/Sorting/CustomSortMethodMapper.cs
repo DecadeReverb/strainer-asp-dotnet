@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models.Sorting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
@@ -15,6 +16,18 @@ namespace Fluorite.Strainer.Services.Sorting
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
             _options = options ?? throw new ArgumentNullException(nameof(options));
+        }
+
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods
+        {
+            get
+            {
+                var dictionary = _methods.ToDictionary(
+                    k => k.Key,
+                    v => new ReadOnlyDictionary<string, object>(v.Value) as IReadOnlyDictionary<string, object>);
+
+                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>>(dictionary);
+            }
         }
 
         public void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod)
