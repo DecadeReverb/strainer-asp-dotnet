@@ -33,14 +33,14 @@
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether
-        /// Strainer should operatre in case sensitive mode when comparing names.
+        /// Strainer should operatre in case insensitive mode when comparing names.
         /// <para/>
         /// This affects for example the way of comparing name of incoming filter
         /// with property name.
         /// <para/>
-        /// Defaults to <see langword="true"/>.
+        /// Defaults to <see langword="false"/>.
         /// </summary>
-        public bool IsCaseSensitiveForNames { get; set; } = true;
+        public bool IsCaseInsensitiveForNames { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether

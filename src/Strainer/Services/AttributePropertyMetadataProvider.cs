@@ -75,9 +75,9 @@ namespace Fluorite.Strainer.Services
             bool isFilteringRequired,
             string name)
         {
-            var stringComparisonMethod = _options.IsCaseSensitiveForNames
-                ? StringComparison.Ordinal
-                : StringComparison.OrdinalIgnoreCase;
+            var stringComparisonMethod = _options.IsCaseInsensitiveForNames
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
 
             var keyValue = modelType
                 .GetProperties()

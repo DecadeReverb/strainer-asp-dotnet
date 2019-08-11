@@ -50,9 +50,9 @@ namespace Fluorite.Strainer.Services
         {
             try
             {
-                var comparisonMethod = _options.IsCaseSensitiveForNames
-                    ? StringComparison.Ordinal
-                    : StringComparison.OrdinalIgnoreCase;
+                var comparisonMethod = _options.IsCaseInsensitiveForNames
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal;
 
                 return _map[typeof(TEntity)]
                     .FirstOrDefault(metadata =>
