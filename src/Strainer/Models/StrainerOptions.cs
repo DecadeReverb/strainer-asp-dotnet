@@ -38,9 +38,9 @@
         /// This affects for example the way of comparing name of incoming filter
         /// with property name.
         /// <para/>
-        /// Defaults to <see langword="false"/>.
+        /// Defaults to <see langword="true"/>.
         /// </summary>
-        public bool IsCaseSensitiveForNames { get; set; } = false;
+        public bool IsCaseSensitiveForNames { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether
@@ -49,9 +49,9 @@
         /// This affects for example the way of comparing value of incoming filter
         /// with actual property value.
         /// <para/>
-        /// Defaults to <see langword="false"/>.
+        /// Defaults to <see langword="true"/>.
         /// </summary>
-        public bool IsCaseSensitiveForValues { get; set; } = false;
+        public bool IsCaseSensitiveForValues { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a maximum page number.

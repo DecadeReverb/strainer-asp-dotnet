@@ -141,7 +141,7 @@ namespace Fluorite.Strainer.IntegrationTests
             var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
 
             // Act
-            var result = processor.Apply(model, _posts);
+            var result = processor.ApplyFiltering(model, _posts);
 
             // Assert
             result.Should().OnlyContain(p => !p.IsDraft);
@@ -207,7 +207,7 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "Isnew",
+                Filters = "IsNew",
             };
             var processor = Factory.CreateProcessor((context) =>
             {
@@ -333,7 +333,7 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var postModel = new StrainerModel()
             {
-                Filters = "CategoryId==2,Isnew",
+                Filters = "CategoryId==2,IsNew",
             };
             var processor = Factory.CreateProcessor((context) =>
             {
@@ -363,7 +363,7 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var commentModel = new StrainerModel()
             {
-                Filters = "Isnew",
+                Filters = "IsNew",
             };
 
             // Act

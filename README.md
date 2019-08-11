@@ -175,8 +175,8 @@ Strainer comes with following [`options`](https://gitlab.com/fluorite/strainer/b
 | --- | --- | --- | --- |
 | DefaultPageNumber | `int` | 1 | Default page number. |
 | DefaultPageSize | `int` | 10 | Default page size. |
-| IsCaseSensitiveForNames | `bool` | false | A `bool` value indictating whether Strainer should operatre in case sensitive mode when comparing names. This affects for example the way of comparing names of incoming filter with property name. |
-| IsCaseSensitiveForValues | `bool` | false | A `bool` value indictating whether Strainer should operatre in case sensitive mode when comparing values. This affects for example the way of comparing value of incoming filter with actual property value. |
+| IsCaseSensitiveForNames | `bool` | true | A `bool` value indictating whether Strainer should operatre in case sensitive mode when comparing names. This affects for example the way of comparing filter names with names of properties marked as filterable. |
+| IsCaseSensitiveForValues | `bool` | true | A `bool` value indictating whether Strainer should operatre in case sensitive mode when comparing `string` values. This affects for example the way of comparing filter value with `string` value of an actual property. |
 | MaxPageSize | `int` | 50 | Maximum page number. |
 | ThrowExceptions | `bool` | false | A `bool` value indictating whether Strainer should throw [StrainerExceptions](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Exceptions/StrainerException.cs) and the like. |
 

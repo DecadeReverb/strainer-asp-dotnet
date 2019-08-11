@@ -52,7 +52,7 @@ namespace Fluorite.Strainer.IntegrationTests
             var propertyMapper = new PropertyMapper(options);
             var propertyMetadataProvider = new AttributePropertyMetadataProvider(propertyMapper, options);
 
-            var filterExpressionProvider = new FilterExpressionProvider();
+            var filterExpressionProvider = new FilterExpressionProvider(options);
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterOperatorMapper = new FilterOperatorMapper(filterOperatorValidator);
             var filterOperatorParser = new FilterOperatorParser(filterOperatorMapper);
