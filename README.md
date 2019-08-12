@@ -1,3 +1,5 @@
+![Strainer icon](https://i.imgur.com/2wXq8Lu.png)
+
 # Strainer
 
 Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting, filtering and pagination** trival.
