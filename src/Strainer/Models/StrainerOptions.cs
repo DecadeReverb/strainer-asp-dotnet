@@ -44,14 +44,14 @@
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether
-        /// Strainer should operatre in case sensitive mode when comparing values.
+        /// Strainer should operatre in case insensitive mode when comparing values.
         /// <para/>
         /// This affects for example the way of comparing value of incoming filter
         /// with actual property value.
         /// <para/>
-        /// Defaults to <see langword="true"/>.
+        /// Defaults to <see langword="false"/>.
         /// </summary>
-        public bool IsCaseSensitiveForValues { get; set; } = true;
+        public bool IsCaseInsensitiveForValues { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a maximum page number.

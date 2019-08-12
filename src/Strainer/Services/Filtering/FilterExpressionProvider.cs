@@ -80,7 +80,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 var filterValue = GetClosureOverConstant(constantVal, metadata.PropertyInfo.PropertyType);
 
                 if ((filterTerm.Operator.IsCaseInsensitive
-                    || (!filterTerm.Operator.IsCaseInsensitive && !strainerOptions.IsCaseSensitiveForValues))
+                    || (!filterTerm.Operator.IsCaseInsensitive && strainerOptions.IsCaseInsensitiveForValues))
                     && metadata.PropertyInfo.PropertyType == typeof(string))
                 {
                     propertyValue = Expression.Call(
