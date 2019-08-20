@@ -48,22 +48,23 @@ namespace Fluorite.Strainer.Services
             bool isFilterableRequired,
             string name)
         {
-            try
-            {
-                var comparisonMethod = _options.IsCaseInsensitiveForNames
-                    ? StringComparison.OrdinalIgnoreCase
-                    : StringComparison.Ordinal;
+            var comparisonMethod = _options.IsCaseInsensitiveForNames
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
 
-                return _map[typeof(TEntity)]
-                    .FirstOrDefault(metadata =>
-                        (metadata.DisplayName ?? metadata.Name).Equals(name, comparisonMethod)
-                        && (!isSortableRequired || metadata.IsSortable)
-                        && (!isFilterableRequired || metadata.IsFilterable));
-            }
-            catch (Exception ex) when (ex is KeyNotFoundException || ex is ArgumentNullException)
+            _map.TryGetValue(typeof(TEntity), out ISet<IPropertyMetadata> metadataSet);
+
+            if (metadataSet == null)
             {
                 return null;
             }
+
+            return metadataSet.FirstOrDefault(metadata =>
+            {
+                return (metadata.DisplayName ?? metadata.Name).Equals(name, comparisonMethod)
+                    && (!isSortableRequired || metadata.IsSortable)
+                    && (!isFilterableRequired || metadata.IsFilterable);
+            });
         }
 
         public IPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
