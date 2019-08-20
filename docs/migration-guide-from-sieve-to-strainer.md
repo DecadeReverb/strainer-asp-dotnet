@@ -85,7 +85,7 @@ In Sieve, custom filter and sort methods were called using reflection and define
 Old custom filter method:
 
 ```cs
-public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc) // The method is given an indicator of weather to use ThenBy(), and if the query is descending 
+public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc)
 {
     var result = useThenBy
             ? ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount)
@@ -123,7 +123,6 @@ public class ApplicationStrainerProcessor : StrainerProcessor
                 .ThenBy(p => p.CommentCount)
                 .ThenBy(p => p.DateCreated);
     }
-
 }
 ```
 
