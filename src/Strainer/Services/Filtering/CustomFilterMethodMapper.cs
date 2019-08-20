@@ -12,10 +12,11 @@ namespace Fluorite.Strainer.Services.Filtering
         private readonly Dictionary<Type, Dictionary<string, object>> _methods;
         private readonly StrainerOptions _options;
 
-        public CustomFilterMethodMapper(StrainerOptions options)
+        public CustomFilterMethodMapper(IStrainerOptionsProvider optionsProvider)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods

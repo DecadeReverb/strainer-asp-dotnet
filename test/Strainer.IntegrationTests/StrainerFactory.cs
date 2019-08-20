@@ -46,13 +46,18 @@ namespace Fluorite.Strainer.IntegrationTests
             return function(context);
         }
 
+        public IntegrationTestsStrainerOptionsProvider CreateOptionsProvider()
+        {
+            return new IntegrationTestsStrainerOptionsProvider();
+        }
+
         protected IStrainerContext CreateDefaultContext()
         {
-            var options = new StrainerOptions();
-            var propertyMapper = new PropertyMapper(options);
-            var propertyMetadataProvider = new AttributePropertyMetadataProvider(propertyMapper, options);
+            var optionsProvider = new IntegrationTestsStrainerOptionsProvider();
+            var propertyMapper = new PropertyMapper(optionsProvider);
+            var propertyMetadataProvider = new AttributePropertyMetadataProvider(propertyMapper, optionsProvider);
 
-            var filterExpressionProvider = new FilterExpressionProvider(options);
+            var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterOperatorMapper = new FilterOperatorMapper(filterOperatorValidator);
             var filterOperatorParser = new FilterOperatorParser(filterOperatorMapper);
@@ -65,10 +70,10 @@ namespace Fluorite.Strainer.IntegrationTests
             var sortTermParser = new SortTermParser(sortingWayFormatter);
             var sortingContext = new SortingContext(sortExpressionProvider, sortExpressionValidator, sortingWayFormatter, sortTermParser);
 
-            var customMethodsContext = new CustomMethodsContext(options);
+            var customMethodsContext = new CustomMethodsContext(optionsProvider);
 
             return new StrainerContext(
-                options,
+                optionsProvider,
                 filteringContext,
                 sortingContext,
                 propertyMapper,

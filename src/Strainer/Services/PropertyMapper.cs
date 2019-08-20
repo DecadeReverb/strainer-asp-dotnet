@@ -12,10 +12,11 @@ namespace Fluorite.Strainer.Services
         private readonly Dictionary<Type, ISet<IPropertyMetadata>> _map;
         private readonly StrainerOptions _options;
 
-        public PropertyMapper(StrainerOptions options)
+        public PropertyMapper(IStrainerOptionsProvider optionsProvider)
         {
             _map = new Dictionary<Type, ISet<IPropertyMetadata>>();
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
         public IReadOnlyDictionary<Type, IEnumerable<IPropertyMetadata>> Properties

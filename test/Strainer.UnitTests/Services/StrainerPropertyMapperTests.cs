@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.TestModels;
+using Moq;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services
@@ -12,8 +13,11 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Null_WhenJustPropertyIsCalled()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
 
             // Act
             mapper.Property<Post>(p => p.Id);
@@ -30,8 +34,11 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Map_WhenMarkedAsFilterable()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
 
             // Act
             mapper.Property<Post>(p => p.Id)
@@ -50,8 +57,11 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Returns_Map_WhenMarkedAsSortable()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
 
             // Act
             mapper.Property<Post>(p => p.Id)
@@ -70,8 +80,11 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_Map_Via_AddMap()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
             var metadata = new PropertyMetadata()
             {
                 DisplayName = nameof(Post.Id),
@@ -95,8 +108,11 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_AlreadyExistingMaps_Via_AddMap()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
             var metadata = new PropertyMetadata()
             {
                 DisplayName = nameof(Post.Id),

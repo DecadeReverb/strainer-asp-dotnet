@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Fluorite.Strainer.Services;
+using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests
 {

@@ -7,15 +7,15 @@ namespace Fluorite.Strainer.Services
 {
     public class CustomMethodsContext : ICustomMethodsContext
     {
-        public CustomMethodsContext(StrainerOptions options)
+        public CustomMethodsContext(IStrainerOptionsProvider optionsProvider)
         {
-            if (options == null)
+            if (optionsProvider == null)
             {
-                throw new ArgumentNullException(nameof(options));
+                throw new ArgumentNullException(nameof(optionsProvider));
             }
 
-            Filter = new CustomFilterMethodMapper(options);
-            Sort = new CustomSortMethodMapper(options);
+            Filter = new CustomFilterMethodMapper(optionsProvider);
+            Sort = new CustomSortMethodMapper(optionsProvider);
         }
 
         public ICustomFilterMethodMapper Filter { get; }

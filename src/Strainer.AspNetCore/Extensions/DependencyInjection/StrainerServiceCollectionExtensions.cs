@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.AspNetCore.Services;
+using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
@@ -14,56 +15,9 @@ namespace Fluorite.Extensions.DependencyInjection
     {
         public const ServiceLifetime DefaultServiceLifetime = ServiceLifetime.Scoped;
 
-        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, IConfiguration configuration)
-            where TProcessor : class, IStrainerProcessor
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            var options = new StrainerOptions();
-            configuration.Bind(options);
-            services.AddSingleton(options);
-
-            services.AddOptions<AspNetCoreStrainerOptions>();
-            services.Configure<AspNetCoreStrainerOptions>(configuration);
-
-            var builder = services.AddStrainer<TProcessor>();
-
-            return builder;
-        }
-
-        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, Action<AspNetCoreStrainerOptions> configure)
-            where TProcessor : class, IStrainerProcessor
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (configure == null)
-            {
-                throw new ArgumentNullException(nameof(configure));
-            }
-
-            var options = new AspNetCoreStrainerOptions();
-            configure(options);
-            services.AddSingleton<StrainerOptions>(options);
-
-            services.AddOptions<AspNetCoreStrainerOptions>().Configure(configure);
-
-            var builder = services.AddStrainer<TProcessor>();
-
-            return builder;
-        }
-
-        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services)
+        public static IStrainerBuilder AddStrainer<TProcessor>(
+            this IServiceCollection services,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
             where TProcessor : class, IStrainerProcessor
         {
             if (services == null)
@@ -81,11 +35,10 @@ namespace Fluorite.Extensions.DependencyInjection
             // Add Strainer options only if they weren't configured yet.
             if (!services.ContainsServiceOfType<StrainerOptions>())
             {
-                services.AddOptions();
-                services.AddSingleton<StrainerOptions>();
+                services.AddOptions<StrainerOptions>();
             }
 
-            var serviceLifetime = services.GetStrainerLifetime();
+            services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
 
             services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
             services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
@@ -112,6 +65,52 @@ namespace Fluorite.Extensions.DependencyInjection
             return new StrainerBuilder(services);
         }
 
+        public static IStrainerBuilder AddStrainer<TProcessor>(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
+            where TProcessor : class, IStrainerProcessor
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            services.Configure<StrainerOptions>(configuration);
+
+            var builder = services.AddStrainer<TProcessor>();
+
+            return builder;
+        }
+
+        public static IStrainerBuilder AddStrainer<TProcessor>(
+            this IServiceCollection services,
+            Action<StrainerOptions> configure,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
+            where TProcessor : class, IStrainerProcessor
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (configure == null)
+            {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            services.AddOptions<StrainerOptions>().Configure(configure);
+
+            var builder = services.AddStrainer<TProcessor>();
+
+            return builder;
+        }
+
         private static void Add<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
         {
             services.Add(new ServiceDescriptor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime));
@@ -125,15 +124,6 @@ namespace Fluorite.Extensions.DependencyInjection
         private static bool ContainsServiceOfType(this IServiceCollection services, Type implementationType)
         {
             return services.Any(d => d.ServiceType == implementationType);
-        }
-
-        private static ServiceLifetime GetStrainerLifetime(this IServiceCollection services)
-        {
-            using (var provider = services.BuildServiceProvider())
-            {
-                return provider.GetService<IOptions<AspNetCoreStrainerOptions>>()?.Value.ServiceLifetime
-                    ?? DefaultServiceLifetime;
-            }
         }
     }
 }

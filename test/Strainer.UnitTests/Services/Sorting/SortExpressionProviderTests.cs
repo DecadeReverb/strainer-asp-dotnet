@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.TestModels;
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,14 +29,17 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 { propertyInfo, sortTerm },
             };
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
-            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
-            var provider = new SortExpressionProvider(mapper, metadataProvider);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, optionsProvider);
+            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
-            var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
+            var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
             var firstExpression = sortExpressions.FirstOrDefault();
 
             // Assert
@@ -59,13 +63,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 { propertyInfo, sortTerm },
             };
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
-            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
-            var provider = new SortExpressionProvider(mapper, metadataProvider);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, optionsProvider);
+            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
-            var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
+            var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
 
             // Assert
             sortExpressions.Should().BeEmpty();
@@ -86,14 +93,17 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 { propertyInfo, sortTerm },
             };
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
             mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
-            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
-            var provider = new SortExpressionProvider(mapper, metadataProvider);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, optionsProvider);
+            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
-            var sortExpressions = provider.GetExpressions<Post>(sortTerms);
+            var sortExpressions = expressionProvider.GetExpressions<Post>(sortTerms);
             var firstExpression = sortExpressions.FirstOrDefault();
 
             // Assert
@@ -128,16 +138,19 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
             var sortTerms = properties.Zip(termsList, (prop, term) => new { prop, term })
                 .ToDictionary(x => x.prop, x => x.term);
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
             mapper.Property<Comment>(c => c.Id).IsSortable();
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();
-            var metadataProvider = new AttributePropertyMetadataProvider(mapper, options);
-            var provider = new SortExpressionProvider(mapper, metadataProvider);
+            var metadataProvider = new AttributePropertyMetadataProvider(mapper, optionsProvider);
+            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
 
             // Act
-            var sortExpressions = provider.GetExpressions<Comment>(sortTerms);
+            var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
             var firstExpression = sortExpressions.FirstOrDefault();
             var secondExpression = sortExpressions.LastOrDefault();
 

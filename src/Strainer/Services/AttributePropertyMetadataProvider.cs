@@ -12,10 +12,11 @@ namespace Fluorite.Strainer.Services
         private readonly IPropertyMapper _mapper;
         private readonly StrainerOptions _options;
 
-        public AttributePropertyMetadataProvider(IPropertyMapper mapper, StrainerOptions options)
+        public AttributePropertyMetadataProvider(IPropertyMapper mapper, IStrainerOptionsProvider optionsProvider)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
         public IPropertyMetadata GetPropertyMetadata<TEntity>(

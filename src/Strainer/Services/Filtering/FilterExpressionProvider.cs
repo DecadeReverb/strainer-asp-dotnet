@@ -10,11 +10,12 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionProvider : IFilterExpressionProvider
     {
-        private readonly StrainerOptions strainerOptions;
+        private readonly StrainerOptions _options;
 
-        public FilterExpressionProvider(StrainerOptions strainerOptions)
+        public FilterExpressionProvider(IStrainerOptionsProvider optionsProvider)
         {
-            this.strainerOptions = strainerOptions ?? throw new ArgumentNullException(nameof(strainerOptions));
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
         public Expression GetExpression(
@@ -80,7 +81,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 var filterValue = GetClosureOverConstant(constantVal, metadata.PropertyInfo.PropertyType);
 
                 if ((filterTerm.Operator.IsCaseInsensitive
-                    || (!filterTerm.Operator.IsCaseInsensitive && strainerOptions.IsCaseInsensitiveForValues))
+                    || (!filterTerm.Operator.IsCaseInsensitive && _options.IsCaseInsensitiveForValues))
                     && metadata.PropertyInfo.PropertyType == typeof(string))
                 {
                     propertyValue = Expression.Call(

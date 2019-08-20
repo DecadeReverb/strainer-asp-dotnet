@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.TestModels;
+using Moq;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services
@@ -12,12 +13,15 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Provider_Returns_NoPropertyMetadata_WhenRegistredWithFluentApi()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
-            var provider = new AttributePropertyMetadataProvider(mapper, options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
+            var attributeMetadataProvider = new AttributePropertyMetadataProvider(mapper, optionsProvider);
 
             // Act
-            var result = provider.GetPropertyMetadata<Post>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
                 isSortingRequired: false,
                 isFilteringRequired: true,
                 name: nameof(Post.Id));
@@ -30,12 +34,15 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Provider_Returns_NoPropertyMetadata_WhenNoneAreMatchingConditions()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
-            var provider = new AttributePropertyMetadataProvider(mapper, options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
+            var attributeMetadataProvider = new AttributePropertyMetadataProvider(mapper, optionsProvider);
 
             // Act
-            var result = provider.GetPropertyMetadata<Post>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Post.Id));
@@ -48,12 +55,15 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Provider_Returns_PropertyMetadata_FromStrainerAttribute()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
-            var provider = new AttributePropertyMetadataProvider(mapper, options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
+            var attributeMetadataProvider = new AttributePropertyMetadataProvider(mapper, optionsProvider);
 
             // Act
-            var result = provider.GetPropertyMetadata<Post>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
                 isSortingRequired: false,
                 isFilteringRequired: true,
                 name: nameof(Post.Title));

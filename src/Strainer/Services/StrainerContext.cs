@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Services
         /// Initializes new instance of <see cref="StrainerContext"/> class.
         /// </summary>
         public StrainerContext(
-            StrainerOptions options,
+            IStrainerOptionsProvider optionsProvider,
             IFilterContext filteringContext,
             ISortingContext sortingContext,
             IPropertyMapper mapper,
@@ -26,7 +26,8 @@ namespace Fluorite.Strainer.Services
             Sorting = sortingContext ?? throw new ArgumentNullException(nameof(sortingContext));
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             MetadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
-            Options = options ?? throw new ArgumentNullException(nameof(options));
+            Options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
         /// <summary>
