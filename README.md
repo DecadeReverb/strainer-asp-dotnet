@@ -232,7 +232,7 @@ Strainer model is based on four properties:
 
 ### Sorts
 
-`Sorts` is a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly. Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control that behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
+`Sorts` is a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly. Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control this behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
 
 ### Filters
 
@@ -292,7 +292,7 @@ public class User {
 }
 ```
 
-in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to the nested property:
+in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to nested property:
 
 ```cs
 protected override void MapProperties(IStrainerPropertyMapper mapper)
@@ -359,6 +359,8 @@ Strainer comes with following filter operators:
 | `==*`      | Equals _(case-insensitive)_                  |
 | `!@=*`     | Does not contain _(case-insensitive)_        |
 | `!_=*`     | Does not start with _(case-insensitive)_     |
+
+Case insensitive operators will force case insensitivity when comparing values even when [`IsCaseInsensitiveForValues`](#configure-strainer) option is set to `false`.
 
 ## Custom filter operators
 
