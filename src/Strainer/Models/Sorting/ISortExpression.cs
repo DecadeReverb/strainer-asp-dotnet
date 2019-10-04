@@ -1,7 +1,7 @@
 ﻿namespace Fluorite.Strainer.Models.Sorting
 {
     /// <summary>
-    /// Provides additional information about expression used for sorting.
+    /// Provides information about expression used for sorting.
     /// </summary>
     public interface ISortExpression
     {

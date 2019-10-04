@@ -4,8 +4,7 @@ using System.Linq.Expressions;
 namespace Fluorite.Strainer.Models.Sorting
 {
     /// <summary>
-    /// Provides additional information about expression used for sorting
-    /// and strongly typed expression over <see cref="Func{T, TResult}"/>.
+    /// Provides information about strongly typed expression used for sorting.
     /// </summary>
     /// <typeparam name="TEntity">
     /// The type of entity for which the expression is for.
