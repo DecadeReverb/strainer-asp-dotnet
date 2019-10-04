@@ -38,13 +38,13 @@ namespace Fluorite.Strainer.Attributes
         public bool IsDefaultSortingDescending { get; set; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets <see cref="bool"/> value indicating whether related
         /// property is marked as filterable.
         /// </summary>
         public bool IsFilterable { get; set; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets a <see cref="bool"/> value indicating whether related
         /// property is marked as sortable.
         /// </summary>
         public bool IsSortable { get; set; }
