@@ -18,12 +18,12 @@ namespace Fluorite.Strainer.Models.Sorting
         bool IsDescending { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current ordering
-        /// is a subsequent one - not a first one.
+        /// Gets a <see cref="bool"/> value indictating whether current context
+        /// for sorting is a subsequent one - not a first one.
         /// <para/>
-        /// If <see langword="true"/>, then a subsequent
-        /// ordering calls should be executed on source collection
-        /// e.g. ThenBy() or ThenByDescending().
+        /// If <see langword="true"/>, then a subsequent ordering calls
+        /// should be executed on source collection using ThenBy()
+        /// or ThenByDescending().
         /// </summary>
         bool IsSubsequent { get; }
 
