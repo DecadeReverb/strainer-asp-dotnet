@@ -5,16 +5,44 @@ using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 
 namespace Fluorite.Extensions.DependencyInjection
 {
+    /// <summary>
+    /// Provides extensions for adding Strainer services to <see cref="IServiceCollection"/>.
+    /// </summary>
     public static class StrainerServiceCollectionExtensions
     {
+        /// <summary>
+        /// The default service lifetime for Strainer services.
+        /// </summary>
         public const ServiceLifetime DefaultServiceLifetime = ServiceLifetime.Scoped;
 
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <typeparam name="TProcessor">
+        /// The type of Strainer processor used.
+        /// </typeparam>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
         public static IStrainerBuilder AddStrainer<TProcessor>(
             this IServiceCollection services,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -65,6 +93,36 @@ namespace Fluorite.Extensions.DependencyInjection
             return new StrainerBuilder(services);
         }
 
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>
+        /// with a configuration.
+        /// </summary>
+        /// <typeparam name="TProcessor">
+        /// The type of Strainer processor used.
+        /// </typeparam>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="configuration">
+        /// A configuration used to bind against <see cref="StrainerOptions"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="configuration"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
         public static IStrainerBuilder AddStrainer<TProcessor>(
             this IServiceCollection services,
             IConfiguration configuration,
@@ -88,6 +146,35 @@ namespace Fluorite.Extensions.DependencyInjection
             return builder;
         }
 
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <typeparam name="TProcessor">
+        /// The type of Strainer processor used.
+        /// </typeparam>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="configure">
+        /// An action used to configure <see cref="StrainerOptions"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="configure"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
         public static IStrainerBuilder AddStrainer<TProcessor>(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
