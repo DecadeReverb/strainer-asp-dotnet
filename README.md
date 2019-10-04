@@ -77,7 +77,7 @@ Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is esp
 
 ### Use Strainer to filter/sort/paginate
 
-In example below, Strainer processor is injected in a controller. Then, in `GetPost()` Strainer will process the source collection by calling `Apply()`. It will filter, sort and/or paginate the source `IQueryable` depending on model parameters.
+In example below, Strainer processor is injected to a controller. In `GetPosts()` method below, `Apply()` is called causing the source collection to be processed. Strainer processor will filter, sort and/or paginate the source `IQueryable` depending on model parameters.
 
 ```cs
 private readonly ApplicationDbContext _dbContext;
@@ -98,7 +98,7 @@ public JsonResult GetPosts(StrainerModel strainerModel)
 }
 ```
 
-You can also explicitly specify if only filtering, sorting, and/or pagination should be applied via optional `bool` arguments:
+You can explicitly specify whether only filtering, sorting, and/or pagination should be applied via optional `bool` arguments:
 
 ```cs
 var result = _strainerProcessor.Apply(
