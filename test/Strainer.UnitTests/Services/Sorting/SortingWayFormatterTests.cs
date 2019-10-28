@@ -6,7 +6,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortingWayFormatterTests
     {
-        private readonly static string DescendingWaySortingPrefix = SortingWayFormatter.DescendingWaySortingPrefix;
+        private readonly static string DescendingWaySortingPrefix = DescendingPrefixSortingWayFormatter.DescendingWaySortingPrefix;
 
         [Fact]
         public void Formatter_DoesNotChangeInput_WhenInputIsEmpty()
@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             // Arrange
             var input = string.Empty;
             var isDescending = false;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Format(input, isDescending);
@@ -31,7 +31,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             // Arrange
             var input = " ";
             var isDescending = false;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Format(input, isDescending);
@@ -48,7 +48,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             // Arrange
             var input = "foo";
             var isDescending = true;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Format(input, isDescending);
@@ -65,7 +65,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             // Arrange
             var input = "foo";
             var isDescending = false;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Format(input, isDescending);
@@ -81,7 +81,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = "foo";
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.IsDescending(input);
@@ -97,7 +97,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = DescendingWaySortingPrefix + "foo";
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.IsDescending(input);
@@ -113,7 +113,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = DescendingWaySortingPrefix + "foo";
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Unformat(input);
@@ -129,7 +129,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = DescendingWaySortingPrefix;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Unformat(input);
@@ -145,7 +145,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = "foo";
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Unformat(input);
@@ -161,7 +161,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = string.Empty;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Unformat(input);
@@ -177,7 +177,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = " ";
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
             var result = formatter.Unformat(input);

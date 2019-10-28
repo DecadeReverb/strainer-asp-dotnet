@@ -66,7 +66,7 @@ namespace Fluorite.Strainer.IntegrationTests
 
             var sortExpressionProvider = new SortExpressionProvider(propertyMapper, propertyMetadataProvider);
             var sortExpressionValidator = new SortExpressionValidator();
-            var sortingWayFormatter = new SortingWayFormatter();
+            var sortingWayFormatter = new DescendingPrefixSortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter);
             var sortingContext = new SortingContext(sortExpressionProvider, sortExpressionValidator, sortingWayFormatter, sortTermParser);
 

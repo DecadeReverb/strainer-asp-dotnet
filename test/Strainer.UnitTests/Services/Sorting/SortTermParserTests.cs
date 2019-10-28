@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             string input = null;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
             ISortTermParser parser = new SortTermParser(formatter);
 
             // Act
@@ -28,7 +28,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = string.Empty;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
             ISortTermParser parser = new SortTermParser(formatter);
 
             // Act
@@ -45,7 +45,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         {
             // Arrange
             var input = string.Empty;
-            ISortingWayFormatter formatter = new SortingWayFormatter();
+            ISortingWayFormatter formatter = new DescendingPrefixSortingWayFormatter();
             ISortTermParser parser = new SortTermParser(formatter);
 
             // Act

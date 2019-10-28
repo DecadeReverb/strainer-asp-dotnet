@@ -7,11 +7,11 @@ namespace Fluorite.Strainer.Services.Sorting
     /// Provides means of two-way formatting and recognizing a sorting
     /// direction on input value based on prefix added on when descending ordering.
     /// </summary>
-    public class SortingWayFormatter : ISortingWayFormatter
+    public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
     {
         public static readonly string DescendingWaySortingPrefix = "-";
 
-        public SortingWayFormatter()
+        public DescendingPrefixSortingWayFormatter()
         {
 
         }
