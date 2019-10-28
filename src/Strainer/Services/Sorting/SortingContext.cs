@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Sorting
+﻿using System;
+
+namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortingContext : ISortingContext
     {
@@ -8,10 +10,10 @@
             ISortingWayFormatter formatter,
             ISortTermParser parser)
         {
-            ExpressionProvider = expressionProvider ?? throw new System.ArgumentNullException(nameof(expressionProvider));
-            ExpressionValidator = expressionValidator ?? throw new System.ArgumentNullException(nameof(expressionValidator));
-            Formatter = formatter ?? throw new System.ArgumentNullException(nameof(formatter));
-            TermParser = parser ?? throw new System.ArgumentNullException(nameof(parser));
+            ExpressionProvider = expressionProvider ?? throw new ArgumentNullException(nameof(expressionProvider));
+            ExpressionValidator = expressionValidator ?? throw new ArgumentNullException(nameof(expressionValidator));
+            Formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
+            TermParser = parser ?? throw new ArgumentNullException(nameof(parser));
         }
 
         public ISortExpressionProvider ExpressionProvider { get; set; }
