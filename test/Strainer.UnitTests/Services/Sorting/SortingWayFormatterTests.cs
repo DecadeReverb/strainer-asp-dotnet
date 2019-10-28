@@ -6,7 +6,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortingWayFormatterTests
     {
-        private readonly static string DescendingWaySortingPrefix = DescendingPrefixSortingWayFormatter.DescendingWaySortingPrefix;
+        private readonly static string DescendingWaySortingPrefix = DescendingPrefixSortingWayFormatter.Prefix;
 
         [Fact]
         public void Formatter_DoesNotChangeInput_WhenInputIsEmpty()

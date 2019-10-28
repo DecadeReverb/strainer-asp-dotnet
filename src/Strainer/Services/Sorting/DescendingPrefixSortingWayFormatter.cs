@@ -9,8 +9,17 @@ namespace Fluorite.Strainer.Services.Sorting
     /// </summary>
     public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
     {
-        public static readonly string DescendingWaySortingPrefix = "-";
+        /// <summary>
+        /// The prefix used to mark by this formatter.
+        /// <para/>
+        /// This field is readonly.
+        /// </summary>
+        public static readonly string Prefix = "-";
 
+        /// <summary>
+        /// Initializes new instance of <see cref="DescendingPrefixSortingWayFormatter"/>
+        /// class.
+        /// </summary>
         public DescendingPrefixSortingWayFormatter()
         {
 
@@ -29,7 +38,7 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             return isDescending
-                ? DescendingWaySortingPrefix + input
+                ? Prefix + input
                 : input;
         }
 
@@ -57,7 +66,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(input));
             }
 
-            return input.StartsWith(DescendingWaySortingPrefix);
+            return input.StartsWith(Prefix);
         }
 
         public string Unformat(string input)
@@ -73,7 +82,7 @@ namespace Fluorite.Strainer.Services.Sorting
             }
             else
             {
-                return input.TrimStartOnce(DescendingWaySortingPrefix);
+                return input.TrimStartOnce(Prefix);
             }
         }
     }
