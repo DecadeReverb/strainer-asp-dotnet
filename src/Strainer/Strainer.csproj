@@ -16,7 +16,7 @@
     <PackageIconUrl>https://gitlab.com/fluorite/assets/raw/master/img/logo/png/fluorite-logo-transparent-bg-64.png</PackageIconUrl>
     <RepositoryUrl>https://gitlab.com/fluorite/strainer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Heavy refactoring</PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
