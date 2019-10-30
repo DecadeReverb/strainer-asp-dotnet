@@ -183,6 +183,8 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
     internal class _TestSortingWayFormatter : ISortingWayFormatter
     {
+        public bool IsDescendingDefaultSortingWay => throw new NotImplementedException();
+
         public string Format(string input, bool isDescending)
         {
             throw new NotImplementedException();

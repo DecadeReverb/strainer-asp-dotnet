@@ -6,6 +6,8 @@
     /// </summary>
     public interface ISortingWayFormatter
     {
+        bool IsDescendingDefaultSortingWay { get; }
+
         string Format(string input, bool isDescending);
 
         /// <summary>

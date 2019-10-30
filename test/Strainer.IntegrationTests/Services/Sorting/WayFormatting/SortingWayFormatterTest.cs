@@ -51,7 +51,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
             });
             var model = new StrainerModel
             {
-                Sorts = "Name" + _TestSortingWayFormatter.AscendingSortingWaySuffix
+                Sorts = "Name" + _TestSortingWayFormatter.AscendingSuffix
             };
 
             // Act
@@ -84,12 +84,15 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
 
     class _TestSortingWayFormatter : ISortingWayFormatter
     {
-        public static readonly string AscendingSortingWaySuffix = "_asc";
-        public static readonly string DescendingSortingWaySuffix = "_desc";
+        public static readonly string AscendingSuffix = "_asc";
+
+        public static readonly string DescendingSuffix = "_desc";
+
+        public bool IsDescendingDefaultSortingWay => true;
 
         public string Format(string input, bool isDescending)
         {
-            if (input == null)
+            if (input is null)
             {
                 throw new ArgumentNullException(nameof(input));
             }
@@ -99,43 +102,61 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
                 return input;
             }
 
-            var sortingWaySuffix = isDescending ? DescendingSortingWaySuffix : AscendingSortingWaySuffix;
-
-            return input + sortingWaySuffix;
+            return input + GetSuffix(isDescending);
         }
 
         public bool IsDescending(string input)
         {
-            if (input == null)
+            if (input is null)
             {
                 throw new ArgumentNullException(nameof(input));
             }
 
-            return input.EndsWith(DescendingSortingWaySuffix);
+            if (input.EndsWith(DescendingSuffix))
+            {
+                return true;
+            }
+
+            if (input.EndsWith(AscendingSuffix))
+            {
+                return false;
+            }
+
+            return IsDescendingDefaultSortingWay;
         }
 
         public string Unformat(string input)
         {
-            if (input == null)
+            if (input is null)
             {
                 throw new ArgumentNullException(nameof(input));
             }
 
-            if (input.EndsWith(AscendingSortingWaySuffix))
+            if (string.IsNullOrEmpty(input))
             {
-                return input.TrimEndOnce(AscendingSortingWaySuffix);
+                return input;
+            }
+
+            if (input.EndsWith(AscendingSuffix))
+            {
+                return input.TrimEndOnce(AscendingSuffix);
             }
             else
             {
-                if (input.EndsWith(DescendingSortingWaySuffix))
+                if (input.EndsWith(DescendingSuffix))
                 {
-                    return input.TrimEndOnce(DescendingSortingWaySuffix);
+                    return input.TrimEndOnce(DescendingSuffix);
                 }
-                else
-                {
-                    return input;
-                }
+
+                return input;
             }
+        }
+
+        private string GetSuffix(bool isDescending)
+        {
+            return isDescending
+                ? DescendingSuffix
+                : AscendingSuffix;
         }
     }
 }

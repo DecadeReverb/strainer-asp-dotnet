@@ -6,11 +6,11 @@ During porting from Sieve to Strainer, the project met heavy refactoring. Whole 
 
 As this project was forked, to avoid ambiguity a new name was established - **"Strainer"**.
 
-Replace your `Sieve` models and services with `Strainer` (run find and replace with `Ctrl` + `H` in VS):
+Replace your `Sieve` models and services with `Strainer`.
 
 ### New namespace - Fluorite.Strainer
 
-New project name comes with new namespace. Replace your `Sieve` usings:
+New project name comes with new namespace. Replace your `Sieve` usings like:
 
 ```cs
 using Sieve.Services;

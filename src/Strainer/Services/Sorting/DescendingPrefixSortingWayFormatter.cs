@@ -10,7 +10,7 @@ namespace Fluorite.Strainer.Services.Sorting
     public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
     {
         /// <summary>
-        /// The prefix used to mark by this formatter.
+        /// The prefix used to mark a descending sorting term by this formatter.
         /// <para/>
         /// This field is readonly.
         /// </summary>
@@ -24,6 +24,8 @@ namespace Fluorite.Strainer.Services.Sorting
         {
 
         }
+
+        public bool IsDescendingDefaultSortingWay => true;
 
         public string Format(string input, bool isDescending)
         {
