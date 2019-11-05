@@ -1,11 +1,8 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.TestModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
@@ -87,15 +84,15 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             // Arrange
             var source = new[]
             {
-                new Post
+                new Comment
                 {
                     LikeCount = 20,
                 },
-                new Post
+                new Comment
                 {
                     LikeCount = 10,
                 },
-                new Post
+                new Comment
                 {
                     LikeCount = 50,
                 },
@@ -110,7 +107,16 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(p => !p.LikeCount.Equals(20));
+            result.Should().OnlyContain(c => !c.LikeCount.Equals(20));
         }
+    }
+
+    class Comment
+    {
+        [StrainerProperty(IsFilterable = true)]
+        public int LikeCount { get; set; }
+
+        [StrainerProperty(IsFilterable = true)]
+        public string Text { get; set; }
     }
 }

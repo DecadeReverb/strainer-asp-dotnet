@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.TestModels;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,7 +16,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
     public class SortExpressionProviderTests
     {
         [Fact]
-        public void Provider_ReturnsListOfSortExpressions()
+        public void Provider_Returns_ListOfSortExpressions()
         {
             // Arrange
             var sortTerm = new SortTerm
@@ -49,7 +50,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         }
 
         [Fact]
-        public void Provider_ReturnsEmptyListOfSortExpressions_WhenNoMatchingPropertyIsFound()
+        public void Provider_Returns_EmptyListOfSortExpressions_When_NoMatchingPropertyIsFound()
         {
             // Arrange
             var sortTerm = new SortTerm
@@ -79,7 +80,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         }
 
         [Fact]
-        public void Provider_ReturnsListOfSortExpressions_ForNestedProperty()
+        public void Provider_Returns_ListOfSortExpressions_For_NestedProperty()
         {
             // Arrange
             var sortTerm = new SortTerm
@@ -113,7 +114,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         }
 
         [Fact]
-        public void Provider_ReturnsListOfSortExpressions_ForSubsequentSorting()
+        public void Provider_Returns_ListOfSortExpressions_For_SubsequentSorting()
         {
             // Arrange
             var termsList = new List<ISortTerm>
@@ -160,6 +161,22 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             firstExpression.IsSubsequent.Should().BeFalse();
             secondExpression.IsDescending.Should().BeFalse();
             secondExpression.IsSubsequent.Should().BeTrue();
+        }
+
+        private class Comment
+        {
+            [StrainerProperty(IsFilterable = true, IsSortable = true)]
+            public DateTimeOffset DateCreated { get; set; }
+
+            public int Id { get; set; }
+
+            [StrainerProperty(IsFilterable = true)]
+            public string Text { get; set; }
+        }
+
+        private class Post
+        {
+            public Comment TopComment { get; set; }
         }
     }
 }

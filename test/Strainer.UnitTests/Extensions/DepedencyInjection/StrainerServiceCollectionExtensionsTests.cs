@@ -85,11 +85,10 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(strainerOptions)
                 .Build();
-            var serviceProvider = services.BuildServiceProvider();
 
             // Act
             services.AddStrainer<StrainerProcessor>(configuration);
-            serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
 
@@ -140,7 +139,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             services.AddStrainer<StrainerProcessor>();
-            services.AddScoped<IFilterTermParser, _TestFilterTermParser>();
+            services.AddScoped<IFilterTermParser, TestFilterTermParser>();
             var serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionFilterTermParser = serviceProvider.GetService<IFilterTermParser>();
@@ -152,7 +151,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                         "Strainer to the service collection.");
             postExtensionFilterTermParser
                 .Should()
-                .BeAssignableTo<_TestFilterTermParser>(
+                .BeAssignableTo<TestFilterTermParser>(
                     "Because DI container should return service that was registered last.");
         }
 
@@ -162,42 +161,42 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             // Arrange
             var services = new ServiceCollection();
             services.AddStrainer<StrainerProcessor>();
-            services.AddScoped<ISortingWayFormatter, _TestSortingWayFormatter>();
+            services.AddScoped<ISortingWayFormatter, TestSortingWayFormatter>();
             var serviceProvider = services.BuildServiceProvider();
 
             // Act
             var formatter = serviceProvider.GetRequiredService<ISortingWayFormatter>();
 
             // Assert
-            formatter.Should().BeAssignableTo<_TestSortingWayFormatter>();
-        }
-    }
-
-    internal class _TestFilterTermParser : IFilterTermParser
-    {
-        public IList<IFilterTerm> GetParsedTerms(string input)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class _TestSortingWayFormatter : ISortingWayFormatter
-    {
-        public bool IsDescendingDefaultSortingWay => throw new NotImplementedException();
-
-        public string Format(string input, bool isDescending)
-        {
-            throw new NotImplementedException();
+            formatter.Should().BeAssignableTo<TestSortingWayFormatter>();
         }
 
-        public bool IsDescending(string input)
+        private class TestFilterTermParser : IFilterTermParser
         {
-            throw new NotImplementedException();
+            public IList<IFilterTerm> GetParsedTerms(string input)
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public string Unformat(string input)
+        private class TestSortingWayFormatter : ISortingWayFormatter
         {
-            throw new NotImplementedException();
+            public bool IsDescendingDefaultSortingWay => throw new NotImplementedException();
+
+            public string Format(string input, bool isDescending)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsDescending(string input)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string Unformat(string input)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

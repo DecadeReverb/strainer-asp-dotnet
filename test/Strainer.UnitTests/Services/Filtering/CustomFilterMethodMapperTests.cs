@@ -3,8 +3,8 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.TestModels;
 using Moq;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -20,16 +20,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var customFilterMethod = new CustomFilterMethod<Comment>
+            var customFilterMethod = new CustomFilterMethod<Uri>
             {
-                Function = context => context.Source.Where(c => c.DateCreated.Year > 2000),
-                Name = "XXI-century-comments",
+                Function = context => context.Source.Where(uri => uri.Port == 443),
+                Name = "URIs with HTTP port",
             };
             var mapper = new CustomFilterMethodMapper(optionsProvider);
 
             // Act
             mapper.AddMap(customFilterMethod);
-            var result = mapper.GetMethod<Comment>(customFilterMethod.Name);
+            var result = mapper.GetMethod<Uri>(customFilterMethod.Name);
 
             // Assert
             result.Should().NotBeNull();

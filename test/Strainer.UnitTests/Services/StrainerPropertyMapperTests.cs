@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.TestModels;
 using Moq;
+using System;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services
@@ -10,7 +11,7 @@ namespace Fluorite.Strainer.UnitTests.Services
     public class StrainerPropertyMapperTests
     {
         [Fact]
-        public void Mapper_Returns_Null_WhenJustPropertyIsCalled()
+        public void Mapper_Returns_Null_When_JustPropertyIsCalled()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -31,7 +32,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         }
 
         [Fact]
-        public void Mapper_Returns_Map_WhenMarkedAsFilterable()
+        public void Mapper_Returns_Map_When_MarkedAsFilterable()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -54,7 +55,7 @@ namespace Fluorite.Strainer.UnitTests.Services
         }
 
         [Fact]
-        public void Mapper_Returns_Map_WhenMarkedAsSortable()
+        public void Mapper_Returns_Map_When_MarkedAsSortable()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -132,6 +133,14 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Assert
             result.Name.Should().Be(nameof(Post.Id));
             result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
+        }
+
+        private class Post
+        {
+            public int Id { get; set; }
+
+            [StrainerProperty(IsFilterable = true, IsSortable = true)]
+            public string Title { get; set; }
         }
     }
 }

@@ -3,8 +3,8 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.TestModels;
 using Moq;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -20,18 +20,19 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var customSortMethod = new CustomSortMethod<Comment>
+            var customSortMethod = new CustomSortMethod<Uri>
             {
-                Function = context => context.Source
-                    .OrderBy(c => c.DateCreated)
-                    .ThenBy(c => c.Text),
-                Name = "DateCreatedThenText",
+                Function = context => context
+                    .Source
+                    .OrderBy(uri => uri.Port)
+                    .ThenBy(uri => uri.Host),
+                Name = "IntThenText",
             };
             var mapper = new CustomSortMethodMapper(optionsProvider);
 
             // Act
             mapper.AddMap(customSortMethod);
-            var result = mapper.GetMethod<Comment>(customSortMethod.Name);
+            var result = mapper.GetMethod<Uri>(customSortMethod.Name);
 
             // Assert
             result.Should().NotBeNull();

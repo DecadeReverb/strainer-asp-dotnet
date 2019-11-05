@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.TestModels;
 using System;
 using System.Linq;
 using Xunit;
@@ -76,6 +76,12 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
 
             // Assert
             result.Should().OnlyContain(b => b.Text.Equals("foo", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private class Comment
+        {
+            [StrainerProperty(IsFilterable = true)]
+            public string Text { get; set; }
         }
     }
 }
