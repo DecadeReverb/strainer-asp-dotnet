@@ -19,16 +19,16 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new _TestEntity
+                new Post
                 {
                     Name = "Foo",
                 },
-                new _TestEntity
+                new Post
                 {
                     Name = "Bar",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateProcessor(context => new _TestStrainerProcessor(context));
+            var processor = Factory.CreateProcessor(context => new TestStrainerProcessor(context));
             var model = new StrainerModel();
 
             // Act
@@ -44,11 +44,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new _TestEntity
+                new Post
                 {
                     Name = "Foo",
                 },
-                new _TestEntity
+                new Post
                 {
                     Name = "Bar",
                 },
@@ -57,7 +57,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             {
                 context.Options.ThrowExceptions = false;
 
-                return new _TestStrainerProcessor(context);
+                return new TestStrainerProcessor(context);
             });
             var model = new StrainerModel
             {
@@ -77,11 +77,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new _TestEntity
+                new Post
                 {
                     Name = "Foo",
                 },
-                new _TestEntity
+                new Post
                 {
                     Name = "Bar",
                 },
@@ -96,25 +96,25 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             result.Should().BeEquivalentTo(source);
             result.Should().BeInDescendingOrder(e => e.Name);
         }
-    }
 
-    class _TestStrainerProcessor : StrainerProcessor
-    {
-        public _TestStrainerProcessor(IStrainerContext context) : base(context)
+        private class TestStrainerProcessor : StrainerProcessor
         {
+            public TestStrainerProcessor(IStrainerContext context) : base(context)
+            {
 
+            }
+
+            protected override void MapProperties(IPropertyMapper mapper)
+            {
+                mapper.Property<Post>(p => p.Name)
+                    .IsSortable()
+                    .IsDefaultSort();
+            }
         }
 
-        protected override void MapProperties(IPropertyMapper mapper)
+        private class Post
         {
-            mapper.Property<_TestEntity>(e => e.Name)
-                .IsSortable()
-                .IsDefaultSort();
+            public string Name { get; set; }
         }
-    }
-
-    class _TestEntity
-    {
-        public string Name { get; set; }
     }
 }

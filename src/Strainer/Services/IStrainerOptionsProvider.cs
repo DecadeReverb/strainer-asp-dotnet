@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services
     public interface IStrainerOptionsProvider
     {
         /// <summary>
-        /// Gets <see cref="StrainerOptions"/>.
+        /// Gets the <see cref="StrainerOptions"/>.
         /// </summary>
         /// <returns>
         /// An instance of <see cref="StrainerOptions"/>.

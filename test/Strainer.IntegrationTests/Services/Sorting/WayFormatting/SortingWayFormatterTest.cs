@@ -17,21 +17,21 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
         }
 
         [Fact]
-        public void CustomSortingWayFormatterWorks()
+        public void CustomSortingWayFormatter_Works()
         {
             // Arrange
             var source = new[]
             {
-                new _TestEntity
+                new Post
                 {
                     Name = "foo",
                 },
-                new _TestEntity
+                new Post
                 {
                     Name = "bar",
                 },
             }.AsQueryable();
-            var customSortingWayFormatter = new _TestSortingWayFormatter();
+            var customSortingWayFormatter = new TestSortingWayFormatter();
             var processor = Factory.CreateProcessor(context =>
             {
                 var newSortingContext = new SortingContext(
@@ -47,11 +47,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
                     context.MetadataProvider,
                     context.CustomMethods);
 
-                return new _TestStrainerProcessor(newContext);
+                return new TestStrainerProcessor(newContext);
             });
             var model = new StrainerModel
             {
-                Sorts = "Name" + _TestSortingWayFormatter.AscendingSuffix
+                Sorts = "Name" + TestSortingWayFormatter.AscendingSuffix
             };
 
             // Act
@@ -60,103 +60,96 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
             // Assert
             result.Should().BeInAscendingOrder(e => e.Name);
         }
-    }
 
-    class _TestStrainerProcessor : StrainerProcessor
-    {
-        public _TestStrainerProcessor(IStrainerContext context) : base(context)
+        private class TestStrainerProcessor : StrainerProcessor
         {
+            public TestStrainerProcessor(IStrainerContext context) : base(context)
+            {
 
+            }
+
+            protected override void MapProperties(IPropertyMapper mapper)
+            {
+                mapper.Property<Post>(e => e.Name)
+                    .IsSortable()
+                    .IsDefaultSort();
+            }
         }
 
-        protected override void MapProperties(IPropertyMapper mapper)
+        private class Post
         {
-            mapper.Property<_TestEntity>(e => e.Name)
-                .IsSortable()
-                .IsDefaultSort();
-        }
-    }
-
-    class _TestEntity
-    {
-        public string Name { get; set; }
-    }
-
-    class _TestSortingWayFormatter : ISortingWayFormatter
-    {
-        public static readonly string AscendingSuffix = "_asc";
-
-        public static readonly string DescendingSuffix = "_desc";
-
-        public bool IsDescendingDefaultSortingWay => true;
-
-        public string Format(string input, bool isDescending)
-        {
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                return input;
-            }
-
-            return input + GetSuffix(isDescending);
+            public string Name { get; set; }
         }
 
-        public bool IsDescending(string input)
+        private class TestSortingWayFormatter : ISortingWayFormatter
         {
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            public static readonly string AscendingSuffix = "_asc";
 
-            if (input.EndsWith(DescendingSuffix))
-            {
-                return true;
-            }
+            public static readonly string DescendingSuffix = "_desc";
 
-            if (input.EndsWith(AscendingSuffix))
-            {
-                return false;
-            }
+            public bool IsDescendingDefaultSortingWay => true;
 
-            return IsDescendingDefaultSortingWay;
-        }
-
-        public string Unformat(string input)
-        {
-            if (input is null)
+            public string Format(string input, bool isDescending)
             {
-                throw new ArgumentNullException(nameof(input));
-            }
-
-            if (string.IsNullOrEmpty(input))
-            {
-                return input;
-            }
-
-            if (input.EndsWith(AscendingSuffix))
-            {
-                return input.TrimEndOnce(AscendingSuffix);
-            }
-            else
-            {
-                if (input.EndsWith(DescendingSuffix))
+                if (input is null)
                 {
-                    return input.TrimEndOnce(DescendingSuffix);
+                    throw new ArgumentNullException(nameof(input));
                 }
 
-                return input;
-            }
-        }
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    return input;
+                }
 
-        private string GetSuffix(bool isDescending)
-        {
-            return isDescending
-                ? DescendingSuffix
-                : AscendingSuffix;
+                return input + (isDescending ? DescendingSuffix : AscendingSuffix);
+            }
+
+            public bool IsDescending(string input)
+            {
+                if (input is null)
+                {
+                    throw new ArgumentNullException(nameof(input));
+                }
+
+                if (input.EndsWith(DescendingSuffix))
+                {
+                    return true;
+                }
+
+                if (input.EndsWith(AscendingSuffix))
+                {
+                    return false;
+                }
+
+                return IsDescendingDefaultSortingWay;
+            }
+
+            public string Unformat(string input)
+            {
+                if (input is null)
+                {
+                    throw new ArgumentNullException(nameof(input));
+                }
+
+                if (string.IsNullOrEmpty(input))
+                {
+                    return input;
+                }
+
+                if (input.EndsWith(AscendingSuffix))
+                {
+                    return input.TrimEndOnce(AscendingSuffix);
+                }
+                else
+                {
+                    if (input.EndsWith(DescendingSuffix))
+                    {
+                        return input.TrimEndOnce(DescendingSuffix);
+                    }
+
+                    return input;
+                }
+            }
         }
     }
 }

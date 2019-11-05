@@ -97,23 +97,6 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void ContainsIsCaseSensitive()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "Text@=text",
-            };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
-
-            // Act
-            var result = processor.Apply(model, _comments);
-
-            // Assert
-            result.Should().OnlyContain(p => p.Text.Contains("text", StringComparison.Ordinal));
-        }
-
-        [Fact]
         public void NotContainsWorks()
         {
             // Arrange
@@ -211,11 +194,11 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var optionsProviderProvider = Factory.CreateOptionsProvider();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProviderProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProviderProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    optionsProviderProvider,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
@@ -242,11 +225,11 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var optionsProviderProvider = Factory.CreateOptionsProvider();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProviderProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProviderProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    optionsProviderProvider,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,

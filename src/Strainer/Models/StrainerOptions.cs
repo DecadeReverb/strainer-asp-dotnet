@@ -5,10 +5,6 @@
     /// </summary>
 	public class StrainerOptions
     {
-        // TODO:
-        // Add more options like:
-        // - MinPageSize
-
         /// <summary>
         /// Initializes new instance of <see cref="StrainerOptions"/> class.
         /// </summary>
@@ -35,7 +31,7 @@
         /// Gets or sets a <see cref="bool"/> value indictating whether
         /// Strainer should operatre in case insensitive mode when comparing names.
         /// <para/>
-        /// This affects for example the way of comparing name of incoming filter
+        /// This for example affects the way of comparing name of incoming filter
         /// with property name.
         /// <para/>
         /// Defaults to <see langword="false"/>.
@@ -46,7 +42,7 @@
         /// Gets or sets a <see cref="bool"/> value indictating whether
         /// Strainer should operatre in case insensitive mode when comparing values.
         /// <para/>
-        /// This affects for example the way of comparing value of incoming filter
+        /// This for example affects the way of comparing value of incoming filter
         /// with actual property value.
         /// <para/>
         /// Defaults to <see langword="false"/>.

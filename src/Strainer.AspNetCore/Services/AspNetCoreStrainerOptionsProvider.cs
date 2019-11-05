@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.AspNetCore.Services
     /// </summary>
     public class AspNetCoreStrainerOptionsProvider : IStrainerOptionsProvider
     {
-        private readonly IOptionsSnapshot<StrainerOptions> options;
+        private readonly IOptionsSnapshot<StrainerOptions> _options;
 
         /// <summary>
         /// Initializes new instance of <see cref="AspNetCoreStrainerOptionsProvider"/>
@@ -25,15 +25,15 @@ namespace Fluorite.Strainer.AspNetCore.Services
         /// </exception>
         public AspNetCoreStrainerOptionsProvider(IOptionsSnapshot<StrainerOptions> options)
         {
-            this.options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <summary>
-        /// Gets <see cref="StrainerOptions"/>.
+        /// Gets the <see cref="StrainerOptions"/>.
         /// </summary>
         /// <returns>
         /// An instance of <see cref="StrainerOptions"/>.
         /// </returns>
-        public StrainerOptions GetStrainerOptions() => options.Value;
+        public StrainerOptions GetStrainerOptions() => _options.Value;
     }
 }

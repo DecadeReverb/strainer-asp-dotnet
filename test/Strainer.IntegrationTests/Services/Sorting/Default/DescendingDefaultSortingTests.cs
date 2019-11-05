@@ -19,16 +19,16 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new _TestBlog
+                new Post
                 {
                     Name = "Foo",
                 },
-                new _TestBlog
+                new Post
                 {
                     Name = "Bar",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateProcessor(context => new _TestDescendingStrainerProcessor(context));
+            var processor = Factory.CreateProcessor(context => new TestDescendingStrainerProcessor(context));
             var model = new StrainerModel();
 
             // Act
@@ -44,11 +44,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new _TestBlog
+                new Post
                 {
                     Name = "Foo",
                 },
-                new _TestBlog
+                new Post
                 {
                     Name = "Bar",
                 },
@@ -57,7 +57,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             {
                 context.Options.ThrowExceptions = false;
 
-                return new _TestDescendingStrainerProcessor(context);
+                return new TestDescendingStrainerProcessor(context);
             });
             var model = new StrainerModel
             {
@@ -70,25 +70,25 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             // Assert
             result.Should().BeInDescendingOrder(e => e.Name);
         }
-    }
 
-    class _TestDescendingStrainerProcessor : StrainerProcessor
-    {
-        public _TestDescendingStrainerProcessor(IStrainerContext context) : base(context)
+        private class TestDescendingStrainerProcessor : StrainerProcessor
         {
+            public TestDescendingStrainerProcessor(IStrainerContext context) : base(context)
+            {
 
+            }
+
+            protected override void MapProperties(IPropertyMapper mapper)
+            {
+                mapper.Property<Post>(p => p.Name)
+                    .IsSortable()
+                    .IsDefaultSort(isDescending: true);
+            }
         }
 
-        protected override void MapProperties(IPropertyMapper mapper)
+        private class Post
         {
-            mapper.Property<_TestBlog>(e => e.Name)
-                .IsSortable()
-                .IsDefaultSort(isDescending: true);
+            public string Name { get; set; }
         }
-    }
-
-    class _TestBlog
-    {
-        public string Name { get; set; }
     }
 }
