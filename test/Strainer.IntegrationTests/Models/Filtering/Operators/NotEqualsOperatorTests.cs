@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
 {
     public class NotEqualsOperatorTests : StrainerFixtureBase
     {

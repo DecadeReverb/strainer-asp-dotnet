@@ -95,6 +95,12 @@ namespace Fluorite.Strainer.Services.Filtering
                             .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
                 }
 
+                if (filterTerm.Operator.IsStringBased)
+                {
+                    filterValue = ConvertToStringValue(filterValue, metadata.PropertyInfo.PropertyType);
+                    propertyValue = ConvertToStringValue(propertyValue, metadata.PropertyInfo.PropertyType);
+                }
+
                 var filterOperatorContext = new FilterExpressionContext(filterValue, propertyValue);
                 var expression = filterTerm.Operator.Expression(filterOperatorContext);
 
@@ -114,6 +120,16 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             return innerExpression;
+        }
+
+        private Expression ConvertToStringValue(Expression expressionToConvert, Type propertyType)
+        {
+            if (propertyType == typeof(string))
+            {
+                return expressionToConvert;
+            }
+
+            return Expression.Call(expressionToConvert, typeof(object).GetMethod(nameof(object.ToString)));
         }
 
         // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core

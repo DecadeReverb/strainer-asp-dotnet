@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
 {
     public class ContainsOperatorTests : StrainerFixtureBase
     {
@@ -76,6 +76,38 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
 
             // Assert
             result.Should().OnlyContain(b => b.Text.Contains("oo", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void Contains_Works_For_NonStringValues()
+        {
+            // Arrange
+            var source = new[]
+            {
+                new Comment
+                {
+                    LikeCount = 20,
+                },
+                new Comment
+                {
+                    LikeCount = 10,
+                },
+                new Comment
+                {
+                    LikeCount = 50,
+                },
+            }.AsQueryable();
+            var processor = Factory.CreateDefaultProcessor();
+            var model = new StrainerModel
+            {
+                Filters = "LikeCount@=2",
+            };
+
+            // Act
+            var result = processor.ApplyFiltering(model, source);
+
+            // Assert
+            result.Should().OnlyContain(c => c.LikeCount.ToString().Contains("2", StringComparison.Ordinal));
         }
 
         private class Comment

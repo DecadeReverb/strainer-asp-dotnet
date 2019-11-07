@@ -2,7 +2,6 @@
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.IntegrationTests.Services;
 using System;
 
 namespace Fluorite.Strainer.IntegrationTests

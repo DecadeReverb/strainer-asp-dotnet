@@ -27,7 +27,7 @@ namespace Fluorite.Strainer.Models.Filter.Operators
         public FilterExpressionContext(Expression filterValue, Expression propertyValue)
         {
             FilterValue = filterValue ?? throw new ArgumentNullException(nameof(filterValue));
-            Property = propertyValue ?? throw new ArgumentNullException(nameof(propertyValue));
+            PropertyValue = propertyValue ?? throw new ArgumentNullException(nameof(propertyValue));
         }
 
         /// <summary>
@@ -36,8 +36,8 @@ namespace Fluorite.Strainer.Models.Filter.Operators
         public Expression FilterValue { get; }
 
         /// <summary>
-        /// Get the expression for property access.
+        /// Get the expression for property value access.
         /// </summary>
-        public Expression Property { get; }
+        public Expression PropertyValue { get; }
     }
 }
