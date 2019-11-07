@@ -68,17 +68,32 @@ namespace Fluorite.Strainer.Services.Filtering
 
             foreach (var filterTermValue in filterTerm.Values)
             {
-                object constantVal = null;
-                if (typeConverter.CanConvertFrom(typeof(string)))
+                object constantVal = filterTermValue;
+
+                if (filterTerm.Operator.IsStringBased)
                 {
-                    constantVal = typeConverter.ConvertFrom(filterTermValue);
+                    if (metadata.PropertyInfo.PropertyType != typeof(string))
+                    {
+                        propertyValue = ConvertToStringValue(propertyValue);
+                    }
                 }
                 else
                 {
-                    constantVal = Convert.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
+                    if (typeConverter.CanConvertFrom(typeof(string)))
+                    {
+                        constantVal = typeConverter.ConvertFrom(filterTermValue);
+                    }
+                    else
+                    {
+                        constantVal = Convert.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
+                    }
                 }
 
-                var filterValue = GetClosureOverConstant(constantVal, metadata.PropertyInfo.PropertyType);
+                var filterValue = GetClosureOverConstant(
+                    constantVal,
+                    filterTerm.Operator.IsStringBased
+                        ? (typeof(string))
+                        : metadata.PropertyInfo.PropertyType);
 
                 if ((filterTerm.Operator.IsCaseInsensitive
                     || (!filterTerm.Operator.IsCaseInsensitive && _options.IsCaseInsensitiveForValues))
@@ -93,12 +108,6 @@ namespace Fluorite.Strainer.Services.Filtering
                         filterValue,
                         typeof(string).GetMethods()
                             .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
-                }
-
-                if (filterTerm.Operator.IsStringBased)
-                {
-                    filterValue = ConvertToStringValue(filterValue, metadata.PropertyInfo.PropertyType);
-                    propertyValue = ConvertToStringValue(propertyValue, metadata.PropertyInfo.PropertyType);
                 }
 
                 var filterOperatorContext = new FilterExpressionContext(filterValue, propertyValue);
@@ -122,13 +131,8 @@ namespace Fluorite.Strainer.Services.Filtering
             return innerExpression;
         }
 
-        private Expression ConvertToStringValue(Expression expressionToConvert, Type propertyType)
+        private Expression ConvertToStringValue(Expression expressionToConvert)
         {
-            if (propertyType == typeof(string))
-            {
-                return expressionToConvert;
-            }
-
             return Expression.Call(expressionToConvert, typeof(object).GetMethod(nameof(object.ToString)));
         }
 
