@@ -33,7 +33,6 @@ namespace Fluorite.Strainer.ExampleWebApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:80/", "https://*:443/")
                 .UseStartup<Startup>();
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{904F25A9-5CBD-42AE-8422-ADAB98F4B4B7}"
 	ProjectSection(SolutionItems) = preProject
@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.IntegrationTests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.TestModels", "test\Strainer.TestModels\Strainer.TestModels.csproj", "{BF6F8A28-977A-46D3-BE2D-8BC90C8A97FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strainer.AspNetCore", "src\Strainer.AspNetCore\Strainer.AspNetCore.csproj", "{B14505AD-4C49-400F-AC10-21A5EA31A93B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strainer.AspNetCore", "src\Strainer.AspNetCore\Strainer.AspNetCore.csproj", "{B14505AD-4C49-400F-AC10-21A5EA31A93B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

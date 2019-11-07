@@ -8,29 +8,32 @@
     }
   },
   "profiles": {
-    "IIS-Express-Development": {
+    "IIS-Express-Dev": {
       "commandName": "IISExpress",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "IIS-Express-Production": {
+    "IIS-Express-Prod": {
       "commandName": "IISExpress",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       }
     },
-    "Kestrel-Development": {
+    "Kestrel-Dev": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://[::]:80/;https://[::]:443/"
     },
-    "Kestrel-Production": {
+    "Kestrel-Prod": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
-      }
+      },
+      "applicationUrl": "http://[::]:80/;https://[::]:443/"
     }
+
   }
 }

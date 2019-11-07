@@ -35,7 +35,7 @@ namespace Fluorite.Sieve.Example.Data
 
             var posts = Constants.Data.Seeding.Posts;
 
-            #region levels
+            #region posts
             AddPosts(context, posts);
             context.SaveChanges();
             #endregion
