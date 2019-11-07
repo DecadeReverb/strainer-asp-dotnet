@@ -85,17 +85,17 @@ namespace Fluorite.Strainer.Services.Filtering
 
             new FilterOperatorBuilder(this, symbol: "<")
                 .HasName("less then")
-                .HasExpression((context) => Expression.LessThan(context.FilterValue, context.PropertyValue));
+                .HasExpression((context) => Expression.LessThan(context.PropertyValue, context.FilterValue));
             new FilterOperatorBuilder(this, symbol: "<=")
                 .HasName("less then or equal to")
-                .HasExpression((context) => Expression.LessThanOrEqual(context.FilterValue, context.PropertyValue));
+                .HasExpression((context) => Expression.LessThanOrEqual(context.PropertyValue, context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: ">")
                 .HasName("greater then")
-                .HasExpression((context) => Expression.GreaterThan(context.FilterValue, context.PropertyValue));
+                .HasExpression((context) => Expression.GreaterThan(context.PropertyValue, context.FilterValue));
             new FilterOperatorBuilder(this, symbol: ">=")
                 .HasName("greater then or equal to")
-                .HasExpression((context) => Expression.GreaterThanOrEqual(context.FilterValue, context.PropertyValue));
+                .HasExpression((context) => Expression.GreaterThanOrEqual(context.PropertyValue, context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: "@=")
                 .HasName("contains")
