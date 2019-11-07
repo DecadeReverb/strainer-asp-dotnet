@@ -27,6 +27,14 @@ namespace Fluorite.Strainer.Models.Filter.Operators
         bool IsDefault { get; }
 
         /// <summary>
+        /// Gets a <see cref="bool"/> value indictating whether associated
+        /// <see cref="System.Linq.Expressions.Expression"/> uses method
+        /// based on a <see cref="string"/> instance like
+        /// <see cref="string.Contains(string)"/> or <see cref="string.StartsWith(string)"/>.
+        /// </summary>
+        bool IsStringBased { get; }
+
+        /// <summary>
         /// Gets the operator name.
         /// </summary>
         string Name { get; }

@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models.Filtering;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Fluorite.Strainer.Services.Filtering
@@ -11,17 +12,30 @@ namespace Fluorite.Strainer.Services.Filtering
         private readonly Dictionary<Type, Dictionary<string, object>> _methods;
         private readonly StrainerOptions _options;
 
-        public CustomFilterMethodMapper(StrainerOptions options)
+        public CustomFilterMethodMapper(IStrainerOptionsProvider optionsProvider)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
-        public void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod)
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods
         {
-            if (sortMethod == null)
+            get
             {
-                throw new ArgumentNullException(nameof(sortMethod));
+                var dictionary = _methods.ToDictionary(
+                    k => k.Key,
+                    v => new ReadOnlyDictionary<string, object>(v.Value) as IReadOnlyDictionary<string, object>);
+
+                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>>(dictionary);
+            }
+        }
+
+        public void AddMap<TEntity>(ICustomFilterMethod<TEntity> customMethod)
+        {
+            if (customMethod == null)
+            {
+                throw new ArgumentNullException(nameof(customMethod));
             }
 
             if (!_methods.ContainsKey(typeof(TEntity)))
@@ -29,7 +43,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 _methods[typeof(TEntity)] = new Dictionary<string, object>();
             }
 
-            _methods[typeof(TEntity)][sortMethod.Name] = sortMethod;
+            _methods[typeof(TEntity)][customMethod.Name] = customMethod;
         }
 
         public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
@@ -62,9 +76,9 @@ namespace Fluorite.Strainer.Services.Filtering
                 return null;
             }
 
-            var comparisonType = _options.CaseSensitive
-                ? StringComparison.Ordinal
-                : StringComparison.OrdinalIgnoreCase;
+            var comparisonType = _options.IsCaseInsensitiveForNames
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
 
             return _methods[typeof(TEntity)]
                 .FirstOrDefault(pair => pair.Key.Equals(name, comparisonType))

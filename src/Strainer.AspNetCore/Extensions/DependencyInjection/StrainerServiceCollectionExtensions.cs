@@ -1,69 +1,51 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.AspNetCore.Services;
+using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 
 namespace Fluorite.Extensions.DependencyInjection
 {
+    /// <summary>
+    /// Provides extensions for adding Strainer services to <see cref="IServiceCollection"/>.
+    /// </summary>
     public static class StrainerServiceCollectionExtensions
     {
+        /// <summary>
+        /// The default service lifetime for Strainer services.
+        /// </summary>
         public const ServiceLifetime DefaultServiceLifetime = ServiceLifetime.Scoped;
 
-        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, IConfiguration configuration)
-            where TProcessor : class, IStrainerProcessor
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            var options = new StrainerOptions();
-            configuration.Bind(options);
-            services.AddSingleton(options);
-
-            services.AddOptions<AspNetCoreStrainerOptions>();
-            services.Configure<AspNetCoreStrainerOptions>(configuration);
-
-            var builder = services.AddStrainer<TProcessor>();
-
-            return builder;
-        }
-
-        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services, Action<AspNetCoreStrainerOptions> configure)
-            where TProcessor : class, IStrainerProcessor
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (configure == null)
-            {
-                throw new ArgumentNullException(nameof(configure));
-            }
-
-            var options = new AspNetCoreStrainerOptions();
-            configure(options);
-            services.AddSingleton<StrainerOptions>(options);
-
-            services.AddOptions<AspNetCoreStrainerOptions>().Configure(configure);
-
-            var builder = services.AddStrainer<TProcessor>();
-
-            return builder;
-        }
-
-        public static IStrainerBuilder AddStrainer<TProcessor>(this IServiceCollection services)
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <typeparam name="TProcessor">
+        /// The type of Strainer processor used.
+        /// </typeparam>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
+        public static IStrainerBuilder AddStrainer<TProcessor>(
+            this IServiceCollection services,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
             where TProcessor : class, IStrainerProcessor
         {
             if (services == null)
@@ -81,11 +63,10 @@ namespace Fluorite.Extensions.DependencyInjection
             // Add Strainer options only if they weren't configured yet.
             if (!services.ContainsServiceOfType<StrainerOptions>())
             {
-                services.AddOptions();
-                services.AddSingleton<StrainerOptions>();
+                services.AddOptions<StrainerOptions>();
             }
 
-            var serviceLifetime = services.GetStrainerLifetime();
+            services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
 
             services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
             services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
@@ -96,7 +77,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
             services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
-            services.Add<ISortingWayFormatter, SortingWayFormatter>(serviceLifetime);
+            services.Add<ISortingWayFormatter, DescendingPrefixSortingWayFormatter>(serviceLifetime);
             services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
             services.Add<ISortingContext, SortingContext>(serviceLifetime);
 
@@ -105,11 +86,116 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
             services.Add<IPropertyMapper, PropertyMapper>(serviceLifetime);
-            services.Add<IPropertyMetadataProvider, PropertyMetadataProvider>(serviceLifetime);
+            services.Add<IAttributePropertyMetadataProvider, AttributePropertyMetadataProvider>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
 
             return new StrainerBuilder(services);
+        }
+
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>
+        /// with a configuration.
+        /// </summary>
+        /// <typeparam name="TProcessor">
+        /// The type of Strainer processor used.
+        /// </typeparam>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="configuration">
+        /// A configuration used to bind against <see cref="StrainerOptions"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="configuration"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
+        public static IStrainerBuilder AddStrainer<TProcessor>(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
+            where TProcessor : class, IStrainerProcessor
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            services.Configure<StrainerOptions>(configuration);
+
+            var builder = services.AddStrainer<TProcessor>();
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <typeparam name="TProcessor">
+        /// The type of Strainer processor used.
+        /// </typeparam>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="configure">
+        /// An action used to configure <see cref="StrainerOptions"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="configure"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
+        public static IStrainerBuilder AddStrainer<TProcessor>(
+            this IServiceCollection services,
+            Action<StrainerOptions> configure,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
+            where TProcessor : class, IStrainerProcessor
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (configure == null)
+            {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            services.AddOptions<StrainerOptions>().Configure(configure);
+
+            var builder = services.AddStrainer<TProcessor>();
+
+            return builder;
         }
 
         private static void Add<TServiceType, TImplementationType>(this IServiceCollection services, ServiceLifetime serviceLifetime)
@@ -125,15 +211,6 @@ namespace Fluorite.Extensions.DependencyInjection
         private static bool ContainsServiceOfType(this IServiceCollection services, Type implementationType)
         {
             return services.Any(d => d.ServiceType == implementationType);
-        }
-
-        private static ServiceLifetime GetStrainerLifetime(this IServiceCollection services)
-        {
-            using (var provider = services.BuildServiceProvider())
-            {
-                return provider.GetService<IOptions<AspNetCoreStrainerOptions>>()?.Value.ServiceLifetime
-                    ?? DefaultServiceLifetime;
-            }
         }
     }
 }

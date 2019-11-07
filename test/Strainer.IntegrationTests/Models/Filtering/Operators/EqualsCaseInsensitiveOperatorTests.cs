@@ -1,14 +1,11 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.TestModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
 {
     public class EqualsCaseInsensitiveTests : StrainerFixtureBase
     {
@@ -36,7 +33,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
                     Text = "FOO",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.CaseSensitive = false);
+            var processor = Factory.CreateDefaultProcessor(options => options.IsCaseInsensitiveForValues = true);
             var model = new StrainerModel
             {
                 Filters = "Text==*foo",
@@ -50,7 +47,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
         }
 
         [Fact]
-        public void EqualsCaseInsensitive_Works_When_CaseSensivity_IsEnabled()
+        public void EqualsCaseInsensitive_Works_Even_When_CaseSensivity_IsEnabled()
         {
             // Arrange
             var source = new[]
@@ -68,7 +65,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
                     Text = "FOO",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.CaseSensitive = true);
+            var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel
             {
                 Filters = "Text==*foo",
@@ -79,6 +76,12 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 
             // Assert
             result.Should().OnlyContain(b => b.Text.Equals("foo", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private class Comment
+        {
+            [StrainerProperty(IsFilterable = true)]
+            public string Text { get; set; }
         }
     }
 }

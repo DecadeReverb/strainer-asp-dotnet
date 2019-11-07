@@ -1,3 +1,5 @@
+![Strainer icon](https://i.imgur.com/2wXq8Lu.png)
+
 # Strainer
 
 Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting, filtering and pagination** trival.
@@ -75,7 +77,7 @@ Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is esp
 
 ### Use Strainer to filter/sort/paginate
 
-In example below, Strainer processor is injected in a controller. Then, in `GetPost()` Strainer will process the source collection by calling `Apply()`. It will filter, sort and/or paginate the source `IQueryable` depending on model parameters.
+In example below, Strainer processor is injected to a controller. In `GetPosts()` method below, `Apply()` is called causing the source collection to be processed. Strainer processor will filter, sort and/or paginate the source `IQueryable` depending on model parameters.
 
 ```cs
 private readonly ApplicationDbContext _dbContext;
@@ -96,7 +98,7 @@ public JsonResult GetPosts(StrainerModel strainerModel)
 }
 ```
 
-You can also explicitly specify if only filtering, sorting, and/or pagination should be applied via optional `bool` arguments:
+You can explicitly specify whether only filtering, sorting, and/or pagination should be applied via optional `bool` arguments:
 
 ```cs
 var result = _strainerProcessor.Apply(
@@ -173,9 +175,10 @@ Strainer comes with following [`options`](https://gitlab.com/fluorite/strainer/b
 
 | Name | Type | Default value | Description |
 | --- | --- | --- | --- |
-| CaseSensitive | `bool` | false | A `bool` value indictating whether Strainer should operatre in case sensitive mode. This affects for example the way of comparing value of incoming filters with names of properties marked as filterable. |
 | DefaultPageNumber | `int` | 1 | Default page number. |
 | DefaultPageSize | `int` | 10 | Default page size. |
+| IsCaseInsensitiveForNames | `bool` | false | A `bool` value indictating whether Strainer should operatre in case insensitive mode when comparing names. This affects for example the way of comparing filter names with names of properties marked as filterable. |
+| IsCaseInsensitiveForValues | `bool` | false | A `bool` value indictating whether Strainer should operatre in case insensitive mode when comparing `string` values. This affects for example the way of comparing filter value with `string` value of an actual property. |
 | MaxPageSize | `int` | 50 | Maximum page number. |
 | ThrowExceptions | `bool` | false | A `bool` value indictating whether Strainer should throw [StrainerExceptions](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Exceptions/StrainerException.cs) and the like. |
 
@@ -229,7 +232,7 @@ Strainer model is based on four properties:
 
 ### Sorts
 
-`Sorts` is a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly. Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control that behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
+`Sorts` is a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly. Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control this behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
 
 ### Filters
 
@@ -289,7 +292,7 @@ public class User {
 }
 ```
 
-in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to the nested property:
+in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to nested property:
 
 ```cs
 protected override void MapProperties(IStrainerPropertyMapper mapper)
@@ -356,6 +359,8 @@ Strainer comes with following filter operators:
 | `==*`      | Equals _(case-insensitive)_                  |
 | `!@=*`     | Does not contain _(case-insensitive)_        |
 | `!_=*`     | Does not start with _(case-insensitive)_     |
+
+Case insensitive operators will force case insensitivity when comparing values even when [`IsCaseInsensitiveForValues`](#configure-strainer) option is set to `false`.
 
 ## Custom filter operators
 

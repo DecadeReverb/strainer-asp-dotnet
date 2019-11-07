@@ -6,7 +6,13 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterOperatorBuilder : IFilterOperatorBuilder
     {
-        private readonly FilterOperator _filterOperator;
+        protected Func<IFilterExpressionContext, Expression> _expression;
+        protected string _name;
+        protected bool _isCaseInsensitive;
+        protected bool _isDefault;
+        protected bool _isStringBased;
+        protected bool _negateExpression;
+        protected string _symbol;
 
         public FilterOperatorBuilder(IFilterOperatorMapper mapper, string symbol)
         {
@@ -19,22 +25,27 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-
-            _filterOperator = new FilterOperator
-            {
-                Symbol = symbol,
-            };
+            _symbol = symbol;
 
             UpdateMap();
         }
 
         protected IFilterOperatorMapper Mapper { get; }
 
-        public IFilterOperator Build() => _filterOperator;
+        public IFilterOperator Build() => new FilterOperator
+        {
+            Expression = _expression,
+            IsCaseInsensitive = _isCaseInsensitive,
+            IsDefault = _isDefault,
+            IsStringBased = _isStringBased,
+            Name = _name,
+            NegateExpression = _negateExpression,
+            Symbol = _symbol,
+        };
 
         public IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression)
         {
-            _filterOperator.Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             UpdateMap();
 
             return this;
@@ -50,7 +61,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(name));
             }
 
-            _filterOperator.Name = name;
+            _name = name;
             UpdateMap();
 
             return this;
@@ -58,7 +69,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public IFilterOperatorBuilder IsCaseInsensitive()
         {
-            _filterOperator.IsCaseInsensitive = true;
+            _isCaseInsensitive = true;
             UpdateMap();
 
             return this;
@@ -66,7 +77,15 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public IFilterOperatorBuilder IsDefault()
         {
-            _filterOperator.IsDefault = true;
+            _isDefault = true;
+            UpdateMap();
+
+            return this;
+        }
+
+        public IFilterOperatorBuilder IsStringBased()
+        {
+            _isStringBased = true;
             UpdateMap();
 
             return this;
@@ -74,7 +93,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public IFilterOperatorBuilder NegateExpression()
         {
-            _filterOperator.NegateExpression = true;
+            _negateExpression = true;
             UpdateMap();
 
             return this;
@@ -82,7 +101,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private void UpdateMap()
         {
-            Mapper.AddMap(_filterOperator.Symbol, _filterOperator);
+            Mapper.AddMap(_symbol, Build());
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Fluorite.Strainer.Models.Sorting
     /// Represents custom sort method.
     /// </summary>
     /// <typeparam name="TEntity">
-    /// The type of entity processed by custom method.
+    /// The type of entity processed by the custom method.
     /// </typeparam>
     public interface ICustomSortMethod<TEntity>
     {

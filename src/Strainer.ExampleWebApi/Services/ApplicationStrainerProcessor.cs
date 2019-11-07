@@ -32,7 +32,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
         {
             mapper.Operator(symbol: "!=*")
                 .HasName("not equal to (case insensitive)")
-                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.Property))
+                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
         }
 

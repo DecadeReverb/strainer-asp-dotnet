@@ -12,10 +12,11 @@ namespace Fluorite.Strainer.Services
         private readonly Dictionary<Type, ISet<IPropertyMetadata>> _map;
         private readonly StrainerOptions _options;
 
-        public PropertyMapper(StrainerOptions options)
+        public PropertyMapper(IStrainerOptionsProvider optionsProvider)
         {
             _map = new Dictionary<Type, ISet<IPropertyMetadata>>();
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
         public IReadOnlyDictionary<Type, IEnumerable<IPropertyMetadata>> Properties
@@ -48,22 +49,23 @@ namespace Fluorite.Strainer.Services
             bool isFilterableRequired,
             string name)
         {
-            try
-            {
-                var comparisonMethod = _options.CaseSensitive
-                    ? StringComparison.Ordinal
-                    : StringComparison.OrdinalIgnoreCase;
+            var comparisonMethod = _options.IsCaseInsensitiveForNames
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
 
-                return _map[typeof(TEntity)]
-                    .FirstOrDefault(metadata =>
-                        (metadata.DisplayName ?? metadata.Name).Equals(name, comparisonMethod)
-                        && (!isSortableRequired || metadata.IsSortable)
-                        && (!isFilterableRequired || metadata.IsFilterable));
-            }
-            catch (Exception ex) when (ex is KeyNotFoundException || ex is ArgumentNullException)
+            _map.TryGetValue(typeof(TEntity), out ISet<IPropertyMetadata> metadataSet);
+
+            if (metadataSet == null)
             {
                 return null;
             }
+
+            return metadataSet.FirstOrDefault(metadata =>
+            {
+                return (metadata.DisplayName ?? metadata.Name).Equals(name, comparisonMethod)
+                    && (!isSortableRequired || metadata.IsSortable)
+                    && (!isFilterableRequired || metadata.IsFilterable);
+            });
         }
 
         public IPropertyBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)

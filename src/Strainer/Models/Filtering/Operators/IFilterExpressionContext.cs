@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Models.Filter.Operators
 {
@@ -13,8 +14,8 @@ namespace Fluorite.Strainer.Models.Filter.Operators
         Expression FilterValue { get; }
 
         /// <summary>
-        /// Get the expression for property access.
+        /// Get the expression for property value access.
         /// </summary>
-        Expression Property { get; }
+        Expression PropertyValue { get; }
     }
 }

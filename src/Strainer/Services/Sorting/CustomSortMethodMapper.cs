@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models.Sorting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
@@ -11,10 +12,23 @@ namespace Fluorite.Strainer.Services.Sorting
         private readonly Dictionary<Type, Dictionary<string, object>> _methods;
         private readonly StrainerOptions _options;
 
-        public CustomSortMethodMapper(StrainerOptions options)
+        public CustomSortMethodMapper(IStrainerOptionsProvider optionsProvider)
         {
             _methods = new Dictionary<Type, Dictionary<string, object>>();
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
+        }
+
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods
+        {
+            get
+            {
+                var dictionary = _methods.ToDictionary(
+                    k => k.Key,
+                    v => new ReadOnlyDictionary<string, object>(v.Value) as IReadOnlyDictionary<string, object>);
+
+                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>>(dictionary);
+            }
         }
 
         public void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod)
@@ -62,9 +76,9 @@ namespace Fluorite.Strainer.Services.Sorting
                 return null;
             }
 
-            var comparisonType = _options.CaseSensitive
-                ? StringComparison.Ordinal
-                : StringComparison.OrdinalIgnoreCase;
+            var comparisonType = _options.IsCaseInsensitiveForNames
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
 
             return _methods[typeof(TEntity)]
                 .FirstOrDefault(pair => pair.Key.Equals(name, comparisonType))

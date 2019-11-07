@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Filtering
+﻿using System;
+
+namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterContext : IFilterContext
     {
@@ -9,11 +11,11 @@
             IFilterOperatorValidator operatorValidator,
             IFilterTermParser termParser)
         {
-            ExpressionProvider = expressionProvider ?? throw new System.ArgumentNullException(nameof(expressionProvider));
-            OperatorMapper = operatorMapper ?? throw new System.ArgumentNullException(nameof(operatorMapper));
-            OperatorParser = operatorParser ?? throw new System.ArgumentNullException(nameof(operatorParser));
-            OperatorValidator = operatorValidator ?? throw new System.ArgumentNullException(nameof(operatorValidator));
-            TermParser = termParser ?? throw new System.ArgumentNullException(nameof(termParser));
+            ExpressionProvider = expressionProvider ?? throw new ArgumentNullException(nameof(expressionProvider));
+            OperatorMapper = operatorMapper ?? throw new ArgumentNullException(nameof(operatorMapper));
+            OperatorParser = operatorParser ?? throw new ArgumentNullException(nameof(operatorParser));
+            OperatorValidator = operatorValidator ?? throw new ArgumentNullException(nameof(operatorValidator));
+            TermParser = termParser ?? throw new ArgumentNullException(nameof(termParser));
         }
 
         public IFilterExpressionProvider ExpressionProvider { get; }

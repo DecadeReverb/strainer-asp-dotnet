@@ -2,7 +2,6 @@
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Sorting;
-using Fluorite.Strainer.IntegrationTests.Services;
 using System;
 
 namespace Fluorite.Strainer.IntegrationTests
@@ -46,13 +45,18 @@ namespace Fluorite.Strainer.IntegrationTests
             return function(context);
         }
 
+        public IntegrationTestsStrainerOptionsProvider CreateOptionsProvider()
+        {
+            return new IntegrationTestsStrainerOptionsProvider();
+        }
+
         protected IStrainerContext CreateDefaultContext()
         {
-            var options = new StrainerOptions();
-            var propertyMapper = new PropertyMapper(options);
-            var propertyMetadataProvider = new PropertyMetadataProvider(propertyMapper, options);
+            var optionsProvider = new IntegrationTestsStrainerOptionsProvider();
+            var propertyMapper = new PropertyMapper(optionsProvider);
+            var propertyMetadataProvider = new AttributePropertyMetadataProvider(propertyMapper, optionsProvider);
 
-            var filterExpressionProvider = new FilterExpressionProvider();
+            var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterOperatorMapper = new FilterOperatorMapper(filterOperatorValidator);
             var filterOperatorParser = new FilterOperatorParser(filterOperatorMapper);
@@ -61,14 +65,14 @@ namespace Fluorite.Strainer.IntegrationTests
 
             var sortExpressionProvider = new SortExpressionProvider(propertyMapper, propertyMetadataProvider);
             var sortExpressionValidator = new SortExpressionValidator();
-            var sortingWayFormatter = new SortingWayFormatter();
+            var sortingWayFormatter = new DescendingPrefixSortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter);
             var sortingContext = new SortingContext(sortExpressionProvider, sortExpressionValidator, sortingWayFormatter, sortTermParser);
 
-            var customMethodsContext = new CustomMethodsContext(options);
+            var customMethodsContext = new CustomMethodsContext(optionsProvider);
 
             return new StrainerContext(
-                options,
+                optionsProvider,
                 filteringContext,
                 sortingContext,
                 propertyMapper,

@@ -48,8 +48,8 @@ namespace Fluorite.Strainer.Services
                 //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
             }
 
-            MapCustomFilterMethods(context.CustomMethods.Filter.Mapper);
-            MapCustomSortMethods(context.CustomMethods.Sort.Mapper);
+            MapCustomFilterMethods(context.CustomMethods.Filter);
+            MapCustomSortMethods(context.CustomMethods.Sort);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Fluorite.Strainer.Services
                     }
                     else
                     {
-                        var customMethod = Context.CustomMethods.Filter?.Mapper.GetMethod<TEntity>(filterTermName);
+                        var customMethod = Context.CustomMethods.Filter.GetMethod<TEntity>(filterTermName);
                         if (customMethod != null)
                         {
                             var context = new CustomFilterMethodContext<TEntity>
@@ -374,7 +374,7 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    var customMethod = Context.CustomMethods.Sort?.Mapper.GetMethod<TEntity>(sortTerm.Name);
+                    var customMethod = Context.CustomMethods.Sort.GetMethod<TEntity>(sortTerm.Name);
                     if (customMethod != null)
                     {
                         var context = new CustomSortMethodContext<TEntity>
@@ -446,15 +446,6 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
-        // See https://github.com/aspnet/EntityFrameworkCore/issues/3361
-        // Expression.Constant passed the target type to allow Nullable comparison
-        // See http://bradwilson.typepad.com/blog/2008/07/creating-nullab.html
-        private Expression GetClosureOverConstant<T>(T constant, Type targetType)
-        {
-            return Expression.Constant(constant, targetType);
-        }
-
         private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
             var metadata = Context.Mapper.FindProperty<TEntity>(
@@ -464,7 +455,7 @@ namespace Fluorite.Strainer.Services
 
             if (metadata == null)
             {
-                return Context.MetadataProvider.GetMetadataFromAttributes<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return Context.MetadataProvider.GetPropertyMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

@@ -97,23 +97,6 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void ContainsIsCaseSensitive()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "Text@=text",
-            };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
-
-            // Act
-            var result = processor.Apply(model, _comments);
-
-            // Assert
-            result.Should().OnlyContain(p => p.Text.Contains("text", StringComparison.Ordinal));
-        }
-
-        [Fact]
         public void NotContainsWorks()
         {
             // Arrange
@@ -141,7 +124,7 @@ namespace Fluorite.Strainer.IntegrationTests
             var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
 
             // Act
-            var result = processor.Apply(model, _posts);
+            var result = processor.ApplyFiltering(model, _posts);
 
             // Assert
             result.Should().OnlyContain(p => !p.IsDraft);
@@ -207,16 +190,15 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "Isnew",
+                Filters = "IsNew",
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = new StrainerOptions();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    options,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
@@ -243,12 +225,11 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = new StrainerOptions();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    options,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
@@ -275,12 +256,11 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = new StrainerOptions();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    options,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
@@ -308,12 +288,11 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = new StrainerOptions();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    options,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
@@ -337,16 +316,15 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var postModel = new StrainerModel()
             {
-                Filters = "CategoryId==2,Isnew",
+                Filters = "CategoryId==2,IsNew",
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = new StrainerOptions();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(options);
-                var customFilterMethodProvider = new CustomFilterMethodProvider(customFilterMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customFilterMethodProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    options,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
@@ -368,7 +346,7 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var commentModel = new StrainerModel()
             {
-                Filters = "Isnew",
+                Filters = "IsNew",
             };
 
             // Act
@@ -388,12 +366,11 @@ namespace Fluorite.Strainer.IntegrationTests
             };
             var processor = Factory.CreateProcessor((context) =>
             {
-                var options = new StrainerOptions();
-                var customSortMethodMapper = new CustomSortMethodMapper(options);
-                var customSortMethodProvider = new  CustomSortMethodProvider(customSortMethodMapper);
-                var customMethodsContext = new CustomMethodsContext(options, customSortMethodProvider);
+                var optionsProvider = Factory.CreateOptionsProvider();
+                var customSortMethodMapper = new CustomSortMethodMapper(optionsProvider);
+                var customMethodsContext = new CustomMethodsContext(optionsProvider);
                 var newContext = new StrainerContext(
-                    options,
+                    optionsProvider,
                     context.Filter,
                     context.Sorting,
                     context.Mapper,

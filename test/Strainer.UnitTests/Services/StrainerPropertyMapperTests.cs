@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.TestModels;
+using Moq;
+using System;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services
@@ -9,11 +11,14 @@ namespace Fluorite.Strainer.UnitTests.Services
     public class StrainerPropertyMapperTests
     {
         [Fact]
-        public void Mapper_Returns_Null_WhenJustPropertyIsCalled()
+        public void Mapper_Returns_Null_When_JustPropertyIsCalled()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
 
             // Act
             mapper.Property<Post>(p => p.Id);
@@ -27,11 +32,14 @@ namespace Fluorite.Strainer.UnitTests.Services
         }
 
         [Fact]
-        public void Mapper_Returns_Map_WhenMarkedAsFilterable()
+        public void Mapper_Returns_Map_When_MarkedAsFilterable()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
 
             // Act
             mapper.Property<Post>(p => p.Id)
@@ -47,11 +55,14 @@ namespace Fluorite.Strainer.UnitTests.Services
         }
 
         [Fact]
-        public void Mapper_Returns_Map_WhenMarkedAsSortable()
+        public void Mapper_Returns_Map_When_MarkedAsSortable()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
 
             // Act
             mapper.Property<Post>(p => p.Id)
@@ -70,8 +81,11 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_Map_Via_AddMap()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
             var metadata = new PropertyMetadata()
             {
                 DisplayName = nameof(Post.Id),
@@ -95,8 +109,11 @@ namespace Fluorite.Strainer.UnitTests.Services
         public void Mapper_Adds_AlreadyExistingMaps_Via_AddMap()
         {
             // Arrange
-            var options = new StrainerOptions();
-            var mapper = new PropertyMapper(options);
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var mapper = new PropertyMapper(optionsProvider);
             var metadata = new PropertyMetadata()
             {
                 DisplayName = nameof(Post.Id),
@@ -116,6 +133,14 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Assert
             result.Name.Should().Be(nameof(Post.Id));
             result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
+        }
+
+        private class Post
+        {
+            public int Id { get; set; }
+
+            [StrainerProperty(IsFilterable = true, IsSortable = true)]
+            public string Title { get; set; }
         }
     }
 }

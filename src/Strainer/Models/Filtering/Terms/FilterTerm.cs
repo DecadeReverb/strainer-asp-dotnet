@@ -89,6 +89,7 @@ namespace Fluorite.Strainer.Models.Filtering.Terms
             hashCode = hashCode * -1521134295 + EqualityComparer<IList<string>>.Default.GetHashCode(Names);
             hashCode = hashCode * -1521134295 + EqualityComparer<IFilterOperator>.Default.GetHashCode(Operator);
             hashCode = hashCode * -1521134295 + EqualityComparer<IList<string>>.Default.GetHashCode(Values);
+
             return hashCode;
         }
 

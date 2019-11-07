@@ -10,9 +10,12 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionProvider : IFilterExpressionProvider
     {
-        public FilterExpressionProvider()
-        {
+        private readonly StrainerOptions _options;
 
+        public FilterExpressionProvider(IStrainerOptionsProvider optionsProvider)
+        {
+            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
+                .GetStrainerOptions();
         }
 
         public Expression GetExpression(
@@ -65,19 +68,36 @@ namespace Fluorite.Strainer.Services.Filtering
 
             foreach (var filterTermValue in filterTerm.Values)
             {
-                object constantVal = null;
-                if (typeConverter.CanConvertFrom(typeof(string)))
+                object constantVal = filterTermValue;
+
+                if (filterTerm.Operator.IsStringBased)
                 {
-                    constantVal = typeConverter.ConvertFrom(filterTermValue);
+                    if (metadata.PropertyInfo.PropertyType != typeof(string))
+                    {
+                        propertyValue = ConvertToStringValue(propertyValue);
+                    }
                 }
                 else
                 {
-                    constantVal = Convert.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
+                    if (typeConverter.CanConvertFrom(typeof(string)))
+                    {
+                        constantVal = typeConverter.ConvertFrom(filterTermValue);
+                    }
+                    else
+                    {
+                        constantVal = Convert.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
+                    }
                 }
 
-                var filterValue = GetClosureOverConstant(constantVal, metadata.PropertyInfo.PropertyType);
+                var filterValue = GetClosureOverConstant(
+                    constantVal,
+                    filterTerm.Operator.IsStringBased
+                        ? (typeof(string))
+                        : metadata.PropertyInfo.PropertyType);
 
-                if (filterTerm.Operator.IsCaseInsensitive)
+                if ((filterTerm.Operator.IsCaseInsensitive
+                    || (!filterTerm.Operator.IsCaseInsensitive && _options.IsCaseInsensitiveForValues))
+                    && metadata.PropertyInfo.PropertyType == typeof(string))
                 {
                     propertyValue = Expression.Call(
                         propertyValue,
@@ -109,6 +129,11 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             return innerExpression;
+        }
+
+        private Expression ConvertToStringValue(Expression expressionToConvert)
+        {
+            return Expression.Call(expressionToConvert, typeof(object).GetMethod(nameof(object.ToString)));
         }
 
         // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core

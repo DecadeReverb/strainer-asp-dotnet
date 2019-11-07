@@ -26,14 +26,11 @@ namespace Fluorite.Strainer.TestModels
 
         public int OnlySortableViaFluentApi { get; set; }
 
-        public string ThisHasNoAttribute { get; set; }
-
         public string ThisHasNoAttributeButIsAccessible { get; set; }
 
         [StrainerProperty(IsFilterable = true, IsSortable = true)]
         public string Title { get; set; }
 
         public Comment TopComment { get; set; }
-
     }
 }

@@ -20,12 +20,12 @@ namespace Fluorite.Strainer.Services.Sorting
     public class SortExpressionProvider : ISortExpressionProvider
     {
         private readonly IPropertyMapper _mapper;
-        private readonly IPropertyMetadataProvider _metadataProvider;
+        private readonly IAttributePropertyMetadataProvider _metadataProvider;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IPropertyMapper mapper, IPropertyMetadataProvider metadataProvider)
+        public SortExpressionProvider(IPropertyMapper mapper, IAttributePropertyMetadataProvider metadataProvider)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
@@ -152,7 +152,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             if (metadata == null)
             {
-                return _metadataProvider.GetMetadataFromAttributes<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return _metadataProvider.GetPropertyMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

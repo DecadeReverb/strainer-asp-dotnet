@@ -1,64 +1,16 @@
 # Migration guide from Sieve to Strainer
 
-To reach version 3.0.0 Strainer met heavy refactoring. Whole bunch of new interfaces and services was created, a lot of code was split into smaller pieces in order to achieve finer granularity. No worries - all this without a change in framework's core functionality. The main goal of this process was to make the framework easier to maintain, test and extend.
+During porting from Sieve to Strainer, the project met heavy refactoring. Whole bunch of new interfaces and services was introduced, a lot of code was split into smaller pieces. The goal was to achieve finer granularity. No worries - all this without a change in framework's core functionality. Code which is more granular, it's also easier to maintain, test and extend.
 
 ### New project name - "Strainer"
 
 As this project was forked, to avoid ambiguity a new name was established - **"Strainer"**.
 
-Replace your `Sieve` models and services with `Strainer` (run find and replace with `Ctrl` + `H` in VS):
+Replace your `Sieve` models and services with `Strainer`.
 
-```cs
-public class PostsController : Controller
-{
-    private readonly ISieveProcessor _sieveProcessor;
-    private readonly ApplicationDbContext _dbContext;
+### New namespace - Fluorite.Strainer
 
-    public PostsController(ISieveProcessor sieveProcessor,
-        ApplicationDbContext dbContext)
-    {
-        _sieveProcessor = sieveProcessor;
-        _dbContext = dbContext;
-    }
-
-    [HttpGet]
-    public JsonResult GetAll(SieveModel sieveModel)
-    {
-        var result = _dbContext.Posts.AsNoTracking();
-        result = _sieveProcessor.Apply(sieveModel, result);
-
-        return Json(result.ToList());
-    }
-```
-
-change to:
-
-```cs
-public class PostsController : Controller
-{
-    private readonly IStrainerProcessor _strainerProcessor;
-    private readonly ApplicationDbContext _dbContext;
-
-    public PostsController(IStrainerProcessor strainerProcessor,
-        ApplicationDbContext dbContext)
-    {
-        _strainerProcessor = strainerProcessor;
-        _dbContext = dbContext;
-    }
-
-    [HttpGet]
-    public JsonResult GetAll(StrainerModel strainerModel)
-    {
-        var result = _dbContext.Posts.AsNoTracking();
-        result = _strainerProcessor.Apply(strainerModel, result);
-
-        return Json(result.ToList());
-    }
-```
-
-### New namespace
-
-New project name comes with new namespace. Replace your `Sieve` usings:
+New project name comes with new namespace. Replace your `Sieve` usings like:
 
 ```cs
 using Sieve.Services;
@@ -70,7 +22,11 @@ with `Fluorite.Strainer`:
 using Fluorite.Strainer.Services;
 ```
 
-### New and simpler SieveProcessor - StrainerProcessor
+### New attribute name
+
+`SieveAttribute` became `StrainerPropertyAttribute`.
+
+### New and simpler processor
 
 In older versions of Sieve to create a custom `SieveProcessor` you would have to pass couple of services:
 
@@ -88,7 +44,7 @@ public class ApplicationSieveProcessor : SieveProcessor
 }
 ```
 
-With Strainer an [`IStrainerContext`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/IStrainerContext.cs) was introduced to wrap all important services. Eventually, all you need to do is call the base constructor while passing the context:
+With Strainer an [`IStrainerContext`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/IStrainerContext.cs) was introduced to wrap all important services. Essentially, all you need to do is call the base constructor while passing the context:
 
 ```cs
 public class ApplicationStrainerProcessor : StrainerProcessor
@@ -120,21 +76,58 @@ public virtual int? Page { get; set; }
 public virtual int? PageSize { get; set; }
 ```
 
- Eventually you can also create a new model implementing [`IStrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs) interface.
+ Eventually you can create a completly new model by implementing [`IStrainerModel`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Models/IStrainerModel.cs) interface.
 
+### New structure of custom filter and sort methods
 
-### New pattern for custom filter methods
+In Sieve, custom filter and sort methods were called using reflection and defined in service implementing `ISieveCustomFilterMethods` or `ISieveCustomSortMethod`.
 
-Instead of passing filter operator as a `string` value:
-
-```cs
-public IQueryable<T> IsNew(IQueryable<T> source, string op, IList<string> values)
-```
-
-from now on an `IFilterOperator` instance will be passed. Change the type of operator parameter from `string` to `IFilterOperator`:
+Old custom filter method:
 
 ```cs
-public IQueryable<T> IsNew(IQueryable<T> source, IFilterOperator op, IList<string> values);
+public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool desc)
+{
+    var result = useThenBy
+            ? ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount)
+            : source.OrderBy(p => p.LikeCount)
+        .ThenBy(p => p.CommentCount)
+        .ThenBy(p => p.DateCreated);
+
+    return result;
+}
 ```
+
+Strainer introduces new structure of adding such methods by overriding appropriate method in your processor and there adding the method using more comfortable fluent-like API.
+
+For example, code adding the same method from the example above in Strainer would look like this:
+
+```cs
+public class ApplicationStrainerProcessor : StrainerProcessor
+{
+    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    {
+
+    }
+
+    protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
+    {
+        mapper.CustomMethod<Post>(nameof(Popularity))
+            .WithFunction(Popularity);
+    }
+
+    private IQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
+    {
+        return context.IsSubsequent
+            ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
+            : context.Source.OrderBy(p => p.LikeCount)
+                .ThenBy(p => p.CommentCount)
+                .ThenBy(p => p.DateCreated);
+    }
+}
+```
+
+Some explantation of what is going on above. In `MapCustomSortMethods()` a custom sorting method for `Post` entity is added with a name _"Popularity"_. Then a transforming function is specified. Although `WithFunction()` method requires an argument of `Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>>`, you can easily provide a whole method which returns an `IQueryable` and has an `ICustomSortMethodContext` parameter. In that way you can seperete your sorting logic in a dedicated method which can be made private.
+
+`MapCustomSortMethods()` will be called on `StrainerProcessor` initialization, alongside with other similar methods like `MapCustomFilterMethods()`.
 
 ### ...more will come.
