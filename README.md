@@ -436,3 +436,8 @@ A lot happened between Sieve v2* and Strainer v3*. Read the full migration guide
 ## License & Contributing
 
 Strainer is licensed under Apache 2.0. Any contributions highly appreciated!
+
+### Acknowledgements
+
+Project icon is based on one made by [Freepik](https://www.freepik.com/) from [www.flaticon.com](https://www.flaticon.com/) and [Visual Studio Icons](https://www.microsoft.com/en-us/download/details.aspx?id=35825).
+
