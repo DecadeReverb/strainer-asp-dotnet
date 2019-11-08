@@ -362,6 +362,8 @@ Strainer comes with following filter operators:
 
 Case insensitive operators will force case insensitivity when comparing values even when [`IsCaseInsensitiveForValues`](#configure-strainer) option is set to `false`.
 
+**Note:** even though Strainer supports different case sensitivity modes, whether the case sensitivity will be taken into account when comparing values, depends entirely on the source `IQueryable` provider, which in most scenarios is the database provider.
+
 ## Custom filter operators
 
 Same manner as marking properties you can add new filter operators. Override `MapFilterOperators()` in a class deriving from `StrainerProcessor`:
