@@ -38,7 +38,6 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         protected override void MapProperties(IPropertyMapper mapper)
         {
-
             mapper.Property<Post>(p => p.Title)
                 .IsSortable()
                 .IsFilterable()
@@ -54,7 +53,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
                 ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
                 : context.Source.OrderBy(p => p.LikeCount)
                     .ThenBy(p => p.CommentCount)
-                    .ThenBy(p => p.DateCreated);
+                    .ThenByDescending(p => p.DateCreated);
         }
     }
 }

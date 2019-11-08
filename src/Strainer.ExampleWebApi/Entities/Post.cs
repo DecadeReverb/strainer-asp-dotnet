@@ -6,6 +6,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Entities
 {
 	public class Post
     {
+        [StrainerProperty(IsFilterable = true, IsSortable = true)]
         public int Id { get; set; }
 
         [StrainerProperty(IsFilterable = true, IsSortable = true)]

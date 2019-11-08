@@ -2,6 +2,7 @@
 using Fluorite.Sieve.Example.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +20,10 @@ namespace Fluorite.Strainer.ExampleWebApi
                 try
                 {
                     var context = provider.GetRequiredService<ApplicationDbContext>();
+
+                    context.Database.EnsureDeleted();
+                    context.Database.EnsureCreated();
+
                     DatabaseInitializer.Initialize(context);
                 }
                 catch (Exception ex)

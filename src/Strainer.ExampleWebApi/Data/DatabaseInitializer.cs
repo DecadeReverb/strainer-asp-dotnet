@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Fluorite.Strainer.ExampleWebApi.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fluorite.Strainer.ExampleWebApi.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fluorite.Sieve.Example.Data
 {
@@ -11,7 +11,7 @@ namespace Fluorite.Sieve.Example.Data
     /// </summary>
     public static class DatabaseInitializer
     {
-        private static Random _random = new Random();
+        private static readonly Random _random = new Random();
 
         /// <summary>
         /// Creates the database if it does not exists and seeds it with
@@ -24,26 +24,13 @@ namespace Fluorite.Sieve.Example.Data
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.Database.EnsureCreated();
-
-            // Look for any Posts.
-            if (context.Posts.AsNoTracking().Any() && context.Posts.AsNoTracking().Any())
-            {
-                // Database already has been seeded.
-                return;
-            }
-
-            var posts = Constants.Data.Seeding.Posts;
-
-            #region posts
-            AddPosts(context, posts);
+            AddPosts(context, postsCount: 120);
             context.SaveChanges();
-            #endregion
         }
 
-        private static void AddPosts(ApplicationDbContext context, int posts)
+        private static void AddPosts(ApplicationDbContext context, int postsCount)
         {
-            for (var i = 0; i < posts; i++)
+            for (var i = 0; i < postsCount; i++)
             {
                 var post = RandomizePost();
                 context.Posts.Add(post);

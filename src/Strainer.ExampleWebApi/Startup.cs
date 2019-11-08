@@ -29,7 +29,7 @@ namespace Fluorite.Strainer.ExampleWebApi
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseInMemoryDatabase("InMemoryDatabase");
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
             services.AddStrainer<ApplicationStrainerProcessor>(Configuration.GetSection("Strainer"));
