@@ -25,7 +25,11 @@ namespace Fluorite.Strainer.ExampleWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Post>>> Index()
         {
-            var result = await _dbContext.Posts.AsNoTracking().ToListAsync();
+            var result = await _dbContext
+                .Posts
+                .Include(p => p.Comments)
+                .AsNoTracking()
+                .ToListAsync();
 
             return Json(result);
         }
@@ -33,7 +37,10 @@ namespace Fluorite.Strainer.ExampleWebApi.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<List<Post>>> GetAllWithStrainer([FromQuery] StrainerModel strainerModel)
         {
-            var source = _dbContext.Posts.AsNoTracking();
+            var source = _dbContext
+                .Posts
+                .Include(p => p.Comments)
+                .AsNoTracking();
             var result = _strainerProcessor.Apply(strainerModel, source);
 
             return await result.ToListAsync();

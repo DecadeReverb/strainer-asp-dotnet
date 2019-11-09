@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
+namespace Fluorite.Strainer.IntegrationTests.Attributes
 {
     public class StrainerObjectAttributeTests : StrainerFixtureBase
     {
@@ -15,16 +15,16 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
         }
 
         [Fact]
-        public void StrainerObjectAttribute_Empty_DoesNotWork()
+        public void StrainerObjectAttribute_With_TurnedOffFilters_DoesNotWork()
         {
             // Arrange
             var source = new[]
             {
-                new _EmptyTestEntity
+                new EmptyTestEntity
                 {
                     Name = "foo",
                 },
-                new _EmptyTestEntity
+                new EmptyTestEntity
                 {
                     Name = "bar",
                 },
@@ -33,7 +33,6 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
             var model = new StrainerModel
             {
                 Filters = "Name==foo",
-                Sorts = "Name",
             };
 
             // Act
@@ -49,11 +48,11 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
             // Arrange
             var source = new[]
             {
-                new _SortableTestEntity
+                new SortableTestEntity
                 {
                     Name = "foo",
                 },
-                new _SortableTestEntity
+                new SortableTestEntity
                 {
                     Name = "bar",
                 },
@@ -77,11 +76,11 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
             // Arrange
             var source = new[]
             {
-                new _FilterableTestEntity
+                new FilterableTestEntity
                 {
                     Name = "foo",
                 },
-                new _FilterableTestEntity
+                new FilterableTestEntity
                 {
                     Name = "bar",
                 },
@@ -105,15 +104,15 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
             // Arrange
             var source = new[]
             {
-                new _FilterableAndSortableTestEntity
+                new FilterableAndSortableTestEntity
                 {
                     Name = "fooZ",
                 },
-                new _FilterableAndSortableTestEntity
+                new FilterableAndSortableTestEntity
                 {
                     Name = "fooA",
                 },
-                new _FilterableAndSortableTestEntity
+                new FilterableAndSortableTestEntity
                 {
                     Name = "bar",
                 },
@@ -139,11 +138,11 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
             // Arrange
             var source = new[]
             {
-                new _DerivedTestEntity
+                new DerivedTestEntity
                 {
                     Name = "foo",
                 },
-                new _DerivedTestEntity
+                new DerivedTestEntity
                 {
                     Name = "bar",
                 },
@@ -160,34 +159,34 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes.StrainerObject
             // Assert
             result.Should().BeInAscendingOrder(e => e.Name);
         }
-    }
 
-    [StrainerObject]
-    class _EmptyTestEntity
-    {
-        public string Name { get; set; }
-    }
+        [StrainerObject(IsFilterable = false)]
+        private class EmptyTestEntity
+        {
+            public string Name { get; set; }
+        }
 
-    class _DerivedTestEntity : _SortableTestEntity
-    {
+        private class DerivedTestEntity : SortableTestEntity
+        {
 
-    }
+        }
 
-    [StrainerObject(IsFilterable = true)]
-    class _FilterableTestEntity
-    {
-        public string Name { get; set; }
-    }
+        [StrainerObject(IsFilterable = true)]
+        private class FilterableTestEntity
+        {
+            public string Name { get; set; }
+        }
 
-    [StrainerObject(IsSortable = true)]
-    class _SortableTestEntity
-    {
-        public string Name { get; set; }
-    }
+        [StrainerObject(IsSortable = true)]
+        private class SortableTestEntity
+        {
+            public string Name { get; set; }
+        }
 
-    [StrainerObject(IsFilterable = true, IsSortable = true)]
-    class _FilterableAndSortableTestEntity
-    {
-        public string Name { get; set; }
+        [StrainerObject(IsFilterable = true, IsSortable = true)]
+        private class FilterableAndSortableTestEntity
+        {
+            public string Name { get; set; }
+        }
     }
 }

@@ -38,21 +38,20 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         protected override void MapProperties(IPropertyMapper mapper)
         {
-            mapper.Property<Post>(p => p.Title)
-                .IsSortable()
+            mapper.Property<Post>(p => p.Comments.Count)
                 .IsFilterable()
-                .HasDisplayName("CustomTitleName");
+                .IsSortable();
         }
 
         private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
-            => context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
+            => context.Source.Where(p => p.LikeCount < 100 && p.Comments.Count < 5);
 
         private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
         {
             return context.IsSubsequent
                 ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
                 : context.Source.OrderBy(p => p.LikeCount)
-                    .ThenBy(p => p.CommentCount)
+                    .ThenBy(p => p.Comments.Count)
                     .ThenByDescending(p => p.DateCreated);
         }
     }

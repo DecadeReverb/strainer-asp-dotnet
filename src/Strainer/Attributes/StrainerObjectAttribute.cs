@@ -19,20 +19,24 @@ namespace Fluorite.Strainer.Attributes
 
         }
 
-        public bool DefaultSortingPropertyName { get; set; }
+        public string DefaultSortingPropertyName { get; set; }
 
         public bool IsDefaultSortingDescending { get; set; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets a <see cref="bool"/> value indicating whether related
         /// object is marked as filterable.
+        /// <para/>
+        /// Defaults to <see langword="true"/>.
         /// </summary>
-        public bool IsFilterable { get; set; }
+        public bool IsFilterable { get; set; } = true;
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets a <see cref="bool"/> value indicating whether related
         /// object is marked as filterable.
+        /// <para/>
+        /// Defaults to <see langword="true"/>.
         /// </summary>
-        public bool IsSortable { get; set; }
+        public bool IsSortable { get; set; } = true;
     }
 }

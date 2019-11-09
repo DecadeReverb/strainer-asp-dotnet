@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.ExampleWebApi.Entities;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,33 +23,54 @@ namespace Fluorite.Sieve.Example.Data
                 throw new ArgumentNullException(nameof(context));
             }
 
-            AddPosts(context, postsCount: 120);
+            AddPosts(context, postsCount: 120, upToCommentsPerPost: 10);
+
             context.SaveChanges();
         }
 
-        private static void AddPosts(ApplicationDbContext context, int postsCount)
+        private static void AddPosts(ApplicationDbContext context, int postsCount, int upToCommentsPerPost)
         {
             for (var i = 0; i < postsCount; i++)
             {
-                var post = RandomizePost();
+                var post = RandomizePost(upToCommentsPerPost);
                 context.Posts.Add(post);
                 context.SaveChanges();
             }
         }
 
-        private static Post RandomizePost()
+        private static List<Comment> RandomizeComments(Post parentPost, int minComments, int maxComments)
+        {
+            var commentsCount = _random.Next(minComments, maxComments + 1);
+            var comments = new List<Comment>(capacity: commentsCount);
+
+            for (var i = 0; i < commentsCount; i++)
+            {
+                comments.Add(new Comment
+                {
+                    Message = RandomizeText(),
+                    Post = parentPost,
+                });
+            }
+
+            return comments;
+        }
+
+        private static Post RandomizePost(int upToCommentsPerPost)
         {
             var randomDateTime = RandomizeDateTime();
 
-            return new Post
+            var post = new Post
             {
                 CategoryId = _random.Next(1, 3000),
-                CommentCount = _random.Next(0, 38),
                 DateCreated = randomDateTime,
                 DateLastViewed = randomDateTime.AddDays(_random.Next((DateTime.Today - randomDateTime).Days)),
                 LikeCount = _random.Next(0, 48),
-                Title = RandomizeTitle(),
+                Title = RandomizeText(),
             };
+
+            post.Comments = RandomizeComments(post, 0, upToCommentsPerPost);
+
+            return post;
         }
 
         private static DateTime RandomizeDateTime()
@@ -61,7 +81,7 @@ namespace Fluorite.Sieve.Example.Data
             return start.AddDays(_random.Next(range));
         }
 
-        private static string RandomizeTitle()
+        private static string RandomizeText()
         {
             var words = new List<string>
             {
@@ -69,6 +89,7 @@ namespace Fluorite.Sieve.Example.Data
                 "and", "a", "with", "bird", "fox"
             };
             var sentence = new List<string>();
+
             while (sentence.Count != words.Count)
             {
                 var index = _random.Next(0, words.Count);
@@ -82,14 +103,12 @@ namespace Fluorite.Sieve.Example.Data
             return string.Join(" ", sentence).FirstCharToUpper();
         }
 
-        private static string FirstCharToUpper(this string input)
-        {
-            switch (input)
+        private static string FirstCharToUpper(this string input) =>
+            input switch
             {
-                case null: throw new ArgumentNullException(nameof(input));
-                case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
-                default: return input.First().ToString().ToUpper() + input.Substring(1);
-            }
-        }
+                null => throw new ArgumentNullException(nameof(input)),
+                "" => throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input)),
+                _ => input.First().ToString().ToUpper() + input.Substring(1),
+            };
     }
 }
