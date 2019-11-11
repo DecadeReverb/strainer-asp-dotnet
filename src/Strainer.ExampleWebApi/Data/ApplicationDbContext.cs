@@ -1,7 +1,7 @@
 ﻿using Fluorite.Strainer.ExampleWebApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fluorite.Sieve.Example.Data
+namespace Fluorite.Strainer.ExampleWebApi.Data
 {
     /// <summary>
     /// Represents a session with the database and can be used to query

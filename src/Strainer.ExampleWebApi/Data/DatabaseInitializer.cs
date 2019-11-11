@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fluorite.Sieve.Example.Data
+namespace Fluorite.Strainer.ExampleWebApi.Data
 {
     /// <summary>
     /// Provides means of database initialization.
