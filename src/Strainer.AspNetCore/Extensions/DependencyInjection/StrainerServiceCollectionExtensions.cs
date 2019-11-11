@@ -141,7 +141,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Configure<StrainerOptions>(configuration);
 
-            var builder = services.AddStrainer<TProcessor>();
+            var builder = services.AddStrainer<TProcessor>(serviceLifetime);
 
             return builder;
         }
@@ -193,7 +193,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.AddOptions<StrainerOptions>().Configure(configure);
 
-            var builder = services.AddStrainer<TProcessor>();
+            var builder = services.AddStrainer<TProcessor>(serviceLifetime);
 
             return builder;
         }
@@ -206,11 +206,6 @@ namespace Fluorite.Extensions.DependencyInjection
         private static bool ContainsServiceOfType<TImplementationType>(this IServiceCollection services)
         {
             return services.Any(d => d.ServiceType == typeof(TImplementationType));
-        }
-
-        private static bool ContainsServiceOfType(this IServiceCollection services, Type implementationType)
-        {
-            return services.Any(d => d.ServiceType == implementationType);
         }
     }
 }
