@@ -28,26 +28,34 @@ namespace Fluorite.Strainer.Attributes
         /// Gets or sets a <see cref="bool"/> value indicating whether related
         /// property should be used as a default (fallback) property when
         /// sorting objects having related property.
+        /// <para/>
+        /// Defaults to <see langword="false"/>.
         /// </summary>
-        public bool IsDefaultSorting { get; set; }
+        public bool IsDefaultSorting { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indicating whether default
         /// sorting should be performed in a descending way.
+        /// <para/>
+        /// Defaults to <see langword="false"/>.
         /// </summary>
-        public bool IsDefaultSortingDescending { get; set; }
+        public bool IsDefaultSortingDescending { get; set; } = false;
 
         /// <summary>
         /// Gets or sets <see cref="bool"/> value indicating whether related
         /// property is marked as filterable.
+        /// <para/>
+        /// Defaults to <see langword="false"/>.
         /// </summary>
-        public bool IsFilterable { get; set; }
+        public bool IsFilterable { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indicating whether related
         /// property is marked as sortable.
+        /// <para/>
+        /// Defaults to <see langword="false"/>.
         /// </summary>
-        public bool IsSortable { get; set; }
+        public bool IsSortable { get; set; } = false;
 
         /// <summary>
         /// Gets the real name of related property.

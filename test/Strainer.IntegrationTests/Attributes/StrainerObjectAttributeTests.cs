@@ -160,7 +160,7 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes
             result.Should().BeInAscendingOrder(e => e.Name);
         }
 
-        [StrainerObject(IsFilterable = false)]
+        [StrainerObject(nameof(Name), IsFilterable = false)]
         private class EmptyTestEntity
         {
             public string Name { get; set; }
@@ -171,19 +171,19 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes
 
         }
 
-        [StrainerObject(IsFilterable = true)]
+        [StrainerObject(nameof(Name), IsFilterable = true)]
         private class FilterableTestEntity
         {
             public string Name { get; set; }
         }
 
-        [StrainerObject(IsSortable = true)]
+        [StrainerObject(nameof(Name), IsSortable = true)]
         private class SortableTestEntity
         {
             public string Name { get; set; }
         }
 
-        [StrainerObject(IsFilterable = true, IsSortable = true)]
+        [StrainerObject(nameof(Name), IsFilterable = true, IsSortable = true)]
         private class FilterableAndSortableTestEntity
         {
             public string Name { get; set; }

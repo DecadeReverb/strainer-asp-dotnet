@@ -11,21 +11,20 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     /// <summary>
     /// Provides means of tranlating <see cref="ISortTerm"/> into
-    /// <see cref="System.Linq.Expressions.Expression{TDelegate}"/> of
-    /// <see cref="System.Func{T, TResult}"/>.
+    /// <see cref="Expression{TDelegate}"/> of <see cref="Func{T, TResult}"/>.
     /// <para/>
     /// In other words - provides list of expressions which later can be used
-    /// as arguments for ordering <see cref="System.Linq.IQueryable{T}"/> functions.
+    /// as arguments for ordering <see cref="IQueryable{T}"/>.
     /// </summary>
     public class SortExpressionProvider : ISortExpressionProvider
     {
         private readonly IPropertyMapper _mapper;
-        private readonly IAttributePropertyMetadataProvider _metadataProvider;
+        private readonly IAttributeMetadataProvider _metadataProvider;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IPropertyMapper mapper, IAttributePropertyMetadataProvider metadataProvider)
+        public SortExpressionProvider(IPropertyMapper mapper, IAttributeMetadataProvider metadataProvider)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
@@ -33,23 +32,29 @@ namespace Fluorite.Strainer.Services.Sorting
 
         public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
         {
-            var metadata = _mapper
-                .Properties
-                .FirstOrDefault(pair => pair.Key == typeof(TEntity))
-                .Value
-                ?.FirstOrDefault(p => p.IsDefaultSorting);
-            if (metadata == null)
+            // TODO:
+            // Check if can use Fluent API.
+
+            var propertyMetadata = _mapper.GetDefaultMetadata<TEntity>();
+
+            if (propertyMetadata == null)
             {
                 return null;
             }
 
+            // TODO:
+            // Check if can use attributes.
+            // If yes and propertyMetada is still null, get default metadata
+            // from attributes metadata provider, just like it's done in
+            // StrainerProcessor.
+
             var sortTerm = new SortTerm
             {
-                IsDescending = metadata.IsDefaultSortingDescending,
-                Name = metadata.DisplayName ?? metadata.Name
+                IsDescending = propertyMetadata.IsDefaultSortingDescending,
+                Name = propertyMetadata.DisplayName ?? propertyMetadata.Name
             };
 
-            return GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isSubsequent: false);
+            return GetExpression<TEntity>(propertyMetadata.PropertyInfo, sortTerm, isSubsequent: false);
         }
 
         public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isSubsequent)
@@ -145,14 +150,14 @@ namespace Fluorite.Strainer.Services.Sorting
 
         private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
-            var metadata = _mapper.FindProperty<TEntity>(
+            var metadata = _mapper.GetMetadata<TEntity>(
                 isSortingRequired,
                 isFilteringRequired,
                 name);
 
             if (metadata == null)
             {
-                return _metadataProvider.GetPropertyMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return _metadataProvider.GetMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

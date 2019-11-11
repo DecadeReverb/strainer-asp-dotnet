@@ -2,7 +2,7 @@
 
 namespace Fluorite.Strainer.ExampleWebApi.Entities
 {
-    [StrainerObject(DefaultSortingPropertyName = nameof(Id))]
+    [StrainerObject(nameof(Id))]
     public class Comment
     {
         public Comment()

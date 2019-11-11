@@ -57,6 +57,17 @@
         public int MaxPageSize { get; set; } = 50;
 
         /// <summary>
+        /// Defines the type of sources Strainer will look through
+        /// when obtaining property metadata.
+        /// <para/>
+        /// Note: narrowing down type of metadata source can speed up Strainer
+        /// processing performance.
+        /// <para/>
+        /// Defaults to <see cref="MetadataSourceType.All"/>.
+        /// </summary>
+        public MetadataSourceType MetadataSourceType { get; set; } = MetadataSourceType.All;
+
+        /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether
         /// Strainer should throw <see cref="Exceptions.StrainerException"/>
         /// and the like.

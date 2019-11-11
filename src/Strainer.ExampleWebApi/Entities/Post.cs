@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.ExampleWebApi.Entities
 {
-    [StrainerObject(DefaultSortingPropertyName = nameof(Id))]
+    [StrainerObject(nameof(Id))]
 	public class Post
     {
         public Post()

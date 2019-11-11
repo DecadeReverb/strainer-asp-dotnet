@@ -44,7 +44,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
                     context.Filter,
                     newSortingContext,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.AttributeMetadataProvider,
                     context.CustomMethods);
 
                 return new TestStrainerProcessor(newContext);

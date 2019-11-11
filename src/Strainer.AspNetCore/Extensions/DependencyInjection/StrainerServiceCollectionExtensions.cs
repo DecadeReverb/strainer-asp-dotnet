@@ -86,7 +86,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
             services.Add<IPropertyMapper, PropertyMapper>(serviceLifetime);
-            services.Add<IAttributePropertyMetadataProvider, AttributePropertyMetadataProvider>(serviceLifetime);
+            services.Add<IAttributeMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
 

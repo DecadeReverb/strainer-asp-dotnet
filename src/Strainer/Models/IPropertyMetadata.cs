@@ -3,7 +3,7 @@
 namespace Fluorite.Strainer.Models
 {
     /// <summary>
-    /// Provides metadata about properties used by Strainer.
+    /// Provides metadata about a property.
     /// </summary>
     public interface IPropertyMetadata
     {

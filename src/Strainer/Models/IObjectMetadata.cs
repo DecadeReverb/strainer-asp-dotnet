@@ -6,8 +6,15 @@
     /// </summary>
     public interface IObjectMetadata
     {
+        /// <summary>
+        /// Gets a property name being default sorting property for marked object.
+        /// </summary>
         string DefaultSortingPropertyName { get; }
 
+        /// <summary>
+        /// Gets a <see cref="bool"/> value indicating whether default
+        /// sorting way for marked object is descending.
+        /// </summary>
         bool IsDefaultSortingDescending { get; }
 
         /// <summary>

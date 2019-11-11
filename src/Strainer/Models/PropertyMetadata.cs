@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Fluorite.Strainer.Models
 {
     /// <summary>
-    /// Represents default property metadata model used by Strainer.
+    /// Represents default property metadata model.
     /// </summary>
     [DebuggerDisplay("\\{" + nameof(Name) + " = " + "{" + nameof(Name) + "} \\}")]
     public class PropertyMetadata : IPropertyMetadata, IEquatable<PropertyMetadata>

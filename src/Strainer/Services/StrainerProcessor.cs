@@ -41,12 +41,13 @@ namespace Fluorite.Strainer.Services
 
             // TODO:
             // Move sort expression validation to service injection.
-            var properties = Context.Mapper.Properties;
-            foreach (var type in properties.Keys)
-            {
-                dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
-                //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
-            }
+            //var properties = Context.Mapper.GetAllMetadata();
+
+            //foreach (var type in properties.Keys)
+            //{
+            //    dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
+            //    //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
+            //}
 
             MapCustomFilterMethods(context.CustomMethods.Filter);
             MapCustomSortMethods(context.CustomMethods.Sort);
@@ -448,17 +449,44 @@ namespace Fluorite.Strainer.Services
 
         private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
-            var metadata = Context.Mapper.FindProperty<TEntity>(
-                isSortingRequired,
-                isFilteringRequired,
-                name);
+            IPropertyMetadata propertyMetadata = null;
 
-            if (metadata == null)
+            if (IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
             {
-                return Context.MetadataProvider.GetPropertyMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
+                propertyMetadata = Context.Mapper.GetMetadata<TEntity>(
+                    isSortingRequired,
+                    isFilteringRequired,
+                    name);
             }
 
-            return metadata;
+            if (IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
+            {
+                if (propertyMetadata == null)
+                {
+                    propertyMetadata = Context.AttributeMetadataProvider
+                        .GetMetadataFromPropertyAttribute<TEntity>(
+                            isSortingRequired,
+                            isFilteringRequired,
+                            name);
+                }
+            }
+
+            if (IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
+            {
+                if (propertyMetadata == null)
+                {
+                    propertyMetadata = Context.AttributeMetadataProvider
+                        .GetMetadataFromObjectAttribute<TEntity>(
+                            isSortingRequired,
+                            isFilteringRequired,
+                            name);
+                }
+            }
+
+            return propertyMetadata;
         }
+
+        private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
+            => Context.Options.MetadataSourceType.HasFlag(metadataSourceType);
     }
 }
