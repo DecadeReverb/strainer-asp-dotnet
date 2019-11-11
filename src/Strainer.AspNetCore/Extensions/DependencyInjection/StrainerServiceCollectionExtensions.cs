@@ -90,7 +90,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
 
-            return new StrainerBuilder(services);
+            return new StrainerBuilder(services, serviceLifetime);
         }
 
         /// <summary>
