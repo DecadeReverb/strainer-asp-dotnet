@@ -1,6 +1,6 @@
 # Migration guide from Sieve to Strainer
 
-During porting from Sieve to Strainer, the project met heavy refactoring. Whole bunch of new interfaces and services was introduced, a lot of code was split into smaller pieces. The goal was to achieve finer granularity. No worries - all this without a change in framework's core functionality. Code which is more granular, it's also easier to maintain, test and extend.
+During porting from Sieve to Strainer, the project met heavy refactoring. Whole bunch of new interfaces and services was introduced, a lot of code was split into smaller pieces. The goal was to achieve finer granularity. Framework's core functionality stayed more or less the same. Code which is more granular, it's also easier to maintain, test and extend.
 
 ### New project name - "Strainer"
 
@@ -126,7 +126,7 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 }
 ```
 
-Some explantation of what is going on above. In `MapCustomSortMethods()` a custom sorting method for `Post` entity is added with a name _"Popularity"_. Then a transforming function is specified. Although `WithFunction()` method requires an argument of `Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>>`, you can easily provide a whole method which returns an `IQueryable` and has an `ICustomSortMethodContext` parameter. In that way you can seperete your sorting logic in a dedicated method which can be made private.
+In `MapCustomSortMethods()` a custom sorting method for `Post` entity is added with a name _"Popularity"_. Then a transforming function is specified. Although `WithFunction()` method requires an argument of `Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>>`, you can easily provide a whole method which returns an `IQueryable` and has an `ICustomSortMethodContext` parameter. In that way you can seperete your sorting logic in a dedicated method which can be made private.
 
 `MapCustomSortMethods()` will be called on `StrainerProcessor` initialization, alongside with other similar methods like `MapCustomFilterMethods()`.
 
