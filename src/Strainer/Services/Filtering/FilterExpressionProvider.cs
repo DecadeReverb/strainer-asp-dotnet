@@ -81,7 +81,14 @@ namespace Fluorite.Strainer.Services.Filtering
                 {
                     if (typeConverter.CanConvertFrom(typeof(string)))
                     {
-                        constantVal = typeConverter.ConvertFrom(filterTermValue);
+                        try
+                        {
+                            constantVal = typeConverter.ConvertFrom(filterTermValue);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
                     }
                     else
                     {
