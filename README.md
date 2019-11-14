@@ -357,6 +357,7 @@ Strainer comes with following filter operators:
 | `@=*`      | Contains _(case-insensitive)_                |
 | `_=*`      | Starts with _(case-insensitive)_             |
 | `==*`      | Equals _(case-insensitive)_                  |
+| `!=*`      | Not equals _(case-insensitive)_              |
 | `!@=*`     | Does not contain _(case-insensitive)_        |
 | `!_=*`     | Does not start with _(case-insensitive)_     |
 

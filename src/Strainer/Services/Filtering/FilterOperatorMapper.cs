@@ -134,6 +134,11 @@ namespace Fluorite.Strainer.Services.Filtering
                 .IsStringBased()
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
+            new FilterOperatorBuilder(this, symbol: "!=*")
+                .HasName("not equal to (case insensitive)")
+                .IsStringBased()
+                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
+                .IsCaseInsensitive();
 
             new FilterOperatorBuilder(this, symbol: "@=*")
                 .HasName("contains (case insensitive)")
