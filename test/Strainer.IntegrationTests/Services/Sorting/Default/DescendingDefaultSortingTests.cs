@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Metadata;
 using System.Linq;
 using Xunit;
 
@@ -78,7 +79,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
 
             }
 
-            protected override void MapProperties(IPropertyMapper mapper)
+            protected override void MapProperties(IPropertyMetadataMapper mapper)
             {
                 mapper.Property<Post>(p => p.Name)
                     .IsSortable()

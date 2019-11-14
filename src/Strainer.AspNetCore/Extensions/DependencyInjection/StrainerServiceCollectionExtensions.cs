@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -85,8 +86,11 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
             services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
-            services.Add<IPropertyMapper, PropertyMapper>(serviceLifetime);
-            services.Add<IAttributeMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
+            services.Add<IPropertyMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
+            services.Add<IPropertyMetadataProvider, PropertyMetadataMapper>(serviceLifetime);
+            services.Add<IMainMetadataProvider, MainMetadataProvider>(serviceLifetime);
+
+            services.Add<IPropertyMetadataMapper, PropertyMetadataMapper>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
 

@@ -1,6 +1,7 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
+using Fluorite.Strainer.Services.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,35 +19,24 @@ namespace Fluorite.Strainer.Services.Sorting
     /// </summary>
     public class SortExpressionProvider : ISortExpressionProvider
     {
-        private readonly IPropertyMapper _mapper;
-        private readonly IAttributeMetadataProvider _metadataProvider;
+        private readonly IMainMetadataProvider _mainMetadataProvider;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IPropertyMapper mapper, IAttributeMetadataProvider metadataProvider)
+        public SortExpressionProvider(IMainMetadataProvider mainMetadataProvider)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
+            this._mainMetadataProvider = mainMetadataProvider ?? throw new ArgumentNullException(nameof(mainMetadataProvider));
         }
 
         public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
         {
-            // TODO:
-            // Check if can use Fluent API.
-
-            var propertyMetadata = _mapper.GetDefaultMetadata<TEntity>();
+            var propertyMetadata = _mainMetadataProvider.GetDefaultMetadata<TEntity>();
 
             if (propertyMetadata == null)
             {
                 return null;
             }
-
-            // TODO:
-            // Check if can use attributes.
-            // If yes and propertyMetada is still null, get default metadata
-            // from attributes metadata provider, just like it's done in
-            // StrainerProcessor.
 
             var sortTerm = new SortTerm
             {
@@ -106,7 +96,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
-        /// list of sort terms used to associate names from <see cref="IPropertyMapper"/>.
+        /// list of sort terms used to associate names from <see cref="IPropertyMetadataMapper"/>.
         /// </summary>
         /// <typeparam name="TEntity">
         /// The type of entity for which the expression is for.
@@ -150,14 +140,14 @@ namespace Fluorite.Strainer.Services.Sorting
 
         private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
         {
-            var metadata = _mapper.GetMetadata<TEntity>(
+            var metadata = _mainMetadataProvider.GetMetadata<TEntity>(
                 isSortingRequired,
                 isFilteringRequired,
                 name);
 
             if (metadata == null)
             {
-                return _metadataProvider.GetMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return _mainMetadataProvider.GetMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

@@ -3,6 +3,7 @@ using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using Moq;
 using System;
@@ -34,10 +35,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
-            var metadataProvider = new AttributeMetadataProvider(optionsProvider);
-            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
+            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
+            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
             var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
@@ -68,9 +70,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
-            var metadataProvider = new AttributeMetadataProvider(optionsProvider);
-            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
+            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
+            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
             var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
@@ -98,10 +101,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
-            var metadataProvider = new AttributeMetadataProvider(optionsProvider);
-            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
+            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
+            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
             var sortExpressions = expressionProvider.GetExpressions<Post>(sortTerms);
@@ -143,12 +147,14 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
             mapper.Property<Comment>(c => c.Id).IsSortable();
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();
-            var metadataProvider = new AttributeMetadataProvider(optionsProvider);
-            var expressionProvider = new SortExpressionProvider(mapper, metadataProvider);
+            var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
+            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper, attributeMetadataProvider };
+            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
             var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);

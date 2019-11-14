@@ -1,5 +1,5 @@
 ﻿using Fluorite.Extensions.DependencyInjection;
-using Fluorite.Sieve.Example.Data;
+using Fluorite.Strainer.ExampleWebApi.Data;
 using Fluorite.Strainer.ExampleWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

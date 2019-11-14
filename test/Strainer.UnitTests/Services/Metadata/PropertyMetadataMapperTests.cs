@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Metadata;
 using Moq;
 using System;
-using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests.Services
+namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {
-    public class PropertyMapperTests
+    public class PropertyMetadataMapperTests
     {
         [Fact]
         public void Mapper_Returns_Null_When_JustPropertyIsCalled()
@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
 
             // Act
             mapper.Property<Post>(p => p.Id);
@@ -39,7 +39,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Post>(p => p.Id).IsFilterable();
 
             // Act
@@ -61,7 +61,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Post>(p => p.Id).IsSortable();
 
             // Act
@@ -83,7 +83,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Post>(p => p.Id).IsSortable().IsDefaultSort();
 
             // Act
@@ -96,49 +96,6 @@ namespace Fluorite.Strainer.UnitTests.Services
         }
 
         [Fact]
-        public void Mapper_Returns_AllMetadata()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
-            mapper.Property<Post>(p => p.Id).IsSortable();
-            mapper.Property<Exception>(p => p.Message).IsSortable();
-
-            // Act
-            var metadatas = mapper.GetAllMetadata();
-
-            // Assert
-            metadatas.Should().HaveCount(2);
-            metadatas.First().Value.Should().HaveCount(1);
-            metadatas.Last().Value.Should().HaveCount(1);
-        }
-
-        [Fact]
-        public void Mapper_Returns_AllMetadata_For_SpecificType()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
-            mapper.Property<Post>(p => p.Id).IsSortable();
-            mapper.Property<Exception>(p => p.Message).IsSortable();
-
-            // Act
-            var metadatas = mapper.GetAllMetadata<Post>();
-            var metadata = metadatas.FirstOrDefault();
-
-            // Assert
-            metadatas.Should().HaveCount(1);
-            metadata.Name.Should().Be(nameof(Post.Id));
-            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-        }
-
-        [Fact]
         public void Mapper_Adds_Map_Via_AddMap()
         {
             // Arrange
@@ -146,10 +103,9 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             var metadata = new PropertyMetadata()
             {
-                DisplayName = nameof(Post.Id),
                 Name = nameof(Post.Id),
                 PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
             };
@@ -174,30 +130,28 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
-            var metadata1 = new PropertyMetadata()
+            var mapper = new PropertyMetadataMapper(optionsProvider);
+            var firstMetadata = new PropertyMetadata()
             {
-                DisplayName = nameof(Post.Id),
-                Name = nameof(Post.Id),
+                Name = "first",
                 PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
             };
-            var metadata2 = new PropertyMetadata()
+            var secondMetadata = new PropertyMetadata()
             {
-                DisplayName = nameof(Post.Id),
                 IsFilterable = true,
-                Name = nameof(Post.Id),
+                Name = "second",
                 PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
             };
 
             // Act
-            mapper.AddMetadata<Post>(metadata1);
-            mapper.AddMetadata<Post>(metadata2);
-            var metadatas = mapper.GetAllMetadata<Post>();
+            mapper.AddMetadata<Post>(firstMetadata);
+            mapper.AddMetadata<Post>(secondMetadata);
+            var firstResult = mapper.GetMetadata<Post>(false, false, name: firstMetadata.Name);
+            var secondResult = mapper.GetMetadata<Post>(false, false, name: secondMetadata.Name);
 
             // Assert
-            metadatas.Should().HaveCount(2);
-            metadatas.First().IsFilterable.Should().BeFalse();
-            metadatas.Last().IsFilterable.Should().BeTrue();
+            firstResult.Should().Be(firstMetadata);
+            secondResult.Should().Be(secondMetadata);
         }
 
         [Fact]
@@ -208,10 +162,9 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             var metadata = new PropertyMetadata()
             {
-                DisplayName = nameof(Post.Id),
                 Name = nameof(Post.Id),
                 PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
             };
@@ -219,12 +172,11 @@ namespace Fluorite.Strainer.UnitTests.Services
             // Act
             mapper.AddMetadata<Post>(metadata);
             mapper.AddMetadata<Post>(metadata);
-            var metadatas = mapper.GetAllMetadata<Post>();
+            var result = mapper.GetMetadata<Post>(isSortableRequired: false, isFilterableRequired: false, nameof(Post.Id));
 
             // Assert
-            metadatas.Should().HaveCount(1);
-            metadatas.First().Name.Should().Be(nameof(Post.Id));
-            metadatas.First().PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
+            result.Name.Should().Be(nameof(Post.Id));
+            result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
         }
 
         [Fact]
@@ -235,7 +187,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => mapper.Property<Post>(p => p.Id));
@@ -249,10 +201,9 @@ namespace Fluorite.Strainer.UnitTests.Services
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
             var metadata = new PropertyMetadata()
             {
-                DisplayName = nameof(Post.Id),
                 Name = nameof(Post.Id),
                 PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
             };
@@ -262,17 +213,23 @@ namespace Fluorite.Strainer.UnitTests.Services
         }
 
         [Fact]
-        public void Mapper_FindProperty_Throws_Exception_With_FluentApiMetadataSourceType_Disabled()
+        public void Mapper_FindProperty_Returns_Null_With_FluentApiMetadataSourceType_Disabled()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMapper(optionsProvider);
+            var mapper = new PropertyMetadataMapper(optionsProvider);
 
-            // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => mapper.GetMetadata<Post>(true, true, null));
+            // Act
+            var result = mapper.GetMetadata<Post>(
+                isSortableRequired: true,
+                isFilterableRequired: true,
+                name: null);
+
+            // Assert
+            result.Should().BeNull();
         }
 
         private class Post

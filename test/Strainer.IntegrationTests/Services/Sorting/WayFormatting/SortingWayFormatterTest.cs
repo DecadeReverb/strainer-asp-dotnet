@@ -2,6 +2,7 @@
 using Fluorite.Extensions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
                     context.Filter,
                     newSortingContext,
                     context.Mapper,
-                    context.AttributeMetadataProvider,
+                    context.MetadataProvider,
                     context.CustomMethods);
 
                 return new TestStrainerProcessor(newContext);
@@ -68,7 +69,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
 
             }
 
-            protected override void MapProperties(IPropertyMapper mapper)
+            protected override void MapProperties(IPropertyMetadataMapper mapper)
             {
                 mapper.Property<Post>(e => e.Name)
                     .IsSortable()

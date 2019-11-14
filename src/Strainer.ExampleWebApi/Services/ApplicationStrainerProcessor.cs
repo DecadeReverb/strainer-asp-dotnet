@@ -3,6 +3,7 @@ using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System.Linq;
 using System.Linq.Expressions;
@@ -36,7 +37,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
                 .IsCaseInsensitive();
         }
 
-        protected override void MapProperties(IPropertyMapper mapper)
+        protected override void MapProperties(IPropertyMetadataMapper mapper)
         {
             mapper.Property<Post>(p => p.Comments.Count)
                 .IsFilterable()

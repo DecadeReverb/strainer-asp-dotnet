@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services
+namespace Fluorite.Strainer.Services.Metadata
 {
-    public class AttributeMetadataProvider : IAttributeMetadataProvider
+    public class AttributeMetadataProvider : IPropertyMetadataProvider
     {
         private readonly StrainerOptions _options;
 
@@ -29,8 +29,28 @@ namespace Fluorite.Strainer.Services
             return propertyMetadata;
         }
 
-        public IPropertyMetadata GetDefaultMetadataFromObjectAttribute<TEntity>()
+        public IPropertyMetadata GetMetadata<TEntity>(
+            bool isSortingRequired,
+            bool isFilteringRequired,
+            string name)
         {
+            var propertyMetadata = GetMetadataFromPropertyAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+
+            if (propertyMetadata == null)
+            {
+                propertyMetadata = GetMetadataFromObjectAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+            }
+
+            return propertyMetadata;
+        }
+
+        private IPropertyMetadata GetDefaultMetadataFromObjectAttribute<TEntity>()
+        {
+            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
+            {
+                return null;
+            }
+
             var modelType = typeof(TEntity);
             var currentType = modelType;
 
@@ -71,8 +91,13 @@ namespace Fluorite.Strainer.Services
             return null;
         }
 
-        public IPropertyMetadata GetDefaultMetadataFromPropertyAttribute<TEntity>()
+        private IPropertyMetadata GetDefaultMetadataFromPropertyAttribute<TEntity>()
         {
+            if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
+            {
+                return null;
+            }
+
             var keyValue = typeof(TEntity)
                 .GetProperties()
                 .Select(propertyInfo =>
@@ -105,26 +130,16 @@ namespace Fluorite.Strainer.Services
             return keyValue.Value;
         }
 
-        public IPropertyMetadata GetMetadata<TEntity>(
+        private IPropertyMetadata GetMetadataFromObjectAttribute<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,
             string name)
         {
-            var propertyMetadata = GetMetadataFromPropertyAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
-
-            if (propertyMetadata == null)
+            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
             {
-                propertyMetadata = GetMetadataFromObjectAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return null;
             }
 
-            return propertyMetadata;
-        }
-
-        public IPropertyMetadata GetMetadataFromObjectAttribute<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
-            string name)
-        {
             var modelType = typeof(TEntity);
             var currentType = modelType;
 
@@ -156,11 +171,16 @@ namespace Fluorite.Strainer.Services
             return null;
         }
 
-        public IPropertyMetadata GetMetadataFromPropertyAttribute<TEntity>(
+        private IPropertyMetadata GetMetadataFromPropertyAttribute<TEntity>(
             bool isSortingRequired,
             bool isFilteringRequired,
             string name)
         {
+            if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
+            {
+                return null;
+            }
+
             var stringComparisonMethod = _options.IsCaseInsensitiveForNames
                 ? StringComparison.OrdinalIgnoreCase
                 : StringComparison.Ordinal;
@@ -194,5 +214,8 @@ namespace Fluorite.Strainer.Services
 
             return keyValue.Value;
         }
+
+        private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
+            => _options.MetadataSourceType.HasFlag(metadataSourceType);
     }
 }

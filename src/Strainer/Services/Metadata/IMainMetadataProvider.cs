@@ -1,14 +1,14 @@
 ﻿using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.Services
+namespace Fluorite.Strainer.Services.Metadata
 {
-    public interface IMetadataProvider
+    public interface IMainMetadataProvider
     {
         IPropertyMetadata GetDefaultMetadata<TEntity>();
 
         IPropertyMetadata GetMetadata<TEntity>(
-            bool isSortableRequired,
-            bool isFilterableRequired,
+            bool isSortingRequired,
+            bool isFilteringRequired,
             string name);
     }
 }

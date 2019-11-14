@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.Services
@@ -22,12 +23,12 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the property mapper.
         /// </summary>
-        IPropertyMapper Mapper { get; }
+        IPropertyMetadataMapper Mapper { get; }
 
         /// <summary>
         /// Gets the attribute metadata provider.
         /// </summary>
-        IAttributeMetadataProvider AttributeMetadataProvider { get; }
+        IMainMetadataProvider MetadataProvider { get; }
 
         /// <summary>
         /// Gets the Strainer options.

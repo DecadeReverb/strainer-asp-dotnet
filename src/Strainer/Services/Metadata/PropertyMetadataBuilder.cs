@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services
+namespace Fluorite.Strainer.Services.Metadata
 {
-    public class PropertyBuilder<TEntity> : IPropertyBuilder<TEntity>
+    public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity>
     {
         private readonly Expression<Func<TEntity, object>> _expression;
-        private readonly IPropertyMapper _mapper;
+        private readonly IPropertyMetadataMapper _mapper;
 
         protected string displayName;
         protected bool isDefaultSorting;
@@ -20,7 +20,7 @@ namespace Fluorite.Strainer.Services
         protected string name;
         protected PropertyInfo propertyInfo;
 
-        public PropertyBuilder(IPropertyMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
+        public PropertyMetadataBuilder(IPropertyMetadataMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             _mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
@@ -41,7 +41,7 @@ namespace Fluorite.Strainer.Services
             };
         }
 
-        public virtual IPropertyBuilder<TEntity> IsFilterable()
+        public virtual IPropertyMetadataBuilder<TEntity> IsFilterable()
         {
             isFilterable = true;
             UpdateMap(Build());
@@ -49,15 +49,15 @@ namespace Fluorite.Strainer.Services
             return this;
         }
 
-        public virtual ISortPropertyBuilder<TEntity> IsSortable()
+        public virtual ISortPropertyMetadataBuilder<TEntity> IsSortable()
         {
             isSortable = true;
             UpdateMap(Build());
 
-            return new SortPropertyBuilder<TEntity>(_mapper, _expression, Build());
+            return new SortPropertyMetadataBuilder<TEntity>(_mapper, _expression, Build());
         }
 
-        public virtual IPropertyBuilder<TEntity> HasDisplayName(string displayName)
+        public virtual IPropertyMetadataBuilder<TEntity> HasDisplayName(string displayName)
         {
             if (string.IsNullOrWhiteSpace(displayName))
             {

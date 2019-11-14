@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Linq;
@@ -210,7 +211,7 @@ namespace Fluorite.Strainer.Services
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var metadata = GetPropertyMetadata<TEntity>(
+                    var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
                         isSortingRequired: false,
                         isFilteringRequired: true,
                         name: filterTermName);
@@ -359,7 +360,7 @@ namespace Fluorite.Strainer.Services
 
             foreach (var sortTerm in parsedTerms)
             {
-                var metadata = GetPropertyMetadata<TEntity>(
+                var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
                     isSortingRequired: true,
                     isFilteringRequired: false,
                     name: sortTerm.Name);
@@ -439,54 +440,12 @@ namespace Fluorite.Strainer.Services
             }
         }
 
-        protected virtual void MapProperties(IPropertyMapper mapper)
+        protected virtual void MapProperties(IPropertyMetadataMapper mapper)
         {
             if (mapper == null)
             {
                 throw new ArgumentNullException(nameof(mapper));
             }
         }
-
-        private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
-        {
-            IPropertyMetadata propertyMetadata = null;
-
-            if (IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
-            {
-                propertyMetadata = Context.Mapper.GetMetadata<TEntity>(
-                    isSortingRequired,
-                    isFilteringRequired,
-                    name);
-            }
-
-            if (IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
-            {
-                if (propertyMetadata == null)
-                {
-                    propertyMetadata = Context.AttributeMetadataProvider
-                        .GetMetadataFromPropertyAttribute<TEntity>(
-                            isSortingRequired,
-                            isFilteringRequired,
-                            name);
-                }
-            }
-
-            if (IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
-            {
-                if (propertyMetadata == null)
-                {
-                    propertyMetadata = Context.AttributeMetadataProvider
-                        .GetMetadataFromObjectAttribute<TEntity>(
-                            isSortingRequired,
-                            isFilteringRequired,
-                            name);
-                }
-            }
-
-            return propertyMetadata;
-        }
-
-        private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
-            => Context.Options.MetadataSourceType.HasFlag(metadataSourceType);
     }
 }

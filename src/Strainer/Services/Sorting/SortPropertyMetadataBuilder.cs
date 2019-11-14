@@ -1,13 +1,14 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Metadata;
 using System;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public class SortPropertyBuilder<TEntity> : PropertyBuilder<TEntity>, ISortPropertyBuilder<TEntity>, IPropertyBuilder<TEntity>
+    public class SortPropertyMetadataBuilder<TEntity> : PropertyMetadataBuilder<TEntity>, ISortPropertyMetadataBuilder<TEntity>
     {
-        public SortPropertyBuilder(
-            IPropertyMapper strainerPropertyMapper,
+        public SortPropertyMetadataBuilder(
+            IPropertyMetadataMapper strainerPropertyMapper,
             Expression<Func<TEntity, object>> expression,
             IPropertyMetadata basePropertyMetadata)
             : base(strainerPropertyMapper, expression)
@@ -36,7 +37,7 @@ namespace Fluorite.Strainer.Services.Sorting
             propertyInfo = basePropertyMetadata.PropertyInfo;
         }
 
-        public ISortPropertyBuilder<TEntity> IsDefaultSort(bool isDescending = false)
+        public ISortPropertyMetadataBuilder<TEntity> IsDefaultSort(bool isDescending = false)
         {
             isDefaultSorting = true;
             isDefaultSortingDescending = isDescending;

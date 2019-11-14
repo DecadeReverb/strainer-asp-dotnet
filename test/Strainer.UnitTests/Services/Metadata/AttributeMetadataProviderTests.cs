@@ -2,10 +2,11 @@
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Metadata;
 using Moq;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests.Services
+namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {
     public class AttributeMetadataProviderTests
     {
@@ -33,6 +34,29 @@ namespace Fluorite.Strainer.UnitTests.Services
             var optionsMock = new Mock<IStrainerOptionsProvider>();
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
+            var optionsProvider = optionsMock.Object;
+            var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
+
+            // Act
+            var result = attributeMetadataProvider.GetMetadata<Post>(
+                isSortingRequired: true,
+                isFilteringRequired: true,
+                name: nameof(Post.Id));
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void Provider_Returns_NoPropertyMetadata_WhenAttributeMetadataSource_Is_Disabled()
+        {
+            // Arrange
+            var optionsMock = new Mock<IStrainerOptionsProvider>();
+            optionsMock.Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions
+                {
+                    MetadataSourceType = MetadataSourceType.FluentApi,
+                });
             var optionsProvider = optionsMock.Object;
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
@@ -79,7 +103,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
             // Act
-            var result = attributeMetadataProvider.GetMetadataFromPropertyAttribute<Post>(
+            var result = attributeMetadataProvider.GetMetadata<Post>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Post.Title));
@@ -101,7 +125,7 @@ namespace Fluorite.Strainer.UnitTests.Services
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
             // Act
-            var result = attributeMetadataProvider.GetMetadataFromObjectAttribute<Comment>(
+            var result = attributeMetadataProvider.GetMetadata<Comment>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Comment.Id));

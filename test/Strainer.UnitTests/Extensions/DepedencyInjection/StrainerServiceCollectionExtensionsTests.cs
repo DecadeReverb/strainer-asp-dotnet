@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -129,6 +130,22 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .Lifetime
                 .Should()
                 .Be(serviceLifetime);
+        }
+
+        [Fact]
+        public void ExtensionMethod_AddsStrainer_With_TwoPropertyMetadataProviders()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddStrainer<StrainerProcessor>();
+            var serviceProvider = services.BuildServiceProvider();
+            var propertyMetadataProviders = serviceProvider.GetService<IEnumerable<IPropertyMetadataProvider>>();
+
+            // Assert
+            propertyMetadataProviders.Should().NotBeNullOrEmpty();
+            propertyMetadataProviders.Should().HaveCount(2);
         }
 
         [Fact]

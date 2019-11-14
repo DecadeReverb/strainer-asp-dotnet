@@ -6,6 +6,7 @@ namespace Fluorite.Strainer.Services
     public interface ICustomMethodsContext
     {
         ICustomFilterMethodMapper Filter { get; }
+
         ICustomSortMethodMapper Sort { get; }
     }
 }
