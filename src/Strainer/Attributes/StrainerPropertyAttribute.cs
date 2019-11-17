@@ -25,9 +25,12 @@ namespace Fluorite.Strainer.Attributes
         public string DisplayName { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets <see cref="bool"/> value indicating whether related
         /// property should be used as a default (fallback) property when
-        /// sorting objects having related property.
+        /// no sorting information was provided but sorting was still requested.
+        /// <para/>
+        /// Default sorting is not perfomed when sorting information was not
+        /// properly recognized.
         /// <para/>
         /// Defaults to <see langword="false"/>.
         /// </summary>

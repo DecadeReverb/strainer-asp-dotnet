@@ -24,8 +24,20 @@ namespace Fluorite.Strainer.Models
         /// </summary>
         public string DisplayName { get; set; }
 
+        /// <summary>
+        /// Gets or sets <see cref="bool"/> value indicating whether related
+        /// property should be used as a default (fallback) property when
+        /// no sorting information was provided but sorting was still requested.
+        /// <para/>
+        /// Default sorting is not perfomed when sorting information was not
+        /// properly recognized.
+        /// </summary>
         public bool IsDefaultSorting { get; set; }
 
+        /// <summary>
+        /// Gets or sets <see cref="bool"/> value indicating whether default
+        /// sorting should be performed in a descending way.
+        /// </summary>
         public bool IsDefaultSortingDescending { get; set; }
 
         /// <summary>
