@@ -33,7 +33,11 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
                     Text = "FOO",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.IsCaseInsensitiveForValues = true);
+            var processor = Factory.CreateDefaultProcessor(options =>
+            {
+                options.IsCaseInsensitiveForValues = true;
+                options.ThrowExceptions = true;
+            });
             var model = new StrainerModel
             {
                 Filters = "Text@=foo",
@@ -65,7 +69,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
                     Text = "FOO",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
+            var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
                 Filters = "Text@=oo",
@@ -97,7 +101,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
                     LikeCount = 50,
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
+            var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
                 Filters = "LikeCount@=2",

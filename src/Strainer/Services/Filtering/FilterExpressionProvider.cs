@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Exceptions;
+using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filter.Operators;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using System;
@@ -39,16 +40,16 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(parameterExpression));
             }
 
+            if (filterTerm.Values == null)
+            {
+                return null;
+            }
+
             Expression propertyValueExpresssion = parameterExpression;
 
             foreach (var part in metadata.Name.Split('.'))
             {
                 propertyValueExpresssion = Expression.PropertyOrField(propertyValueExpresssion, part);
-            }
-
-            if (filterTerm.Values == null)
-            {
-                return null;
             }
 
             return CreateInnerExpression(
@@ -79,27 +80,44 @@ namespace Fluorite.Strainer.Services.Filtering
                 }
                 else
                 {
-                    if (typeConverter.CanConvertFrom(typeof(string)))
+                    if (typeConverter.CanConvertFrom(typeof(string))
+                        && typeof(string) != metadata.PropertyInfo.PropertyType)
                     {
                         try
                         {
                             constantVal = typeConverter.ConvertFrom(filterTermValue);
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            continue;
+                            throw new StrainerConversionException(
+                                    $"Failed to convert filter value '{filterTermValue}' " +
+                                    $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
+                                ex,
+                                filterTermValue,
+                                metadata.PropertyInfo.PropertyType);
                         }
                     }
                     else
                     {
-                        constantVal = Convert.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
+                        try
+                        {
+                            constantVal = Convert.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new StrainerConversionException(
+                                    $"Failed to change type of filter value '{filterTermValue}' " +
+                                    $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
+                                ex,
+                                filterTermValue,
+                                metadata.PropertyInfo.PropertyType);
+                        }
                     }
                 }
 
-                var filterValue = GetClosureOverConstant(
-                    constantVal,
+                var filterValue = GetClosureOverConstant(constantVal,
                     filterTerm.Operator.IsStringBased
-                        ? (typeof(string))
+                        ? typeof(string)
                         : metadata.PropertyInfo.PropertyType);
 
                 if ((filterTerm.Operator.IsCaseInsensitive
@@ -118,7 +136,27 @@ namespace Fluorite.Strainer.Services.Filtering
                 }
 
                 var filterOperatorContext = new FilterExpressionContext(filterValue, propertyValue);
-                var expression = filterTerm.Operator.Expression(filterOperatorContext);
+
+                Expression expression = null;
+
+                try
+                {
+                    expression = filterTerm.Operator.Expression(filterOperatorContext);
+                }
+                catch (Exception ex)
+                {
+                    throw new StrainerUnsupportedOperatorException(
+                            $"Failed to use operator '{filterTerm.Operator}' " +
+                            $"for filter value '{filterTermValue}' on property " +
+                            $"'{metadata.PropertyInfo.DeclaringType.FullName}.{metadata.PropertyInfo.Name}' " +
+                            $"of type '{metadata.PropertyInfo.PropertyType.FullName}'\n." +
+                            $"Please ensure that this operator is supported by type " +
+                            $"'{metadata.PropertyInfo.PropertyType.FullName}'.",
+                        ex,
+                        filterTerm.Operator,
+                        metadata.PropertyInfo,
+                        filterTermValue);
+                }
 
                 if (filterTerm.Operator.NegateExpression)
                 {

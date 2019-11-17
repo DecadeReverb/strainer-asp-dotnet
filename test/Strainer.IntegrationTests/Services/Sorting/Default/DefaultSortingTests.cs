@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Metadata;
 using System.Linq;
 using Xunit;
 
@@ -29,7 +28,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
                     Name = "Bar",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateProcessor(context => new TestStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel();
 
             // Act
@@ -47,23 +46,18 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             {
                 new Post
                 {
-                    Name = "Foo",
+                    Title = "Foo",
                 },
                 new Post
                 {
-                    Name = "Bar",
+                    Title = "Bar",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateProcessor(context =>
+            var processor = Factory.CreateDefaultProcessor(options =>
             {
-                context.Options.ThrowExceptions = false;
-
-                return new TestStrainerProcessor(context);
+                options.ThrowExceptions = false;
             });
-            var model = new StrainerModel
-            {
-                Sorts = "Title",
-            };
+            var model = new StrainerModel();
 
             // Act
             var result = processor.ApplySorting(model, source);
@@ -80,11 +74,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             {
                 new Post
                 {
-                    Name = "Foo",
+                    Title = "Foo",
                 },
                 new Post
                 {
-                    Name = "Bar",
+                    Title = "Bar",
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor();
@@ -98,24 +92,12 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             result.Should().BeInDescendingOrder(e => e.Name);
         }
 
-        private class TestStrainerProcessor : StrainerProcessor
-        {
-            public TestStrainerProcessor(IStrainerContext context) : base(context)
-            {
-
-            }
-
-            protected override void MapProperties(IPropertyMetadataMapper mapper)
-            {
-                mapper.Property<Post>(p => p.Name)
-                    .IsSortable()
-                    .IsDefaultSort();
-            }
-        }
-
         private class Post
         {
+            [StrainerProperty(IsSortable = true, IsDefaultSorting = true)]
             public string Name { get; set; }
+
+            public string Title { get; set; }
         }
     }
 }

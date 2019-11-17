@@ -141,16 +141,11 @@ namespace Fluorite.Strainer.Services
 
                 return source;
             }
-            catch (Exception ex)
+            catch (StrainerException ex)
             {
                 if (Context.Options.ThrowExceptions)
                 {
-                    if (ex is StrainerException)
-                    {
-                        throw;
-                    }
-
-                    throw new StrainerException(ex.Message, ex);
+                    throw ex;
                 }
                 else
                 {
@@ -216,30 +211,41 @@ namespace Fluorite.Strainer.Services
                         isFilteringRequired: true,
                         name: filterTermName);
 
-                    if (metadata != null)
+                    try
                     {
-                        innerExpression = Context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
-                    }
-                    else
-                    {
-                        var customMethod = Context.CustomMethods.Filter.GetMethod<TEntity>(filterTermName);
-                        if (customMethod != null)
+                        if (metadata != null)
                         {
-                            var context = new CustomFilterMethodContext<TEntity>
-                            {
-                                Source = source,
-                                Term = filterTerm,
-                            };
-                            source = customMethod.Function(context);
+                            innerExpression = Context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
                         }
                         else
                         {
-                            if (Context.Options.ThrowExceptions)
+                            var customMethod = Context.CustomMethods.Filter.GetMethod<TEntity>(filterTermName);
+                            if (customMethod != null)
+                            {
+                                var context = new CustomFilterMethodContext<TEntity>
+                                {
+                                    Source = source,
+                                    Term = filterTerm,
+                                };
+                                source = customMethod.Function(context);
+                            }
+                            else
                             {
                                 throw new StrainerMethodNotFoundException(
                                     filterTermName,
-                                    $"{filterTermName} not found.");
+                                    $"Property or custom filter method '{filterTermName}' was not found.");
                             }
+                        }
+                    }
+                    catch (StrainerException ex)
+                    {
+                        if (Context.Options.ThrowExceptions)
+                        {
+                            throw ex;
+                        }
+                        else
+                        {
+                            return source;
                         }
                     }
                 }
@@ -376,26 +382,37 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    var customMethod = Context.CustomMethods.Sort.GetMethod<TEntity>(sortTerm.Name);
-                    if (customMethod != null)
+                    try
                     {
-                        var context = new CustomSortMethodContext<TEntity>
+                        var customMethod = Context.CustomMethods.Sort.GetMethod<TEntity>(sortTerm.Name);
+                        if (customMethod != null)
                         {
-                            IsDescending = sortTerm.IsDescending,
-                            IsSubsequent = isSubsequent,
-                            Source = source,
-                            Term = sortTerm,
-                        };
-                        source = customMethod.Function(context);
-                        sortingPerformed = true;
-                    }
-                    else
-                    {
-                        if (Context.Options.ThrowExceptions)
+                            var context = new CustomSortMethodContext<TEntity>
+                            {
+                                IsDescending = sortTerm.IsDescending,
+                                IsSubsequent = isSubsequent,
+                                Source = source,
+                                Term = sortTerm,
+                            };
+                            source = customMethod.Function(context);
+                            sortingPerformed = true;
+                        }
+                        else
                         {
                             throw new StrainerMethodNotFoundException(
                                 sortTerm.Name,
-                                $"{sortTerm.Name} not found.");
+                                $"Property or custom sorting method '{sortTerm.Name}' was not found.");
+                        }
+                    }
+                    catch (StrainerException ex)
+                    {
+                        if (Context.Options.ThrowExceptions)
+                        {
+                            throw ex;
+                        }
+                        else
+                        {
+                            return source;
                         }
                     }
                 }
@@ -418,34 +435,22 @@ namespace Fluorite.Strainer.Services
 
         protected virtual void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
+
         }
 
         protected virtual void MapCustomSortMethods(ICustomSortMethodMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
+
         }
 
         protected virtual void MapFilterOperators(IFilterOperatorMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
+
         }
 
         protected virtual void MapProperties(IPropertyMetadataMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
+
         }
     }
 }
