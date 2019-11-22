@@ -37,7 +37,9 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
                     context.Sorting.ExpressionProvider,
                     context.Sorting.ExpressionValidator,
                     customSortingWayFormatter,
-                    new SortTermParser(customSortingWayFormatter));
+                    new SortTermParser(
+                        customSortingWayFormatter,
+                        Factory.CreateOptionsProvider()));
                 var newContext = new StrainerContext(
                     Factory.CreateOptionsProvider(),
                     context.Filter,

@@ -1,11 +1,11 @@
 ﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Models.Sorting;
 using System;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
     /// <summary>
-    /// Provides means of two-way formatting and recognizing a sorting
-    /// direction on input value based on prefix added on when descending ordering.
+    /// Provides sorting way formatter based on presence of descending prefix.
     /// </summary>
     public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
     {
@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <para/>
         /// This field is readonly.
         /// </summary>
-        public static readonly string Prefix = "-";
+        public static readonly string DescendingPrefix = "-";
 
         /// <summary>
         /// Initializes new instance of <see cref="DescendingPrefixSortingWayFormatter"/>
@@ -25,13 +25,33 @@ namespace Fluorite.Strainer.Services.Sorting
 
         }
 
-        public bool IsDescendingDefaultSortingWay => true;
-
-        public string Format(string input, bool isDescending)
+        /// <summary>
+        /// Applies formatting to input value according to specified sorting way.
+        /// </summary>
+        /// <param name="input">
+        /// The sorting value to be formatted.
+        /// </param>
+        /// <param name="sortingWay">
+        /// The sorting way which format will be applied upon the input.
+        /// </param>
+        /// <returns>
+        /// A formatted value.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="sortingWay"/> is <see cref="SortingWay.Unknown"/>.
+        /// </exception>
+        public string Format(string input, SortingWay sortingWay)
         {
             if (input == null)
             {
                 throw new ArgumentNullException(nameof(input));
+            }
+
+            if (sortingWay == SortingWay.Unknown)
+            {
+                throw new ArgumentException(
+                    $"{nameof(sortingWay)} cannot be {nameof(SortingWay.Unknown)}.",
+                    nameof(sortingWay));
             }
 
             if (string.IsNullOrWhiteSpace(input))
@@ -39,53 +59,83 @@ namespace Fluorite.Strainer.Services.Sorting
                 return input;
             }
 
-            return isDescending
-                ? Prefix + input
+            return sortingWay == SortingWay.Descending
+                ? DescendingPrefix + input
                 : input;
         }
 
         /// <summary>
-        /// Checks whether provided value is formatted in a descending way.
+        /// Gets the sorting way based on input.
         /// <para/>
-        /// Take notice that even if provided value is not formatted
-        /// in a descending way, this method may still return <see langword="true"/>
-        /// if it fallbacks to its default (descending) sorting way.
         /// </summary>
         /// <param name="input">
         /// The value to check for sorting way.
         /// </param>
         /// <returns>
-        /// A <see cref="bool"/> value, <see langword="true"/> if the value
-        /// is descending; otherwise - <see langword="false"/>.
+        /// <see cref="SortingWay.Ascending"/> if the input is formatted in
+        /// ascending way; <see cref="SortingWay.Descending"/> if the input
+        /// is formatted in descending way; <see cref="SortingWay.Unknown"/>
+        /// if the sorting way cannot be established (e.g. the input was
+        /// <see langword="null"/>).
+        /// </returns>
+        public SortingWay GetSortingWay(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return SortingWay.Unknown;
+            }
+
+            if (input.StartsWith(DescendingPrefix))
+            {
+                return SortingWay.Descending;
+            }
+
+            return SortingWay.Ascending;
+        }
+
+        /// <summary>
+        /// Removes sorting way formatting from provided input value.
+        /// </summary>
+        /// <param name="input">
+        /// The input value to be unformatted.
+        /// </param>
+        /// <param name="sortingWay">
+        /// The sorting way of which format will be removed from the input.
+        /// </param>
+        /// <returns>
+        /// An unformatted value.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
-        public bool IsDescending(string input)
+        /// <exception cref="ArgumentException">
+        /// <paramref name="sortingWay"/> is <see cref="SortingWay.Unknown"/>.
+        /// </exception>
+        public string Unformat(string input, SortingWay sortingWay)
         {
-            if (input == null)
+            if (input is null)
             {
                 throw new ArgumentNullException(nameof(input));
             }
 
-            return input.StartsWith(Prefix);
-        }
-
-        public string Unformat(string input)
-        {
-            if (input == null)
+            if (sortingWay == SortingWay.Unknown)
             {
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentException(
+                    $"{nameof(sortingWay)} cannot be {nameof(SortingWay.Unknown)}.",
+                    nameof(sortingWay));
             }
 
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrEmpty(input))
             {
                 return input;
             }
-            else
+
+            if (input.StartsWith(DescendingPrefix))
             {
-                return input.TrimStartOnce(Prefix);
+                return input.TrimStartOnce(DescendingPrefix);
             }
+
+            return input;
         }
     }
 }

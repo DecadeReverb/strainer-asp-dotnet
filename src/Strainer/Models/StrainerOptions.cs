@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Strainer.Models
+﻿using Fluorite.Strainer.Models.Sorting;
+
+namespace Fluorite.Strainer.Models
 {
     /// <summary>
     /// Represents options used by Strainer.
@@ -26,6 +28,14 @@
         /// Defaults to 10.
         /// </summary>
         public int DefaultPageSize { get; set; } = 10;
+
+        /// <summary>
+        /// Gets or sets a default sorting way used when applying default
+        /// sorting.
+        /// <para/>
+        /// Defaults to <see cref="SortingWay.Ascending"/>.
+        /// </summary>
+        public SortingWay DefaultSortingWay { get; set; } = SortingWay.Ascending;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether

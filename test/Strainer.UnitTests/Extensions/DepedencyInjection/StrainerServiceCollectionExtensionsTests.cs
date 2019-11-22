@@ -2,6 +2,7 @@
 using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
@@ -198,19 +199,17 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
         private class TestSortingWayFormatter : ISortingWayFormatter
         {
-            public bool IsDescendingDefaultSortingWay => throw new NotImplementedException();
-
-            public string Format(string input, bool isDescending)
+            public string Format(string input, SortingWay sortingWay)
             {
                 throw new NotImplementedException();
             }
 
-            public bool IsDescending(string input)
+            public SortingWay GetSortingWay(string input)
             {
                 throw new NotImplementedException();
             }
 
-            public string Unformat(string input)
+            public string Unformat(string input, SortingWay sortingWay)
             {
                 throw new NotImplementedException();
             }
