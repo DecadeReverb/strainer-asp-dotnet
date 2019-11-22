@@ -380,36 +380,14 @@ protected override void MapFilterOperators(IFilterOperatorMapper mapper)
 }
 ```
 
-## Custom sorting way formatter
+## Sorting way formatting
 
-Strainer by default determines sorting way by checking against the presence of a prefix indicating descending sorting way - a dash `-`. For example:
+In order to determine sorting way Strainer uses `ISortingWayFormatter`. Default implementation used is `DescendingPrefixSortingWayFormatter`. It checks against the presence of a prefix indicating descending sorting way, specifically a dash `-`. For example:
 
  - `Name` will be translated to ascending sorting.
  - `-Name` will be translated to descending sorting.
 
-Sorting way determination logic is handled by service implementing `ISortingWayFormatter`, which by default is - `SortingWayFormatter`.
-
-In order to perform your own sorting way determination and formatting, implement `ISortingWayFormatter` interface (see [SortingWayFormatter](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/Sorting/SortingWayFormatter.cs) for reference):
-
-```cs
-public class CustomSortingWayFormatter : ISortingWayFormatter
-{
-    public string Format(string input, bool isDescending)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsDescending(string input)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string Unformat(string input)
-    {
-        throw new NotImplementedException();
-    }
-}
-```
+In order to perform your own sorting way determination and formatting, implement `ISortingWayFormatter` interface (see [DescendingPrefixSortingWayFormatter](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/Sorting/DescendingPrefixSortingWayFormatter.cs) for reference).
 
 Then, add custom formatter in `Startup` **after** adding Strainer:
 
