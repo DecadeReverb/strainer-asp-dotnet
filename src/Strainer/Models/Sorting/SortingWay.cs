@@ -6,17 +6,17 @@
     public enum SortingWay
     {
         /// <summary>
-        /// Represents unknown sorting way, that could not be established.
+        /// Unknown sorting way, that could not be established.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// Represents ascending sorting way.
+        /// Ascending sorting way.
         /// </summary>
         Ascending,
 
         /// <summary>
-        /// Represents descending sorting way.
+        /// Descending sorting way.
         /// </summary>
         Descending,
     }
