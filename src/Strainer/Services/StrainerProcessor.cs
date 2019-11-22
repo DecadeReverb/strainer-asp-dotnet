@@ -433,21 +433,45 @@ namespace Fluorite.Strainer.Services
             return source;
         }
 
+        /// <summary>
+        /// Override this method to add custom filter methods.
+        /// </summary>
+        /// <param name="mapper">
+        /// The custom filter method mapper.
+        /// </param>
         protected virtual void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
         {
 
         }
 
+        /// <summary>
+        /// Override this method to add custom sort methods.
+        /// </summary>
+        /// <param name="mapper">
+        /// The custom sort method mapper.
+        /// </param>
         protected virtual void MapCustomSortMethods(ICustomSortMethodMapper mapper)
         {
 
         }
 
+        /// <summary>
+        /// Override this method to add additional filter operators.
+        /// </summary>
+        /// <param name="mapper">
+        /// The filter operator mapper.
+        /// </param>
         protected virtual void MapFilterOperators(IFilterOperatorMapper mapper)
         {
 
         }
 
+        /// <summary>
+        /// Override this method to add property configurations.
+        /// </summary>
+        /// <param name="mapper">
+        /// The property metadata mapper.
+        /// </param>
         protected virtual void MapProperties(IPropertyMetadataMapper mapper)
         {
 

@@ -20,7 +20,7 @@ namespace Fluorite.Strainer.Services
             ISortingContext sortingContext,
             IPropertyMetadataMapper mapper,
             IMainMetadataProvider mainMetadataProvider,
-            ICustomMethodsContext customMethodsContext)
+            ICustomMethodsContext customMethodsContext)z
         {
             CustomMethods = customMethodsContext ?? throw new ArgumentNullException(nameof(customMethodsContext));
             Filter = filteringContext ?? throw new ArgumentNullException(nameof(filteringContext));
