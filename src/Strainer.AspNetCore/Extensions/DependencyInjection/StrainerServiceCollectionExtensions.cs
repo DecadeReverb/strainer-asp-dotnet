@@ -88,7 +88,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Add<IPropertyMetadataProvider, PropertyMetadataMapper>(serviceLifetime);
             services.Add<IPropertyMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
-            services.Add<IMainMetadataProvider, MainMetadataProvider>(serviceLifetime);
+            services.Add<IMetadataProvidersFacade, MetadataProvidersFacade>(serviceLifetime);
 
             services.Add<IPropertyMetadataMapper, PropertyMetadataMapper>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);

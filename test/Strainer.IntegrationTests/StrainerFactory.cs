@@ -61,7 +61,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 propertyMapper,
                 attributeMetadataProvider
             };
-            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
 
             var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();

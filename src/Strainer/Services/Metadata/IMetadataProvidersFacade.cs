@@ -2,7 +2,7 @@
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public interface IMainMetadataProvider
+    public interface IMetadataProvidersFacade
     {
         IPropertyMetadata GetDefaultMetadata<TEntity>();
 

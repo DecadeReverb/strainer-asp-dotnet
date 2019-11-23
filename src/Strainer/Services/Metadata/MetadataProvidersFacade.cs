@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public class MainMetadataProvider : IMainMetadataProvider
+    public class MetadataProvidersFacade : IMetadataProvidersFacade
     {
         private readonly IEnumerable<IPropertyMetadataProvider> _metadataProviders;
 
-        public MainMetadataProvider(IEnumerable<IPropertyMetadataProvider> metadataProviders)
+        public MetadataProvidersFacade(IEnumerable<IPropertyMetadataProvider> metadataProviders)
         {
             if (metadataProviders is null)
             {

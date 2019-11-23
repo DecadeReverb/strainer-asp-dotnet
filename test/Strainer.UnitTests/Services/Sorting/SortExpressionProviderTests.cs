@@ -38,7 +38,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
             var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
-            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -72,7 +72,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var optionsProvider = optionsMock.Object;
             var mapper = new PropertyMetadataMapper(optionsProvider);
             var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
-            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -104,7 +104,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var mapper = new PropertyMetadataMapper(optionsProvider);
             mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
             var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
-            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -153,7 +153,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
             var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper, attributeMetadataProvider };
-            var mainMetadataProvider = new MainMetadataProvider(propertyMetadataProviders);
+            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act

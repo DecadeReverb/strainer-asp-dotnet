@@ -19,7 +19,7 @@ namespace Fluorite.Strainer.Services
             IFilterContext filteringContext,
             ISortingContext sortingContext,
             IPropertyMetadataMapper mapper,
-            IMainMetadataProvider mainMetadataProvider,
+            IMetadataProvidersFacade mainMetadataProvider,
             ICustomMethodsContext customMethodsContext)
         {
             CustomMethods = customMethodsContext ?? throw new ArgumentNullException(nameof(customMethodsContext));
@@ -49,7 +49,7 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the property metadata provider.
         /// </summary>
-        public IMainMetadataProvider MetadataProvider { get; }
+        public IMetadataProvidersFacade MetadataProvider { get; }
 
         /// <summary>
         /// Gets the Strainer options.
