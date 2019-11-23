@@ -82,7 +82,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             return customMethods
                 .FirstOrDefault(pair => pair.Key.Equals(name, comparisonType))
-                .Value as ICustomFilterMethod<TEntity>;
+                .Value as ICustomSortMethod<TEntity>;
         }
     }
 }
