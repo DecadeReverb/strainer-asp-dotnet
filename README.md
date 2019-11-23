@@ -285,7 +285,7 @@ For example, using `Post` and `User` models:
 
 ```cs
 public class Post {
-    public User Creator { get; set; }
+    public User Author { get; set; }
 }
 
 public class User {
@@ -293,19 +293,19 @@ public class User {
 }
 ```
 
-in order to `Post.User` to be filterable, override `MapProperties` in your custom Strainer processor and provide expression leading to nested property:
+In order to filter by post author name, override `MapProperties` in your custom Strainer processor and provide expression leading to nested property:
 
 ```cs
 protected override void MapProperties(IStrainerPropertyMapper mapper)
 {
-    mapper.Property<Post>(p => p.Creator.Name)
+    mapper.Property<Post>(p => p.Author.Name)
         .IsFilterable();
 }
 ```
 
-With such configuration, requests with `Filters` set to `User.Name==John_Doe` will tell Strainer to filter to posts with creator name being exactly _"John Doe"_.
+With such configuration, requests with `Filters` set to `Author.Name==John_Doe` will tell Strainer to filter to posts with post author name being exactly _"John Doe"_.
 
-Notice how nested property name is not just `Name` but it's constructed using full property path resulting in `User.Name`.
+Notice how nested property name is not just `Name` but it's constructed using full property path resulting in `Author.Name` (unless explicitly configured).
 
 ## Custom methods
 
