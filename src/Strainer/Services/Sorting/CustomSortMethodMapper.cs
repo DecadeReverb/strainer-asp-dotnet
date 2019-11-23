@@ -71,7 +71,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if (!_methods.ContainsKey(typeof(TEntity)))
+            if (!_methods.TryGetValue(typeof(TEntity), out var customMethods))
             {
                 return null;
             }
@@ -80,9 +80,9 @@ namespace Fluorite.Strainer.Services.Sorting
                 ? StringComparison.OrdinalIgnoreCase
                 : StringComparison.Ordinal;
 
-            return _methods[typeof(TEntity)]
+            return customMethods
                 .FirstOrDefault(pair => pair.Key.Equals(name, comparisonType))
-                .Value as ICustomSortMethod<TEntity>;
+                .Value as ICustomFilterMethod<TEntity>;
         }
     }
 }
