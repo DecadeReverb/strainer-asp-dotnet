@@ -5,6 +5,7 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -31,10 +32,13 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         protected override void MapFilterOperators(IFilterOperatorMapper mapper)
         {
-            mapper.Operator(symbol: "!=*")
-                .HasName("not equal to (case insensitive)")
-                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
-                .IsCaseInsensitive();
+            mapper.Operator(symbol: "=_")
+                .HasName("ends with")
+                .HasExpression((context) => Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
+                    context.FilterValue))
+                .IsStringBased();
         }
 
         protected override void MapProperties(IPropertyMetadataMapper mapper)
