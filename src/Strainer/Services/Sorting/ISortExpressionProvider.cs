@@ -19,11 +19,15 @@ namespace Fluorite.Strainer.Services.Sorting
     {
         ISortExpression<TEntity> GetDefaultExpression<TEntity>();
 
-        ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isSubsequent);
+        ISortExpression<TEntity> GetExpression<TEntity>(
+            PropertyInfo propertyInfo,
+            ISortTerm sortTerm,
+            bool isSubsequent);
 
         /// <summary>
-        /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
-        /// list of sort terms used to associate names from <see cref="IPropertyMetadataMapper"/>.
+        /// Gets a list of <see cref="ISortExpression{TEntity}"/> based on
+        /// list of sort terms connected with property metadata from
+        /// <see cref="IPropertyMetadataProvider"/>s.
         /// </summary>
         /// <typeparam name="TEntity">
         /// The type of entity for which the expression is for.
@@ -34,6 +38,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <returns>
         /// A list of <see cref="ISortExpression{TEntity}"/>.
         /// </returns>
-        IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms);
+        IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(
+            IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms);
     }
 }

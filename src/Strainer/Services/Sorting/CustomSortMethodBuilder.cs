@@ -22,6 +22,7 @@ namespace Fluorite.Strainer.Services.Sorting
         }
 
         public Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> Function { get; protected set; }
+
         public string Name { get; protected set; }
 
         protected ICustomSortMethodMapper Mapper { get; }
@@ -32,7 +33,8 @@ namespace Fluorite.Strainer.Services.Sorting
             Name = Name,
         };
 
-        public ICustomSortMethodBuilder<TEntity> WithFunction(Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function)
+        public ICustomSortMethodBuilder<TEntity> WithFunction(
+            Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
 
