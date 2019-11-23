@@ -305,13 +305,16 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var page = model?.Page ?? Context.Options.DefaultPageNumber;
-            var pageSize = model?.PageSize ?? Context.Options.DefaultPageSize;
+            var page = model.Page ?? Context.Options.DefaultPageNumber;
+            var pageSize = model.PageSize ?? Context.Options.DefaultPageSize;
             var maxPageSize = Context.Options.MaxPageSize > 0
                 ? Context.Options.MaxPageSize
                 : pageSize;
 
-            source = source.Skip((page - 1) * pageSize);
+            if (page > 1)
+            {
+                source = source.Skip((page - 1) * pageSize);
+            }
 
             if (pageSize > 0)
             {
