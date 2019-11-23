@@ -62,7 +62,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     $"symbol: \"{duplicatedSymbols.Key}\". " +
                     $"Symbol representing filter operator must be unique. " +
                     $"Please remove or change symbol for either of operators. " +
-                    $"Filter operators found:\n" +
+                    $"Conflicting filter operators:\n" +
                     $"{string.Join(Environment.NewLine, duplicatedSymbols.Select(f => f.ToString()))}");
             }
 
@@ -74,7 +74,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     $"Only one filter operator can be a default one. " +
                     $"Please remove the default flag from filter operators, " +
                     $"so only one is default. " +
-                    $"Filter operators found:\n" +
+                    $"Conflicting filter operators:\n" +
                     $"{string.Join(Environment.NewLine, defaultOperators.Select(f => f.ToString()))}");
             }
 

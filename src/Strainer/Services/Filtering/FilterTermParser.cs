@@ -18,6 +18,7 @@ namespace Fluorite.Strainer.Services.Filtering
         }
 
         protected IFilterOperatorMapper Mapper { get; }
+
         protected IFilterOperatorParser Parser { get; }
 
         public IList<IFilterTerm> GetParsedTerms(string input)

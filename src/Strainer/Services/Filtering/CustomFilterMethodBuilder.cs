@@ -22,6 +22,7 @@ namespace Fluorite.Strainer.Services.Filtering
         }
 
         public Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> Function { get; protected set; }
+
         public string Name { get; protected set; }
 
         protected ICustomFilterMethodMapper Mapper { get; }
@@ -32,7 +33,8 @@ namespace Fluorite.Strainer.Services.Filtering
             Name = Name,
         };
 
-        public ICustomFilterMethodBuilder<TEntity> WithFunction(Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> function)
+        public ICustomFilterMethodBuilder<TEntity> WithFunction(
+            Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> function)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
 

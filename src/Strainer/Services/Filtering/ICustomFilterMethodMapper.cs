@@ -9,7 +9,9 @@ namespace Fluorite.Strainer.Services.Filtering
         IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods { get; }
 
         void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod);
+
         ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
+
         ICustomFilterMethod<TEntity> GetMethod<TEntity>(string name);
     }
 }
