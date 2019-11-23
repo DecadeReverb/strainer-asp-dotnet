@@ -202,7 +202,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -233,7 +233,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -264,7 +264,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -296,7 +296,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -328,7 +328,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -374,7 +374,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);

@@ -206,7 +206,7 @@ namespace Fluorite.Strainer.Services
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
+                    var metadata = Context.Metadata.GetMetadata<TEntity>(
                         isSortingRequired: false,
                         isFilteringRequired: true,
                         name: filterTermName);
@@ -366,7 +366,7 @@ namespace Fluorite.Strainer.Services
 
             foreach (var sortTerm in parsedTerms)
             {
-                var metadata = Context.MetadataProvider.GetMetadata<TEntity>(
+                var metadata = Context.Metadata.GetMetadata<TEntity>(
                     isSortingRequired: true,
                     isFilteringRequired: false,
                     name: sortTerm.Name);
