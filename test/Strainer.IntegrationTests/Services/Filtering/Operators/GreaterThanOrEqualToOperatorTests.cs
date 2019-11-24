@@ -9,15 +9,15 @@ using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
 {
-    public class GreaterThanOperatorTests : StrainerFixtureBase
+    public class GreaterThanOrEqualToOperatorTests : StrainerFixtureBase
     {
-        public GreaterThanOperatorTests(StrainerFactory factory) : base(factory)
+        public GreaterThanOrEqualToOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
 
         [Fact]
-        public void GreaterThan_Works_For_Numbers()
+        public void GreaterThanOrEqualTo_Works_For_Numbers()
         {
             // Arrange
             var source = new[]
@@ -34,20 +34,21 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel
             {
-                Filters = "LikeCount>2",
+                Filters = "LikeCount>=2",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.LikeCount > 2);
+            result.Should().OnlyContain(c => c.LikeCount >= 2);
         }
 
         [Fact]
-        public void GreaterThan_Works_For_ComplexTypes()
+        public void GreaterThanOrEqualTo_Works_For_ComplexTypes()
         {
             // Arrange
+            var dateTimeNow = DateTime.Now;
             var source = new[]
             {
                 new Comment
@@ -56,24 +57,24 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
                 },
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(2),
+                    DateTime = dateTimeNow,
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = $"DateTime>{DateTime.Now}",
+                Filters = $"DateTime>={dateTimeNow}",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.DateTime > DateTime.Now);
+            result.Should().OnlyContain(c => c.DateTime >= dateTimeNow);
         }
 
         [Fact]
-        public void GreaterThan_DoesNot_Work_For_StringValues()
+        public void GreaterThanOrEqualTo_DoesNot_Work_For_StringValues()
         {
             // Arrange
             var source = new[]
@@ -90,7 +91,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Text>2",
+                Filters = "Text>=2",
             };
 
             // Act & Assert
@@ -98,7 +99,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
         }
 
         [Fact]
-        public void GreaterThan_DoesNot_Work_For_ComplexValues_Without_DedicatedTypeConverter()
+        public void GreaterThanOrEqualTo_DoesNot_Work_For_ComplexValues_Without_DedicatedTypeConverter()
         {
             // Arrange
             var source = new[]
@@ -115,7 +116,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Point>2",
+                Filters = "Point>=2",
             };
 
             // Act & Assert
