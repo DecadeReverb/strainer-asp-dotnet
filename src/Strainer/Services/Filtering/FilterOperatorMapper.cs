@@ -76,11 +76,11 @@ namespace Fluorite.Strainer.Services.Filtering
         private void AddInitialFilterOperators()
         {
             new FilterOperatorBuilder(this, symbol: "==")
-                .HasName("equal to")
+                .HasName("equal")
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
                 .IsDefault();
             new FilterOperatorBuilder(this, symbol: "!=")
-                .HasName("does not equal to")
+                .HasName("does not equal")
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue));
 
             new FilterOperatorBuilder(this, symbol: "<")
@@ -142,12 +142,12 @@ namespace Fluorite.Strainer.Services.Filtering
                     context.FilterValue)));
 
             new FilterOperatorBuilder(this, symbol: "==*")
-                .HasName("equal to (case insensitive)")
+                .HasName("equal (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
             new FilterOperatorBuilder(this, symbol: "!=*")
-                .HasName("does not equal to (case insensitive)")
+                .HasName("does not equal (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
@@ -168,6 +168,14 @@ namespace Fluorite.Strainer.Services.Filtering
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
                     context.FilterValue))
                 .IsCaseInsensitive();
+            new FilterOperatorBuilder(this, symbol: "=_*")
+                .HasName("ends with (case insensitive)")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
+                    context.FilterValue))
+                .IsCaseInsensitive();
 
             new FilterOperatorBuilder(this, symbol: "!@=*")
                 .HasName("does not contain (case insensitive)")
@@ -183,6 +191,14 @@ namespace Fluorite.Strainer.Services.Filtering
                 .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
+                    context.FilterValue)))
+                .IsCaseInsensitive();
+            new FilterOperatorBuilder(this, symbol: "!=_*")
+                .HasName("does not end with (case insensitive)")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Not(Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
                     context.FilterValue)))
                 .IsCaseInsensitive();
         }
