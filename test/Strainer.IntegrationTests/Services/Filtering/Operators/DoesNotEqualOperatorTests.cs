@@ -7,15 +7,15 @@ using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
 {
-    public class NotEqualsCaseInsensitiveOperatorTests : StrainerFixtureBase
+    public class DoesNotEqualOperatorTests : StrainerFixtureBase
     {
-        public NotEqualsCaseInsensitiveOperatorTests(StrainerFactory factory) : base(factory)
+        public DoesNotEqualOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
 
         [Fact]
-        public void NotEqualsCaseInsensitive_Works_When_CaseSensivity_IsDisabled()
+        public void NotEquals_Works_When_CaseSensivity_IsDisabled()
         {
             // Arrange
             var source = new[]
@@ -36,7 +36,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.IsCaseInsensitiveForValues = true);
             var model = new StrainerModel
             {
-                Filters = "Text!=*foo",
+                Filters = "Text!=foo",
             };
 
             // Act
@@ -47,7 +47,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
         }
 
         [Fact]
-        public void NotEqualsCaseInsensitive_Works_When_CaseSensivity_IsEnabled()
+        public void NotEquals_Works_When_CaseSensivity_IsEnabled()
         {
             // Arrange
             var source = new[]
@@ -68,18 +68,18 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel
             {
-                Filters = "Text!=*foo",
+                Filters = "Text!=foo",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(b => !b.Text.Equals("foo", StringComparison.OrdinalIgnoreCase));
+            result.Should().OnlyContain(b => !b.Text.Equals("foo", StringComparison.Ordinal));
         }
 
         [Fact]
-        public void NotEqualsCaseInsensitive_Works_For_NonStringValues()
+        public void NotEquals_Works_For_NonStringValues()
         {
             // Arrange
             var source = new[]
@@ -100,7 +100,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel
             {
-                Filters = "LikeCount!=*20",
+                Filters = "LikeCount!=20",
             };
 
             // Act
@@ -110,8 +110,39 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             result.Should().OnlyContain(c => !c.LikeCount.Equals(20));
         }
 
+        [Fact]
+        public void Equals_Works_For_ComplexValues()
+        {
+            // Arrange
+            var source = new[]
+            {
+                new Comment
+                {
+                    TimeSpan = TimeSpan.FromMinutes(1),
+                },
+                new Comment
+                {
+                    TimeSpan = TimeSpan.FromMinutes(2),
+                },
+            }.AsQueryable();
+            var processor = Factory.CreateDefaultProcessor();
+            var model = new StrainerModel
+            {
+                Filters = "TimeSpan!=00:01:00",
+            };
+
+            // Act
+            var result = processor.ApplyFiltering(model, source);
+
+            // Assert
+            result.Should().OnlyContain(c => c.TimeSpan != TimeSpan.FromMinutes(1));
+        }
+
         private class Comment
         {
+            [StrainerProperty(IsFilterable = true)]
+            public TimeSpan TimeSpan { get; set; }
+
             [StrainerProperty(IsFilterable = true)]
             public int LikeCount { get; set; }
 
