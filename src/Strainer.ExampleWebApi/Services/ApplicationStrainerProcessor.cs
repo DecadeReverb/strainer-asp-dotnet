@@ -5,6 +5,7 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -49,7 +50,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
         }
 
         private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
-            => context.Source.Where(p => p.LikeCount < 100 && p.Comments.Count < 5);
+            => context.Source.Where(p => EF.Functions.DateDiffDay(DateTime.Now, p.DateCreated) < 7);
 
         private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
         {
