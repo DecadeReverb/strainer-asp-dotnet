@@ -8,7 +8,6 @@ using Fluorite.Strainer.Services.Sorting;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.ExampleWebApi.Services
 {
@@ -33,13 +32,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         protected override void MapFilterOperators(IFilterOperatorMapper mapper)
         {
-            mapper.Operator(symbol: "=_")
-                .HasName("ends with")
-                .HasExpression((context) => Expression.Call(
-                    context.PropertyValue,
-                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .IsStringBased();
+
         }
 
         protected override void MapProperties(IPropertyMetadataMapper mapper)
