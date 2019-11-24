@@ -194,7 +194,7 @@ namespace Fluorite.Strainer.Services
             }
 
             var parsedTerms = Context.Filter.TermParser.GetParsedTerms(model.Filters);
-            if (parsedTerms == null)
+            if (!parsedTerms.Any())
             {
                 return source;
             }
@@ -264,9 +264,12 @@ namespace Fluorite.Strainer.Services
                 outerExpression = Expression.And(outerExpression, innerExpression);
             }
 
-            return outerExpression == null
-                ? source
-                : source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
+            if (outerExpression == null)
+            {
+                return source;
+            }
+
+            return source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
         }
 
         /// <summary>

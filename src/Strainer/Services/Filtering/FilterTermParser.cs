@@ -68,7 +68,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private string GetFilterOperatorSymbol(string input, List<string> filterSplits)
         {
-            return new string(input.Except(string.Join("", filterSplits).ToArray()).ToArray());
+            return new string(input.Except(string.Concat(filterSplits).ToArray()).ToArray());
         }
 
         private List<string> GetFilterSplits(string input)
@@ -90,7 +90,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 ? Regex.Split(filterSplits[1], EscapedPipePattern)
                     .Select(t => t.Trim())
                     .ToList()
-                : null;
+                : new List<string>();
         }
 
         private string ParseFilterOperatorAndValue(string filter)

@@ -11,18 +11,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             string input = null;
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser parser = new FilterOperatorParser(mapper);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
+            var parser = new FilterOperatorParser(mapper);
 
             // Act
             var defaultFilterOperator = mapper.GetDefault();
             var filterOperator = parser.GetParsedOperator(input);
 
             // Assert
-            filterOperator
-                .Should()
-                .Be(defaultFilterOperator);
+            filterOperator.Should().Be(defaultFilterOperator);
         }
 
         [Fact]
@@ -30,18 +28,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser parser = new FilterOperatorParser(mapper);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
+            var parser = new FilterOperatorParser(mapper);
 
             // Act
             var defaultFilterOperator = mapper.GetDefault();
             var filterOperator = parser.GetParsedOperator(input);
 
             // Assert
-            filterOperator
-                .Should()
-                .Be(defaultFilterOperator);
+            filterOperator.Should().Be(defaultFilterOperator);
         }
 
         [Fact]
@@ -49,18 +45,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = " ";
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser parser = new FilterOperatorParser(mapper);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
+            var parser = new FilterOperatorParser(mapper);
 
             // Act
             var defaultFilterOperator = mapper.GetDefault();
             var filterOperator = parser.GetParsedOperator(input);
 
             // Assert
-            filterOperator
-                .Should()
-                .Be(defaultFilterOperator);
+            filterOperator.Should().Be(defaultFilterOperator);
         }
     }
 }

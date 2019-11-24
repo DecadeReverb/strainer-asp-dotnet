@@ -26,7 +26,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                     .Source
                     .OrderBy(uri => uri.Port)
                     .ThenBy(uri => uri.Host),
-                Name = "IntThenText",
+                Name = "PortThenHost",
             };
             var mapper = new CustomSortMethodMapper(optionsProvider);
 

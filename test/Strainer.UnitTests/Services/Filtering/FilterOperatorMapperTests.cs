@@ -10,20 +10,15 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         public void Mapper_ReturnsDefaultFilterOperator()
         {
             // Arrange
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
 
             // Act
             var defaultFilterOperator = mapper.GetDefault();
 
             // Assert
-            defaultFilterOperator
-                .Should()
-                .NotBeNull();
-            defaultFilterOperator
-                .IsDefault
-                .Should()
-                .BeTrue();
+            defaultFilterOperator.Should().NotBeNull();
+            defaultFilterOperator.IsDefault.Should().BeTrue();
         }
 
         [Fact]
@@ -31,32 +26,28 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var symbol = string.Empty;
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
 
             // Act
             var filterOperator = mapper.Find(symbol);
 
             // Assert
-            filterOperator
-                .Should()
-                .BeNull();
+            filterOperator.Should().BeNull();
         }
 
         [Fact]
         public void Mapper_IsNotEmpty()
         {
             // Arrange
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
 
             // Act
             var filterOperatorsAmount = mapper.Operators.Count;
 
             // Assert
-            filterOperatorsAmount
-                .Should()
-                .BeGreaterThan(0);
+            filterOperatorsAmount.Should().BeGreaterThan(0);
         }
     }
 }
