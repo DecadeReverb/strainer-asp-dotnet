@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
 {
     public class LessThanOperatorTests : StrainerFixtureBase
     {
