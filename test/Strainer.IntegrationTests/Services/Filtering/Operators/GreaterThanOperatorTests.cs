@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿
+using FluentAssertions;
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
@@ -8,9 +9,9 @@ using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
 {
-    public class LessThanOperatorTests : StrainerFixtureBase
+    public class GreaterThanOperatorTests : StrainerFixtureBase
     {
-        public LessThanOperatorTests(StrainerFactory factory) : base(factory)
+        public GreaterThanOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
@@ -33,14 +34,14 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel
             {
-                Filters = "LikeCount<3",
+                Filters = "LikeCount>2",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.LikeCount < 3);
+            result.Should().OnlyContain(c => c.LikeCount > 2);
         }
 
         [Fact]
@@ -61,14 +62,14 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = $"DateTime<{DateTime.Now}",
+                Filters = $"DateTime>{DateTime.Now}",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.DateTime < DateTime.Now);
+            result.Should().OnlyContain(c => c.DateTime > DateTime.Now);
         }
 
         [Fact]
@@ -89,7 +90,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Text<3",
+                Filters = "Text>2",
             };
 
             // Act & Assert
@@ -114,7 +115,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Point<3",
+                Filters = "Point>2",
             };
 
             // Act & Assert
