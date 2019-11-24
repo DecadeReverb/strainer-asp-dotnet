@@ -110,8 +110,39 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             result.Should().OnlyContain(c => c.LikeCount.Equals(20));
         }
 
+        [Fact]
+        public void Equals_Works_For_ComplexValues()
+        {
+            // Arrange
+            var source = new[]
+            {
+                new Comment
+                {
+                    TimeSpan = TimeSpan.FromMinutes(1),
+                },
+                new Comment
+                {
+                    TimeSpan = TimeSpan.FromMinutes(2),
+                },
+            }.AsQueryable();
+            var processor = Factory.CreateDefaultProcessor();
+            var model = new StrainerModel
+            {
+                Filters = "TimeSpan==00:01:00",
+            };
+
+            // Act
+            var result = processor.ApplyFiltering(model, source);
+
+            // Assert
+            result.Should().OnlyContain(c => c.TimeSpan == TimeSpan.FromMinutes(1));
+        }
+
         private class Comment
         {
+            [StrainerProperty(IsFilterable = true)]
+            public TimeSpan TimeSpan { get; set; }
+
             [StrainerProperty(IsFilterable = true)]
             public int LikeCount { get; set; }
 
