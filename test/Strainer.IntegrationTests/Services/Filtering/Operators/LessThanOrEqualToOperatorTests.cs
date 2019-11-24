@@ -52,24 +52,24 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             {
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(-3),
+                    TimeSpan = TimeSpan.FromMinutes(5),
                 },
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(2),
+                    TimeSpan = TimeSpan.FromMinutes(10),
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = $"DateTime<={DateTime.Now}",
+                Filters = $"TimeSpan<={TimeSpan.FromMinutes(10)}",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.DateTime <= DateTime.Now);
+            result.Should().OnlyContain(c => c.TimeSpan <= TimeSpan.FromMinutes(10));
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             public string Text { get; set; }
 
             [StrainerProperty(IsFilterable = true)]
-            public DateTime DateTime { get; set; }
+            public TimeSpan TimeSpan { get; set; }
         }
 
         private readonly struct Point
