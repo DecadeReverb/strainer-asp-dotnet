@@ -346,7 +346,7 @@ Strainer comes with following filter operators:
 | Operator   | Meaning                                      |
 |------------|----------------------------------------------|
 | `==`       | Equals                                       |
-| `!=`       | Not equals                                   |
+| `!=`       | Does not equal                               |
 | `>`        | Greater than                                 |
 | `<`        | Less than                                    |
 | `>=`       | Greater than or equal to                     |
@@ -359,10 +359,12 @@ Strainer comes with following filter operators:
 | `!=_`      | Does not end with                            |
 | `@=*`      | Contains _(case-insensitive)_                |
 | `_=*`      | Starts with _(case-insensitive)_             |
+| `=_*`      | Ends with _(case-insensitive)_               |
 | `==*`      | Equals _(case-insensitive)_                  |
-| `!=*`      | Not equals _(case-insensitive)_              |
+| `!=*`      | Does not equal _(case-insensitive)_          |
 | `!@=*`     | Does not contain _(case-insensitive)_        |
 | `!_=*`     | Does not start with _(case-insensitive)_     |
+| `!=_*`     | Does not end with _(case-insensitive)_       |
 
 Case insensitive operators will force case insensitivity when comparing values even when [`IsCaseInsensitiveForValues`](#configure-strainer) option is set to `false`.
 
