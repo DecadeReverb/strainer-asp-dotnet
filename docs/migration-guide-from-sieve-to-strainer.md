@@ -130,4 +130,35 @@ In `MapCustomSortMethods()` a custom sorting method for `Post` entity is added w
 
 `MapCustomSortMethods()` will be called on `StrainerProcessor` initialization, alongside with other similar methods like `MapCustomFilterMethods()`.
 
+### Object-level attribute
+
+In Strainer it is possible to configure filtering/sorting options on object-level, instead of configuring every property, one by one. To use that feature, apply `StrainerObject` attribute on a desired class or struct. For example, consider following class:
+
+```cs
+[StrainerObject(nameof(Id))]
+public class Post
+{
+	public int Id { get; set; }
+
+	public string Title { get; set; }
+}
+```
+
+In the example above, marking `Post` class with `StrainerObject` attribute, will tell Strainer that all its properties are filterable and sortable (this can be configured with additional `bool` flags). While applying `StrainerObject` attribute, a name of property is required which will act as a name for fallback sorting property, when during processing no sorting information was discovered, but sorting was still requested.
+
+Furthermore, you can combine `StrainerObject` attribute with `StrainerProperty` attribute which will override object-level defaults. For example:
+
+```cs
+[StrainerObject(nameof(Id))]
+public class Post
+{
+	public int Id { get; set; }
+
+	[StrainerProperty(IsSortable = false)]
+	public string Title { get; set; }
+}
+```
+
+Configuration above will tell Strainer that all properties of `Post` class are filterable and sortable, with exception for `Title` property which is not sortable.
+
 ### ...more will come.
