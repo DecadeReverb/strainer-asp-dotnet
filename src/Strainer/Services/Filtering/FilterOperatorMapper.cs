@@ -80,21 +80,21 @@ namespace Fluorite.Strainer.Services.Filtering
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
                 .IsDefault();
             new FilterOperatorBuilder(this, symbol: "!=")
-                .HasName("not equal to")
+                .HasName("does not equal to")
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue));
 
             new FilterOperatorBuilder(this, symbol: "<")
-                .HasName("less then")
+                .HasName("less than")
                 .HasExpression((context) => Expression.LessThan(context.PropertyValue, context.FilterValue));
             new FilterOperatorBuilder(this, symbol: "<=")
-                .HasName("less then or equal to")
+                .HasName("less than or equal to")
                 .HasExpression((context) => Expression.LessThanOrEqual(context.PropertyValue, context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: ">")
-                .HasName("greater then")
+                .HasName("greater than")
                 .HasExpression((context) => Expression.GreaterThan(context.PropertyValue, context.FilterValue));
             new FilterOperatorBuilder(this, symbol: ">=")
-                .HasName("greater then or equal to")
+                .HasName("greater than or equal to")
                 .HasExpression((context) => Expression.GreaterThanOrEqual(context.PropertyValue, context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: "@=")
@@ -135,7 +135,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
             new FilterOperatorBuilder(this, symbol: "!=*")
-                .HasName("not equal to (case insensitive)")
+                .HasName("does not equal to (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
