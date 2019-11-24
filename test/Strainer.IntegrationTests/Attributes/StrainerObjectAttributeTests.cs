@@ -160,6 +160,34 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes
             result.Should().BeInAscendingOrder(e => e.Name);
         }
 
+        [Fact]
+        public void StrainerObjectAttribute_Filterable_Does_Not_Override_Property_Attributes()
+        {
+            // Arrange
+            var source = new[]
+            {
+                new ObjectAndPropertyAttributesEntity
+                {
+                    Name = "foo",
+                },
+                new ObjectAndPropertyAttributesEntity
+                {
+                    Name = "bar",
+                },
+            }.AsQueryable();
+            var processor = Factory.CreateDefaultProcessor();
+            var model = new StrainerModel
+            {
+                Filters = "Name==foo",
+            };
+
+            // Act
+            var result = processor.ApplyFiltering(model, source);
+
+            // Assert
+            result.Should().OnlyContain(e => e.Name == "foo");
+        }
+
         [StrainerObject(nameof(Name), IsFilterable = false)]
         private class EmptyTestEntity
         {
@@ -169,6 +197,13 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes
         private class DerivedTestEntity : SortableTestEntity
         {
 
+        }
+
+        [StrainerObject(nameof(Name), IsFilterable = false)]
+        private class ObjectAndPropertyAttributesEntity
+        {
+            [StrainerProperty(IsFilterable = true)]
+            public string Name { get; set; }
         }
 
         [StrainerObject(nameof(Name), IsFilterable = true)]
