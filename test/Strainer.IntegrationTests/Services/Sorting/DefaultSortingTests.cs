@@ -4,7 +4,7 @@ using Fluorite.Strainer.Models;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
+namespace Fluorite.Strainer.IntegrationTests.Services.Sorting
 {
     public class DefaultSortingTests : StrainerFixtureBase
     {
@@ -46,11 +46,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             {
                 new Post
                 {
-                    Title = "Foo",
+                    Name = "Foo",
                 },
                 new Post
                 {
-                    Title = "Bar",
+                    Name = "Bar",
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor(options =>
@@ -72,13 +72,13 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
             // Arrange
             var source = new[]
             {
-                new Post
+                new Comment
                 {
-                    Title = "Foo",
+                    Text = "Foo",
                 },
-                new Post
+                new Comment
                 {
-                    Title = "Bar",
+                    Text = "Bar",
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor();
@@ -89,15 +89,18 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.Default
 
             // Assert
             result.Should().BeEquivalentTo(source);
-            result.Should().BeInDescendingOrder(e => e.Name);
+            result.Should().BeInDescendingOrder(c => c.Text);
         }
 
         private class Post
         {
             [StrainerProperty(IsSortable = true, IsDefaultSorting = true)]
             public string Name { get; set; }
+        }
 
-            public string Title { get; set; }
+        private class Comment
+        {
+            public string Text { get; set; }
         }
     }
 }

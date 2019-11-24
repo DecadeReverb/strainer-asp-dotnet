@@ -6,11 +6,11 @@ using Fluorite.Strainer.Services.Sorting;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Sorting.WayFormatting
+namespace Fluorite.Strainer.IntegrationTests.Services.Sorting
 {
-    public class SortingWayFormatterTest : StrainerFixtureBase
+    public class SuffixSortingWayFormatterTests : StrainerFixtureBase
     {
-        public SortingWayFormatterTest(StrainerFactory factory) : base(factory)
+        public SuffixSortingWayFormatterTests(StrainerFactory factory) : base(factory)
         {
 
         }
