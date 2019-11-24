@@ -111,6 +111,13 @@ namespace Fluorite.Strainer.Services.Filtering
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
                     context.FilterValue));
+            new FilterOperatorBuilder(this, symbol: "=_")
+                .HasName("ends with")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
+                    context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: "!@=")
                 .HasName("does not contain")
@@ -125,6 +132,13 @@ namespace Fluorite.Strainer.Services.Filtering
                 .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
+                    context.FilterValue)));
+            new FilterOperatorBuilder(this, symbol: "!=_")
+                .HasName("does not end with")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Not(Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
                     context.FilterValue)));
 
             new FilterOperatorBuilder(this, symbol: "==*")
