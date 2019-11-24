@@ -2,7 +2,7 @@
 
 # Strainer
 
-Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting, filtering and pagination** trival.
+Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting**, **filtering** and **pagination** trival.
 
 **Note:** This project is a port of [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
 
@@ -233,7 +233,7 @@ Strainer model is based on four properties:
 
 ### Sorts
 
-`Sorts` is a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly. Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control this behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
+`Sorts` is a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly (you can configure it via [options](#configure-strainer)). Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control this behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
 
 ### Filters
 
@@ -353,8 +353,10 @@ Strainer comes with following filter operators:
 | `<=`       | Less than or equal to                        |
 | `@=`       | Contains                                     |
 | `_=`       | Starts with                                  |
+| `=_`       | Ends with                                    |
 | `!@=`      | Does not contain                             |
 | `!_=`      | Does not start with                          |
+| `!=_`      | Does not end with                            |
 | `@=*`      | Contains _(case-insensitive)_                |
 | `_=*`      | Starts with _(case-insensitive)_             |
 | `==*`      | Equals _(case-insensitive)_                  |
