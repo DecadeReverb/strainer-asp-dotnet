@@ -115,19 +115,17 @@ namespace Fluorite.Strainer.Services.Filtering
             new FilterOperatorBuilder(this, symbol: "!@=")
                 .HasName("does not contain")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .NegateExpression();
+                    context.FilterValue)));
             new FilterOperatorBuilder(this, symbol: "!_=")
                 .HasName("does not start with")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .NegateExpression();
+                    context.FilterValue)));
 
             new FilterOperatorBuilder(this, symbol: "==*")
                 .HasName("equal to (case insensitive)")
@@ -160,21 +158,19 @@ namespace Fluorite.Strainer.Services.Filtering
             new FilterOperatorBuilder(this, symbol: "!@=*")
                 .HasName("does not contain (case insensitive)")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .IsCaseInsensitive()
-                .NegateExpression();
+                    context.FilterValue)))
+                .IsCaseInsensitive();
             new FilterOperatorBuilder(this, symbol: "!_=*")
                 .HasName("does not start with (case insensitive)")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .IsCaseInsensitive()
-                .NegateExpression();
+                    context.FilterValue)))
+                .IsCaseInsensitive();
         }
     }
 }

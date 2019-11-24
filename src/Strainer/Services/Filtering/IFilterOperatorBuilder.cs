@@ -17,7 +17,5 @@ namespace Fluorite.Strainer.Services.Filtering
         IFilterOperatorBuilder IsDefault();
 
         IFilterOperatorBuilder IsStringBased();
-
-        IFilterOperatorBuilder NegateExpression();
     }
 }
