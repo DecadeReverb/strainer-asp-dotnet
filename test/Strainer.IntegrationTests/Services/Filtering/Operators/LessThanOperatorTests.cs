@@ -51,24 +51,24 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             {
                 new Comment
                 {
-                    Version = new Version(2, 1),
+                    DateTime = DateTime.Now.AddDays(-3),
                 },
                 new Comment
                 {
-                    Version = new Version(3, 1),
+                    DateTime = DateTime.Now.AddDays(-2),
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Version<3.0.0.0",
+                Filters = $"DateTime<{DateTime.Now}",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.Version < new Version("3.0.0.0"));
+            result.Should().OnlyContain(c => c.DateTime < DateTime.Now);
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace Fluorite.Strainer.IntegrationTests.Models.Filtering.Operators
             public string Text { get; set; }
 
             [StrainerProperty(IsFilterable = true)]
-            public Version Version { get; set; }
+            public DateTime DateTime { get; set; }
         }
 
         private readonly struct Point
