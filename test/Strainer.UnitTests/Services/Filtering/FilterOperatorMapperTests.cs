@@ -7,21 +7,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
     public class FilterOperatorMapperTests
     {
         [Fact]
-        public void Mapper_ReturnsDefaultFilterOperator()
-        {
-            // Arrange
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-
-            // Act
-            var defaultFilterOperator = mapper.GetDefault();
-
-            // Assert
-            defaultFilterOperator.Should().NotBeNull();
-            defaultFilterOperator.IsDefault.Should().BeTrue();
-        }
-
-        [Fact]
         public void Mapper_ReturnsNull_WhenNoMatchingOperatorIsFound()
         {
             // Arrange

@@ -48,7 +48,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(symbol));
             }
 
-            if (Symbols.Contains(symbol, StringComparer.OrdinalIgnoreCase))
+            if (Symbols.Contains(symbol))
             {
                 throw new InvalidOperationException(
                     $"There is already existing operator with a symbol {symbol}. " +
@@ -65,20 +65,19 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(symbol));
             }
 
-            return _map.Values.FirstOrDefault(f => f.Symbol.Equals(symbol, StringComparison.OrdinalIgnoreCase));
-        }
+            if (_map.TryGetValue(symbol, out var filterOperator))
+            {
+                return filterOperator;
+            }
 
-        public IFilterOperator GetDefault()
-        {
-            return _map.Values.FirstOrDefault(f => f.IsDefault);
+            return null;
         }
 
         private void AddInitialFilterOperators()
         {
             new FilterOperatorBuilder(this, symbol: "==")
                 .HasName("equal")
-                .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
-                .IsDefault();
+                .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue));
             new FilterOperatorBuilder(this, symbol: "!=")
                 .HasName("does not equal")
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue));

@@ -65,26 +65,6 @@ namespace Fluorite.Strainer.Services.Filtering
                     $"Conflicting filter operators:\n" +
                     $"{string.Join(Environment.NewLine, duplicatedSymbols.Select(f => f.ToString()))}");
             }
-
-            var defaultOperators = filterOperators.Where(f => f.IsDefault);
-            if (defaultOperators.Count() > 1)
-            {
-                throw new InvalidOperationException(
-                    $"Too many default filter operators found. " +
-                    $"Only one filter operator can be a default one. " +
-                    $"Please remove the default flag from filter operators, " +
-                    $"so only one is default. " +
-                    $"Conflicting filter operators:\n" +
-                    $"{string.Join(Environment.NewLine, defaultOperators.Select(f => f.ToString()))}");
-            }
-
-            if (!defaultOperators.Any())
-            {
-                throw new InvalidOperationException(
-                    "No default filter operator found. " +
-                    "Please add a filter operator with default flag " +
-                    "set to true.");
-            }
         }
     }
 }

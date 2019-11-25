@@ -14,8 +14,6 @@ namespace Fluorite.Strainer.Services.Filtering
 
         IFilterOperatorBuilder IsCaseInsensitive();
 
-        IFilterOperatorBuilder IsDefault();
-
         IFilterOperatorBuilder IsStringBased();
     }
 }

@@ -13,8 +13,6 @@ namespace Fluorite.Strainer.Services.Filtering
 
         IFilterOperator Find(string symbol);
 
-        IFilterOperator GetDefault();
-
         IFilterOperatorBuilder Operator(string symbol);
     }
 }
