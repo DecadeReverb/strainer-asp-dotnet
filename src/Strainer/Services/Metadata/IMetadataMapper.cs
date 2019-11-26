@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public interface IPropertyMetadataMapper
+    public interface IMetadataMapper
     {
         void AddPropertyMetadata<TEntity>(IPropertyMetadata propertyMetadata);
 

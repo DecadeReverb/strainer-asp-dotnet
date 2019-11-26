@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMetadataMapper(optionsProvider);
+            var mapper = new MetadataMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
             var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
             var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
@@ -70,7 +70,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMetadataMapper(optionsProvider);
+            var mapper = new MetadataMapper(optionsProvider);
             var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
             var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
@@ -101,7 +101,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMetadataMapper(optionsProvider);
+            var mapper = new MetadataMapper(optionsProvider);
             mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
             var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
             var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
@@ -147,7 +147,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new PropertyMetadataMapper(optionsProvider);
+            var mapper = new MetadataMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
             mapper.Property<Comment>(c => c.Id).IsSortable();
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();

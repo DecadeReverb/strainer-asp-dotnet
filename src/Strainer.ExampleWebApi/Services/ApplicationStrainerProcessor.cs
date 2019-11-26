@@ -35,7 +35,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         }
 
-        protected override void MapProperties(IPropertyMetadataMapper mapper)
+        protected override void MapProperties(IMetadataMapper mapper)
         {
             mapper.Property<Post>(p => p.Comments.Count)
                 .IsFilterable()

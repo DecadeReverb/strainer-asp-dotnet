@@ -478,7 +478,7 @@ namespace Fluorite.Strainer.Services
         /// <param name="mapper">
         /// The property metadata mapper.
         /// </param>
-        protected virtual void MapProperties(IPropertyMetadataMapper mapper)
+        protected virtual void MapProperties(IMetadataMapper mapper)
         {
 
         }

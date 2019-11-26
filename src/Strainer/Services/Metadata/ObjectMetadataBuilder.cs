@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
     {
-        private readonly IPropertyMetadataMapper _mapper;
+        private readonly IMetadataMapper _mapper;
 
         protected readonly string defaultSortingPropertyName;
         protected readonly PropertyInfo defaultSortingPropertyInfo;
@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.Services.Metadata
         protected bool isSortable;
 
         public ObjectMetadataBuilder(
-            IPropertyMetadataMapper propertyMetadataMapper,
+            IMetadataMapper propertyMetadataMapper,
             Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
         {
             if (defaultSortingPropertyExpression is null)

@@ -10,7 +10,7 @@ namespace Fluorite.Strainer.Services.Metadata
     public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity>
     {
         private readonly Expression<Func<TEntity, object>> _expression;
-        private readonly IPropertyMetadataMapper _mapper;
+        private readonly IMetadataMapper _mapper;
 
         protected string displayName;
         protected bool isDefaultSorting;
@@ -20,7 +20,7 @@ namespace Fluorite.Strainer.Services.Metadata
         protected string name;
         protected PropertyInfo propertyInfo;
 
-        public PropertyMetadataBuilder(IPropertyMetadataMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
+        public PropertyMetadataBuilder(IMetadataMapper strainerPropertyMapper, Expression<Func<TEntity, object>> expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             _mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));

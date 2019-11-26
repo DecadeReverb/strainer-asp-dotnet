@@ -23,7 +23,7 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the property mapper.
         /// </summary>
-        IPropertyMetadataMapper Mapper { get; }
+        IMetadataMapper Mapper { get; }
 
         /// <summary>
         /// Gets the metadata providers facade.

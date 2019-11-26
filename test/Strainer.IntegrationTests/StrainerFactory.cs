@@ -54,7 +54,7 @@ namespace Fluorite.Strainer.IntegrationTests
         protected IStrainerContext CreateDefaultContext()
         {
             var optionsProvider = new IntegrationTestsStrainerOptionsProvider();
-            var propertyMapper = new PropertyMetadataMapper(optionsProvider);
+            var propertyMapper = new MetadataMapper(optionsProvider);
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
             var propertyMetadataProviders = new IPropertyMetadataProvider[]
             {

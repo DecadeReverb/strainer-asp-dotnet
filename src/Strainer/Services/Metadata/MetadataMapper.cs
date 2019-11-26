@@ -7,14 +7,14 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public class PropertyMetadataMapper : IPropertyMetadataMapper, IPropertyMetadataProvider
+    public class MetadataMapper : IMetadataMapper, IPropertyMetadataProvider
     {
         private readonly Dictionary<Type, IPropertyMetadata> _defaultPropertyMetadata;
         private readonly Dictionary<Type, ISet<IPropertyMetadata>> _propertyMetadata;
         private readonly Dictionary<Type, IObjectMetadata> _objectMetadata;
         private readonly StrainerOptions _options;
 
-        public PropertyMetadataMapper(IStrainerOptionsProvider optionsProvider)
+        public MetadataMapper(IStrainerOptionsProvider optionsProvider)
         {
             _defaultPropertyMetadata = new Dictionary<Type, IPropertyMetadata>();
             _propertyMetadata = new Dictionary<Type, ISet<IPropertyMetadata>>();

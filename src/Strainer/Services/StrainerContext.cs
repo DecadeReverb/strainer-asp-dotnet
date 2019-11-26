@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.Services
             IStrainerOptionsProvider optionsProvider,
             IFilterContext filteringContext,
             ISortingContext sortingContext,
-            IPropertyMetadataMapper mapper,
+            IMetadataMapper mapper,
             IMetadataProvidersFacade metadataProvidersFacade,
             ICustomMethodsContext customMethodsContext)
         {
@@ -44,7 +44,7 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Gets the property mapper.
         /// </summary>
-        public IPropertyMetadataMapper Mapper { get; }
+        public IMetadataMapper Mapper { get; }
 
         /// <summary>
         /// Gets the property metadata provider.

@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Sorting
     public class SortPropertyMetadataBuilder<TEntity> : PropertyMetadataBuilder<TEntity>, ISortPropertyMetadataBuilder<TEntity>
     {
         public SortPropertyMetadataBuilder(
-            IPropertyMetadataMapper strainerPropertyMapper,
+            IMetadataMapper strainerPropertyMapper,
             Expression<Func<TEntity, object>> expression,
             IPropertyMetadata basePropertyMetadata)
             : base(strainerPropertyMapper, expression)
