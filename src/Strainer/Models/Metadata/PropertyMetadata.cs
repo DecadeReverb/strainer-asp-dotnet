@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Models
+namespace Fluorite.Strainer.Models.Metadata
 {
     /// <summary>
     /// Represents default property metadata model.

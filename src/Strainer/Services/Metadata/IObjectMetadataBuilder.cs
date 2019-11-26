@@ -1,4 +1,4 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models.Metadata;
 
 namespace Fluorite.Strainer.Services.Metadata
 {

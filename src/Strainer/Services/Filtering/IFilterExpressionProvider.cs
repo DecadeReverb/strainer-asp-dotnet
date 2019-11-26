@@ -1,5 +1,5 @@
-﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering.Terms;
+﻿using Fluorite.Strainer.Models.Filtering.Terms;
+using Fluorite.Strainer.Models.Metadata;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Filtering

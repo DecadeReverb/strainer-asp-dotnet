@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Fluorite.Strainer.Models
+namespace Fluorite.Strainer.Models.Metadata
 {
     /// <summary>
     /// Represents filtering and sorting metadata for a class or struct,

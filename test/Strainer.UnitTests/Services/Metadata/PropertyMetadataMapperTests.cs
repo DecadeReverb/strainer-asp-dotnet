@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
 using Moq;

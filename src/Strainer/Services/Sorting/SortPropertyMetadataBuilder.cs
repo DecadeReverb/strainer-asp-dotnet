@@ -1,4 +1,4 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Metadata;
 using System;
 using System.Linq.Expressions;

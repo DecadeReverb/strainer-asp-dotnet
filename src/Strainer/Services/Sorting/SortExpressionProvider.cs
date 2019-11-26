@@ -1,4 +1,4 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Metadata;

@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Models.Sorting;
 
 namespace Fluorite.Strainer.Models
 {

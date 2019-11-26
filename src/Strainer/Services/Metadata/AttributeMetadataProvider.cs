@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;

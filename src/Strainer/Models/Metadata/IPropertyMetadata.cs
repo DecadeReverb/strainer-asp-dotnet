@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Fluorite.Strainer.Models
+namespace Fluorite.Strainer.Models.Metadata
 {
     /// <summary>
     /// Provides metadata about a property.
