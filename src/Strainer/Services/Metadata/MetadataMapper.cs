@@ -95,7 +95,7 @@ namespace Fluorite.Strainer.Services.Metadata
             return propertyMetadata;
         }
 
-        public IPropertyMetadata GetMetadata<TEntity>(
+        public IPropertyMetadata GetPropertyMetadata<TEntity>(
             bool isSortableRequired,
             bool isFilterableRequired,
             string name)

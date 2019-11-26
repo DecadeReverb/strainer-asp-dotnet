@@ -9,10 +9,10 @@ using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {
-    public class PropertyMetadataMapperTests
+    public class MetadataMapperTests
     {
         [Fact]
-        public void Mapper_Returns_Null_When_JustPropertyIsCalled()
+        public void Mapper_GetMetadata_Returns_Null_When_JustPropertyIsCalled()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -20,10 +20,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
             var mapper = new MetadataMapper(optionsProvider);
+            mapper.Property<Post>(p => p.Id);
 
             // Act
-            mapper.Property<Post>(p => p.Id);
-            var metadata = mapper.GetMetadata<Post>(
+            var metadata = mapper.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
                 name: nameof(Post.Id));
@@ -33,7 +33,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_Returns_Map_When_MarkedAsFilterable()
+        public void Mapper_GetMetadata_Returns_Map_When_MarkedAsFilterable()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -44,7 +44,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             mapper.Property<Post>(p => p.Id).IsFilterable();
 
             // Act
-            var metadata = mapper.GetMetadata<Post>(
+            var metadata = mapper.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
                 name: nameof(Post.Id));
@@ -55,7 +55,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_Returns_Map_When_MarkedAsSortable()
+        public void Mapper_GetMetadata_Returns_Map_When_MarkedAsSortable()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -66,7 +66,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             mapper.Property<Post>(p => p.Id).IsSortable();
 
             // Act
-            var metadata = mapper.GetMetadata<Post>(
+            var metadata = mapper.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
                 name: nameof(Post.Id));
@@ -77,7 +77,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_Returns_DefaultMetadata_When_MarkedAsDefault()
+        public void Mapper_GetDefaultMetadata_Returns_DefaultMetadata_When_MarkedAsDefault()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -97,7 +97,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_Adds_Map_Via_AddMap()
+        public void Mapper_Adds_PropertyMetadata_Via_AddPropertyMetadata()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -113,7 +113,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
 
             // Act
             mapper.AddPropertyMetadata<Post>(metadata);
-            var result = mapper.GetMetadata<Post>(
+            var result = mapper.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
                 name: nameof(Post.Id));
@@ -124,7 +124,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_Adds_Different_Metadata_For_Already_Existing_Property()
+        public void Mapper_Adds_Different_PropertyMetadata_For_Already_Existing_PropertyMetadata()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -147,8 +147,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             // Act
             mapper.AddPropertyMetadata<Post>(firstMetadata);
             mapper.AddPropertyMetadata<Post>(secondMetadata);
-            var firstResult = mapper.GetMetadata<Post>(false, false, name: firstMetadata.Name);
-            var secondResult = mapper.GetMetadata<Post>(false, false, name: secondMetadata.Name);
+            var firstResult = mapper.GetPropertyMetadata<Post>(false, false, name: firstMetadata.Name);
+            var secondResult = mapper.GetPropertyMetadata<Post>(false, false, name: secondMetadata.Name);
 
             // Assert
             firstResult.Should().Be(firstMetadata);
@@ -156,7 +156,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_Adds_AlreadyExistingMaps_Via_AddMap_Without_Duplicating()
+        public void Mapper_Adds_AlreadyExistingPropertyMetadata_Via_AddPropertyMetadata_Without_Duplicating()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -173,7 +173,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             // Act
             mapper.AddPropertyMetadata<Post>(metadata);
             mapper.AddPropertyMetadata<Post>(metadata);
-            var result = mapper.GetMetadata<Post>(isSortableRequired: false, isFilterableRequired: false, nameof(Post.Id));
+            var result = mapper.GetPropertyMetadata<Post>(isSortableRequired: false, isFilterableRequired: false, nameof(Post.Id));
 
             // Assert
             result.Name.Should().Be(nameof(Post.Id));
@@ -195,7 +195,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_AddMap_Throws_Exception_With_FluentApiMetadataSourceType_Disabled()
+        public void Mapper_AddPropertyMetadata_Throws_Exception_With_FluentApiMetadataSourceType_Disabled()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -214,7 +214,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void Mapper_FindProperty_Returns_Null_With_FluentApiMetadataSourceType_Disabled()
+        public void Mapper_GetMetadata_Returns_Null_With_FluentApiMetadataSourceType_Disabled()
         {
             // Arrange
             var optionsMock = new Mock<IStrainerOptionsProvider>();
@@ -224,7 +224,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var mapper = new MetadataMapper(optionsProvider);
 
             // Act
-            var result = mapper.GetMetadata<Post>(
+            var result = mapper.GetPropertyMetadata<Post>(
                 isSortableRequired: true,
                 isFilterableRequired: true,
                 name: null);

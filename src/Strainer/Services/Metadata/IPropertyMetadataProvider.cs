@@ -6,6 +6,6 @@ namespace Fluorite.Strainer.Services.Metadata
     {
         IPropertyMetadata GetDefaultMetadata<TEntity>();
 
-        IPropertyMetadata GetMetadata<TEntity>(bool isSortableRequired, bool isFilterableRequired, string name);
+        IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortableRequired, bool isFilterableRequired, string name);
     }
 }

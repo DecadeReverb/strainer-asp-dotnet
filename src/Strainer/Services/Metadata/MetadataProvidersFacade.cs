@@ -37,7 +37,7 @@ namespace Fluorite.Strainer.Services.Metadata
         {
             foreach (var provider in _metadataProviders)
             {
-                var metadata = provider.GetMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
+                var metadata = provider.GetPropertyMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
 
                 if (metadata != null)
                 {

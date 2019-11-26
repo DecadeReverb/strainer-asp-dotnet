@@ -39,7 +39,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
             // Act
-            var result = attributeMetadataProvider.GetMetadata<Post>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Post.Id));
@@ -62,7 +62,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
             // Act
-            var result = attributeMetadataProvider.GetMetadata<Post>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Post.Id));
@@ -82,7 +82,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
             // Act
-            var result = attributeMetadataProvider.GetMetadata<Post>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Post.Title));
@@ -104,7 +104,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
             // Act
-            var result = attributeMetadataProvider.GetMetadata<Post>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Post.Title));
@@ -126,7 +126,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
 
             // Act
-            var result = attributeMetadataProvider.GetMetadata<Comment>(
+            var result = attributeMetadataProvider.GetPropertyMetadata<Comment>(
                 isSortingRequired: true,
                 isFilteringRequired: true,
                 name: nameof(Comment.Id));
