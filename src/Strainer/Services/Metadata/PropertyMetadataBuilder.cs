@@ -80,7 +80,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(propertyMetadata));
             }
 
-            _mapper.AddMetadata<TEntity>(propertyMetadata);
+            _mapper.AddPropertyMetadata<TEntity>(propertyMetadata);
         }
 
         private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)

@@ -6,8 +6,12 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public interface IPropertyMetadataMapper
     {
-        void AddMetadata<TEntity>(IPropertyMetadata metadata);
+        void AddPropertyMetadata<TEntity>(IPropertyMetadata propertyMetadata);
+
+        void AddObjectMetadata<TEntity>(IObjectMetadata objectMetadata);
 
         IPropertyMetadataBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression);
+
+        IObjectMetadataBuilder<TEntity> Object<TEntity>(Expression<Func<TEntity, object>> expression);
     }
 }

@@ -111,7 +111,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             };
 
             // Act
-            mapper.AddMetadata<Post>(metadata);
+            mapper.AddPropertyMetadata<Post>(metadata);
             var result = mapper.GetMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
@@ -144,8 +144,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             };
 
             // Act
-            mapper.AddMetadata<Post>(firstMetadata);
-            mapper.AddMetadata<Post>(secondMetadata);
+            mapper.AddPropertyMetadata<Post>(firstMetadata);
+            mapper.AddPropertyMetadata<Post>(secondMetadata);
             var firstResult = mapper.GetMetadata<Post>(false, false, name: firstMetadata.Name);
             var secondResult = mapper.GetMetadata<Post>(false, false, name: secondMetadata.Name);
 
@@ -170,8 +170,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             };
 
             // Act
-            mapper.AddMetadata<Post>(metadata);
-            mapper.AddMetadata<Post>(metadata);
+            mapper.AddPropertyMetadata<Post>(metadata);
+            mapper.AddPropertyMetadata<Post>(metadata);
             var result = mapper.GetMetadata<Post>(isSortableRequired: false, isFilterableRequired: false, nameof(Post.Id));
 
             // Assert
@@ -209,7 +209,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => mapper.AddMetadata<Post>(metadata));
+            Assert.Throws<InvalidOperationException>(() => mapper.AddPropertyMetadata<Post>(metadata));
         }
 
         [Fact]

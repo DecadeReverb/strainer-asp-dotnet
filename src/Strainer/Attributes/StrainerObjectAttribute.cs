@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using System;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Attributes
 {
@@ -82,5 +83,10 @@ namespace Fluorite.Strainer.Attributes
         /// Defaults to <see langword="true"/>.
         /// </summary>
         public bool IsSortable { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the <see cref="PropertyInfo"/> for default sorting property.
+        /// </summary>
+        public PropertyInfo DefaultSortingPropertyInfo { get; set; }
     }
 }
