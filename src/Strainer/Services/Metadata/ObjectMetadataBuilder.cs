@@ -35,6 +35,7 @@ namespace Fluorite.Strainer.Services.Metadata
         {
             return new ObjectMetadata
             {
+                DefaultSortingPropertyInfo = defaultSortingPropertyInfo,
                 DefaultSortingPropertyName = defaultSortingPropertyName,
                 IsDefaultSortingDescending = isDefaultSortingDescending,
                 IsFilterable = isFilterable,
