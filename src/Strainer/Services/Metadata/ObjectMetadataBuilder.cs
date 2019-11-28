@@ -29,6 +29,8 @@ namespace Fluorite.Strainer.Services.Metadata
             _mapper = propertyMetadataMapper ?? throw new ArgumentNullException(nameof(propertyMetadataMapper));
 
             (defaultSortingPropertyName, defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
+
+            UpdateMap(Build());
         }
 
         public IObjectMetadata Build()

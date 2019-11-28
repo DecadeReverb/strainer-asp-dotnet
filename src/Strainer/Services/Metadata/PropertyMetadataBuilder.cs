@@ -24,7 +24,10 @@ namespace Fluorite.Strainer.Services.Metadata
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             _mapper = strainerPropertyMapper ?? throw new ArgumentNullException(nameof(strainerPropertyMapper));
+
             (name, propertyInfo) = GetPropertyInfo(expression);
+
+            UpdateMap(Build());
         }
 
         public virtual IPropertyMetadata Build()
