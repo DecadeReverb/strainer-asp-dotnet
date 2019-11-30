@@ -1,7 +1,7 @@
-﻿using Fluorite.Strainer.ExampleWebApi.Entities;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.ExampleWebApi.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Fluorite.Strainer.ExampleWebApi.Data
 {
@@ -23,7 +23,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Data
                 throw new ArgumentNullException(nameof(context));
             }
 
-            AddPosts(context, postsCount: 120, upToCommentsPerPost: 10);
+            AddPosts(context, postsCount: 120, upToCommentsPerPost: 3);
 
             context.SaveChanges();
         }
@@ -75,7 +75,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Data
 
         private static DateTime RandomizeDateTime()
         {
-            var start = new DateTime(2016, 1, 1);
+            var start = DateTime.Now.AddYears(-2);
             var range = (DateTime.Today - start).Days;
 
             return start.AddDays(_random.Next(range));
@@ -85,7 +85,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Data
         {
             var words = new List<string>
             {
-                "anemone", "wagstaff", "man", "the", "for",
+                "John", "must", "man", "the", "for",
                 "and", "a", "with", "bird", "fox"
             };
             var sentence = new List<string>();
@@ -102,13 +102,5 @@ namespace Fluorite.Strainer.ExampleWebApi.Data
 
             return string.Join(" ", sentence).FirstCharToUpper();
         }
-
-        private static string FirstCharToUpper(this string input) =>
-            input switch
-            {
-                null => throw new ArgumentNullException(nameof(input)),
-                "" => throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input)),
-                _ => input.First().ToString().ToUpper() + input.Substring(1),
-            };
     }
 }
