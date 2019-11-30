@@ -35,6 +35,8 @@ namespace Fluorite.Strainer.Services.Sorting
             isSortable = basePropertyMetadata.IsSortable;
             name = basePropertyMetadata.Name;
             propertyInfo = basePropertyMetadata.PropertyInfo;
+
+            UpdateMap(Build());
         }
 
         public ISortPropertyMetadataBuilder<TEntity> IsDefaultSort(bool isDescending = false)
