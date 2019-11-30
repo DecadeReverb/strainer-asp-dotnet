@@ -22,8 +22,12 @@ namespace Fluorite.Strainer.ExampleWebApi.Controllers
             _dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Gets all posts.
+        /// </summary>
         [HttpGet]
-        public async Task<ActionResult<List<Post>>> Index()
+        [ProducesResponseType(typeof(List<Post>), 200)]
+        public async Task<ActionResult<List<Post>>> GetAll()
         {
             var result = await _dbContext
                 .Posts
@@ -34,7 +38,15 @@ namespace Fluorite.Strainer.ExampleWebApi.Controllers
             return Json(result);
         }
 
+        /// <summary>
+        /// Gets all posts with Strainer processing.
+        /// </summary>
+        /// <param name="strainerModel">
+        /// The Strainer model containing filtering, sorting and pagination
+        /// information.
+        /// </param>
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(List<Post>), 200)]
         public async Task<ActionResult<List<Post>>> GetAllWithStrainer([FromQuery] StrainerModel strainerModel)
         {
             var source = _dbContext
