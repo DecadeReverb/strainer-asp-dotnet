@@ -34,6 +34,8 @@ namespace Fluorite.Strainer.ExampleWebApi
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddSwaggerGenWithDefaultOptions();
+
             services.AddStrainer<ApplicationStrainerProcessor>(Configuration.GetSection("Strainer"));
         }
 
@@ -44,6 +46,12 @@ namespace Fluorite.Strainer.ExampleWebApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Strainer example API");
+                options.RoutePrefix = string.Empty;
+            });
             app.UseMvc();
         }
     }
