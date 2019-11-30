@@ -48,7 +48,7 @@ namespace Fluorite.Extensions.DependencyInjection
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
-                var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "Strainer*.xml", SearchOption.TopDirectoryOnly).ToList();
+                var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "Fluorite*.xml", SearchOption.TopDirectoryOnly).ToList();
                 xmlFiles.ForEach(xmlFile => options.IncludeXmlComments(xmlFile));
             });
         }

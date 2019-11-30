@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>Fluorite.Strainer.ExampleWebApi</AssemblyName>
     <RootNamespace>Fluorite.Strainer.ExampleWebApi</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
