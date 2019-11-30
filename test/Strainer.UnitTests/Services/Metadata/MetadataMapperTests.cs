@@ -78,6 +78,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 name: nameof(Post.Id));
 
             // Assert
+            metadata.Should().NotBeNull();
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.IsFilterable.Should().BeTrue();
             metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
@@ -101,6 +102,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 name: nameof(Post.Id));
 
             // Assert
+            metadata.Should().NotBeNull();
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.IsSortable.Should().BeTrue();
             metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
@@ -124,6 +126,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 name: nameof(Post.Id));
 
             // Assert
+            metadata.Should().NotBeNull();
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.IsFilterable.Should().BeTrue();
             metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
@@ -147,6 +150,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 name: nameof(Post.Id));
 
             // Assert
+            metadata.Should().NotBeNull();
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.IsSortable.Should().BeTrue();
             metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
@@ -167,6 +171,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var metadata = mapper.GetDefaultMetadata<Post>();
 
             // Assert
+            metadata.Should().NotBeNull();
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.IsSortable.Should().BeTrue();
             metadata.IsDefaultSorting.Should().BeTrue();
@@ -188,6 +193,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var metadata = mapper.GetDefaultMetadata<Post>();
 
             // Assert
+            metadata.Should().NotBeNull();
             metadata.Name.Should().Be(nameof(Post.Id));
             metadata.IsSortable.Should().BeFalse();
             metadata.IsDefaultSorting.Should().BeTrue();
@@ -275,6 +281,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             var result = mapper.GetPropertyMetadata<Post>(isSortableRequired: false, isFilterableRequired: false, nameof(Post.Id));
 
             // Assert
+            result.Should().NotBeNull();
             result.Name.Should().Be(nameof(Post.Id));
             result.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
         }
