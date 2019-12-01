@@ -48,17 +48,17 @@ namespace Fluorite.Strainer.Attributes
         /// Gets or sets <see cref="bool"/> value indicating whether related
         /// property is marked as filterable.
         /// <para/>
-        /// Defaults to <see langword="false"/>.
+        /// Defaults to <see langword="true"/>.
         /// </summary>
-        public bool IsFilterable { get; set; } = false;
+        public bool IsFilterable { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indicating whether related
         /// property is marked as sortable.
         /// <para/>
-        /// Defaults to <see langword="false"/>.
+        /// Defaults to <see langword="true"/>.
         /// </summary>
-        public bool IsSortable { get; set; } = false;
+        public bool IsSortable { get; set; } = true;
 
         /// <summary>
         /// Gets the real name of related property.
