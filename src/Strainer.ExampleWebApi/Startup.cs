@@ -1,12 +1,12 @@
-﻿using Fluorite.Extensions.Builder;
-using Fluorite.Extensions.DependencyInjection;
-using Fluorite.Sieve.Example.Data;
+﻿using Fluorite.Extensions.DependencyInjection;
+using Fluorite.Strainer.ExampleWebApi.Data;
 using Fluorite.Strainer.ExampleWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
 namespace Fluorite.Strainer.ExampleWebApi
@@ -20,32 +20,38 @@ namespace Fluorite.Strainer.ExampleWebApi
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                .AddJsonOptions(options =>
+            services.AddMvc(options => options.EnableEndpointRouting = false)
+                .AddNewtonsoftJson(options =>
                 {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.Formatting = Formatting.Indented;
                 });
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseInMemoryDatabase("InMemoryDatabase");
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            services.AddSwaggerGenWithDefaultOptions();
 
             services.AddStrainer<ApplicationStrainerProcessor>(Configuration.GetSection("Strainer"));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseTimeMeasurement();
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Strainer example API");
+                options.RoutePrefix = string.Empty;
+            });
             app.UseMvc();
         }
     }

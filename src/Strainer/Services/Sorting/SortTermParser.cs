@@ -1,4 +1,7 @@
-﻿using Fluorite.Strainer.Models.Sorting.Terms;
+﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Sorting;
+using Fluorite.Strainer.Models.Sorting.Terms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,10 +13,13 @@ namespace Fluorite.Strainer.Services.Sorting
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
 
         private readonly ISortingWayFormatter _formatter;
+        private readonly StrainerOptions _options;
 
-        public SortTermParser(ISortingWayFormatter formatter)
+        public SortTermParser(ISortingWayFormatter formatter, IStrainerOptionsProvider strainerOptionsProvider)
         {
-            _formatter = formatter ?? throw new System.ArgumentNullException(nameof(formatter));
+            _formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
+            _options = (strainerOptionsProvider?.GetStrainerOptions()
+                ?? throw new ArgumentNullException(nameof(strainerOptionsProvider)));
         }
 
         public IList<ISortTerm> GetParsedTerms(string input)
@@ -33,11 +39,17 @@ namespace Fluorite.Strainer.Services.Sorting
                     continue;
                 }
 
+                var sortingWay = _formatter.GetSortingWay(part);
+                if (sortingWay == SortingWay.Unknown)
+                {
+                    sortingWay = _options.DefaultSortingWay;
+                }
+
                 var sortTerm = new SortTerm()
                 {
                     Input = part,
-                    IsDescending = _formatter.IsDescending(part),
-                    Name = _formatter.Unformat(part),
+                    IsDescending = sortingWay == SortingWay.Descending,
+                    Name = _formatter.Unformat(part, sortingWay),
                 };
 
                 if (!value.Any(s => s.Name == sortTerm.Name))

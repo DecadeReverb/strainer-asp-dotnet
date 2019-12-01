@@ -102,57 +102,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         }
 
         [Fact]
-        public void Validator_Throw_Exception_For_Operators_With_NoDefault()
-        {
-            // Arrange
-            var filterOperators = new FilterOperator[]
-            {
-                new FilterOperator
-                {
-                    Expression = (context) => Expression.Empty(),
-                    Symbol = "@",
-                }
-            };
-            var validator = new FilterOperatorValidator();
-
-            // Act & Assert
-            Action action = () => validator.Validate(filterOperators);
-            action
-                .Should()
-                .Throw<InvalidOperationException>()
-                .WithMessage("*default*");
-        }
-
-        [Fact]
-        public void Validator_Throw_Exception_For_Operators_With_More_Then_One_Default()
-        {
-            // Arrange
-            var filterOperators = new FilterOperator[]
-            {
-                new FilterOperator
-                {
-                    IsDefault = true,
-                    Expression = (context) => Expression.Empty(),
-                    Symbol = "@",
-                },
-                new FilterOperator
-                {
-                    IsDefault = true,
-                    Expression = (context) => Expression.Empty(),
-                    Symbol = "$$",
-                }
-            };
-            var validator = new FilterOperatorValidator();
-
-            // Act & Assert
-            Action action = () => validator.Validate(filterOperators);
-            action
-                .Should()
-                .Throw<InvalidOperationException>()
-                .WithMessage("*default*");
-        }
-
-        [Fact]
         public void Validator_Throw_Exception_For_Operators_With_TheSameSymbol()
         {
             // Arrange

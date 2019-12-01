@@ -202,7 +202,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -233,7 +233,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -252,7 +252,7 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "Isnew,CategoryId==2",
+                Filters = "IsNew,CategoryId==2",
             };
             var processor = Factory.CreateProcessor((context) =>
             {
@@ -264,7 +264,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -284,7 +284,7 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "CategoryId==2,Isnew",
+                Filters = "CategoryId==2,IsNew",
             };
             var processor = Factory.CreateProcessor((context) =>
             {
@@ -296,7 +296,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -328,7 +328,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);
@@ -374,7 +374,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     context.Filter,
                     context.Sorting,
                     context.Mapper,
-                    context.MetadataProvider,
+                    context.Metadata,
                     customMethodsContext);
 
                 return new ApplicationStrainerProcessor(newContext);

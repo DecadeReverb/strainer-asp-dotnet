@@ -9,9 +9,7 @@ namespace Fluorite.Strainer.Services.Filtering
         protected Func<IFilterExpressionContext, Expression> _expression;
         protected string _name;
         protected bool _isCaseInsensitive;
-        protected bool _isDefault;
         protected bool _isStringBased;
-        protected bool _negateExpression;
         protected string _symbol;
 
         public FilterOperatorBuilder(IFilterOperatorMapper mapper, string symbol)
@@ -36,10 +34,8 @@ namespace Fluorite.Strainer.Services.Filtering
         {
             Expression = _expression,
             IsCaseInsensitive = _isCaseInsensitive,
-            IsDefault = _isDefault,
             IsStringBased = _isStringBased,
             Name = _name,
-            NegateExpression = _negateExpression,
             Symbol = _symbol,
         };
 
@@ -75,25 +71,9 @@ namespace Fluorite.Strainer.Services.Filtering
             return this;
         }
 
-        public IFilterOperatorBuilder IsDefault()
-        {
-            _isDefault = true;
-            UpdateMap();
-
-            return this;
-        }
-
         public IFilterOperatorBuilder IsStringBased()
         {
             _isStringBased = true;
-            UpdateMap();
-
-            return this;
-        }
-
-        public IFilterOperatorBuilder NegateExpression()
-        {
-            _negateExpression = true;
             UpdateMap();
 
             return this;

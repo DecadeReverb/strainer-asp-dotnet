@@ -1,4 +1,7 @@
-﻿namespace Fluorite.Strainer.Models
+﻿using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Models.Sorting;
+
+namespace Fluorite.Strainer.Models
 {
     /// <summary>
     /// Represents options used by Strainer.
@@ -28,6 +31,14 @@
         public int DefaultPageSize { get; set; } = 10;
 
         /// <summary>
+        /// Gets or sets a default sorting way used when applying default
+        /// sorting.
+        /// <para/>
+        /// Defaults to <see cref="SortingWay.Ascending"/>.
+        /// </summary>
+        public SortingWay DefaultSortingWay { get; set; } = SortingWay.Ascending;
+
+        /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether
         /// Strainer should operatre in case insensitive mode when comparing names.
         /// <para/>
@@ -55,6 +66,17 @@
         /// Defaults to 50.
         /// </summary>
         public int MaxPageSize { get; set; } = 50;
+
+        /// <summary>
+        /// Defines the type of sources Strainer will look through
+        /// when obtaining property metadata.
+        /// <para/>
+        /// Note: narrowing down type of metadata source can speed up Strainer
+        /// processing performance.
+        /// <para/>
+        /// Defaults to <see cref="MetadataSourceType.All"/>.
+        /// </summary>
+        public MetadataSourceType MetadataSourceType { get; set; } = MetadataSourceType.All;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether

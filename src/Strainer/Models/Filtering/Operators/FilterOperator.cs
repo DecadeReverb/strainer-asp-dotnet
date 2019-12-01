@@ -32,12 +32,6 @@ namespace Fluorite.Strainer.Models.Filter.Operators
         public bool IsCaseInsensitive { get; set; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current
-        /// operator is a default operator.
-        /// </summary>
-        public bool IsDefault { get; set; }
-
-        /// <summary>
         /// Gets or sets <see cref="bool"/> value indictating whether associated
         /// <see cref="System.Linq.Expressions.Expression"/> uses method
         /// based on a <see cref="string"/> instance like

@@ -28,6 +28,14 @@ namespace Fluorite.Strainer.Models.Sorting
         bool IsSubsequent { get; }
 
         /// <summary>
+        /// Gets the ordered source collection for subsequent calls.
+        /// <para/>
+        /// Use this for subsequent calls when <see cref="IsSubsequent"/>
+        /// is <see langword="true"/>.
+        /// </summary>
+        IOrderedQueryable<TEntity> OrderedSource { get; }
+
+        /// <summary>
         /// Gets the source collection.
         /// </summary>
         IQueryable<TEntity> Source { get; }

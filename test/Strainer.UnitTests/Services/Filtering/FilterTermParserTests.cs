@@ -11,18 +11,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             string input = null;
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser operatorParser = new FilterOperatorParser(mapper);
-            IFilterTermParser parser = new FilterTermParser(operatorParser, mapper);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
+            var operatorParser = new FilterOperatorParser(mapper);
+            var parser = new FilterTermParser(operatorParser, mapper);
 
             // Act
-            var FilterTermList = parser.GetParsedTerms(input);
+            var filterTermList = parser.GetParsedTerms(input);
 
             // Assert
-            FilterTermList
-                .Should()
-                .BeEmpty();
+            filterTermList.Should().BeEmpty();
         }
 
         [Fact]
@@ -30,18 +28,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser operatorParser = new FilterOperatorParser(mapper);
-            IFilterTermParser parser = new FilterTermParser(operatorParser, mapper);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
+            var operatorParser = new FilterOperatorParser(mapper);
+            var parser = new FilterTermParser(operatorParser, mapper);
 
             // Act
-            var FilterTermList = parser.GetParsedTerms(input);
+            var filterTermList = parser.GetParsedTerms(input);
 
             // Assert
-            FilterTermList
-                .Should()
-                .BeEmpty();
+            filterTermList.Should().BeEmpty();
         }
 
         [Fact]
@@ -49,18 +45,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            IFilterOperatorValidator validator = new FilterOperatorValidator();
-            IFilterOperatorMapper mapper = new FilterOperatorMapper(validator);
-            IFilterOperatorParser operatorParser = new FilterOperatorParser(mapper);
-            IFilterTermParser parser = new FilterTermParser(operatorParser, mapper);
+            var validator = new FilterOperatorValidator();
+            var mapper = new FilterOperatorMapper(validator);
+            var operatorParser = new FilterOperatorParser(mapper);
+            var parser = new FilterTermParser(operatorParser, mapper);
 
             // Act
-            var FilterTermList = parser.GetParsedTerms(input);
+            var filterTermList = parser.GetParsedTerms(input);
 
             // Assert
-            FilterTermList
-                .Should()
-                .BeEmpty();
+            filterTermList.Should().BeEmpty();
         }
     }
 }

@@ -9,7 +9,9 @@ namespace Fluorite.Strainer.Services.Sorting
         IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods { get; }
 
         void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod);
+
         ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
+
         ICustomSortMethod<TEntity> GetMethod<TEntity>(string name);
     }
 }

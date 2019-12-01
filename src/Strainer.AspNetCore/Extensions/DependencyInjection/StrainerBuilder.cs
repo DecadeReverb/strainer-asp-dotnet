@@ -15,13 +15,22 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <param name="services">
         /// The service collection.
         /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="services"/> is <see langword="null"/>.
         /// </exception>
-        public StrainerBuilder(IServiceCollection services)
+        public StrainerBuilder(IServiceCollection services, ServiceLifetime serviceLifetime)
         {
             Services = services ?? throw new ArgumentNullException(nameof(services));
+            ServiceLifetime = serviceLifetime;
         }
+
+        /// <summary>
+        /// Gets the service lifetime for Strainer services.
+        /// </summary>
+        public ServiceLifetime ServiceLifetime { get; }
 
         /// <summary>
         /// Gets the services collection.

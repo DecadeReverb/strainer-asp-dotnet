@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Fluorite.Sieve.Example.Data;
+﻿using Fluorite.Strainer.ExampleWebApi.Data;
 using Fluorite.Strainer.ExampleWebApi.Entities;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Fluorite.Strainer.ExampleWebApi.Controllers
 {
@@ -22,18 +22,37 @@ namespace Fluorite.Strainer.ExampleWebApi.Controllers
             _dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Gets all posts.
+        /// </summary>
         [HttpGet]
-        public async Task<ActionResult<List<Post>>> Index()
+        [ProducesResponseType(typeof(List<Post>), 200)]
+        public async Task<ActionResult<List<Post>>> GetAll()
         {
-            var result = await _dbContext.Posts.AsNoTracking().ToListAsync();
+            var result = await _dbContext
+                .Posts
+                .Include(p => p.Comments)
+                .AsNoTracking()
+                .ToListAsync();
 
             return Json(result);
         }
 
+        /// <summary>
+        /// Gets all posts with Strainer processing.
+        /// </summary>
+        /// <param name="strainerModel">
+        /// The Strainer model containing filtering, sorting and pagination
+        /// information.
+        /// </param>
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(List<Post>), 200)]
         public async Task<ActionResult<List<Post>>> GetAllWithStrainer([FromQuery] StrainerModel strainerModel)
         {
-            var source = _dbContext.Posts.AsNoTracking();
+            var source = _dbContext
+                .Posts
+                .Include(p => p.Comments)
+                .AsNoTracking();
             var result = _strainerProcessor.Apply(strainerModel, source);
 
             return await result.ToListAsync();

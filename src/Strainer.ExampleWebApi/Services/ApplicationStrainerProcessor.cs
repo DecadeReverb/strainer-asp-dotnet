@@ -3,9 +3,11 @@ using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.ExampleWebApi.Services
 {
@@ -30,31 +32,26 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
 
         protected override void MapFilterOperators(IFilterOperatorMapper mapper)
         {
-            mapper.Operator(symbol: "!=*")
-                .HasName("not equal to (case insensitive)")
-                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
-                .IsCaseInsensitive();
+
         }
 
-        protected override void MapProperties(IPropertyMapper mapper)
+        protected override void MapProperties(IMetadataMapper mapper)
         {
-
-            mapper.Property<Post>(p => p.Title)
-                .IsSortable()
+            mapper.Property<Post>(p => p.Comments.Count)
                 .IsFilterable()
-                .HasDisplayName("CustomTitleName");
+                .IsSortable();
         }
 
         private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
-            => context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
+            => context.Source.Where(p => EF.Functions.DateDiffDay(DateTime.Now, p.DateCreated) < 7);
 
         private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
         {
             return context.IsSubsequent
-                ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
+                ? context.OrderedSource.ThenBy(p => p.LikeCount)
                 : context.Source.OrderBy(p => p.LikeCount)
-                    .ThenBy(p => p.CommentCount)
-                    .ThenBy(p => p.DateCreated);
+                    .ThenBy(p => p.Comments.Count)
+                    .ThenByDescending(p => p.DateCreated);
         }
     }
 }

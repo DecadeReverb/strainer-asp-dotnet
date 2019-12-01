@@ -2,8 +2,10 @@
 using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -132,6 +134,22 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         }
 
         [Fact]
+        public void ExtensionMethod_AddsStrainer_With_TwoPropertyMetadataProviders()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddStrainer<StrainerProcessor>();
+            var serviceProvider = services.BuildServiceProvider();
+            var propertyMetadataProviders = serviceProvider.GetService<IEnumerable<IPropertyMetadataProvider>>();
+
+            // Assert
+            propertyMetadataProviders.Should().NotBeNullOrEmpty();
+            propertyMetadataProviders.Should().HaveCount(2);
+        }
+
+        [Fact]
         public void ExtensionMethod_AddsStrainer_WithCustomService_FilterTermParser()
         {
             // Arrange
@@ -181,19 +199,17 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
         private class TestSortingWayFormatter : ISortingWayFormatter
         {
-            public bool IsDescendingDefaultSortingWay => throw new NotImplementedException();
-
-            public string Format(string input, bool isDescending)
+            public string Format(string input, SortingWay sortingWay)
             {
                 throw new NotImplementedException();
             }
 
-            public bool IsDescending(string input)
+            public SortingWay GetSortingWay(string input)
             {
                 throw new NotImplementedException();
             }
 
-            public string Unformat(string input)
+            public string Unformat(string input, SortingWay sortingWay)
             {
                 throw new NotImplementedException();
             }

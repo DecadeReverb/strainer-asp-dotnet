@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Linq;
@@ -41,12 +42,13 @@ namespace Fluorite.Strainer.Services
 
             // TODO:
             // Move sort expression validation to service injection.
-            var properties = Context.Mapper.Properties;
-            foreach (var type in properties.Keys)
-            {
-                dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
-                //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
-            }
+            //var properties = Context.Mapper.GetAllMetadata();
+
+            //foreach (var type in properties.Keys)
+            //{
+            //    dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
+            //    //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
+            //}
 
             MapCustomFilterMethods(context.CustomMethods.Filter);
             MapCustomSortMethods(context.CustomMethods.Sort);
@@ -139,16 +141,11 @@ namespace Fluorite.Strainer.Services
 
                 return source;
             }
-            catch (Exception ex)
+            catch (StrainerException ex)
             {
                 if (Context.Options.ThrowExceptions)
                 {
-                    if (ex is StrainerException)
-                    {
-                        throw;
-                    }
-
-                    throw new StrainerException(ex.Message, ex);
+                    throw ex;
                 }
                 else
                 {
@@ -197,7 +194,7 @@ namespace Fluorite.Strainer.Services
             }
 
             var parsedTerms = Context.Filter.TermParser.GetParsedTerms(model.Filters);
-            if (parsedTerms == null)
+            if (!parsedTerms.Any())
             {
                 return source;
             }
@@ -209,35 +206,46 @@ namespace Fluorite.Strainer.Services
                 Expression innerExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var metadata = GetPropertyMetadata<TEntity>(
+                    var metadata = Context.Metadata.GetMetadata<TEntity>(
                         isSortingRequired: false,
                         isFilteringRequired: true,
                         name: filterTermName);
 
-                    if (metadata != null)
+                    try
                     {
-                        innerExpression = Context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
-                    }
-                    else
-                    {
-                        var customMethod = Context.CustomMethods.Filter.GetMethod<TEntity>(filterTermName);
-                        if (customMethod != null)
+                        if (metadata != null)
                         {
-                            var context = new CustomFilterMethodContext<TEntity>
-                            {
-                                Source = source,
-                                Term = filterTerm,
-                            };
-                            source = customMethod.Function(context);
+                            innerExpression = Context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
                         }
                         else
                         {
-                            if (Context.Options.ThrowExceptions)
+                            var customMethod = Context.CustomMethods.Filter.GetMethod<TEntity>(filterTermName);
+                            if (customMethod != null)
+                            {
+                                var context = new CustomFilterMethodContext<TEntity>
+                                {
+                                    Source = source,
+                                    Term = filterTerm,
+                                };
+                                source = customMethod.Function(context);
+                            }
+                            else
                             {
                                 throw new StrainerMethodNotFoundException(
                                     filterTermName,
-                                    $"{filterTermName} not found.");
+                                    $"Property or custom filter method '{filterTermName}' was not found.");
                             }
+                        }
+                    }
+                    catch (StrainerException ex)
+                    {
+                        if (Context.Options.ThrowExceptions)
+                        {
+                            throw ex;
+                        }
+                        else
+                        {
+                            return source;
                         }
                     }
                 }
@@ -256,9 +264,12 @@ namespace Fluorite.Strainer.Services
                 outerExpression = Expression.And(outerExpression, innerExpression);
             }
 
-            return outerExpression == null
-                ? source
-                : source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
+            if (outerExpression == null)
+            {
+                return source;
+            }
+
+            return source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
         }
 
         /// <summary>
@@ -297,13 +308,16 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var page = model?.Page ?? Context.Options.DefaultPageNumber;
-            var pageSize = model?.PageSize ?? Context.Options.DefaultPageSize;
+            var page = model.Page ?? Context.Options.DefaultPageNumber;
+            var pageSize = model.PageSize ?? Context.Options.DefaultPageSize;
             var maxPageSize = Context.Options.MaxPageSize > 0
                 ? Context.Options.MaxPageSize
                 : pageSize;
 
-            source = source.Skip((page - 1) * pageSize);
+            if (page > 1)
+            {
+                source = source.Skip((page - 1) * pageSize);
+            }
 
             if (pageSize > 0)
             {
@@ -358,7 +372,7 @@ namespace Fluorite.Strainer.Services
 
             foreach (var sortTerm in parsedTerms)
             {
-                var metadata = GetPropertyMetadata<TEntity>(
+                var metadata = Context.Metadata.GetMetadata<TEntity>(
                     isSortingRequired: true,
                     isFilteringRequired: false,
                     name: sortTerm.Name);
@@ -374,26 +388,38 @@ namespace Fluorite.Strainer.Services
                 }
                 else
                 {
-                    var customMethod = Context.CustomMethods.Sort.GetMethod<TEntity>(sortTerm.Name);
-                    if (customMethod != null)
+                    try
                     {
-                        var context = new CustomSortMethodContext<TEntity>
+                        var customMethod = Context.CustomMethods.Sort.GetMethod<TEntity>(sortTerm.Name);
+                        if (customMethod != null)
                         {
-                            IsDescending = sortTerm.IsDescending,
-                            IsSubsequent = isSubsequent,
-                            Source = source,
-                            Term = sortTerm,
-                        };
-                        source = customMethod.Function(context);
-                        sortingPerformed = true;
-                    }
-                    else
-                    {
-                        if (Context.Options.ThrowExceptions)
+                            var context = new CustomSortMethodContext<TEntity>
+                            {
+                                IsDescending = sortTerm.IsDescending,
+                                IsSubsequent = isSubsequent,
+                                OrderedSource = isSubsequent ? (IOrderedQueryable<TEntity>)source : null,
+                                Source = source,
+                                Term = sortTerm,
+                            };
+                            source = customMethod.Function(context);
+                            sortingPerformed = true;
+                        }
+                        else
                         {
                             throw new StrainerMethodNotFoundException(
                                 sortTerm.Name,
-                                $"{sortTerm.Name} not found.");
+                                $"Property or custom sorting method '{sortTerm.Name}' was not found.");
+                        }
+                    }
+                    catch (StrainerException ex)
+                    {
+                        if (Context.Options.ThrowExceptions)
+                        {
+                            throw ex;
+                        }
+                        else
+                        {
+                            return source;
                         }
                     }
                 }
@@ -414,51 +440,48 @@ namespace Fluorite.Strainer.Services
             return source;
         }
 
+        /// <summary>
+        /// Override this method to add custom filter methods.
+        /// </summary>
+        /// <param name="mapper">
+        /// The custom filter method mapper.
+        /// </param>
         protected virtual void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
+
         }
 
+        /// <summary>
+        /// Override this method to add custom sort methods.
+        /// </summary>
+        /// <param name="mapper">
+        /// The custom sort method mapper.
+        /// </param>
         protected virtual void MapCustomSortMethods(ICustomSortMethodMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
+
         }
 
+        /// <summary>
+        /// Override this method to add additional filter operators.
+        /// </summary>
+        /// <param name="mapper">
+        /// The filter operator mapper.
+        /// </param>
         protected virtual void MapFilterOperators(IFilterOperatorMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
+
         }
 
-        protected virtual void MapProperties(IPropertyMapper mapper)
+        /// <summary>
+        /// Override this method to add property configurations.
+        /// </summary>
+        /// <param name="mapper">
+        /// The property metadata mapper.
+        /// </param>
+        protected virtual void MapProperties(IMetadataMapper mapper)
         {
-            if (mapper == null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
-        }
 
-        private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
-        {
-            var metadata = Context.Mapper.FindProperty<TEntity>(
-                isSortingRequired,
-                isFilteringRequired,
-                name);
-
-            if (metadata == null)
-            {
-                return Context.MetadataProvider.GetPropertyMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
-            }
-
-            return metadata;
         }
     }
 }

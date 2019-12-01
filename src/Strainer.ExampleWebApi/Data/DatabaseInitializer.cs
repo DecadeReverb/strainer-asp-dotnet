@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Fluorite.Extensions;
 using Fluorite.Strainer.ExampleWebApi.Entities;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
-namespace Fluorite.Sieve.Example.Data
+namespace Fluorite.Strainer.ExampleWebApi.Data
 {
     /// <summary>
     /// Provides means of database initialization.
     /// </summary>
     public static class DatabaseInitializer
     {
-        private static Random _random = new Random();
+        private static readonly Random _random = new Random();
 
         /// <summary>
         /// Creates the database if it does not exists and seeds it with
@@ -24,64 +23,73 @@ namespace Fluorite.Sieve.Example.Data
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.Database.EnsureCreated();
+            AddPosts(context, postsCount: 120, upToCommentsPerPost: 3);
 
-            // Look for any Posts.
-            if (context.Posts.AsNoTracking().Any() && context.Posts.AsNoTracking().Any())
-            {
-                // Database already has been seeded.
-                return;
-            }
-
-            var posts = Constants.Data.Seeding.Posts;
-
-            #region levels
-            AddPosts(context, posts);
             context.SaveChanges();
-            #endregion
         }
 
-        private static void AddPosts(ApplicationDbContext context, int posts)
+        private static void AddPosts(ApplicationDbContext context, int postsCount, int upToCommentsPerPost)
         {
-            for (var i = 0; i < posts; i++)
+            for (var i = 0; i < postsCount; i++)
             {
-                var post = RandomizePost();
+                var post = RandomizePost(upToCommentsPerPost);
                 context.Posts.Add(post);
                 context.SaveChanges();
             }
         }
 
-        private static Post RandomizePost()
+        private static List<Comment> RandomizeComments(Post parentPost, int minComments, int maxComments)
+        {
+            var commentsCount = _random.Next(minComments, maxComments + 1);
+            var comments = new List<Comment>(capacity: commentsCount);
+
+            for (var i = 0; i < commentsCount; i++)
+            {
+                comments.Add(new Comment
+                {
+                    Message = RandomizeText(),
+                    Post = parentPost,
+                });
+            }
+
+            return comments;
+        }
+
+        private static Post RandomizePost(int upToCommentsPerPost)
         {
             var randomDateTime = RandomizeDateTime();
 
-            return new Post
+            var post = new Post
             {
                 CategoryId = _random.Next(1, 3000),
-                CommentCount = _random.Next(0, 38),
                 DateCreated = randomDateTime,
                 DateLastViewed = randomDateTime.AddDays(_random.Next((DateTime.Today - randomDateTime).Days)),
                 LikeCount = _random.Next(0, 48),
-                Title = RandomizeTitle(),
+                Title = RandomizeText(),
             };
+
+            post.Comments = RandomizeComments(post, 0, upToCommentsPerPost);
+
+            return post;
         }
 
         private static DateTime RandomizeDateTime()
         {
-            var start = new DateTime(2016, 1, 1);
+            var start = DateTime.Now.AddYears(-2);
             var range = (DateTime.Today - start).Days;
 
             return start.AddDays(_random.Next(range));
         }
 
-        private static string RandomizeTitle()
+        private static string RandomizeText()
         {
             var words = new List<string>
             {
-                "anemone", "wagstaff", "man", "the", "for",
+                "John", "must", "man", "the", "for",
                 "and", "a", "with", "bird", "fox"
             };
             var sentence = new List<string>();
+
             while (sentence.Count != words.Count)
             {
                 var index = _random.Next(0, words.Count);
@@ -93,16 +101,6 @@ namespace Fluorite.Sieve.Example.Data
             }
 
             return string.Join(" ", sentence).FirstCharToUpper();
-        }
-
-        private static string FirstCharToUpper(this string input)
-        {
-            switch (input)
-            {
-                case null: throw new ArgumentNullException(nameof(input));
-                case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
-                default: return input.First().ToString().ToUpper() + input.Substring(1);
-            }
         }
     }
 }

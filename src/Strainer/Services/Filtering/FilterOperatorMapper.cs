@@ -48,7 +48,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(symbol));
             }
 
-            if (Symbols.Contains(symbol, StringComparer.OrdinalIgnoreCase))
+            if (Symbols.Contains(symbol))
             {
                 throw new InvalidOperationException(
                     $"There is already existing operator with a symbol {symbol}. " +
@@ -65,37 +65,36 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(symbol));
             }
 
-            return _map.Values.FirstOrDefault(f => f.Symbol.Equals(symbol, StringComparison.OrdinalIgnoreCase));
-        }
+            if (_map.TryGetValue(symbol, out var filterOperator))
+            {
+                return filterOperator;
+            }
 
-        public IFilterOperator GetDefault()
-        {
-            return _map.Values.FirstOrDefault(f => f.IsDefault);
+            return null;
         }
 
         private void AddInitialFilterOperators()
         {
             new FilterOperatorBuilder(this, symbol: "==")
-                .HasName("equal to")
-                .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
-                .IsDefault();
+                .HasName("equal")
+                .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue));
             new FilterOperatorBuilder(this, symbol: "!=")
-                .HasName("not equal to")
+                .HasName("does not equal")
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue));
 
             new FilterOperatorBuilder(this, symbol: "<")
-                .HasName("less then")
-                .HasExpression((context) => Expression.LessThan(context.FilterValue, context.PropertyValue));
+                .HasName("less than")
+                .HasExpression((context) => Expression.LessThan(context.PropertyValue, context.FilterValue));
             new FilterOperatorBuilder(this, symbol: "<=")
-                .HasName("less then or equal to")
-                .HasExpression((context) => Expression.LessThanOrEqual(context.FilterValue, context.PropertyValue));
+                .HasName("less than or equal to")
+                .HasExpression((context) => Expression.LessThanOrEqual(context.PropertyValue, context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: ">")
-                .HasName("greater then")
-                .HasExpression((context) => Expression.GreaterThan(context.FilterValue, context.PropertyValue));
+                .HasName("greater than")
+                .HasExpression((context) => Expression.GreaterThan(context.PropertyValue, context.FilterValue));
             new FilterOperatorBuilder(this, symbol: ">=")
-                .HasName("greater then or equal to")
-                .HasExpression((context) => Expression.GreaterThanOrEqual(context.FilterValue, context.PropertyValue));
+                .HasName("greater than or equal to")
+                .HasExpression((context) => Expression.GreaterThanOrEqual(context.PropertyValue, context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: "@=")
                 .HasName("contains")
@@ -111,28 +110,45 @@ namespace Fluorite.Strainer.Services.Filtering
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
                     context.FilterValue));
+            new FilterOperatorBuilder(this, symbol: "=_")
+                .HasName("ends with")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
+                    context.FilterValue));
 
             new FilterOperatorBuilder(this, symbol: "!@=")
                 .HasName("does not contain")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .NegateExpression();
+                    context.FilterValue)));
             new FilterOperatorBuilder(this, symbol: "!_=")
                 .HasName("does not start with")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .NegateExpression();
+                    context.FilterValue)));
+            new FilterOperatorBuilder(this, symbol: "!=_")
+                .HasName("does not end with")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Not(Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
+                    context.FilterValue)));
 
             new FilterOperatorBuilder(this, symbol: "==*")
-                .HasName("equal to (case insensitive)")
+                .HasName("equal (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
+                .IsCaseInsensitive();
+            new FilterOperatorBuilder(this, symbol: "!=*")
+                .HasName("does not equal (case insensitive)")
+                .IsStringBased()
+                .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive();
 
             new FilterOperatorBuilder(this, symbol: "@=*")
@@ -151,25 +167,39 @@ namespace Fluorite.Strainer.Services.Filtering
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
                     context.FilterValue))
                 .IsCaseInsensitive();
+            new FilterOperatorBuilder(this, symbol: "=_*")
+                .HasName("ends with (case insensitive)")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
+                    context.FilterValue))
+                .IsCaseInsensitive();
 
             new FilterOperatorBuilder(this, symbol: "!@=*")
                 .HasName("does not contain (case insensitive)")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .IsCaseInsensitive()
-                .NegateExpression();
+                    context.FilterValue)))
+                .IsCaseInsensitive();
             new FilterOperatorBuilder(this, symbol: "!_=*")
                 .HasName("does not start with (case insensitive)")
                 .IsStringBased()
-                .HasExpression((context) => Expression.Call(
+                .HasExpression((context) => Expression.Not(Expression.Call(
                     context.PropertyValue,
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
-                    context.FilterValue))
-                .IsCaseInsensitive()
-                .NegateExpression();
+                    context.FilterValue)))
+                .IsCaseInsensitive();
+            new FilterOperatorBuilder(this, symbol: "!=_*")
+                .HasName("does not end with (case insensitive)")
+                .IsStringBased()
+                .HasExpression((context) => Expression.Not(Expression.Call(
+                    context.PropertyValue,
+                    typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }),
+                    context.FilterValue)))
+                .IsCaseInsensitive();
         }
     }
 }

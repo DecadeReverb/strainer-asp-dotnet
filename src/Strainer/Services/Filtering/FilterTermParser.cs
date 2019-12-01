@@ -18,6 +18,7 @@ namespace Fluorite.Strainer.Services.Filtering
         }
 
         protected IFilterOperatorMapper Mapper { get; }
+
         protected IFilterOperatorParser Parser { get; }
 
         public IList<IFilterTerm> GetParsedTerms(string input)
@@ -40,6 +41,11 @@ namespace Fluorite.Strainer.Services.Filtering
                     var filterOperatorAndValue = ParseFilterOperatorAndValue(filter);
                     var subfilters = ParseSubfilters(filter, filterOperatorAndValue);
                     var filterTerm = ParseFilterTerm(subfilters + filterOperatorAndValue);
+                    if (filterTerm == null)
+                    {
+                        continue;
+                    }
+
                     if (!list.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
                     {
                         list.Add(filterTerm);
@@ -48,6 +54,11 @@ namespace Fluorite.Strainer.Services.Filtering
                 else
                 {
                     var filterTerm = ParseFilterTerm(filter);
+                    if (filterTerm == null)
+                    {
+                        continue;
+                    }
+
                     if (!list.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
                     {
                         list.Add(filterTerm);
@@ -67,7 +78,12 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private string GetFilterOperatorSymbol(string input, List<string> filterSplits)
         {
-            return new string(input.Except(string.Join("", filterSplits).ToArray()).ToArray());
+            foreach (var part in filterSplits)
+            {
+                input = input.Replace(part, string.Empty);
+            }
+
+            return input;
         }
 
         private List<string> GetFilterSplits(string input)
@@ -89,7 +105,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 ? Regex.Split(filterSplits[1], EscapedPipePattern)
                     .Select(t => t.Trim())
                     .ToList()
-                : null;
+                : new List<string>();
         }
 
         private string ParseFilterOperatorAndValue(string filter)
@@ -104,6 +120,11 @@ namespace Fluorite.Strainer.Services.Filtering
             var values = GetFilterValues(filterSplits);
             var symbol = GetFilterOperatorSymbol(input, filterSplits);
             var operatorParsed = Parser.GetParsedOperator(symbol);
+
+            if (!names.Any())
+            {
+                return null;
+            }
 
             return new FilterTerm(input)
             {

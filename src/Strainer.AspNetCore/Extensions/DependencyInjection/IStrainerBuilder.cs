@@ -9,6 +9,11 @@ namespace Fluorite.Extensions.DependencyInjection
     public interface IStrainerBuilder
     {
         /// <summary>
+        /// Gets the service lifetime for Strainer services.
+        /// </summary>
+        ServiceLifetime ServiceLifetime { get; }
+
+        /// <summary>
         /// Gets the services collection.
         /// </summary>
         IServiceCollection Services { get; }

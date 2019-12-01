@@ -1,31 +1,29 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using Fluorite.Strainer.Attributes;
+﻿using Fluorite.Strainer.Attributes;
+using System;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.ExampleWebApi.Entities
 {
+    [StrainerObject(nameof(Id))]
 	public class Post
     {
-        public int Id { get; set; }
+        public Post()
+        {
+            Comments = new List<Comment>();
+        }
 
-        [StrainerProperty(IsFilterable = true, IsSortable = true)]
-        public string Title { get; set; }
+        public int? CategoryId { get; set; }
 
-        [StrainerProperty(IsFilterable = true, IsSortable = true)]
-        public int LikeCount { get; set; }
+        public IList<Comment> Comments { get; set; }
 
-        [StrainerProperty(IsFilterable = true, IsSortable = true)]
-        public int CommentCount { get; set; }
-
-        [StrainerProperty(IsFilterable = true, IsSortable = true)]
-        [Column(TypeName = "datetime")]
         public DateTime DateCreated { get; set; }
 
-        [StrainerProperty(IsFilterable = true, IsSortable = true)]
-        [Column(TypeName = "datetime")]
-        public DateTime DateLastViewed { get; set; }
+        public DateTimeOffset DateLastViewed { get; set; }
 
-        [StrainerProperty(IsFilterable = true, IsSortable = true)]
-        public int? CategoryId { get; set; }
+        public int Id { get; set; }
+
+        public int LikeCount { get; set; }
+
+        public string Title { get; set; }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using Fluorite.Sieve.Example.Data;
+﻿using Fluorite.Strainer.ExampleWebApi.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Fluorite.Strainer.ExampleWebApi
 {
@@ -19,6 +19,10 @@ namespace Fluorite.Strainer.ExampleWebApi
                 try
                 {
                     var context = provider.GetRequiredService<ApplicationDbContext>();
+
+                    context.Database.EnsureDeleted();
+                    context.Database.EnsureCreated();
+
                     DatabaseInitializer.Initialize(context);
                 }
                 catch (Exception ex)
@@ -33,7 +37,6 @@ namespace Fluorite.Strainer.ExampleWebApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:80/", "https://*:443/")
                 .UseStartup<Startup>();
     }
 }

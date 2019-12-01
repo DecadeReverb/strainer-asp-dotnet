@@ -1,6 +1,7 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System;
 
@@ -53,8 +54,14 @@ namespace Fluorite.Strainer.IntegrationTests
         protected IStrainerContext CreateDefaultContext()
         {
             var optionsProvider = new IntegrationTestsStrainerOptionsProvider();
-            var propertyMapper = new PropertyMapper(optionsProvider);
-            var propertyMetadataProvider = new AttributePropertyMetadataProvider(propertyMapper, optionsProvider);
+            var propertyMapper = new MetadataMapper(optionsProvider);
+            var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
+            var propertyMetadataProviders = new IPropertyMetadataProvider[]
+            {
+                propertyMapper,
+                attributeMetadataProvider
+            };
+            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
 
             var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
@@ -63,10 +70,10 @@ namespace Fluorite.Strainer.IntegrationTests
             var filterTermParser = new FilterTermParser(filterOperatorParser, filterOperatorMapper);
             var filteringContext = new FilterContext(filterExpressionProvider, filterOperatorMapper, filterOperatorParser, filterOperatorValidator, filterTermParser);
 
-            var sortExpressionProvider = new SortExpressionProvider(propertyMapper, propertyMetadataProvider);
+            var sortExpressionProvider = new SortExpressionProvider(mainMetadataProvider);
             var sortExpressionValidator = new SortExpressionValidator();
             var sortingWayFormatter = new DescendingPrefixSortingWayFormatter();
-            var sortTermParser = new SortTermParser(sortingWayFormatter);
+            var sortTermParser = new SortTermParser(sortingWayFormatter, optionsProvider);
             var sortingContext = new SortingContext(sortExpressionProvider, sortExpressionValidator, sortingWayFormatter, sortTermParser);
 
             var customMethodsContext = new CustomMethodsContext(optionsProvider);
@@ -76,7 +83,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 filteringContext,
                 sortingContext,
                 propertyMapper,
-                propertyMetadataProvider,
+                mainMetadataProvider,
                 customMethodsContext);
         }
     }

@@ -1,6 +1,7 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
+using Fluorite.Strainer.Services.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,48 +12,46 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     /// <summary>
     /// Provides means of tranlating <see cref="ISortTerm"/> into
-    /// <see cref="System.Linq.Expressions.Expression{TDelegate}"/> of
-    /// <see cref="System.Func{T, TResult}"/>.
+    /// <see cref="Expression{TDelegate}"/> of <see cref="Func{T, TResult}"/>.
     /// <para/>
     /// In other words - provides list of expressions which later can be used
-    /// as arguments for ordering <see cref="System.Linq.IQueryable{T}"/> functions.
+    /// as arguments for ordering <see cref="IQueryable{T}"/>.
     /// </summary>
     public class SortExpressionProvider : ISortExpressionProvider
     {
-        private readonly IPropertyMapper _mapper;
-        private readonly IAttributePropertyMetadataProvider _metadataProvider;
+        private readonly IMetadataProvidersFacade _metadataProvidersFacade;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IPropertyMapper mapper, IAttributePropertyMetadataProvider metadataProvider)
+        public SortExpressionProvider(IMetadataProvidersFacade metadataProvidersFacade)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
+            _metadataProvidersFacade = metadataProvidersFacade
+                ?? throw new ArgumentNullException(nameof(metadataProvidersFacade));
         }
 
         public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
         {
-            var metadata = _mapper
-                .Properties
-                .FirstOrDefault(pair => pair.Key == typeof(TEntity))
-                .Value
-                ?.FirstOrDefault(p => p.IsDefaultSorting);
-            if (metadata == null)
+            var propertyMetadata = _metadataProvidersFacade.GetDefaultMetadata<TEntity>();
+
+            if (propertyMetadata == null)
             {
                 return null;
             }
 
             var sortTerm = new SortTerm
             {
-                IsDescending = metadata.IsDefaultSortingDescending,
-                Name = metadata.DisplayName ?? metadata.Name
+                IsDescending = propertyMetadata.IsDefaultSortingDescending,
+                Name = propertyMetadata.DisplayName ?? propertyMetadata.Name
             };
 
-            return GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isSubsequent: false);
+            return GetExpression<TEntity>(propertyMetadata.PropertyInfo, sortTerm, isSubsequent: false);
         }
 
-        public ISortExpression<TEntity> GetExpression<TEntity>(PropertyInfo propertyInfo, ISortTerm sortTerm, bool isSubsequent)
+        public ISortExpression<TEntity> GetExpression<TEntity>(
+            PropertyInfo propertyInfo,
+            ISortTerm sortTerm,
+            bool isSubsequent)
         {
             if (propertyInfo == null)
             {
@@ -101,7 +100,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
         /// <summary>
         /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
-        /// list of sort terms used to associate names from <see cref="IPropertyMapper"/>.
+        /// list of sort terms used to associate names from <see cref="IMetadataMapper"/>.
         /// </summary>
         /// <typeparam name="TEntity">
         /// The type of entity for which the expression is for.
@@ -115,7 +114,8 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <exception cref="ArgumentNullException">
         /// <paramref name="sortTerms"/> is <see langword="null"/>.
         /// </exception>
-        public IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
+        public IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(
+            IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
         {
             if (sortTerms == null)
             {
@@ -143,16 +143,19 @@ namespace Fluorite.Strainer.Services.Sorting
             return expressions.AsReadOnly();
         }
 
-        private IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortingRequired, bool isFilteringRequired, string name)
+        private IPropertyMetadata GetPropertyMetadata<TEntity>(
+            bool isSortingRequired,
+            bool isFilteringRequired,
+            string name)
         {
-            var metadata = _mapper.FindProperty<TEntity>(
+            var metadata = _metadataProvidersFacade.GetMetadata<TEntity>(
                 isSortingRequired,
                 isFilteringRequired,
                 name);
 
             if (metadata == null)
             {
-                return _metadataProvider.GetPropertyMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return _metadataProvidersFacade.GetMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
             }
 
             return metadata;

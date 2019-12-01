@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Models.Filter.Operators;
 using System;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
@@ -17,10 +16,10 @@ namespace Fluorite.Strainer.Services.Filtering
         {
             if (string.IsNullOrWhiteSpace(symbol))
             {
-                return Mapper.GetDefault();
+                return null;
             }
 
-            return Mapper.Find(symbol) ?? Mapper.GetDefault();
+            return Mapper.Find(symbol);
         }
     }
 }

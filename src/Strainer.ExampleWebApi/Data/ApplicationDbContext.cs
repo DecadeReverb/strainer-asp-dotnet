@@ -1,7 +1,7 @@
 ﻿using Fluorite.Strainer.ExampleWebApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fluorite.Sieve.Example.Data
+namespace Fluorite.Strainer.ExampleWebApi.Data
 {
     /// <summary>
     /// Represents a session with the database and can be used to query
@@ -22,6 +22,11 @@ namespace Fluorite.Sieve.Example.Data
         }
 
         /// <summary>
+        /// Gets or sets <see cref="DbSet{TEntity}"/> of <see cref="Comment"/>s.
+        /// </summary>
+        public DbSet<Comment> Comments { get; set; }
+
+        /// <summary>
         /// Gets or sets <see cref="DbSet{TEntity}"/> of <see cref="Post"/>s.
         /// </summary>
         public DbSet<Post> Posts { get; set; }
@@ -37,6 +42,8 @@ namespace Fluorite.Sieve.Example.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Post>().ToTable(nameof(Post));
+
+            builder.Entity<Comment>().ToTable(nameof(Comment));
         }
     }
 }
