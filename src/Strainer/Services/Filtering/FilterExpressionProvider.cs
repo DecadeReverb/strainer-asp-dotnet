@@ -159,11 +159,6 @@ namespace Fluorite.Strainer.Services.Filtering
                         filterTermValue);
                 }
 
-                if (filterTerm.Operator.NegateExpression)
-                {
-                    expression = Expression.Not(expression);
-                }
-
                 if (innerExpression == null)
                 {
                     innerExpression = expression;
