@@ -43,34 +43,42 @@ While adding Strainer, you can configure it with available [options](#configure-
 
 ### Tell Strainer which properties to use
 
-Strainer will only sort/filter by properties that have applied [`[StrainerProperty]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerPropertyAttribute.cs) attribute on them. 
+Strainer will filter/sort by properties that have applied [`[StrainerProperty]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerPropertyAttribute.cs) attribute on them. 
 
-In order to mark a property as **filterable** apply the `[StrainerProperty]` attribute with `IsFilterable` property set to `true`:
-
-```cs
-[StrainerProperty(IsFilterable = true)]
-public int Id { get; set; }
-```
-
-Similarly **sortable** property:
+In order to mark a property as **filterable** and **sortable**, simply apply the `[StrainerProperty]` attribute:
 
 ```cs
-[StrainerProperty(IsSortable = true)]
-public int Id { get; set; }
-```
-
-For **filterable** and **sortable** property, combine both:
-
-```cs
-[StrainerProperty(IsFilterable = true, IsSortable = true)]
+[StrainerProperty]
 public int Id { get; set; }
 ```
 
 Set a custom display name:
 
 ```cs
-[StrainerProperty(IsFilterable = true, IsSortable = true, DisplayName = "identifier")]
+[StrainerProperty(DisplayName = "identifier")]
 public int Id { get; set; }
+```
+
+
+Mark property as sortable, but not filterable:
+
+```cs
+[StrainerProperty(IsFilterable = false)]
+public int Id { get; set; }
+```
+
+##### Object-level attribute
+
+You can also use [`[StrainerObject]`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Attributes/StrainerObjectyAttribute.cs) attribute to set default values on object level (note that you have to provide name for default sorting property):
+
+```cs
+[StrainerObject(nameof(Id))]
+public class Post
+{
+	public int Id { get; set; }
+	public DateTime Created { get; set; }
+	public string Title { get; set; }
+}
 ```
 
 Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is especially useful if you don't want to/can't use attributes or have multiple APIs.
@@ -125,7 +133,7 @@ result = _strainerProcessor.ApplyPagination(strainerModel, result);
 
 ## Fluent API
 
-You can use Fluent API instead of attributes to mark properties and even more. Start with implementing your own processor deriving from `StrainerProcessor`:
+You can use Fluent API instead of attributes to mark properties, object and even more. Start with implementing your own processor deriving from `StrainerProcessor`:
 
 ```cs
 public class ApplicationStrainerProcessor : StrainerProcessor
@@ -316,22 +324,32 @@ In order to add custom sort or filter methods, override appropriate mapping meth
 ```cs
 protected override void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
 {
-    mapper.CustomMethod<Post>(nameof(IsNew))
-        .WithFunction(IsNew);
+    mapper.CustomMethod<Post>(nameof(IsPopular))
+        .WithFunction(IsPopular);
 }
 
-private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
+private IQueryable<Post> IsPopular(ICustomFilterMethodContext<Post> context)
     => context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
 ```
 
 #### Custom sort methods
 
 ```cs
+protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
+{
+    mapper.CustomMethod<Post>(nameof(Popularity))
+        .WithFunction(Popularity);
+}
+
 private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
 {
     return context.IsSubsequent
-        ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
-        : context.Source.OrderBy(p => p.LikeCount)
+        ? context.OrderedSource
+            .ThenBy(p => p.LikeCount)
+            .ThenBy(p => p.CommentCount)
+            .ThenBy(p => p.DateCreated)
+        : context.Source
+            .OrderBy(p => p.LikeCount)
             .ThenBy(p => p.CommentCount)
             .ThenBy(p => p.DateCreated);
 }
@@ -377,10 +395,11 @@ Same manner as marking properties you can add new filter operators. Override `Ma
 ```cs
 protected override void MapFilterOperators(IFilterOperatorMapper mapper)
 {
-    mapper.AddOperator(symbol: "!=*")
-        .HasName("not equal to (case insensitive)")
-        .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
-        .IsCaseInsensitive();
+	mapper.AddOperator(symbol: "%")
+		.HasName("modulo equal zero")
+		.HasExpression((context) => Expression.Equal(
+			Expression.Modulo(context.PropertyValue, context.FilterValue),
+			Expression.Constant(0)));
 }
 ```
 
