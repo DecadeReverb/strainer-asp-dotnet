@@ -86,8 +86,12 @@ namespace Fluorite.Strainer.IntegrationTests.Services
         private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
         {
             return context.IsSubsequent
-                ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
-                : context.Source.OrderBy(p => p.LikeCount)
+                ? context.OrderedSource
+                    .ThenBy(p => p.LikeCount)
+                    .ThenBy(p => p.CommentCount)
+                    .ThenBy(p => p.DateCreated)
+                : context.Source
+                    .OrderBy(p => p.LikeCount)
                     .ThenBy(p => p.CommentCount)
                     .ThenBy(p => p.DateCreated);
         }

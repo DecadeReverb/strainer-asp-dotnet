@@ -397,6 +397,7 @@ namespace Fluorite.Strainer.Services
                             {
                                 IsDescending = sortTerm.IsDescending,
                                 IsSubsequent = isSubsequent,
+                                OrderedSource = isSubsequent ? (IOrderedQueryable<TEntity>)source : null,
                                 Source = source,
                                 Term = sortTerm,
                             };
