@@ -75,16 +75,26 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public IPropertyMetadata GetDefaultMetadata<TEntity>()
         {
+            return GetDefaultMetadata(typeof(TEntity));
+        }
+
+        public IPropertyMetadata GetDefaultMetadata(Type modelType)
+        {
+            if (modelType is null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
             if (!IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
             {
                 return null;
             }
 
-            _defaultPropertyMetadata.TryGetValue(typeof(TEntity), out var propertyMetadata);
+            _defaultPropertyMetadata.TryGetValue(modelType, out var propertyMetadata);
 
             if (propertyMetadata == null)
             {
-                if (_objectMetadata.TryGetValue(typeof(TEntity), out var objectMetadata))
+                if (_objectMetadata.TryGetValue(modelType, out var objectMetadata))
                 {
                     propertyMetadata = new PropertyMetadata
                     {
@@ -106,12 +116,26 @@ namespace Fluorite.Strainer.Services.Metadata
             bool isFilterableRequired,
             string name)
         {
+            return GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
+        }
+
+        public IPropertyMetadata GetPropertyMetadata(
+            Type modelType,
+            bool isSortableRequired,
+            bool isFilterableRequired,
+            string name)
+        {
+            if (modelType is null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
             if (!IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
             {
                 return null;
             }
 
-            if (_propertyMetadata.TryGetValue(typeof(TEntity), out IDictionary<string, IPropertyMetadata> metadataSet))
+            if (_propertyMetadata.TryGetValue(modelType, out IDictionary<string, IPropertyMetadata> metadataSet))
             {
                 var comparisonMethod = _options.IsCaseInsensitiveForNames
                     ? StringComparison.OrdinalIgnoreCase
@@ -130,7 +154,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 }
             }
 
-            if (_objectMetadata.TryGetValue(typeof(TEntity), out var objectMetadata))
+            if (_objectMetadata.TryGetValue(modelType, out var objectMetadata))
             {
                 if ((!isSortableRequired || objectMetadata.IsSortable)
                     && (!isFilterableRequired || objectMetadata.IsFilterable))
@@ -145,6 +169,26 @@ namespace Fluorite.Strainer.Services.Metadata
                         PropertyInfo = objectMetadata.DefaultSortingPropertyInfo,
                     };
                 }
+            }
+
+            return null;
+        }
+
+        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
+        {
+            return GetPropertyMetadatas(typeof(TEntity));
+        }
+
+        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
+        {
+            if (modelType is null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
+            if (_propertyMetadata.TryGetValue(modelType, out var metadatas))
+            {
+                return metadatas.Values;
             }
 
             return null;

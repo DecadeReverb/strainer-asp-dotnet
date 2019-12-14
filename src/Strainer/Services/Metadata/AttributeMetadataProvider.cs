@@ -20,39 +20,84 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public IPropertyMetadata GetDefaultMetadata<TEntity>()
         {
-            var propertyMetadata = GetDefaultMetadataFromPropertyAttribute<TEntity>();
+            return GetDefaultMetadata(typeof(TEntity));
+        }
+
+        public IPropertyMetadata GetDefaultMetadata(Type modelType)
+        {
+            if (modelType is null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
+            var propertyMetadata = GetDefaultMetadataFromPropertyAttribute(modelType);
 
             if (propertyMetadata == null)
             {
-                propertyMetadata = GetDefaultMetadataFromObjectAttribute<TEntity>();
+                propertyMetadata = GetDefaultMetadataFromObjectAttribute(modelType);
             }
 
             return propertyMetadata;
         }
 
         public IPropertyMetadata GetPropertyMetadata<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
+            bool isSortableRequired,
+            bool isFilterableRequired,
             string name)
         {
-            var propertyMetadata = GetMetadataFromPropertyAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+            return GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
+        }
+
+        public IPropertyMetadata GetPropertyMetadata(
+            Type modelType,
+            bool isSortableRequired,
+            bool isFilterableRequired,
+            string name)
+        {
+            if (modelType is null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
+            var propertyMetadata = GetMetadataFromPropertyAttribute(modelType, isSortableRequired, isFilterableRequired, name);
 
             if (propertyMetadata == null)
             {
-                propertyMetadata = GetMetadataFromObjectAttribute<TEntity>(isSortingRequired, isFilteringRequired, name);
+                propertyMetadata = GetMetadataFromObjectAttribute(modelType, isSortableRequired, isFilterableRequired, name);
             }
 
             return propertyMetadata;
         }
 
-        private IPropertyMetadata GetDefaultMetadataFromObjectAttribute<TEntity>()
+        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
+        {
+            return GetPropertyMetadatas(typeof(TEntity));
+        }
+
+        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
+        {
+            if (modelType is null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
+            var propertyMetadatas = GetMetadatasFromPropertyAttribute(modelType);
+
+            if (propertyMetadatas == null)
+            {
+                propertyMetadatas = GetMetadatasFromObjectAttribute(modelType);
+            }
+
+            return propertyMetadatas;
+        }
+
+        private IPropertyMetadata GetDefaultMetadataFromObjectAttribute(Type modelType)
         {
             if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
             {
                 return null;
             }
 
-            var modelType = typeof(TEntity);
             var currentType = modelType;
 
             do
@@ -92,14 +137,14 @@ namespace Fluorite.Strainer.Services.Metadata
             return null;
         }
 
-        private IPropertyMetadata GetDefaultMetadataFromPropertyAttribute<TEntity>()
+        private IPropertyMetadata GetDefaultMetadataFromPropertyAttribute(Type modelType)
         {
             if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
             {
                 return null;
             }
 
-            var keyValue = typeof(TEntity)
+            var keyValue = modelType
                 .GetProperties()
                 .Select(propertyInfo =>
                 {
@@ -131,9 +176,10 @@ namespace Fluorite.Strainer.Services.Metadata
             return keyValue.Value;
         }
 
-        private IPropertyMetadata GetMetadataFromObjectAttribute<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
+        private IPropertyMetadata GetMetadataFromObjectAttribute(
+            Type modelType,
+            bool isSortableRequired,
+            bool isFilterableRequired,
             string name)
         {
             if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
@@ -141,7 +187,6 @@ namespace Fluorite.Strainer.Services.Metadata
                 return null;
             }
 
-            var modelType = typeof(TEntity);
             var currentType = modelType;
 
             do
@@ -153,11 +198,15 @@ namespace Fluorite.Strainer.Services.Metadata
 
                 if (attribute != null
                     && propertyInfo != null
-                    && (isSortingRequired ? attribute.IsSortable : true)
-                    && (isFilteringRequired ? attribute.IsFilterable : true))
+                    && (isSortableRequired ? attribute.IsSortable : true)
+                    && (isFilterableRequired ? attribute.IsFilterable : true))
                 {
+                    var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
+
                     return new PropertyMetadata
                     {
+                        IsDefaultSorting = isDefaultSorting,
+                        IsDefaultSortingDescending = isDefaultSorting ? attribute.IsDefaultSortingDescending : false,
                         IsFilterable = attribute.IsFilterable,
                         IsSortable = attribute.IsSortable,
                         Name = propertyInfo.Name,
@@ -172,9 +221,49 @@ namespace Fluorite.Strainer.Services.Metadata
             return null;
         }
 
-        private IPropertyMetadata GetMetadataFromPropertyAttribute<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
+        private IEnumerable<IPropertyMetadata> GetMetadatasFromObjectAttribute(Type modelType)
+        {
+            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
+            {
+                return null;
+            }
+
+            var currentType = modelType;
+
+            do
+            {
+                var attribute = currentType.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
+
+                if (attribute != null)
+                {
+                    return currentType
+                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Select(propertyInfo =>
+                        {
+                            var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
+
+                            return new PropertyMetadata
+                            {
+                                IsDefaultSorting = isDefaultSorting,
+                                IsDefaultSortingDescending = isDefaultSorting ? attribute.IsDefaultSortingDescending : false,
+                                IsFilterable = attribute.IsFilterable,
+                                IsSortable = attribute.IsSortable,
+                                Name = propertyInfo.Name,
+                                PropertyInfo = propertyInfo,
+                            };
+                        });
+                }
+
+                currentType = currentType.BaseType;
+            } while (currentType != typeof(object) && currentType != typeof(ValueType));
+
+            return null;
+        }
+
+        private IPropertyMetadata GetMetadataFromPropertyAttribute(
+            Type modelType,
+            bool isSortableRequired,
+            bool isFilterableRequired,
             string name)
         {
             if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
@@ -186,7 +275,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 ? StringComparison.OrdinalIgnoreCase
                 : StringComparison.Ordinal;
 
-            var keyValue = typeof(TEntity)
+            var keyValue = modelType
                 .GetProperties()
                 .Select(propertyInfo =>
                 {
@@ -200,8 +289,8 @@ namespace Fluorite.Strainer.Services.Metadata
                     var propertyInfo = pair.Key;
                     var attribute = pair.Value;
 
-                    return (isSortingRequired ? attribute.IsSortable : true)
-                        && (isFilteringRequired ? attribute.IsFilterable : true)
+                    return (isSortableRequired ? attribute.IsSortable : true)
+                        && (isFilterableRequired ? attribute.IsFilterable : true)
                         && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
                 });
 
@@ -214,6 +303,34 @@ namespace Fluorite.Strainer.Services.Metadata
             }
 
             return keyValue.Value;
+        }
+
+        private IEnumerable<IPropertyMetadata> GetMetadatasFromPropertyAttribute(Type modelType)
+        {
+            if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
+            {
+                return null;
+            }
+
+            var metadataPairs = modelType
+                .GetProperties()
+                .Select(propertyInfo =>
+                {
+                    var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: false);
+
+                    return new KeyValuePair<PropertyInfo, StrainerPropertyAttribute>(propertyInfo, attribute);
+                })
+                .Where(pair => pair.Value != null);
+
+            foreach (var metadataPair in metadataPairs)
+            {
+                if (metadataPair.Value.PropertyInfo == null)
+                {
+                    metadataPair.Value.PropertyInfo = metadataPair.Key;
+                }
+            }
+
+            return metadataPairs.Select(metadataPair => metadataPair.Value);
         }
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)

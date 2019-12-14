@@ -207,8 +207,8 @@ namespace Fluorite.Strainer.Services
                 foreach (var filterTermName in filterTerm.Names)
                 {
                     var metadata = Context.Metadata.GetMetadata<TEntity>(
-                        isSortingRequired: false,
-                        isFilteringRequired: true,
+                        isSortableRequired: false,
+                        isFilterableRequired: true,
                         name: filterTermName);
 
                     try
@@ -373,8 +373,8 @@ namespace Fluorite.Strainer.Services
             foreach (var sortTerm in parsedTerms)
             {
                 var metadata = Context.Metadata.GetMetadata<TEntity>(
-                    isSortingRequired: true,
-                    isFilteringRequired: false,
+                    isSortableRequired: true,
+                    isFilterableRequired: false,
                     name: sortTerm.Name);
 
                 if (metadata != null)
