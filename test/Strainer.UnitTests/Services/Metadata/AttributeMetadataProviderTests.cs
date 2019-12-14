@@ -40,8 +40,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
 
             // Act
             var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
-                isSortingRequired: true,
-                isFilteringRequired: true,
+                isSortableRequired: true,
+                isFilterableRequired: true,
                 name: nameof(Post.Id));
 
             // Assert
@@ -63,8 +63,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
 
             // Act
             var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
-                isSortingRequired: true,
-                isFilteringRequired: true,
+                isSortableRequired: true,
+                isFilterableRequired: true,
                 name: nameof(Post.Id));
 
             // Assert
@@ -83,8 +83,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
 
             // Act
             var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
-                isSortingRequired: true,
-                isFilteringRequired: true,
+                isSortableRequired: true,
+                isFilterableRequired: true,
                 name: nameof(Post.Title));
 
             // Assert
@@ -105,8 +105,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
 
             // Act
             var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
-                isSortingRequired: true,
-                isFilteringRequired: true,
+                isSortableRequired: true,
+                isFilterableRequired: true,
                 name: nameof(Post.Title));
 
             // Assert
@@ -127,8 +127,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
 
             // Act
             var result = attributeMetadataProvider.GetPropertyMetadata<Comment>(
-                isSortingRequired: true,
-                isFilteringRequired: true,
+                isSortableRequired: true,
+                isFilterableRequired: true,
                 name: nameof(Comment.Id));
 
             // Assert

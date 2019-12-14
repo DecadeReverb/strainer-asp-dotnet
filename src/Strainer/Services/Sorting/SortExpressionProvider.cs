@@ -64,8 +64,8 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             var metadata = GetPropertyMetadata<TEntity>(
-                isSortingRequired: true,
-                isFilteringRequired: false,
+                isSortableRequired: true,
+                isFilterableRequired: false,
                 name: sortTerm.Name);
 
             if (metadata == null)
@@ -144,18 +144,18 @@ namespace Fluorite.Strainer.Services.Sorting
         }
 
         private IPropertyMetadata GetPropertyMetadata<TEntity>(
-            bool isSortingRequired,
-            bool isFilteringRequired,
+            bool isSortableRequired,
+            bool isFilterableRequired,
             string name)
         {
             var metadata = _metadataProvidersFacade.GetMetadata<TEntity>(
-                isSortingRequired,
-                isFilteringRequired,
+                isSortableRequired,
+                isFilterableRequired,
                 name);
 
             if (metadata == null)
             {
-                return _metadataProvidersFacade.GetMetadata<TEntity>(isSortingRequired, isFilteringRequired, name);
+                return _metadataProvidersFacade.GetMetadata<TEntity>(isSortableRequired, isFilterableRequired, name);
             }
 
             return metadata;

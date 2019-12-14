@@ -1,4 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
+using System;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
@@ -6,6 +8,21 @@ namespace Fluorite.Strainer.Services.Metadata
     {
         IPropertyMetadata GetDefaultMetadata<TEntity>();
 
-        IPropertyMetadata GetPropertyMetadata<TEntity>(bool isSortableRequired, bool isFilterableRequired, string name);
+        IPropertyMetadata GetDefaultMetadata(Type modelType);
+
+        IPropertyMetadata GetPropertyMetadata<TEntity>(
+            bool isSortableRequired,
+            bool isFilterableRequired,
+            string name);
+
+        IPropertyMetadata GetPropertyMetadata(
+            Type modelType,
+            bool isSortableRequired,
+            bool isFilterableRequired,
+            string name);
+
+        IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>();
+
+        IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType);
     }
 }

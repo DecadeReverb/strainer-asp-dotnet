@@ -45,13 +45,6 @@ namespace Fluorite.Strainer.Models.Filter.Operators
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether associated
-        /// <see cref="System.Linq.Expressions.Expression"/> should be negated
-        /// before using it for filtering data.
-        /// </summary>
-        public bool NegateExpression { get; set; }
-
-        /// <summary>
         /// Gets a <see cref="string"/> representation of the operator.
         /// </summary>
         public string Symbol { get; set; }
