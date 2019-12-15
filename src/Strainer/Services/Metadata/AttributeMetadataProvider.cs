@@ -322,15 +322,20 @@ namespace Fluorite.Strainer.Services.Metadata
                 })
                 .Where(pair => pair.Value != null);
 
-            foreach (var metadataPair in metadataPairs)
+            if (!metadataPairs.Any())
+            {
+                return null;
+            }
+
+            return metadataPairs.Select(metadataPair =>
             {
                 if (metadataPair.Value.PropertyInfo == null)
                 {
                     metadataPair.Value.PropertyInfo = metadataPair.Key;
                 }
-            }
 
-            return metadataPairs.Select(metadataPair => metadataPair.Value);
+                return metadataPair.Value;
+            });
         }
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
