@@ -1,13 +1,12 @@
 ﻿using FluentAssertions;
 using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Attributes;
-using Fluorite.Strainer.IntegrationTests.Services;
 using Fluorite.Strainer.Services.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Extensions.DependencyInjection
+namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
 {
     public class AttributeMetadataProviderTests : StrainerFixtureBase
     {
