@@ -194,11 +194,11 @@ namespace Fluorite.Strainer.Services.Metadata
             return null;
         }
 
-        public IObjectMetadataBuilder<TEntity> Object<TEntity>(Expression<Func<TEntity, object>> expression)
+        public IObjectMetadataBuilder<TEntity> Object<TEntity>(Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
         {
-            if (expression == null)
+            if (defaultSortingPropertyExpression == null)
             {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
             }
 
             if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
@@ -210,14 +210,14 @@ namespace Fluorite.Strainer.Services.Metadata
                     $"be able to use it.");
             }
 
-            return new ObjectMetadataBuilder<TEntity>(this, expression);
+            return new ObjectMetadataBuilder<TEntity>(this, defaultSortingPropertyExpression);
         }
 
-        public IPropertyMetadataBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
+        public IPropertyMetadataBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> propertyExpression)
         {
-            if (expression == null)
+            if (propertyExpression == null)
             {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException(nameof(propertyExpression));
             }
 
             if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
@@ -234,7 +234,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 _propertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
             }
 
-            return new PropertyMetadataBuilder<TEntity>(this, expression);
+            return new PropertyMetadataBuilder<TEntity>(this, propertyExpression);
         }
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
