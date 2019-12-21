@@ -1,12 +1,17 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
     public class CustomFilterMethodBuilder<TEntity> : ICustomFilterMethodBuilder<TEntity>
     {
-        public CustomFilterMethodBuilder(ICustomFilterMethodMapper mapper, string name)
+        private readonly IDictionary<Type, IDictionary<string, ICustomFilterMethod>> _customMethods;
+
+        public CustomFilterMethodBuilder(
+            IDictionary<Type, IDictionary<string, ICustomFilterMethod>> customFilterMethodsDictionary,
+            string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -16,16 +21,15 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(name));
             }
 
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _customMethods = customFilterMethodsDictionary
+                ?? throw new ArgumentNullException(nameof(customFilterMethodsDictionary));
             Name = name;
             Function = context => context.Source;
         }
 
-        public Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> Function { get; protected set; }
+        protected Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> Function { get; set; }
 
-        public string Name { get; protected set; }
-
-        protected ICustomFilterMethodMapper Mapper { get; }
+        protected string Name { get; set; }
 
         public ICustomFilterMethod<TEntity> Build() => new CustomFilterMethod<TEntity>
         {
@@ -38,9 +42,24 @@ namespace Fluorite.Strainer.Services.Filtering
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
 
-            Mapper.AddMap(Build());
+            Save(Build());
 
             return this;
+        }
+
+        protected void Save(ICustomFilterMethod<TEntity> customFilterMethod)
+        {
+            if (customFilterMethod == null)
+            {
+                throw new ArgumentNullException(nameof(customFilterMethod));
+            }
+
+            if (!_customMethods.ContainsKey(typeof(TEntity)))
+            {
+                _customMethods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
+            }
+
+            _customMethods[typeof(TEntity)][customFilterMethod.Name] = customFilterMethod;
         }
     }
 }

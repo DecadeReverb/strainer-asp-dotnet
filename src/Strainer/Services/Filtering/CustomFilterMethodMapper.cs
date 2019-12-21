@@ -9,25 +9,25 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class CustomFilterMethodMapper : ICustomFilterMethodMapper
     {
-        private readonly Dictionary<Type, Dictionary<string, object>> _methods;
+        private readonly Dictionary<Type, IDictionary<string, ICustomFilterMethod>> _methods;
         private readonly StrainerOptions _options;
 
         public CustomFilterMethodMapper(IStrainerOptionsProvider optionsProvider)
         {
-            _methods = new Dictionary<Type, Dictionary<string, object>>();
+            _methods = new Dictionary<Type, IDictionary<string, ICustomFilterMethod>>();
             _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
         }
 
-        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> Methods
         {
             get
             {
                 var dictionary = _methods.ToDictionary(
                     k => k.Key,
-                    v => new ReadOnlyDictionary<string, object>(v.Value) as IReadOnlyDictionary<string, object>);
+                    v => new ReadOnlyDictionary<string, ICustomFilterMethod>(v.Value) as IReadOnlyDictionary<string, ICustomFilterMethod>);
 
-                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>>(dictionary);
+                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(dictionary);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
             if (!_methods.ContainsKey(typeof(TEntity)))
             {
-                _methods[typeof(TEntity)] = new Dictionary<string, object>();
+                _methods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
             }
 
             _methods[typeof(TEntity)][customMethod.Name] = customMethod;
@@ -58,10 +58,10 @@ namespace Fluorite.Strainer.Services.Filtering
 
             if (!_methods.ContainsKey(typeof(TEntity)))
             {
-                _methods[typeof(TEntity)] = new Dictionary<string, object>();
+                _methods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
             }
 
-            return new CustomFilterMethodBuilder<TEntity>(this, name);
+            return new CustomFilterMethodBuilder<TEntity>(_methods, name);
         }
 
         public ICustomFilterMethod<TEntity> GetMethod<TEntity>(string name)

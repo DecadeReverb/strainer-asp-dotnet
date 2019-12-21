@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Fluorite.Extensions
@@ -67,6 +68,22 @@ namespace Fluorite.Extensions
                     return source.OrderBy(sortExpression.Expression);
                 }
             }
+        }
+
+        public static TDictionary MergeLeft<TDictionary, TKey, TValue>(this TDictionary source, params IDictionary<TKey, TValue>[] others)
+            where TDictionary : IDictionary<TKey, TValue>, new()
+        {
+            var resultDictionary = new TDictionary();
+
+            foreach (var dictionary in new List<IDictionary<TKey, TValue>> { source }.Concat(others))
+            {
+                foreach (var pair in dictionary)
+                {
+                    resultDictionary[pair.Key] = pair.Value;
+                }
+            }
+
+            return resultDictionary;
         }
     }
 }

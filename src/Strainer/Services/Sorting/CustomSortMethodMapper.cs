@@ -9,25 +9,25 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     public class CustomSortMethodMapper : ICustomSortMethodMapper
     {
-        private readonly Dictionary<Type, Dictionary<string, object>> _methods;
+        private readonly Dictionary<Type, IDictionary<string, ICustomSortMethod>> _methods;
         private readonly StrainerOptions _options;
 
         public CustomSortMethodMapper(IStrainerOptionsProvider optionsProvider)
         {
-            _methods = new Dictionary<Type, Dictionary<string, object>>();
+            _methods = new Dictionary<Type, IDictionary<string, ICustomSortMethod>>();
             _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
         }
 
-        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> Methods
         {
             get
             {
                 var dictionary = _methods.ToDictionary(
                     k => k.Key,
-                    v => new ReadOnlyDictionary<string, object>(v.Value) as IReadOnlyDictionary<string, object>);
+                    v => new ReadOnlyDictionary<string, ICustomSortMethod>(v.Value) as IReadOnlyDictionary<string, ICustomSortMethod>);
 
-                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>>(dictionary);
+                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(dictionary);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Fluorite.Strainer.Services.Sorting
 
             if (!_methods.ContainsKey(typeof(TEntity)))
             {
-                _methods[typeof(TEntity)] = new Dictionary<string, object>();
+                _methods[typeof(TEntity)] = new Dictionary<string, ICustomSortMethod>();
             }
 
             _methods[typeof(TEntity)][sortMethod.Name] = sortMethod;
@@ -58,10 +58,10 @@ namespace Fluorite.Strainer.Services.Sorting
 
             if (!_methods.ContainsKey(typeof(TEntity)))
             {
-                _methods[typeof(TEntity)] = new Dictionary<string, object>();
+                _methods[typeof(TEntity)] = new Dictionary<string, ICustomSortMethod>();
             }
 
-            return new CustomSortMethodBuilder<TEntity>(this, name);
+            return new CustomSortMethodBuilder<TEntity>(_methods, name);
         }
 
         public ICustomSortMethod<TEntity> GetMethod<TEntity>(string name)

@@ -46,7 +46,8 @@ namespace Fluorite.Strainer.IntegrationTests.Services
                 .IsFilterable();
 
             mapper.Property<Post>(p => p.TopComment.Id)
-                .IsSortable();
+                .IsSortable()
+                .IsDefaultSort();
 
             mapper.Property<Post>(p => p.OnlySortableViaFluentApi)
                 .IsSortable();
@@ -58,6 +59,10 @@ namespace Fluorite.Strainer.IntegrationTests.Services
             mapper.Property<Post>(p => p.FeaturedComment.Text)
                 .IsFilterable()
                 .HasDisplayName("featc");
+
+            mapper.Object<Comment>(comment => comment.Id)
+                .IsFilterable()
+                .IsSortable();
         }
 
         #region custom filter methods

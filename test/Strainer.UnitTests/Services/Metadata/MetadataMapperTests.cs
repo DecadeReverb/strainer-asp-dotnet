@@ -1,10 +1,13 @@
 ﻿using FluentAssertions;
+using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
@@ -339,9 +342,59 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             result.Should().BeNull();
         }
 
+        [Fact]
+        public void MetadataMapper_Works_For_Object_Attribute()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            services.AddStrainer<TestStrainerProcessor>();
+            services.AddScoped<MetadataMapper>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Act
+            var attributeMetadataProvider = serviceProvider.GetRequiredService<MetadataMapper>();
+            var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Post>();
+
+            // Assert
+            metadatas.Should().NotBeNullOrEmpty();
+            metadatas.Should().HaveSameCount(typeof(Post).GetProperties());
+            metadatas.First().Name.Should().Be(nameof(Post.Id));
+        }
+
+        [Fact]
+        public void MetadataMapper_Works_For_Property_Attribute()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            services.AddStrainer<TestStrainerProcessor>();
+            services.AddScoped<MetadataMapper>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Act
+            var attributeMetadataProvider = serviceProvider.GetRequiredService<MetadataMapper>();
+            var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Comment>();
+
+            // Assert
+            metadatas.Should().NotBeNullOrEmpty();
+            metadatas.Should().HaveSameCount(typeof(Post).GetProperties());
+        }
+
         private class Post
         {
             public int Id { get; set; }
+        }
+
+        private class Comment
+        {
+            public int Id { get; set; }
+        }
+
+        private class TestStrainerProcessor : StrainerProcessor
+        {
+            public TestStrainerProcessor(IStrainerContext context) : base(context)
+            {
+
+            }
         }
     }
 }

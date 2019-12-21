@@ -6,6 +6,8 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public interface IMetadataProvidersFacade
     {
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata();
+
         IPropertyMetadata GetDefaultMetadata<TEntity>();
 
         IPropertyMetadata GetDefaultMetadata(Type modelType);

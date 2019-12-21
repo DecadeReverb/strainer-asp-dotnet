@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -71,6 +72,44 @@ namespace Fluorite.Strainer.Services.Metadata
             var metadataKey = propertyMetadata.DisplayName ?? propertyMetadata.Name;
 
             _propertyMetadata[typeof(TEntity)][metadataKey] = propertyMetadata;
+        }
+
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
+        {
+            var joinedTypes = _propertyMetadata.Keys.Union(_objectMetadata.Keys);
+
+            return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                joinedTypes.Select(type =>
+                {
+                    if (_propertyMetadata.TryGetValue(type, out var metadatas))
+                    {
+                        return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                            type,
+                            new ReadOnlyDictionary<string, IPropertyMetadata>(metadatas));
+                    }
+
+                    var objectMetadata = _objectMetadata[type];
+
+                    return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                        type,
+                        new ReadOnlyDictionary<string, IPropertyMetadata>(type
+                            .GetProperties()
+                            .Select(propertyInfo =>
+                            {
+                                var isDefaultSorting = objectMetadata.DefaultSortingPropertyInfo == propertyInfo;
+
+                                return new PropertyMetadata
+                                {
+                                    IsFilterable = objectMetadata.IsFilterable,
+                                    IsSortable = objectMetadata.IsSortable,
+                                    Name = propertyInfo.Name,
+                                    IsDefaultSorting = isDefaultSorting,
+                                    IsDefaultSortingDescending = isDefaultSorting ? objectMetadata.IsDefaultSortingDescending : false,
+                                    PropertyInfo = propertyInfo,
+                                };
+                            })
+                            .ToDictionary(propertyMetadata => propertyMetadata.Name, propertyMetadata => (IPropertyMetadata)propertyMetadata)));
+                }).ToDictionary(pair => pair.Key, pair => pair.Value));
         }
 
         public IPropertyMetadata GetDefaultMetadata<TEntity>()

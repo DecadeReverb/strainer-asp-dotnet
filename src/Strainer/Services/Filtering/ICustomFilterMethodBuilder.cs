@@ -6,10 +6,6 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public interface ICustomFilterMethodBuilder<TEntity>
     {
-        Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> Function { get; }
-
-        string Name { get; }
-
         ICustomFilterMethod<TEntity> Build();
 
         ICustomFilterMethodBuilder<TEntity> WithFunction(

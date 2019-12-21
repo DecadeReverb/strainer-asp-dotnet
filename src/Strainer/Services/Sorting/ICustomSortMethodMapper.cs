@@ -6,7 +6,7 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     public interface ICustomSortMethodMapper
     {
-        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods { get; }
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> Methods { get; }
 
         void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod);
 

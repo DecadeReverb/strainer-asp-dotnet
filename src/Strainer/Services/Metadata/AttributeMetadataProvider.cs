@@ -1,8 +1,10 @@
-﻿using Fluorite.Strainer.Attributes;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 
@@ -16,6 +18,71 @@ namespace Fluorite.Strainer.Services.Metadata
         {
             _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
+        }
+
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
+        {
+            var types = AppDomain.CurrentDomain
+                .GetAssemblies()
+                .Where(assembly => !assembly.FullName.StartsWith("Microsoft.VisualStudio.TraceDataCollector"))
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => type.IsClass || type.IsValueType);
+
+            var objectMetadatas = types
+                .Select(type => new { Type = type, Attribute = type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false) })
+                .Where(pair => pair.Attribute != null)
+                .Select(pair =>
+                {
+                    return new
+                    {
+                        pair.Type,
+                        Metadatas = (IReadOnlyDictionary<string, IPropertyMetadata>)new ReadOnlyDictionary<string, IPropertyMetadata>(pair.Type
+                            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                            .Select(propertyInfo =>
+                            {
+                                var isDefaultSorting = pair.Attribute.DefaultSortingPropertyName == propertyInfo.Name;
+
+                                return new PropertyMetadata
+                                {
+                                    IsDefaultSorting = isDefaultSorting,
+                                    IsDefaultSortingDescending = isDefaultSorting ? pair.Attribute.IsDefaultSortingDescending : false,
+                                    IsFilterable = pair.Attribute.IsFilterable,
+                                    IsSortable = pair.Attribute.IsSortable,
+                                    Name = propertyInfo.Name,
+                                    PropertyInfo = propertyInfo,
+                                };
+                            })
+                            .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata))
+                    };
+                })
+                .ToDictionary(pair => pair.Type, pair => pair.Metadatas);
+
+            var propertyMetadatas = types
+                .Select(type => new
+                {
+                    Type = type,
+                    Attributes = (IReadOnlyDictionary<string, IPropertyMetadata>)new ReadOnlyDictionary<string, IPropertyMetadata>(type
+                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Select(propertyInfo =>
+                        {
+                            var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: false);
+
+                            if (attribute != null)
+                            {
+                                attribute.PropertyInfo = propertyInfo;
+                            }
+
+                            return attribute;
+                        })
+                        .Where(attribute => attribute != null)
+                        .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute))
+                })
+                .Where(pair => pair.Attributes.Any())
+                .ToDictionary(pair => pair.Type, pair => pair.Attributes);
+
+            var mergeResult = objectMetadatas.MergeLeft(propertyMetadatas);
+
+            return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(mergeResult);
         }
 
         public IPropertyMetadata GetDefaultMetadata<TEntity>()

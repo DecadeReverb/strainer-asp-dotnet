@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Models.Filter.Operators
+namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
     /// Represents information context for filter expression.

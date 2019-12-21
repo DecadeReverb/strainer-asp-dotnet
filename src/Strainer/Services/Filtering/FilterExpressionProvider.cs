@@ -1,6 +1,6 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filter.Operators;
+using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Metadata;
 using System;

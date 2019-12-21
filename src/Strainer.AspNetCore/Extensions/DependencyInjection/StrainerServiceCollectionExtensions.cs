@@ -3,11 +3,13 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Fluorite.Extensions.DependencyInjection
 {
@@ -93,6 +95,15 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, TProcessor>(serviceLifetime);
+
+            try
+            {
+                AddModulesConfiguration(services);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unable to add configuration from modules. " + ex.Message, ex);
+            }
 
             return new StrainerBuilder(services, serviceLifetime);
         }
@@ -210,6 +221,16 @@ namespace Fluorite.Extensions.DependencyInjection
         private static bool ContainsServiceOfType<TImplementationType>(this IServiceCollection services)
         {
             return services.Any(d => d.ServiceType == typeof(TImplementationType));
+        }
+
+        private static void AddModulesConfiguration(IServiceCollection services)
+        {
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var types = assembly.GetTypes().ToList();
+                var modules = types.Where(type => !type.IsAbstract && type.IsClass && type.IsAssignableFrom(typeof(StrainerModule))).ToList();
+            }
         }
     }
 }
