@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public class AttributeMetadataProvider : IPropertyMetadataProvider
+    public class AttributeMetadataProvider : IMetadataProvider
     {
         private readonly StrainerOptions _options;
 

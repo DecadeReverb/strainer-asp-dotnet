@@ -142,7 +142,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             // Act
             services.AddStrainer<StrainerProcessor>();
             var serviceProvider = services.BuildServiceProvider();
-            var propertyMetadataProviders = serviceProvider.GetService<IEnumerable<IPropertyMetadataProvider>>();
+            var propertyMetadataProviders = serviceProvider.GetService<IEnumerable<IMetadataProvider>>();
 
             // Assert
             propertyMetadataProviders.Should().NotBeNullOrEmpty();

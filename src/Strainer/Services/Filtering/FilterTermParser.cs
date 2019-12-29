@@ -11,15 +11,14 @@ namespace Fluorite.Strainer.Services.Filtering
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
-        public FilterTermParser(IFilterOperatorParser parser, IFilterOperatorMapper mapper)
+        private readonly IFilterOperatorParser _parser;
+        private readonly IFilterOperatorDictionary _filterOperators;
+
+        public FilterTermParser(IFilterOperatorParser parser, IFilterOperatorDictionary filterOperators)
         {
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            Parser = parser ?? throw new ArgumentNullException(nameof(parser));
+            _parser = parser ?? throw new ArgumentNullException(nameof(parser));
+            this._filterOperators = filterOperators ?? throw new ArgumentNullException(nameof(filterOperators));
         }
-
-        protected IFilterOperatorMapper Mapper { get; }
-
-        protected IFilterOperatorParser Parser { get; }
 
         public IList<IFilterTerm> GetParsedTerms(string input)
         {
@@ -88,8 +87,8 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private List<string> GetFilterSplits(string input)
         {
-            var symbols = Mapper
-                .Symbols
+            var symbols = _filterOperators
+                .Keys
                 .OrderByDescending(s => s.Length)
                 .ToArray();
 
@@ -119,7 +118,7 @@ namespace Fluorite.Strainer.Services.Filtering
             var names = GetFilterNames(filterSplits);
             var values = GetFilterValues(filterSplits);
             var symbol = GetFilterOperatorSymbol(input, filterSplits);
-            var operatorParsed = Parser.GetParsedOperator(symbol);
+            var operatorParsed = _parser.GetParsedOperator(symbol);
 
             if (!names.Any())
             {

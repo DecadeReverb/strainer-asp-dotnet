@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
-    public interface IFilterOperatorMapper :
-        IDictionary<string, IFilterOperator>,
-        ICollection<KeyValuePair<string, IFilterOperator>>,
+    public interface IFilterOperatorDictionary :
+        IReadOnlyDictionary<string, IFilterOperator>,
+        IReadOnlyCollection<KeyValuePair<string, IFilterOperator>>,
         IEnumerable<KeyValuePair<string, IFilterOperator>>,
         IEnumerable
     {
-        IFilterOperatorBuilder Operator(string symbol);
+
     }
 }

@@ -3,9 +3,6 @@ using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Metadata;
-using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -32,13 +29,13 @@ namespace Fluorite.Strainer.Services
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
 
-            MapFilterOperators(context.Filter.OperatorMapper);
+            //MapFilterOperators(context.Filter.OperatorMapper);
 
             // TODO:
             // Move filter operator validation to service injection.
-            Context.Filter.OperatorValidator.Validate(Context.Filter.OperatorMapper.Operators);
+            Context.Filter.OperatorValidator.Validate(Context.Filter.OperatorDictionary.Values);
 
-            MapProperties(context.Mapper);
+            //MapProperties(context.Mapper);
 
             // TODO:
             // Move sort expression validation to service injection.
@@ -50,8 +47,8 @@ namespace Fluorite.Strainer.Services
             //    //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
             //}
 
-            MapCustomFilterMethods(context.CustomMethods.Filter);
-            MapCustomSortMethods(context.CustomMethods.Sort);
+            //MapCustomFilterMethods(context.CustomMethods.Filter);
+            //MapCustomSortMethods(context.CustomMethods.Sort);
         }
 
         /// <summary>
@@ -219,8 +216,7 @@ namespace Fluorite.Strainer.Services
                         }
                         else
                         {
-                            var customMethod = Context.CustomMethods.Filter.GetMethod<TEntity>(filterTermName);
-                            if (customMethod != null)
+                            if (Context.CustomMethods.Filter.TryGetMethod<TEntity>(filterTermName, out var customMethod))
                             {
                                 var context = new CustomFilterMethodContext<TEntity>
                                 {
@@ -390,8 +386,7 @@ namespace Fluorite.Strainer.Services
                 {
                     try
                     {
-                        var customMethod = Context.CustomMethods.Sort.GetMethod<TEntity>(sortTerm.Name);
-                        if (customMethod != null)
+                        if (Context.CustomMethods.Sort.TryGetMethod<TEntity>(sortTerm.Name, out var customMethod))
                         {
                             var context = new CustomSortMethodContext<TEntity>
                             {
@@ -438,50 +433,6 @@ namespace Fluorite.Strainer.Services
             }
 
             return source;
-        }
-
-        /// <summary>
-        /// Override this method to add custom filter methods.
-        /// </summary>
-        /// <param name="mapper">
-        /// The custom filter method mapper.
-        /// </param>
-        protected virtual void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
-        {
-
-        }
-
-        /// <summary>
-        /// Override this method to add custom sort methods.
-        /// </summary>
-        /// <param name="mapper">
-        /// The custom sort method mapper.
-        /// </param>
-        protected virtual void MapCustomSortMethods(ICustomSortMethodMapper mapper)
-        {
-
-        }
-
-        /// <summary>
-        /// Override this method to add additional filter operators.
-        /// </summary>
-        /// <param name="mapper">
-        /// The filter operator mapper.
-        /// </param>
-        protected virtual void MapFilterOperators(IFilterOperatorMapper mapper)
-        {
-
-        }
-
-        /// <summary>
-        /// Override this method to add property configurations.
-        /// </summary>
-        /// <param name="mapper">
-        /// The property metadata mapper.
-        /// </param>
-        protected virtual void MapProperties(IMetadataMapper mapper)
-        {
-
         }
     }
 }

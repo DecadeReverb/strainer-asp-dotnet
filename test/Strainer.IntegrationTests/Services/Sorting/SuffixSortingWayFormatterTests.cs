@@ -44,7 +44,6 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting
                     Factory.CreateOptionsProvider(),
                     context.Filter,
                     newSortingContext,
-                    context.Mapper,
                     context.Metadata,
                     context.CustomMethods);
 

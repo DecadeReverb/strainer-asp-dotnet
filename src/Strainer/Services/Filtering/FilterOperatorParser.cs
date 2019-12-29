@@ -5,12 +5,12 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterOperatorParser : IFilterOperatorParser
     {
-        public FilterOperatorParser(IFilterOperatorMapper mapper)
-        {
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+        private readonly IFilterOperatorDictionary _filterOperators;
 
-        protected IFilterOperatorMapper Mapper { get; }
+        public FilterOperatorParser(IFilterOperatorDictionary filterOperators)
+        {
+            _filterOperators = filterOperators ?? throw new ArgumentNullException(nameof(filterOperators));
+        }
 
         public virtual IFilterOperator GetParsedOperator(string symbol)
         {
@@ -19,7 +19,12 @@ namespace Fluorite.Strainer.Services.Filtering
                 return null;
             }
 
-            return Mapper.Find(symbol);
+            if (_filterOperators.TryGetValue(symbol, out var filterOperator))
+            {
+                return filterOperator;
+            }
+
+            return null;
         }
     }
 }

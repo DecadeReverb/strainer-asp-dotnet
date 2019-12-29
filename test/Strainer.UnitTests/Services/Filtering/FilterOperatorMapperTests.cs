@@ -29,7 +29,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var mapper = new FilterOperatorMapper(validator);
 
             // Act
-            var filterOperatorsAmount = mapper.Operators.Count;
+            var filterOperatorsAmount = mapper.Count;
 
             // Assert
             filterOperatorsAmount.Should().BeGreaterThan(0);

@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.AspNetCore.Services;
+﻿using Fluorite.Extensions.Collections.Generic;
+using Fluorite.Strainer.AspNetCore.Services;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Reflection;
 
 namespace Fluorite.Extensions.DependencyInjection
 {
@@ -88,9 +88,10 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
             services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
-            services.Add<IPropertyMetadataProvider, MetadataMapper>(serviceLifetime);
-            services.Add<IPropertyMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
-            services.Add<IMetadataProvidersFacade, MetadataProvidersFacade>(serviceLifetime);
+            services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
+            services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
+            services.Add<IMetadataProvidersWrapper, MetadataProvidersWrapper>(serviceLifetime);
+            services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
 
             services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
@@ -227,9 +228,49 @@ namespace Fluorite.Extensions.DependencyInjection
         {
             using (var serviceProvider = services.BuildServiceProvider())
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var types = assembly.GetTypes().ToList();
-                var modules = types.Where(type => !type.IsAbstract && type.IsClass && type.IsAssignableFrom(typeof(StrainerModule))).ToList();
+                var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
+
+                var modules = AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .Where(a => a.GetReferencedAssemblies().All(name => !name.FullName.StartsWith("Microsoft.IntelliTrace.Core")))
+                    .SelectMany(a => a.GetTypes())
+                    .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)))
+                    .Select(type => Activator.CreateInstance(type) as StrainerModule)
+                    .Where(instance => instance != null)
+                    .ToList();
+
+                modules.ForEach(strainerModule =>
+                {
+                    strainerModule.Options = optionsProvider.GetStrainerOptions();
+                    strainerModule.Load();
+                });
+
+                var customFilerMethods = modules
+                    .SelectMany(module => module.CustomFilterMethods)
+                    .Merge();
+                var customSortMethods = modules
+                    .SelectMany(module => module.CustomSortMethods)
+                    .Merge();
+                var defaultMetadata = modules
+                    .SelectMany(module => module.DefaultMetadata)
+                    .Merge();
+                var filterOperators = modules
+                    .SelectMany(module => module.FilterOperators)
+                    .Union(FilterOperatorMapper.DefaultOperators)
+                    .Merge();
+                var objectMetadata = modules
+                    .SelectMany(module => module.ObjectMetadata)
+                    .Merge();
+                var propertyMetadata = modules
+                    .SelectMany(module => module.PropertyMetadata)
+                    .Merge();
+
+                services.AddSingleton<ICustomFilterMethodDictionary>(new CustomFilterMethodDictionary(customFilerMethods, optionsProvider));
+                services.AddSingleton<ICustomSortMethodDictionary>(new CustomSortMethodDictionary(customSortMethods, optionsProvider));
+                services.AddSingleton<IDefaultMetadataDictionary>(new DefaultMetadataDictionary(defaultMetadata));
+                services.AddSingleton<IFilterOperatorDictionary>(new FilterOperatorDictionary(filterOperators));
+                services.AddSingleton<IObjectMetadataDictionary>(new ObjectMetadataDictionary(objectMetadata));
+                services.AddSingleton<IPropertyMetadataDictionary>(new PropertyMetadataDictionary(propertyMetadata));
             }
         }
     }

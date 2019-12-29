@@ -5,25 +5,20 @@ using System.Collections.ObjectModel;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public class MetadataProvidersFacade : IMetadataProvidersFacade
+    public class MetadataFacade : IMetadataFacade
     {
-        private readonly IEnumerable<IPropertyMetadataProvider> _metadataProviders;
+        private readonly IMetadataProvidersWrapper _metadataProvidersWrapper;
 
-        public MetadataProvidersFacade(IEnumerable<IPropertyMetadataProvider> metadataProviders)
+        public MetadataFacade(IMetadataProvidersWrapper metadataProvidersWrapper)
         {
-            if (metadataProviders is null)
-            {
-                throw new ArgumentNullException(nameof(metadataProviders));
-            }
-
-            _metadataProviders = metadataProviders;
+            _metadataProvidersWrapper = metadataProvidersWrapper ?? throw new ArgumentNullException(nameof(metadataProvidersWrapper));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
         {
             var metadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
 
-            foreach (var provider in _metadataProviders)
+            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
             {
                 var current = provider.GetAllPropertyMetadata();
 
@@ -48,7 +43,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            foreach (var provider in _metadataProviders)
+            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
             {
                 var metadata = provider.GetDefaultMetadata(modelType);
 
@@ -80,7 +75,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            foreach (var provider in _metadataProviders)
+            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
             {
                 var metadata = provider.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name);
 
@@ -105,7 +100,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            foreach (var provider in _metadataProviders)
+            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
             {
                 var metadatas = provider.GetPropertyMetadatas(modelType);
 

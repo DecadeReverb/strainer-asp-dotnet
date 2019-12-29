@@ -12,31 +12,31 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Initializes a new instance of <see cref="CustomMethodsContext"/> class.
         /// </summary>
-        /// <param name="optionsProvider">
-        /// The Strainer options provider.
+        /// <param name="customFilterMethods">
+        /// The custom filter methods dictionary.
+        /// </param>
+        /// <param name="customSortMethods">
+        /// The custom sort methods dictionary.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="optionsProvider"/> is <see langword="null"/>.
         /// </exception>
-        public CustomMethodsContext(IStrainerOptionsProvider optionsProvider)
+        public CustomMethodsContext(
+            ICustomFilterMethodDictionary customFilterMethods,
+            ICustomSortMethodDictionary customSortMethods)
         {
-            if (optionsProvider == null)
-            {
-                throw new ArgumentNullException(nameof(optionsProvider));
-            }
-
-            Filter = new CustomFilterMethodMapper(optionsProvider);
-            Sort = new CustomSortMethodMapper(optionsProvider);
+            Filter = customFilterMethods ?? throw new ArgumentNullException(nameof(customFilterMethods));
+            Sort = customSortMethods ?? throw new ArgumentNullException(nameof(customSortMethods));
         }
 
         /// <summary>
-        /// Gets the custom filter method mapper.
+        /// Gets the custom filter method dictionary.
         /// </summary>
-        public ICustomFilterMethodMapper Filter { get; }
+        public ICustomFilterMethodDictionary Filter { get; }
 
         /// <summary>
-        /// Gets the custom sort method mapper.
+        /// Gets the custom sort method dictionary.
         /// </summary>
-        public ICustomSortMethodMapper Sort { get; }
+        public ICustomSortMethodDictionary Sort { get; }
     }
 }

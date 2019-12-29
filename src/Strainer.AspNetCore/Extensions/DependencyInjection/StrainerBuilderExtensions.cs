@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.AspNetCore.Extensions.DependencyInjection
             }
 
             strainerBuilder.Services.Add(new ServiceDescriptor(
-                typeof(IPropertyMetadataProvider),
+                typeof(IMetadataProvider),
                 typeof(MetadataMapper),
                 strainerBuilder.ServiceLifetime));
 
@@ -30,7 +30,7 @@ namespace Fluorite.Strainer.AspNetCore.Extensions.DependencyInjection
             }
 
             strainerBuilder.Services.Add(new ServiceDescriptor(
-                typeof(IPropertyMetadataProvider),
+                typeof(IMetadataProvider),
                 typeof(AttributeMetadataProvider),
                 strainerBuilder.ServiceLifetime));
 

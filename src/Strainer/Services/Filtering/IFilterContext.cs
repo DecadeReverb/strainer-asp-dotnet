@@ -4,7 +4,7 @@
     {
         IFilterExpressionProvider ExpressionProvider { get; }
 
-        IFilterOperatorMapper OperatorMapper { get; }
+        IFilterOperatorDictionary OperatorDictionary { get; }
 
         IFilterOperatorParser OperatorParser { get; }
 

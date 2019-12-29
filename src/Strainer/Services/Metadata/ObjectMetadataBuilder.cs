@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
     {
-        private readonly IMetadataMapper _mapper;
+        private readonly IDictionary<Type, IObjectMetadata> _objectMetadata;
 
         protected readonly string defaultSortingPropertyName;
         protected readonly PropertyInfo defaultSortingPropertyInfo;
@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.Services.Metadata
         protected bool isSortable;
 
         public ObjectMetadataBuilder(
-            IMetadataMapper propertyMetadataMapper,
+            IDictionary<Type, IObjectMetadata> objectMetadata,
             Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
         {
             if (defaultSortingPropertyExpression is null)
@@ -26,11 +26,10 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
             }
 
-            _mapper = propertyMetadataMapper ?? throw new ArgumentNullException(nameof(propertyMetadataMapper));
-
             (defaultSortingPropertyName, defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
+            _objectMetadata = objectMetadata ?? throw new ArgumentNullException(nameof(objectMetadata));
 
-            UpdateMap(Build());
+            Save(Build());
         }
 
         public IObjectMetadata Build()
@@ -48,7 +47,7 @@ namespace Fluorite.Strainer.Services.Metadata
         public IObjectMetadataBuilder<TEntity> IsFilterable()
         {
             isFilterable = true;
-            UpdateMap(Build());
+            Save(Build());
 
             return this;
         }
@@ -56,7 +55,7 @@ namespace Fluorite.Strainer.Services.Metadata
         public IObjectMetadataBuilder<TEntity> IsSortable()
         {
             isSortable = true;
-            UpdateMap(Build());
+            Save(Build());
 
             return this;
         }
@@ -64,19 +63,19 @@ namespace Fluorite.Strainer.Services.Metadata
         public IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending()
         {
             isDefaultSortingDescending = true;
-            UpdateMap(Build());
+            Save(Build());
 
             return this;
         }
 
-        protected void UpdateMap(IObjectMetadata objectMetadata)
+        protected void Save(IObjectMetadata objectMetadata)
         {
             if (objectMetadata == null)
             {
                 throw new ArgumentNullException(nameof(objectMetadata));
             }
 
-            _mapper.AddObjectMetadata<TEntity>(objectMetadata);
+            _objectMetadata[typeof(TEntity)] = objectMetadata;
         }
 
         private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)

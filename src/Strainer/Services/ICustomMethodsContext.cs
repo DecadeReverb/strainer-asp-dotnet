@@ -9,13 +9,13 @@ namespace Fluorite.Strainer.Services
     public interface ICustomMethodsContext
     {
         /// <summary>
-        /// Gets the custom filter method mapper.
+        /// Gets the custom filter method dictionary.
         /// </summary>
-        ICustomFilterMethodMapper Filter { get; }
+        ICustomFilterMethodDictionary Filter { get; }
 
         /// <summary>
-        /// Gets the custom sort method mapper.
+        /// Gets the custom sort method dictionary.
         /// </summary>
-        ICustomSortMethodMapper Sort { get; }
+        ICustomSortMethodDictionary Sort { get; }
     }
 }

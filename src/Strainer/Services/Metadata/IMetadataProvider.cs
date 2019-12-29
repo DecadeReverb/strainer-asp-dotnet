@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public interface IPropertyMetadataProvider
+    public interface IMetadataProvider
     {
         IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata();
 

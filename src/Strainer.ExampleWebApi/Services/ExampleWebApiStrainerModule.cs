@@ -1,10 +1,7 @@
 ﻿using Fluorite.Strainer.ExampleWebApi.Entities;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Metadata;
-using Fluorite.Strainer.Services.Sorting;
+using Fluorite.Strainer.Services.Modules;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -12,37 +9,28 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.ExampleWebApi.Services
 {
-    public class ApplicationStrainerProcessor : StrainerProcessor
+    public class ExampleWebApiStrainerModule : StrainerModule
     {
-        public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+        public ExampleWebApiStrainerModule()
         {
 
         }
 
-        protected override void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
+        public override void Load()
         {
-            mapper.CustomMethod<Post>(nameof(IsNew))
+            AddCustomFilterMethod<Post>(nameof(IsNew))
                 .WithFunction(IsNew);
-        }
 
-        protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
-        {
-            mapper.CustomMethod<Post>(nameof(Popularity))
+            AddCustomSortMethod<Post>(nameof(Popularity))
                 .WithFunction(Popularity);
-        }
 
-        protected override void MapFilterOperators(IFilterOperatorMapper mapper)
-        {
-            mapper.Operator(symbol: "%")
+            AddFilterOperator(symbol: "%")
                 .HasName("modulo equal zero")
                 .HasExpression((context) => Expression.Equal(
                     Expression.Modulo(context.PropertyValue, context.FilterValue),
                     Expression.Constant(0)));
-        }
 
-        protected override void MapProperties(IMetadataMapper mapper)
-        {
-            mapper.Property<Post>(p => p.Comments.Count)
+            AddProperty<Post>(p => p.Comments.Count)
                 .IsFilterable()
                 .IsSortable();
         }

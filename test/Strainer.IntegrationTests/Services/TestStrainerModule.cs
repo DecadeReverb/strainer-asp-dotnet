@@ -1,74 +1,65 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Metadata;
-using Fluorite.Strainer.Services.Sorting;
+using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.TestModels;
 using System;
 using System.Linq;
 
 namespace Fluorite.Strainer.IntegrationTests.Services
 {
-    public class ApplicationStrainerProcessor : StrainerProcessor
+    public class TestStrainerModule : StrainerModule
     {
-        public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+        public TestStrainerModule()
         {
 
         }
 
-        protected override void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
+        public override void Load()
         {
-            mapper.CustomMethod<Post>(nameof(IsNew))
-                .WithFunction(IsNew);
-            mapper.CustomMethod<Post>(nameof(HasInTitle))
+            AddCustomFilterMethod<Post>(nameof(IsPopular))
+               .WithFunction(IsPopular);
+            AddCustomFilterMethod<Post>(nameof(HasInTitle))
                 .WithFunction(HasInTitle);
-            mapper.CustomMethod<Comment>(nameof(IsNew))
+            AddCustomFilterMethod<Comment>(nameof(IsNew))
                 .WithFunction(IsNew);
-            mapper.CustomMethod<Comment>(nameof(TestComment))
+            AddCustomFilterMethod<Comment>(nameof(TestComment))
                 .WithFunction(TestComment);
-        }
 
-        protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
-        {
-            mapper.CustomMethod<Post>(nameof(Popularity))
+            AddCustomSortMethod<Post>(nameof(Popularity))
                 .WithFunction(Popularity);
-        }
 
-        protected override void MapProperties(IMetadataMapper mapper)
-        {
-            mapper.Property<Post>(p => p.ThisHasNoAttributeButIsAccessible)
+            AddProperty<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .IsSortable()
                 .IsFilterable()
                 .HasDisplayName("shortname");
 
-            mapper.Property<Post>(p => p.TopComment.Text)
+            AddProperty<Post>(p => p.TopComment.Text)
                 .IsFilterable();
 
-            mapper.Property<Post>(p => p.TopComment.Id)
+            AddProperty<Post>(p => p.TopComment.Id)
                 .IsSortable()
                 .IsDefaultSort();
 
-            mapper.Property<Post>(p => p.OnlySortableViaFluentApi)
+            AddProperty<Post>(p => p.OnlySortableViaFluentApi)
                 .IsSortable();
 
-            mapper.Property<Post>(p => p.TopComment.Text)
+            AddProperty<Post>(p => p.TopComment.Text)
                 .IsFilterable()
                 .HasDisplayName("topc");
 
-            mapper.Property<Post>(p => p.FeaturedComment.Text)
+            AddProperty<Post>(p => p.FeaturedComment.Text)
                 .IsFilterable()
                 .HasDisplayName("featc");
 
-            mapper.Object<Comment>(comment => comment.Id)
+            AddObject<Comment>(comment => comment.Id)
                 .IsFilterable()
                 .IsSortable();
         }
 
         #region custom filter methods
-        private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
+        private IQueryable<Post> IsPopular(ICustomFilterMethodContext<Post> context)
         {
-            return context.Source.Where(p => p.LikeCount < 100);
+            return context.Source.Where(p => p.LikeCount > 100);
         }
 
         private IQueryable<Post> HasInTitle(ICustomFilterMethodContext<Post> context)

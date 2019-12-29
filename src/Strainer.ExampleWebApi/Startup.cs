@@ -1,6 +1,7 @@
 ﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.ExampleWebApi.Data;
 using Fluorite.Strainer.ExampleWebApi.Services;
+using Fluorite.Strainer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ namespace Fluorite.Strainer.ExampleWebApi
 
             services.AddSwaggerGenWithDefaultOptions();
 
-            services.AddStrainer<ApplicationStrainerProcessor>(Configuration.GetSection("Strainer"));
+            services.AddStrainer<StrainerProcessor>(Configuration.GetSection("Strainer"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

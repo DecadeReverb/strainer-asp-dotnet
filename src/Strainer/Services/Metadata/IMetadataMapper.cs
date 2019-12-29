@@ -1,11 +1,18 @@
-﻿using Fluorite.Strainer.Models.Metadata;
+﻿ using Fluorite.Strainer.Models.Metadata;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
     public interface IMetadataMapper
     {
+        IDictionary<Type, IPropertyMetadata> DefaultMetadata { get; }
+
+        IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
+
+        IDictionary<Type, IObjectMetadata> ObjectMetadata { get; }
+
         void AddObjectMetadata<TEntity>(IObjectMetadata objectMetadata);
 
         void AddPropertyMetadata<TEntity>(IPropertyMetadata propertyMetadata);

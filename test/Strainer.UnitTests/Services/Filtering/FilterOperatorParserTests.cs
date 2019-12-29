@@ -12,9 +12,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             string symbol = null;
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-            var parser = new FilterOperatorParser(mapper);
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var dictionary = new FilterOperatorDictionary(filterOperators);
+            var parser = new FilterOperatorParser(dictionary);
 
             // Act
             var filterOperator = parser.GetParsedOperator(symbol);
@@ -28,9 +29,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var symbol = string.Empty;
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-            var parser = new FilterOperatorParser(mapper);
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var dictionary = new FilterOperatorDictionary(filterOperators);
+            var parser = new FilterOperatorParser(dictionary);
 
             // Act
             var filterOperator = parser.GetParsedOperator(symbol);
@@ -44,9 +46,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var symbol = " ";
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-            var parser = new FilterOperatorParser(mapper);
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var dictionary = new FilterOperatorDictionary(filterOperators);
+            var parser = new FilterOperatorParser(dictionary);
 
             // Act
             var filterOperator = parser.GetParsedOperator(symbol);
@@ -59,15 +62,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         public void Parser_ReturnsOperators_For_AllFilterOperator_InMapper()
         {
             // Arrange
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-            var parser = new FilterOperatorParser(mapper);
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var dictionary = new FilterOperatorDictionary(filterOperators);
+            var parser = new FilterOperatorParser(dictionary);
 
             // Act
-            var filterOperators = mapper.Symbols.Select(symbol => parser.GetParsedOperator(symbol));
+            var result = filterOperators.Keys.Select(symbol => parser.GetParsedOperator(symbol));
 
             // Assert
-            filterOperators.Should().BeEquivalentTo(mapper.Operators);
+            result.Should().BeEquivalentTo(filterOperators.Values);
         }
     }
 }
