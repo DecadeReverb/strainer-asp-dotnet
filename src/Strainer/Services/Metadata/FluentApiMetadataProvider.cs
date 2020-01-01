@@ -10,15 +10,15 @@ namespace Fluorite.Strainer.Services.Metadata
     public class FluentApiMetadataProvider : IMetadataProvider
     {
         private readonly StrainerOptions _options;
-        private readonly IDefaultMetadataDictionary _defaultMetadata;
-        private readonly IObjectMetadataDictionary _objectMetadata;
-        private readonly IPropertyMetadataDictionary _propertyMetadata;
+        private readonly IReadOnlyDictionary<Type, IPropertyMetadata> _defaultMetadata;
+        private readonly IReadOnlyDictionary<Type, IObjectMetadata> _objectMetadata;
+        private readonly IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> _propertyMetadata;
 
         public FluentApiMetadataProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
-            IDefaultMetadataDictionary defaultMetadataDictionary,
-            IObjectMetadataDictionary objectMetadataDictionary,
-            IPropertyMetadataDictionary propertyMetadataDictionary)
+            IReadOnlyDictionary<Type, IPropertyMetadata> defaultMetadataDictionary,
+            IReadOnlyDictionary<Type, IObjectMetadata> objectMetadataDictionary,
+            IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadataDictionary)
         {
             _options = (strainerOptionsProvider?.GetStrainerOptions()
                 ?? throw new ArgumentNullException(nameof(strainerOptionsProvider)));

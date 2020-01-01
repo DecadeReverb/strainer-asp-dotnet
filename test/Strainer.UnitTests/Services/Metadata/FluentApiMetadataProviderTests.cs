@@ -1,9 +1,14 @@
 ﻿using FluentAssertions;
+using Fluorite.Extensions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
@@ -262,9 +267,14 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             IStrainerOptionsProvider optionsProvider,
             MetadataMapper mapper)
         {
-            var defaultMetadata = new DefaultMetadataDictionary(mapper.DefaultMetadata);
-            var objectMetadata = new ObjectMetadataDictionary(mapper.ObjectMetadata);
-            var propertyMetadata = new PropertyMetadataDictionary(mapper.PropertyMetadata);
+            var defaultMetadata = mapper.DefaultMetadata.ToReadOnly();
+            var objectMetadata = mapper.ObjectMetadata.ToReadOnly();
+            var propertyMetadata = mapper
+                .PropertyMetadata
+                .Select(pair =>
+                    new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                        pair.Key, pair.Value.ToReadOnly()))
+                .ToReadOnlyDictionary();
             var fluentApiMetadataProvider = new FluentApiMetadataProvider(
                 optionsProvider,
                 defaultMetadata,

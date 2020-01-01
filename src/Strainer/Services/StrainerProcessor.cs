@@ -216,14 +216,15 @@ namespace Fluorite.Strainer.Services
                         }
                         else
                         {
-                            if (Context.CustomMethods.Filter.TryGetMethod<TEntity>(filterTermName, out var customMethod))
+                            if (Context.CustomMethods.Filter.ContainsKey(typeof(TEntity))
+                                && Context.CustomMethods.Filter[typeof(TEntity)].TryGetValue(filterTermName, out var customMethod))
                             {
                                 var context = new CustomFilterMethodContext<TEntity>
                                 {
                                     Source = source,
                                     Term = filterTerm,
                                 };
-                                source = customMethod.Function(context);
+                                source = ((ICustomFilterMethod<TEntity>)customMethod).Function(context);
                             }
                             else
                             {
@@ -386,7 +387,8 @@ namespace Fluorite.Strainer.Services
                 {
                     try
                     {
-                        if (Context.CustomMethods.Sort.TryGetMethod<TEntity>(sortTerm.Name, out var customMethod))
+                        if (Context.CustomMethods.Sort.ContainsKey(typeof(TEntity))
+                            && Context.CustomMethods.Sort[typeof(TEntity)].TryGetValue(sortTerm.Name, out var customMethod))
                         {
                             var context = new CustomSortMethodContext<TEntity>
                             {
@@ -396,7 +398,7 @@ namespace Fluorite.Strainer.Services
                                 Source = source,
                                 Term = sortTerm,
                             };
-                            source = customMethod.Function(context);
+                            source = ((ICustomSortMethod<TEntity>)customMethod).Function(context);
                             sortingPerformed = true;
                         }
                         else

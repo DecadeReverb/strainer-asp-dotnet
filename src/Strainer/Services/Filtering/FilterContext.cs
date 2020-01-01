@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using System;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
@@ -6,7 +8,7 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         public FilterContext(
             IFilterExpressionProvider expressionProvider,
-            IFilterOperatorDictionary filterOperatorsDictionary,
+            IReadOnlyDictionary<string, IFilterOperator> filterOperatorsDictionary,
             IFilterOperatorParser operatorParser,
             IFilterOperatorValidator operatorValidator,
             IFilterTermParser termParser)
@@ -20,7 +22,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public IFilterExpressionProvider ExpressionProvider { get; }
 
-        public IFilterOperatorDictionary OperatorDictionary { get; }
+        public IReadOnlyDictionary<string, IFilterOperator> OperatorDictionary { get; }
 
         public IFilterOperatorParser OperatorParser { get; }
 

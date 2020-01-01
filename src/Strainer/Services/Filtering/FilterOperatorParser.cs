@@ -1,13 +1,14 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
 using System;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterOperatorParser : IFilterOperatorParser
     {
-        private readonly IFilterOperatorDictionary _filterOperators;
+        private readonly IReadOnlyDictionary<string, IFilterOperator> _filterOperators;
 
-        public FilterOperatorParser(IFilterOperatorDictionary filterOperators)
+        public FilterOperatorParser(IReadOnlyDictionary<string, IFilterOperator> filterOperators)
         {
             _filterOperators = filterOperators ?? throw new ArgumentNullException(nameof(filterOperators));
         }

@@ -14,9 +14,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             string input = null;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var dictionary = new FilterOperatorDictionary(filterOperators);
-            var operatorParser = new FilterOperatorParser(dictionary);
-            var parser = new FilterTermParser(operatorParser, dictionary);
+            var operatorParser = new FilterOperatorParser(filterOperators);
+            var parser = new FilterTermParser(operatorParser, filterOperators);
 
             // Act
             var filterTermList = parser.GetParsedTerms(input);
@@ -32,9 +31,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var input = string.Empty;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var dictionary = new FilterOperatorDictionary(filterOperators);
-            var operatorParser = new FilterOperatorParser(dictionary);
-            var parser = new FilterTermParser(operatorParser, dictionary);
+            var operatorParser = new FilterOperatorParser(filterOperators);
+            var parser = new FilterTermParser(operatorParser, filterOperators);
 
             // Act
             var filterTermList = parser.GetParsedTerms(input);
@@ -50,9 +48,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var input = string.Empty;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var dictionary = new FilterOperatorDictionary(filterOperators);
-            var operatorParser = new FilterOperatorParser(dictionary);
-            var parser = new FilterTermParser(operatorParser, dictionary);
+            var operatorParser = new FilterOperatorParser(filterOperators);
+            var parser = new FilterTermParser(operatorParser, filterOperators);
 
             // Act
             var filterTermList = parser.GetParsedTerms(input);

@@ -14,8 +14,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             string symbol = null;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var dictionary = new FilterOperatorDictionary(filterOperators);
-            var parser = new FilterOperatorParser(dictionary);
+            var parser = new FilterOperatorParser(filterOperators);
 
             // Act
             var filterOperator = parser.GetParsedOperator(symbol);
@@ -31,8 +30,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var symbol = string.Empty;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var dictionary = new FilterOperatorDictionary(filterOperators);
-            var parser = new FilterOperatorParser(dictionary);
+            var parser = new FilterOperatorParser(filterOperators);
 
             // Act
             var filterOperator = parser.GetParsedOperator(symbol);
@@ -48,8 +46,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var symbol = " ";
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var dictionary = new FilterOperatorDictionary(filterOperators);
-            var parser = new FilterOperatorParser(dictionary);
+            var parser = new FilterOperatorParser(filterOperators);
 
             // Act
             var filterOperator = parser.GetParsedOperator(symbol);
@@ -64,8 +61,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             // Arrange
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var dictionary = new FilterOperatorDictionary(filterOperators);
-            var parser = new FilterOperatorParser(dictionary);
+            var parser = new FilterOperatorParser(filterOperators);
 
             // Act
             var result = filterOperators.Keys.Select(symbol => parser.GetParsedOperator(symbol));

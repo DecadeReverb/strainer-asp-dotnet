@@ -1,6 +1,8 @@
-﻿using Fluorite.Extensions.Collections.Generic;
-using Fluorite.Strainer.AspNetCore.Services;
+﻿using Fluorite.Strainer.AspNetCore.Services;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
@@ -393,37 +395,49 @@ namespace Fluorite.Extensions.DependencyInjection
                 });
 
                 var customFilerMethods = modules
-                    .SelectMany(module => module.CustomFilterMethods)
-                    .Merge();
+                    .SelectMany(module => module
+                        .CustomFilterMethods
+                        .Select(pair =>
+                            new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
+                                pair.Key, pair.Value.ToReadOnly())))
+                    .Merge()
+                    .ToReadOnly();
                 var customSortMethods = modules
-                    .SelectMany(module => module.CustomSortMethods)
-                    .Merge();
+                     .SelectMany(module => module
+                        .CustomSortMethods
+                        .Select(pair =>
+                            new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
+                                pair.Key, pair.Value.ToReadOnly())))
+                    .Merge()
+                    .ToReadOnly();
                 var defaultMetadata = modules
                     .SelectMany(module => module.DefaultMetadata)
-                    .Merge();
+                    .Merge()
+                    .ToReadOnly();
                 var filterOperators = modules
                     .SelectMany(module => module.FilterOperators)
                     .Union(FilterOperatorMapper.DefaultOperators)
-                    .Merge();
+                    .Merge()
+                    .ToReadOnly();
                 var objectMetadata = modules
-                    .SelectMany(module => module.ObjectMetadata)
-                    .Merge();
+                    .SelectMany(module => module.ObjectMetadata.ToReadOnly())
+                    .Merge()
+                    .ToReadOnly();
                 var propertyMetadata = modules
-                    .SelectMany(module => module.PropertyMetadata)
-                    .Merge();
+                     .SelectMany(module => module
+                        .PropertyMetadata
+                        .Select(pair =>
+                            new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                                pair.Key, pair.Value.ToReadOnly())))
+                    .Merge()
+                    .ToReadOnly();
 
-                services.AddSingleton<ICustomFilterMethodDictionary>(
-                    new CustomFilterMethodDictionary(customFilerMethods, optionsProvider));
-                services.AddSingleton<ICustomSortMethodDictionary>(
-                    new CustomSortMethodDictionary(customSortMethods, optionsProvider));
-                services.AddSingleton<IDefaultMetadataDictionary>(
-                    new DefaultMetadataDictionary(defaultMetadata));
-                services.AddSingleton<IFilterOperatorDictionary>(
-                    new FilterOperatorDictionary(filterOperators));
-                services.AddSingleton<IObjectMetadataDictionary>(
-                    new ObjectMetadataDictionary(objectMetadata));
-                services.AddSingleton<IPropertyMetadataDictionary>(
-                    new PropertyMetadataDictionary(propertyMetadata));
+                services.AddSingleton(customFilerMethods);
+                services.AddSingleton(customSortMethods);
+                services.AddSingleton(defaultMetadata);
+                services.AddSingleton(filterOperators);
+                services.AddSingleton(objectMetadata);
+                services.AddSingleton(propertyMetadata);
             }
         }
     }

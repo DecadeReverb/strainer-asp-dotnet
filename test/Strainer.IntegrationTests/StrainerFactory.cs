@@ -1,11 +1,15 @@
-﻿using Fluorite.Extensions.Collections.Generic;
+﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Fluorite.Strainer.IntegrationTests
@@ -93,32 +97,48 @@ namespace Fluorite.Strainer.IntegrationTests
             });
 
             var customFilerMethods = modules
-                .SelectMany(module => module.CustomFilterMethods)
-                .Merge();
+                .SelectMany(module => module
+                    .CustomFilterMethods
+                    .Select(pair =>
+                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
+                            pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
             var customSortMethods = modules
-                .SelectMany(module => module.CustomSortMethods)
-                .Merge();
+                 .SelectMany(module => module
+                    .CustomSortMethods
+                    .Select(pair =>
+                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
+                            pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
             var defaultMetadata = modules
                 .SelectMany(module => module.DefaultMetadata)
-                .Merge();
+                .Merge()
+                .ToReadOnly();
             var filterOperators = modules
                 .SelectMany(module => module.FilterOperators)
                 .Union(FilterOperatorMapper.DefaultOperators)
-                .Merge();
+                .Merge()
+                .ToReadOnly();
             var objectMetadata = modules
-                .SelectMany(module => module.ObjectMetadata)
-                .Merge();
+                .SelectMany(module => module.ObjectMetadata.ToReadOnly())
+                .Merge()
+                .ToReadOnly();
             var propertyMetadata = modules
-                .SelectMany(module => module.PropertyMetadata)
-                .Merge();
-            var defaultMetadataDictionary = new DefaultMetadataDictionary(defaultMetadata);
-            var objectMetadataDictionary = new ObjectMetadataDictionary(objectMetadata);
-            var propertyMetadataDictionary = new PropertyMetadataDictionary(propertyMetadata);
+                 .SelectMany(module => module
+                    .PropertyMetadata
+                    .Select(pair =>
+                        new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                            pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
+
             var fluentApiMetadataProvider = new FluentApiMetadataProvider(
                 optionsProvider,
-                defaultMetadataDictionary,
-                objectMetadataDictionary,
-                propertyMetadataDictionary);
+                defaultMetadata,
+                objectMetadata,
+                propertyMetadata);
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
@@ -130,14 +150,13 @@ namespace Fluorite.Strainer.IntegrationTests
 
             var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
-            var filterOperatorDictionary = new FilterOperatorDictionary(filterOperators);
-            var filterOperatorParser = new FilterOperatorParser(filterOperatorDictionary);
+            var filterOperatorParser = new FilterOperatorParser(filterOperators);
             var filterTermParser = new FilterTermParser(
                 filterOperatorParser,
-                filterOperatorDictionary);
+                filterOperators);
             var filteringContext = new FilterContext(
                 filterExpressionProvider,
-                filterOperatorDictionary,
+                filterOperators,
                 filterOperatorParser,
                 filterOperatorValidator,
                 filterTermParser);
@@ -152,15 +171,9 @@ namespace Fluorite.Strainer.IntegrationTests
                 sortingWayFormatter,
                 sortTermParser);
 
-            var customFilterMethodsDictionary = new CustomFilterMethodDictionary(
-                customFilerMethods,
-                optionsProvider);
-            var customSortMethodsDictionary = new CustomSortMethodDictionary(
-                customSortMethods,
-                optionsProvider);
             var customMethodsContext = new CustomMethodsContext(
-                customFilterMethodsDictionary,
-                customSortMethodsDictionary);
+                customFilerMethods,
+                customSortMethods);
 
             return new StrainerContext(
                 optionsProvider,
