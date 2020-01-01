@@ -3,6 +3,7 @@ using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -17,9 +18,8 @@ namespace Fluorite.Strainer.UnitTests.AspNetCore
             var services = new ServiceCollection();
             services.AddStrainer(new[] { typeof(TestModule) });
             var serviceProvider = services.BuildServiceProvider();
-            var metadataProvidersWrapper = serviceProvider.GetRequiredService<IMetadataProvidersWrapper>();
-            var fluentApiMetadataProvider = metadataProvidersWrapper
-                .GetMetadataProviders()
+            var metadataProviders = serviceProvider.GetRequiredService<IEnumerable<IMetadataProvider>>();
+            var fluentApiMetadataProvider = metadataProviders
                 .OfType<FluentApiMetadataProvider>()
                 .Single();
 
