@@ -28,7 +28,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var preExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
 
             // Act
-            services.AddStrainer<StrainerProcessor>();
+            services.AddStrainer();
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
@@ -55,7 +55,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var serviceProvider = services.BuildServiceProvider();
 
             // Act
-            services.AddStrainer<StrainerProcessor>(options => options.DefaultPageSize = defaultPageSize);
+            services.AddStrainer(options => options.DefaultPageSize = defaultPageSize);
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
@@ -89,7 +89,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .Build();
 
             // Act
-            services.AddStrainer<StrainerProcessor>(configuration);
+            services.AddStrainer(configuration);
             var serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
@@ -117,7 +117,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var serviceProvider = services.BuildServiceProvider();
 
             // Act
-            services.AddStrainer<StrainerProcessor>(serviceLifetime);
+            services.AddStrainer(serviceLifetime);
             serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var strainerProcessorServiceDescriptor = services.FirstOrDefault(s => s.ServiceType == typeof(IStrainerProcessor));
@@ -140,7 +140,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var services = new ServiceCollection();
 
             // Act
-            services.AddStrainer<StrainerProcessor>();
+            services.AddStrainer();
             var serviceProvider = services.BuildServiceProvider();
             var propertyMetadataProviders = serviceProvider.GetService<IEnumerable<IMetadataProvider>>();
 
@@ -156,7 +156,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var services = new ServiceCollection();
 
             // Act
-            services.AddStrainer<StrainerProcessor>();
+            services.AddStrainer();
             services.AddScoped<IFilterTermParser, TestFilterTermParser>();
             var serviceProvider = services.BuildServiceProvider();
             var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
@@ -178,7 +178,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         {
             // Arrange
             var services = new ServiceCollection();
-            services.AddStrainer<StrainerProcessor>();
+            services.AddStrainer();
             services.AddScoped<ISortingWayFormatter, TestSortingWayFormatter>();
             var serviceProvider = services.BuildServiceProvider();
 

@@ -240,46 +240,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
         }
 
-        // TODO:
-        // Tests below should be working after implementing modules configuration.
-
-        //[Fact]
-        //public void MetadataMapper_Works_For_Object_Attribute()
-        //{
-        //    // Arrange
-        //    var services = new ServiceCollection();
-        //    services.AddStrainer<TestStrainerProcessor>();
-        //    services.AddScoped<MetadataMapper>();
-        //    var serviceProvider = services.BuildServiceProvider();
-
-        //    // Act
-        //    var attributeMetadataProvider = serviceProvider.GetRequiredService<MetadataMapper>();
-        //    var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Post>();
-
-        //    // Assert
-        //    metadatas.Should().NotBeNullOrEmpty();
-        //    metadatas.Should().HaveSameCount(typeof(Post).GetProperties());
-        //    metadatas.First().Name.Should().Be(nameof(Post.Id));
-        //}
-
-        //[Fact]
-        //public void MetadataMapper_Works_For_Property_Attribute()
-        //{
-        //    // Arrange
-        //    var services = new ServiceCollection();
-        //    services.AddStrainer<TestStrainerProcessor>();
-        //    services.AddScoped<MetadataMapper>();
-        //    var serviceProvider = services.BuildServiceProvider();
-
-        //    // Act
-        //    var attributeMetadataProvider = serviceProvider.GetRequiredService<MetadataMapper>();
-        //    var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Comment>();
-
-        //    // Assert
-        //    metadatas.Should().NotBeNullOrEmpty();
-        //    metadatas.Should().HaveSameCount(typeof(Post).GetProperties());
-        //}
-
         [Fact]
         public void GetPropertyMetadata_Returns_Null_With_FluentApiMetadataSourceType_Disabled()
         {

@@ -145,7 +145,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         {
             // Arrange
             var services = new ServiceCollection();
-            services.AddStrainer<StrainerProcessor>();
+            services.AddStrainer();
             services.AddScoped<AttributeMetadataProvider>();
             var serviceProvider = services.BuildServiceProvider();
 
@@ -164,7 +164,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         {
             // Arrange
             var services = new ServiceCollection();
-            services.AddStrainer<StrainerProcessor>();
+            services.AddStrainer();
             services.AddScoped<AttributeMetadataProvider>();
             var serviceProvider = services.BuildServiceProvider();
 
