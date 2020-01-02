@@ -338,10 +338,6 @@ namespace Fluorite.Strainer.Services.Metadata
                 return null;
             }
 
-            var stringComparisonMethod = _options.IsCaseInsensitiveForNames
-                ? StringComparison.OrdinalIgnoreCase
-                : StringComparison.Ordinal;
-
             var keyValue = modelType
                 .GetProperties()
                 .Select(propertyInfo =>
@@ -358,7 +354,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
                     return (isSortableRequired ? attribute.IsSortable : true)
                         && (isFilterableRequired ? attribute.IsFilterable : true)
-                        && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name, stringComparisonMethod));
+                        && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name));
                 });
 
             if (keyValue.Value != null)

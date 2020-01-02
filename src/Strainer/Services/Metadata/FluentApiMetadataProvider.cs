@@ -141,13 +141,9 @@ namespace Fluorite.Strainer.Services.Metadata
 
             if (_propertyMetadata.TryGetValue(modelType, out var propertyMetadatas))
             {
-                var comparisonMethod = _options.IsCaseInsensitiveForNames
-                    ? StringComparison.OrdinalIgnoreCase
-                    : StringComparison.Ordinal;
-
                 var propertyMetadata = propertyMetadatas.FirstOrDefault(pair =>
                 {
-                    return pair.Key.Equals(name, comparisonMethod)
+                    return pair.Key.Equals(name)
                         && (!isSortableRequired || pair.Value.IsSortable)
                         && (!isFilterableRequired || pair.Value.IsFilterable);
                 }).Value;

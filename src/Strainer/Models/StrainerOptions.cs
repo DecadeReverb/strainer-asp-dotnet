@@ -38,16 +38,16 @@ namespace Fluorite.Strainer.Models
         /// </summary>
         public SortingWay DefaultSortingWay { get; set; } = SortingWay.Ascending;
 
-        /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indictating whether
-        /// Strainer should operatre in case insensitive mode when comparing names.
-        /// <para/>
-        /// This for example affects the way of comparing name of incoming filter
-        /// with property name.
-        /// <para/>
-        /// Defaults to <see langword="false"/>.
-        /// </summary>
-        public bool IsCaseInsensitiveForNames { get; set; } = false;
+        ///// <summary>
+        ///// Gets or sets a <see cref="bool"/> value indictating whether
+        ///// Strainer should operatre in case insensitive mode when comparing names.
+        ///// <para/>
+        ///// This for example affects the way of comparing name of incoming filter
+        ///// with property name.
+        ///// <para/>
+        ///// Defaults to <see langword="false"/>.
+        ///// </summary>
+        //public bool IsCaseInsensitiveForNames { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value indictating whether

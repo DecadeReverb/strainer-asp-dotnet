@@ -16,10 +16,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         public void Mapper_Adds_NewCustomMethod()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
             var customSortMethod = new CustomSortMethod<Uri>
             {
                 Function = context => context
@@ -28,15 +24,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                     .ThenBy(uri => uri.Host),
                 Name = "PortThenHost",
             };
-            var mapper = new CustomSortMethodMapper(optionsProvider);
+            var mapper = new CustomSortMethodMapper();
 
             // Act
             mapper.AddMap(customSortMethod);
-            var result = mapper.GetMethod<Uri>(customSortMethod.Name);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().Be(customSortMethod);
+            mapper.Methods.ContainsKey(typeof(Uri)).Should().BeTrue();
+            mapper.Methods[typeof(Uri)].Should().NotBeEmpty();
+            mapper.Methods[typeof(Uri)].ContainsKey(customSortMethod.Name).Should().BeTrue();
+            mapper.Methods[typeof(Uri)][customSortMethod.Name].Should().Be(customSortMethod);
         }
     }
 }

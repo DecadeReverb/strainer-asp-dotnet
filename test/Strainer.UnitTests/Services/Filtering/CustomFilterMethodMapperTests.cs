@@ -1,9 +1,6 @@
 ﻿using FluentAssertions;
-using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
-using Moq;
 using System;
 using System.Linq;
 using Xunit;
@@ -16,24 +13,21 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         public void Mapper_Adds_NewCustomMethod()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
             var customFilterMethod = new CustomFilterMethod<Uri>
             {
                 Function = context => context.Source.Where(uri => uri.Port == 443),
-                Name = "URIs with HTTP port",
+                Name = "HTTPS",
             };
-            var mapper = new CustomFilterMethodMapper(optionsProvider);
+            var mapper = new CustomFilterMethodMapper();
 
             // Act
             mapper.AddMap(customFilterMethod);
-            var result = mapper.GetMethod<Uri>(customFilterMethod.Name);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().Be(customFilterMethod);
+            mapper.Methods.ContainsKey(typeof(Uri)).Should().BeTrue();
+            mapper.Methods[typeof(Uri)].Should().NotBeEmpty();
+            mapper.Methods[typeof(Uri)].ContainsKey(customFilterMethod.Name).Should().BeTrue();
+            mapper.Methods[typeof(Uri)][customFilterMethod.Name].Should().Be(customFilterMethod);
         }
     }
 }
