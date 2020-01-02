@@ -109,7 +109,14 @@ namespace Fluorite.Extensions.DependencyInjection
                 services.AddOptions<StrainerOptions>();
             }
 
-            services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
+            if (serviceLifetime == ServiceLifetime.Singleton)
+            {
+                services.Add<IStrainerOptionsProvider, AspNetCoreSingletonStrainerOptionsProvider>(serviceLifetime);
+            }
+            else
+            {
+                services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
+            }
 
             services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
             services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
@@ -199,9 +206,6 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Adds Strainer services to the <see cref="IServiceCollection"/>
         /// with a configuration.
         /// </summary>
-        /// <typeparam name="TProcessor">
-        /// The type of Strainer processor used.
-        /// </typeparam>
         /// <param name="services">
         /// Current instance of <see cref="IServiceCollection"/>.
         /// </param>
@@ -302,9 +306,6 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <summary>
         /// Adds Strainer services to the <see cref="IServiceCollection"/>.
         /// </summary>
-        /// <typeparam name="TProcessor">
-        /// The type of Strainer processor used.
-        /// </typeparam>
         /// <param name="services">
         /// Current instance of <see cref="IServiceCollection"/>.
         /// </param>

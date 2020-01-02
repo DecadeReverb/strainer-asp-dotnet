@@ -34,7 +34,10 @@ namespace Fluorite.Strainer.ExampleWebApi
             });
 
             services.AddSwaggerGenWithDefaultOptions();
-            services.AddStrainer(Configuration.GetSection("Strainer"), new[] { typeof(Startup) });
+            services.AddStrainer(
+                Configuration.GetSection("Strainer"),
+                new[] { typeof(Startup) },
+                ServiceLifetime.Singleton);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

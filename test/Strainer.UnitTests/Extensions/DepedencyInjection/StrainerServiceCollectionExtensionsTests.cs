@@ -114,23 +114,24 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             // Arrange
             var serviceLifetime = ServiceLifetime.Singleton;
             var services = new ServiceCollection();
-            var serviceProvider = services.BuildServiceProvider();
 
             // Act
             services.AddStrainer(serviceLifetime);
-            serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
-            var strainerProcessorServiceDescriptor = services.FirstOrDefault(s => s.ServiceType == typeof(IStrainerProcessor));
 
             // Assert
-            postExtensionStrainer
-                .Should()
-                .NotBeNull("Because extension method should add " +
-                        "Strainer to the service collection.");
-            strainerProcessorServiceDescriptor
+            services.FirstOrDefault(s => s.ServiceType == typeof(IStrainerProcessor))
                 .Lifetime
                 .Should()
                 .Be(serviceLifetime);
+            services.BuildServiceProvider()
+                .GetService<IStrainerProcessor>()
+                .Should()
+                .NotBeNull("Because extension method should add " +
+                        "Strainer to the service collection.");
+            services.BuildServiceProvider()
+                .GetService<IStrainerOptionsProvider>()
+                .Should()
+                .NotBeNull();
         }
 
         [Fact]
