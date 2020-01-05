@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.UnitTests.AspNetCore
+namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
 {
-    public class FluentApiMetadataProviderTests
+    public class ModulesConfigurationTests
     {
         [Fact]
         public void FluentApiMetadataProvider_Works_When_Resolved_From_ServiceCollection()
