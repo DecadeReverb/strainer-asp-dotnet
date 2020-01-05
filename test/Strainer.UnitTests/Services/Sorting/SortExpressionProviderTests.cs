@@ -44,8 +44,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 fluentApiMetadataProvider,
             };
-            var metadataProvidersWrapper = new MetadataProvidersWrapper(propertyMetadataProviders);
-            var mainMetadataProvider = new MetadataFacade(metadataProvidersWrapper);
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -83,8 +82,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 fluentApiMetadataProvider,
             };
-            var metadataProvidersWrapper = new MetadataProvidersWrapper(propertyMetadataProviders);
-            var mainMetadataProvider = new MetadataFacade(metadataProvidersWrapper);
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -120,8 +118,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 fluentApiMetadataProvider,
             };
-            var metadataProvidersWrapper = new MetadataProvidersWrapper(propertyMetadataProviders);
-            var mainMetadataProvider = new MetadataFacade(metadataProvidersWrapper);
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -175,8 +172,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                 attributeMetadataProvider,
                 fluentApiMetadataProvider,
             };
-            var metadataProvidersWrapper = new MetadataProvidersWrapper(propertyMetadataProviders);
-            var mainMetadataProvider = new MetadataFacade(metadataProvidersWrapper);
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act

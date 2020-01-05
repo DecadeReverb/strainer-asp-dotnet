@@ -7,18 +7,18 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public class MetadataFacade : IMetadataFacade
     {
-        private readonly IMetadataProvidersWrapper _metadataProvidersWrapper;
+        private readonly IEnumerable<IMetadataProvider> _metadataProviders;
 
-        public MetadataFacade(IMetadataProvidersWrapper metadataProvidersWrapper)
+        public MetadataFacade(IEnumerable<IMetadataProvider> metadataProviders)
         {
-            _metadataProvidersWrapper = metadataProvidersWrapper ?? throw new ArgumentNullException(nameof(metadataProvidersWrapper));
+            _metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
         {
             var metadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
 
-            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
+            foreach (var provider in _metadataProviders)
             {
                 var current = provider.GetAllPropertyMetadata();
 
@@ -43,7 +43,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
+            foreach (var provider in _metadataProviders)
             {
                 var metadata = provider.GetDefaultMetadata(modelType);
 
@@ -75,7 +75,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
+            foreach (var provider in _metadataProviders)
             {
                 var metadata = provider.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name);
 
@@ -100,7 +100,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            foreach (var provider in _metadataProvidersWrapper.GetMetadataProviders())
+            foreach (var provider in _metadataProviders)
             {
                 var metadatas = provider.GetPropertyMetadatas(modelType);
 

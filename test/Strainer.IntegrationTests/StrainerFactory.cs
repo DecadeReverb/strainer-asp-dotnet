@@ -145,8 +145,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 fluentApiMetadataProvider,
                 attributeMetadataProvider
             };
-            var metadataProvidersWrapper = new MetadataProvidersWrapper(propertyMetadataProviders);
-            var mainMetadataProvider = new MetadataFacade(metadataProvidersWrapper);
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
 
             var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();

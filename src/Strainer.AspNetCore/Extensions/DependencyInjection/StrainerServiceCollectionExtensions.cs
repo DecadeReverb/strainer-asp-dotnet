@@ -137,7 +137,6 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
             services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
-            services.Add<IMetadataProvidersWrapper, MetadataProvidersWrapper>(serviceLifetime);
             services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
 
             services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
