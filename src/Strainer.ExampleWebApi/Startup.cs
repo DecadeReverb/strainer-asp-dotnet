@@ -1,5 +1,6 @@
 ﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.ExampleWebApi.Data;
+using Fluorite.Strainer.ExampleWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ namespace Fluorite.Strainer.ExampleWebApi
             services.AddSwaggerGenWithDefaultOptions();
             services.AddStrainer(
                 Configuration.GetSection("Strainer"),
-                new[] { typeof(Startup) },
+                new[] { typeof(ExampleWebApiStrainerModule) },
                 ServiceLifetime.Singleton);
         }
 

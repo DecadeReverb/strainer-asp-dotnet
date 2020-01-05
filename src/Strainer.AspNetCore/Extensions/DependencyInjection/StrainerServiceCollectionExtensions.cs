@@ -36,29 +36,7 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            return services.AddStrainer(Enumerable.Empty<Assembly>(), serviceLifetime);
-        }
-
-        public static IStrainerBuilder AddStrainer(
-            this IServiceCollection services,
-            IEnumerable<Type> moduleAssemblyMarkerTypes,
-            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
-        {
-            if (services is null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (moduleAssemblyMarkerTypes is null)
-            {
-                throw new ArgumentNullException(nameof(moduleAssemblyMarkerTypes));
-            }
-
-            var assemblies = moduleAssemblyMarkerTypes
-                .Distinct()
-                .Select(type => type.Assembly);
-
-            return services.AddStrainer(assemblies, serviceLifetime);
+            return services.AddStrainer(Enumerable.Empty<Type>(), serviceLifetime);
         }
 
         /// <summary>
@@ -83,7 +61,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// </exception>
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
-            IEnumerable<Assembly> moduleAssemblies,
+            IEnumerable<Type> moduleTypes,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -91,9 +69,9 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (moduleAssemblies is null)
+            if (moduleTypes is null)
             {
-                throw new ArgumentNullException(nameof(moduleAssemblies));
+                throw new ArgumentNullException(nameof(moduleTypes));
             }
 
             if (services.Any(d => d.ServiceType == typeof(IStrainerProcessor)))
@@ -145,7 +123,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             try
             {
-                AddModulesConfiguration(services, moduleAssemblies);
+                AddModulesConfiguration(services, moduleTypes);
             }
             catch (Exception ex)
             {
@@ -176,7 +154,7 @@ namespace Fluorite.Extensions.DependencyInjection
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
-            IEnumerable<Type> moduleAssemblyMarkerTypes,
+            IEnumerable<Type> moduleTypes,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services is null)
@@ -184,9 +162,9 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (moduleAssemblyMarkerTypes is null)
+            if (moduleTypes is null)
             {
-                throw new ArgumentNullException(nameof(moduleAssemblyMarkerTypes));
+                throw new ArgumentNullException(nameof(moduleTypes));
             }
 
             if (configuration is null)
@@ -194,7 +172,7 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var assemblies = moduleAssemblyMarkerTypes
+            var assemblies = moduleTypes
                 .Distinct()
                 .Select(type => type.Assembly);
 
@@ -251,7 +229,8 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Configure<StrainerOptions>(configuration);
 
-            var builder = services.AddStrainer(moduleAssemblies, serviceLifetime);
+            var moduleTypes = GetTypesFromAssemblies(moduleAssemblies);
+            var builder = services.AddStrainer(moduleTypes, serviceLifetime);
 
             return builder;
         }
@@ -277,7 +256,7 @@ namespace Fluorite.Extensions.DependencyInjection
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
-            IEnumerable<Type> moduleAssemblyMarkerTypes,
+            IEnumerable<Type> moduleTypes,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services is null)
@@ -285,9 +264,9 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (moduleAssemblyMarkerTypes is null)
+            if (moduleTypes is null)
             {
-                throw new ArgumentNullException(nameof(moduleAssemblyMarkerTypes));
+                throw new ArgumentNullException(nameof(moduleTypes));
             }
 
             if (configure is null)
@@ -295,7 +274,7 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configure));
             }
 
-            var assemblies = moduleAssemblyMarkerTypes
+            var assemblies = moduleTypes
                 .Distinct()
                 .Select(type => type.Assembly);
 
@@ -351,9 +330,15 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.AddOptions<StrainerOptions>().Configure(configure);
 
-            var builder = services.AddStrainer(moduleAssemblies, serviceLifetime);
+            var assemblyTypes = GetTypesFromAssemblies(moduleAssemblies);
+            var builder = services.AddStrainer(assemblyTypes, serviceLifetime);
 
             return builder;
+        }
+
+        private static object GetModuleTypes()
+        {
+            throw new NotImplementedException();
         }
 
         private static void Add<TServiceType, TImplementationType>(
@@ -369,20 +354,30 @@ namespace Fluorite.Extensions.DependencyInjection
             return services.Any(d => d.ServiceType == typeof(TImplementationType));
         }
 
+        private static IEnumerable<Type> GetTypesFromAssemblies(IEnumerable<Assembly> assemblies)
+        {
+            return assemblies
+                .Distinct()
+                .Where(a => a.GetReferencedAssemblies()
+                    .All(name => !name.FullName.StartsWith("Microsoft.IntelliTrace.Core")))
+                .SelectMany(a => a.GetTypes())
+                .SelectMany(type => new[] { type }.Union(type.GetNestedTypes()));
+        }
+
         private static void AddModulesConfiguration(
             IServiceCollection services,
-            IEnumerable<Assembly> moduleAssemblies)
+            IEnumerable<Type> moduleTypes)
         {
             using (var serviceProvider = services.BuildServiceProvider())
             {
                 var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
+                var options = optionsProvider.GetStrainerOptions();
 
-                var modules = moduleAssemblies
-                    .Distinct()
-                    .Where(a => a.GetReferencedAssemblies()
-                        .All(name => !name.FullName.StartsWith("Microsoft.IntelliTrace.Core")))
-                    .SelectMany(a => a.GetTypes())
-                    .SelectMany(type => new[] { type }.Union(type.GetNestedTypes()))
+                // TODO:
+                // Validation of passed types?
+                // Throw exception for a type not being a module?
+
+                var modules = moduleTypes
                     .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)))
                     .Select(type => Activator.CreateInstance(type) as StrainerModule)
                     .Where(instance => instance != null)
@@ -390,7 +385,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
                 modules.ForEach(strainerModule =>
                 {
-                    strainerModule.Options = optionsProvider.GetStrainerOptions();
+                    strainerModule.Options = options;
                     strainerModule.Load();
                 });
 

@@ -12,11 +12,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
     public class ModulesConfigurationTests
     {
         [Fact]
-        public void FluentApiMetadataProvider_Works_When_Resolved_From_ServiceCollection()
+        public void ModuleConfiguration_Works_For_Adding_Property()
         {
             // Arrange
             var services = new ServiceCollection();
-            services.AddStrainer(new[] { typeof(TestModule) });
+            services.AddStrainer(new[] { typeof(PropertyTestModule) });
             var serviceProvider = services.BuildServiceProvider();
             var metadataProviders = serviceProvider.GetRequiredService<IEnumerable<IMetadataProvider>>();
             var fluentApiMetadataProvider = metadataProviders
@@ -37,12 +37,10 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
             public int Id { get; set; }
         }
 
-        private class TestModule : StrainerModule
+        private class PropertyTestModule : StrainerModule
         {
             public override void Load()
             {
-                base.Load();
-
                 AddProperty<Post>(post => post.Id)
                     .IsFilterable()
                     .IsSortable()
