@@ -19,10 +19,10 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
         public override void Load()
         {
             AddCustomFilterMethod<Post>(nameof(IsNew))
-                .WithFunction(IsNew);
+                .HasExpression(IsNew);
 
             AddCustomSortMethod<Post>(nameof(Popularity))
-                .WithFunction(Popularity);
+                .HasExpression(Popularity);
 
             AddFilterOperator(symbol: "%")
                 .HasName("modulo equal zero")

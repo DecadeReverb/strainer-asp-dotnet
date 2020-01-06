@@ -325,7 +325,7 @@ In order to add custom sort or filter methods, override appropriate mapping meth
 protected override void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
 {
     mapper.CustomMethod<Post>(nameof(IsPopular))
-        .WithFunction(IsPopular);
+        .HasExpression(IsPopular);
 }
 
 private IQueryable<Post> IsPopular(ICustomFilterMethodContext<Post> context)
@@ -338,7 +338,7 @@ private IQueryable<Post> IsPopular(ICustomFilterMethodContext<Post> context)
 protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
 {
     mapper.CustomMethod<Post>(nameof(Popularity))
-        .WithFunction(Popularity);
+        .HasExpression(Popularity);
 }
 
 private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)

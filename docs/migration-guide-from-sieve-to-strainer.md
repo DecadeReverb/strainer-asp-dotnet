@@ -112,7 +112,7 @@ public class ApplicationStrainerProcessor : StrainerProcessor
     protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
     {
         mapper.CustomMethod<Post>(nameof(Popularity))
-            .WithFunction(Popularity);
+            .HasExpression(Popularity);
     }
 
     private IQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
@@ -126,7 +126,7 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 }
 ```
 
-In `MapCustomSortMethods()` a custom sorting method for `Post` entity is added with a name _"Popularity"_. Then a transforming function is specified. Although `WithFunction()` method requires an argument of `Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>>`, you can easily provide a whole method which returns an `IQueryable` and has an `ICustomSortMethodContext` parameter. In that way you can seperete your sorting logic in a dedicated method which can be made private.
+In `MapCustomSortMethods()` a custom sorting method for `Post` entity is added with a name _"Popularity"_. Then a transforming function is specified. Although `HasExpression()` method requires an argument of `Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>>`, you can easily provide a whole method which returns an `IQueryable` and has an `ICustomSortMethodContext` parameter. In that way you can seperete your sorting logic in a dedicated method which can be made private.
 
 `MapCustomSortMethods()` will be called on `StrainerProcessor` initialization, alongside with other similar methods like `MapCustomFilterMethods()`.
 

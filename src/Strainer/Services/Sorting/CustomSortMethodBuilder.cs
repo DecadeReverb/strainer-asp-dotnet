@@ -37,7 +37,7 @@ namespace Fluorite.Strainer.Services.Sorting
             Name = Name,
         };
 
-        public ICustomSortMethodBuilder<TEntity> WithFunction(
+        public ICustomSortMethodBuilder<TEntity> HasExpression(
             Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));

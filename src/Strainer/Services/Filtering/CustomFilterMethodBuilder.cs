@@ -37,7 +37,7 @@ namespace Fluorite.Strainer.Services.Filtering
             Name = Name,
         };
 
-        public ICustomFilterMethodBuilder<TEntity> WithFunction(
+        public ICustomFilterMethodBuilder<TEntity> HasExpression(
             Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> function)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));

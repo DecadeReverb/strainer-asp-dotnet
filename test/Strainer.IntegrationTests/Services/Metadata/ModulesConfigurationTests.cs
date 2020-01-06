@@ -3,7 +3,6 @@ using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.Extensions.DependencyInjection;
@@ -151,10 +150,10 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
                     .HasExpression(context => Expression.Constant(true));
 
                 AddCustomFilterMethod<Post>("TestCustomFilterMethod")
-                    .WithFunction(context => context.Source.Where(post => post.Id == 1));
+                    .HasExpression(context => context.Source.Where(post => post.Id == 1));
 
                 AddCustomSortMethod<Post>("TestCustomSortMethod")
-                    .WithFunction(context => context.Source.OrderBy(post => post.Id));
+                    .HasExpression(context => context.Source.OrderBy(post => post.Id));
             }
         }
     }

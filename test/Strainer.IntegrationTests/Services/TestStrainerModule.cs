@@ -17,16 +17,16 @@ namespace Fluorite.Strainer.IntegrationTests.Services
         public override void Load()
         {
             AddCustomFilterMethod<Post>(nameof(IsPopular))
-               .WithFunction(IsPopular);
+               .HasExpression(IsPopular);
             AddCustomFilterMethod<Post>(nameof(HasInTitle))
-                .WithFunction(HasInTitle);
+                .HasExpression(HasInTitle);
             AddCustomFilterMethod<Comment>(nameof(IsNew))
-                .WithFunction(IsNew);
+                .HasExpression(IsNew);
             AddCustomFilterMethod<Comment>(nameof(TestComment))
-                .WithFunction(TestComment);
+                .HasExpression(TestComment);
 
             AddCustomSortMethod<Post>(nameof(Popularity))
-                .WithFunction(Popularity);
+                .HasExpression(Popularity);
 
             AddProperty<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .IsSortable()
