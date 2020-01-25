@@ -14,6 +14,6 @@ namespace Fluorite.Strainer.Models.Filtering
         /// <summary>
         /// Gets the function used for custom filtering.
         /// </summary>
-        Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> Function { get; }
+        Func<IQueryable<TEntity>, string, IQueryable<TEntity>> Function { get; }
     }
 }

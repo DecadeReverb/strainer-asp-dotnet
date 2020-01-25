@@ -1,6 +1,4 @@
 ﻿using Fluorite.Strainer.ExampleWebApi.Entities;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,10 +17,12 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
         public override void Load()
         {
             AddCustomFilterMethod<Post>(nameof(IsNew))
-                .HasExpression(IsNew);
+                .HasFunction(IsNew);
+            AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
+                .HasFunction(HasInTitleFilterOperator);
 
             AddCustomSortMethod<Post>(nameof(Popularity))
-                .HasExpression(Popularity);
+                .HasFunction(Popularity);
 
             AddFilterOperator(symbol: "%")
                 .HasName("modulo equal zero")
@@ -35,15 +35,17 @@ namespace Fluorite.Strainer.ExampleWebApi.Services
                 .IsSortable();
         }
 
-        private IQueryable<Post> IsNew(ICustomFilterMethodContext<Post> context)
-            => context.Source.Where(p => EF.Functions.DateDiffDay(DateTime.Now, p.DateCreated) < 7);
+        private IQueryable<Post> HasInTitleFilterOperator(IQueryable<Post> source, string filterOperator)
+            => source.Where(p => p.Title.Contains(filterOperator));
 
-        private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
+        private IQueryable<Post> IsNew(IQueryable<Post> source, string filterOperator)
+            => source.Where(p => EF.Functions.DateDiffDay(DateTime.Now, p.DateCreated) < 7);
+
+        private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
         {
-            return context.IsSubsequent
-                ? context.OrderedSource.ThenBy(p => p.LikeCount)
-                : context.Source.OrderBy(p => p.LikeCount)
-                    .ThenBy(p => p.Comments.Count)
+            return isSubsequent
+                ? (source as IOrderedQueryable<Post>).ThenByDescending(p => p.LikeCount)
+                : source.OrderByDescending(p => p.LikeCount)
                     .ThenByDescending(p => p.DateCreated);
         }
     }

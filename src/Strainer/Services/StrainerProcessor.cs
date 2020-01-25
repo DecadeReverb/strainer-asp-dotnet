@@ -219,12 +219,7 @@ namespace Fluorite.Strainer.Services
                             if (Context.CustomMethods.Filter.ContainsKey(typeof(TEntity))
                                 && Context.CustomMethods.Filter[typeof(TEntity)].TryGetValue(filterTermName, out var customMethod))
                             {
-                                var context = new CustomFilterMethodContext<TEntity>
-                                {
-                                    Source = source,
-                                    Term = filterTerm,
-                                };
-                                source = ((ICustomFilterMethod<TEntity>)customMethod).Function(context);
+                                source = (customMethod as ICustomFilterMethod<TEntity>).Function(source, filterTerm.Operator?.Symbol);
                             }
                             else
                             {
@@ -390,15 +385,7 @@ namespace Fluorite.Strainer.Services
                         if (Context.CustomMethods.Sort.ContainsKey(typeof(TEntity))
                             && Context.CustomMethods.Sort[typeof(TEntity)].TryGetValue(sortTerm.Name, out var customMethod))
                         {
-                            var context = new CustomSortMethodContext<TEntity>
-                            {
-                                IsDescending = sortTerm.IsDescending,
-                                IsSubsequent = isSubsequent,
-                                OrderedSource = isSubsequent ? (IOrderedQueryable<TEntity>)source : null,
-                                Source = source,
-                                Term = sortTerm,
-                            };
-                            source = ((ICustomSortMethod<TEntity>)customMethod).Function(context);
+                            source = (customMethod as ICustomSortMethod<TEntity>).Function(source, sortTerm.IsDescending, isSubsequent);
                             sortingPerformed = true;
                         }
                         else

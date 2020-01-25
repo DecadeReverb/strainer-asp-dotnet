@@ -23,6 +23,6 @@ namespace Fluorite.Strainer.Models.Sorting
         /// <summary>
         /// Gets or sets the function used for custom sorting.
         /// </summary>
-        public Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> Function { get; set; }
+        public Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> Function { get; set; }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using FluentAssertions;
-using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
-using Moq;
 using System;
 using System.Linq;
 using Xunit;
@@ -18,8 +15,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             // Arrange
             var customSortMethod = new CustomSortMethod<Uri>
             {
-                Function = context => context
-                    .Source
+                Function = (source, isDescending, isSubsequent) => source
                     .OrderBy(uri => uri.Port)
                     .ThenBy(uri => uri.Host),
                 Name = "PortThenHost",

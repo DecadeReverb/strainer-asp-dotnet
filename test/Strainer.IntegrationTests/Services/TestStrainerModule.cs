@@ -17,16 +17,16 @@ namespace Fluorite.Strainer.IntegrationTests.Services
         public override void Load()
         {
             AddCustomFilterMethod<Post>(nameof(IsPopular))
-               .HasExpression(IsPopular);
-            AddCustomFilterMethod<Post>(nameof(HasInTitle))
-                .HasExpression(HasInTitle);
+               .HasFunction(IsPopular);
+            AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
+                .HasFunction(HasInTitleFilterOperator);
             AddCustomFilterMethod<Comment>(nameof(IsNew))
-                .HasExpression(IsNew);
+                .HasFunction(IsNew);
             AddCustomFilterMethod<Comment>(nameof(TestComment))
-                .HasExpression(TestComment);
+                .HasFunction(TestComment);
 
             AddCustomSortMethod<Post>(nameof(Popularity))
-                .HasExpression(Popularity);
+                .HasFunction(Popularity);
 
             AddProperty<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .IsSortable()
@@ -57,36 +57,36 @@ namespace Fluorite.Strainer.IntegrationTests.Services
         }
 
         #region custom filter methods
-        private IQueryable<Post> IsPopular(ICustomFilterMethodContext<Post> context)
+        private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperator)
         {
-            return context.Source.Where(p => p.LikeCount > 100);
+            return source.Where(p => p.LikeCount > 100);
         }
 
-        private IQueryable<Post> HasInTitle(ICustomFilterMethodContext<Post> context)
+        private IQueryable<Post> HasInTitleFilterOperator(IQueryable<Post> source, string filterOperator)
         {
-            return context.Source.Where(p => p.Title.Contains(context.Term.Values[0]));
+            return source.Where(p => p.Title.Contains(filterOperator));
         }
 
-        private IQueryable<Comment> IsNew(ICustomFilterMethodContext<Comment> context)
+        private IQueryable<Comment> IsNew(IQueryable<Comment> source, string filterOperator)
         {
-            return context.Source.Where(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
+            return source.Where(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
         }
 
-        private IQueryable<Comment> TestComment(ICustomFilterMethodContext<Comment> context)
+        private IQueryable<Comment> TestComment(IQueryable<Comment> source, string filterOperator)
         {
-            return context.Source;
+            return source;
         }
         #endregion
 
         #region custom sort methods
-        private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
+        private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
         {
-            return context.IsSubsequent
-                ? context.OrderedSource
+            return isSubsequent
+                ? (source as IOrderedQueryable<Post>)
                     .ThenBy(p => p.LikeCount)
                     .ThenBy(p => p.CommentCount)
                     .ThenBy(p => p.DateCreated)
-                : context.Source
+                : source
                     .OrderBy(p => p.LikeCount)
                     .ThenBy(p => p.CommentCount)
                     .ThenBy(p => p.DateCreated);

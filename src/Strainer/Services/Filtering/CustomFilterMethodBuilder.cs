@@ -24,10 +24,9 @@ namespace Fluorite.Strainer.Services.Filtering
             _customMethods = customFilterMethodsDictionary
                 ?? throw new ArgumentNullException(nameof(customFilterMethodsDictionary));
             Name = name;
-            Function = context => context.Source;
         }
 
-        protected Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> Function { get; set; }
+        protected Func<IQueryable<TEntity>, string, IQueryable<TEntity>> Function { get; set; }
 
         protected string Name { get; set; }
 
@@ -37,8 +36,8 @@ namespace Fluorite.Strainer.Services.Filtering
             Name = Name,
         };
 
-        public ICustomFilterMethodBuilder<TEntity> HasExpression(
-            Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> function)
+        public ICustomFilterMethodBuilder<TEntity> HasFunction(
+            Func<IQueryable<TEntity>, string, IQueryable<TEntity>> function)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
 

@@ -82,7 +82,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
             // Arrange
             var services = new ServiceCollection();
             services.AddStrainer(new[] { typeof(PropertyTestModule) });
-            var customMethodName = "TestCustomFilterMethod";
+            var customMethodName = nameof(PropertyTestModule.TestCustomFilterMethod);
             var serviceProvider = services.BuildServiceProvider();
             var customFilterMethods = serviceProvider
                 .GetRequiredService<IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>>();
@@ -149,11 +149,21 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
                     .HasName("hash")
                     .HasExpression(context => Expression.Constant(true));
 
-                AddCustomFilterMethod<Post>("TestCustomFilterMethod")
-                    .HasExpression(context => context.Source.Where(post => post.Id == 1));
+                AddCustomFilterMethod<Post>(nameof(TestCustomFilterMethod))
+                    .HasFunction(TestCustomFilterMethod);
 
-                AddCustomSortMethod<Post>("TestCustomSortMethod")
-                    .HasExpression(context => context.Source.OrderBy(post => post.Id));
+                AddCustomSortMethod<Post>(nameof(TestCustomSortMethod))
+                    .HasFunction(TestCustomSortMethod);
+            }
+
+            public IQueryable<Post> TestCustomSortMethod(IQueryable<Post> source, bool isDescending, bool isSubsequent)
+            {
+                return source.OrderBy(post => post.Id);
+            }
+
+            public IQueryable<Post> TestCustomFilterMethod(IQueryable<Post> source, string filterOperator)
+            {
+                return source.Where(post => post.Id == 1);
             }
         }
     }

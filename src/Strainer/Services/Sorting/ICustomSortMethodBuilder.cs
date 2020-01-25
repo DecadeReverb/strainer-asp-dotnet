@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Sorting
     {
         ICustomSortMethod<TEntity> Build();
 
-        ICustomSortMethodBuilder<TEntity> HasExpression(
-            Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function);
+        ICustomSortMethodBuilder<TEntity> HasFunction(
+            Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> function);
     }
 }

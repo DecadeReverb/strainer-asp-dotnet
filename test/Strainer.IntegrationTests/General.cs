@@ -41,7 +41,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 new Post() {
                     Id = 0,
-                    Title = "A",
+                    Title = "A==",
                     LikeCount = 200,
                     IsDraft = true,
                     CategoryId = 2,
@@ -205,7 +205,7 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "HasInTitle==A",
+                Filters = "HasInTitleFilterOperator==",
             };
             var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
@@ -213,7 +213,7 @@ namespace Fluorite.Strainer.IntegrationTests
             var result = processor.Apply(model, _posts);
 
             // Assert
-            result.Should().OnlyContain(p => p.Title.Contains("A"));
+            result.Should().OnlyContain(p => p.Title.Contains("=="));
         }
 
         [Fact]

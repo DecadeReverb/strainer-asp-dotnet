@@ -24,6 +24,8 @@ namespace Fluorite.Strainer.ExampleWebApi.Entities
 
         public int LikeCount { get; set; }
 
+        public string Symbol { get; set; }
+
         public string Title { get; set; }
     }
 }

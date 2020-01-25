@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         ICustomFilterMethod<TEntity> Build();
 
-        ICustomFilterMethodBuilder<TEntity> HasExpression(
-            Func<ICustomFilterMethodContext<TEntity>, IQueryable<TEntity>> function);
+        ICustomFilterMethodBuilder<TEntity> HasFunction(
+            Func<IQueryable<TEntity>, string, IQueryable<TEntity>> function);
     }
 }

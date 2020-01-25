@@ -24,10 +24,9 @@ namespace Fluorite.Strainer.Services.Sorting
             _customMethods = customFilterMethodsDictionary
                 ?? throw new ArgumentNullException(nameof(customFilterMethodsDictionary));
             Name = name;
-            Function = context => context.Source;
         }
 
-        protected Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> Function { get; set; }
+        protected Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> Function { get; set; }
 
         protected string Name { get; set; }
 
@@ -37,8 +36,8 @@ namespace Fluorite.Strainer.Services.Sorting
             Name = Name,
         };
 
-        public ICustomSortMethodBuilder<TEntity> HasExpression(
-            Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function)
+        public ICustomSortMethodBuilder<TEntity> HasFunction(
+            Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> function)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
 
