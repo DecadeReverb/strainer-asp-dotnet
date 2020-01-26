@@ -6,6 +6,7 @@ using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,26 +25,17 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         {
             // Arrange
             var services = new ServiceCollection();
-            var serviceProvider = services.BuildServiceProvider();
-            var preExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
 
             // Act
             services.AddStrainer();
-            serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
-            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
+            var serviceProvider = services.BuildServiceProvider();
+            var processor = serviceProvider.GetService<IStrainerProcessor>();
 
             // Assert
-            preExtensionStrainer
-                .Should()
-                .BeNull("Because Strainer has not been registered yet.");
-            postExtensionStrainer
+            processor
                 .Should()
                 .NotBeNull("Because extension method should add " +
                         "Strainer to the service collection.");
-            postExtensionStrainerOptions
-                .Should()
-                .NotBeNull();
         }
 
         [Fact]
@@ -52,23 +44,14 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             // Arrange
             var defaultPageSize = 20;
             var services = new ServiceCollection();
-            var serviceProvider = services.BuildServiceProvider();
 
             // Act
             services.AddStrainer(options => options.DefaultPageSize = defaultPageSize);
-            serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
-            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
+            var serviceProvider = services.BuildServiceProvider();
+            var strainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
 
             // Assert
-            postExtensionStrainer
-                .Should()
-                .NotBeNull("Because extension method should add " +
-                        "Strainer to the service collection.");
-            postExtensionStrainerOptions
-                .Should()
-                .NotBeNull();
-            postExtensionStrainerOptions
+            strainerOptions
                 .DefaultPageSize
                 .Should()
                 .Be(defaultPageSize);
@@ -91,17 +74,9 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             // Act
             services.AddStrainer(configuration);
             var serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
 
             // Assert
-            postExtensionStrainer
-                .Should()
-                .NotBeNull("Because extension method should add " +
-                        "Strainer to the service collection.");
-            postExtensionStrainerOptions
-                .Should()
-                .NotBeNull();
             postExtensionStrainerOptions
                 .DefaultPageSize
                 .Should()
@@ -123,15 +98,44 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .Lifetime
                 .Should()
                 .Be(serviceLifetime);
-            services.BuildServiceProvider()
-                .GetService<IStrainerProcessor>()
-                .Should()
-                .NotBeNull("Because extension method should add " +
-                        "Strainer to the service collection.");
-            services.BuildServiceProvider()
-                .GetService<IStrainerOptionsProvider>()
+        }
+
+        [Fact]
+        public void ExtensionMethod_AddsStrainerConfiguration_From_Modules_Even_Not_Directly_Deriving_From_StrainerModule_Class()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddStrainer(new[] { typeof(DerivedModule) });
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Assert
+            serviceProvider
+                .GetService<IMetadataFacade>()
+                .GetDefaultMetadata<Post>()
                 .Should()
                 .NotBeNull();
+        }
+
+        [Fact]
+        public void ExtensionMethod_Throws_When_Passed_Not_A_Strainer_Module_Type()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => services.AddStrainer(new[] { typeof(Exception) }));
+        }
+
+        [Fact]
+        public void ExtensionMethod_Throws_When_Passed_Abstract_Module_Type()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => services.AddStrainer(new[] { typeof(BaseModule) }));
         }
 
         [Fact]
@@ -160,14 +164,9 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             services.AddStrainer();
             services.AddScoped<IFilterTermParser, TestFilterTermParser>();
             var serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainer = serviceProvider.GetService<IStrainerProcessor>();
             var postExtensionFilterTermParser = serviceProvider.GetService<IFilterTermParser>();
 
             // Assert
-            postExtensionStrainer
-                .Should()
-                .NotBeNull("Because extension method should add " +
-                        "Strainer to the service collection.");
             postExtensionFilterTermParser
                 .Should()
                 .BeAssignableTo<TestFilterTermParser>(
@@ -188,6 +187,24 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Assert
             formatter.Should().BeAssignableTo<TestSortingWayFormatter>();
+        }
+
+        private abstract class BaseModule : StrainerModule
+        {
+
+        }
+
+        private class DerivedModule : BaseModule
+        {
+            public override void Load()
+            {
+                AddObject<Post>(p => p.Title);
+            }
+        }
+
+        private class Post
+        {
+            public string Title { get; set; }
         }
 
         private class TestFilterTermParser : IFilterTermParser

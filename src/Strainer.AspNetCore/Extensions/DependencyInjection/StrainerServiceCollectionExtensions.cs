@@ -373,12 +373,22 @@ namespace Fluorite.Extensions.DependencyInjection
                 var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
                 var options = optionsProvider.GetStrainerOptions();
 
-                // TODO:
-                // Validation of passed types?
-                // Throw exception for a type not being a module?
+                var validModuleTypes = moduleTypes
+                    .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)));
 
-                var modules = moduleTypes
-                    .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)))
+                var invalidModuleTypes = moduleTypes.Except(validModuleTypes);
+
+                if (invalidModuleTypes.Any())
+                {
+                    throw new InvalidOperationException(
+                        string.Format(
+                                "Valid Strainer Module cannot be an abstract class and must be deriving from {0}. " +
+                                "Invalid types:\n{1}",
+                            typeof(StrainerModule).FullName,
+                            string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
+                }
+
+                var modules = validModuleTypes
                     .Select(type => Activator.CreateInstance(type) as StrainerModule)
                     .Where(instance => instance != null)
                     .ToList();
