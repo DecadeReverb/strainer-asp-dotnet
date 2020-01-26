@@ -1,24 +1,10 @@
-﻿using System;
-using System.Linq;
-
-namespace Fluorite.Strainer.Models.Sorting
+﻿namespace Fluorite.Strainer.Models.Sorting
 {
-    /// <summary>
-    /// Represents custom sort method.
-    /// </summary>
-    /// <typeparam name="TEntity">
-    /// The type of entity processed by the custom method.
-    /// </typeparam>
-    public interface ICustomSortMethod<TEntity>
+    public interface ICustomSortMethod
     {
         /// <summary>
-        /// Gets the function used for custom sorting.
+        /// Gets or sets the custom method name.
         /// </summary>
-        Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> Function { get; }
-
-        /// <summary>
-        /// Gets the custom method name.
-        /// </summary>
-        string Name { get; }
+        string Name { get; set; }
     }
 }

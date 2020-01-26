@@ -1,6 +1,7 @@
-﻿using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Sorting;
+﻿using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Sorting;
 using System;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services
 {
@@ -12,31 +13,34 @@ namespace Fluorite.Strainer.Services
         /// <summary>
         /// Initializes a new instance of <see cref="CustomMethodsContext"/> class.
         /// </summary>
-        /// <param name="optionsProvider">
-        /// The Strainer options provider.
+        /// <param name="customFilterMethods">
+        /// The custom filter methods dictionary.
+        /// </param>
+        /// <param name="customSortMethods">
+        /// The custom sort methods dictionary.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="optionsProvider"/> is <see langword="null"/>.
+        /// <paramref name="customFilterMethods"/> is <see langword="null"/>.
         /// </exception>
-        public CustomMethodsContext(IStrainerOptionsProvider optionsProvider)
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="customSortMethods"/> is <see langword="null"/>.
+        /// </exception>
+        public CustomMethodsContext(
+            IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> customFilterMethods,
+            IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> customSortMethods)
         {
-            if (optionsProvider == null)
-            {
-                throw new ArgumentNullException(nameof(optionsProvider));
-            }
-
-            Filter = new CustomFilterMethodMapper(optionsProvider);
-            Sort = new CustomSortMethodMapper(optionsProvider);
+            Filter = customFilterMethods ?? throw new ArgumentNullException(nameof(customFilterMethods));
+            Sort = customSortMethods ?? throw new ArgumentNullException(nameof(customSortMethods));
         }
 
         /// <summary>
-        /// Gets the custom filter method mapper.
+        /// Gets the custom filter method dictionary.
         /// </summary>
-        public ICustomFilterMethodMapper Filter { get; }
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> Filter { get; }
 
         /// <summary>
-        /// Gets the custom sort method mapper.
+        /// Gets the custom sort method dictionary.
         /// </summary>
-        public ICustomSortMethodMapper Sort { get; }
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> Sort { get; }
     }
 }

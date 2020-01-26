@@ -2,26 +2,28 @@
 using Fluorite.Strainer.Models.Metadata;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public class MetadataMapper : IMetadataMapper, IPropertyMetadataProvider
+    public class MetadataMapper : IMetadataMapper
     {
-        private readonly Dictionary<Type, IPropertyMetadata> _defaultPropertyMetadata;
-        private readonly Dictionary<Type, IDictionary<string, IPropertyMetadata>> _propertyMetadata;
-        private readonly Dictionary<Type, IObjectMetadata> _objectMetadata;
         private readonly StrainerOptions _options;
 
         public MetadataMapper(IStrainerOptionsProvider optionsProvider)
         {
-            _defaultPropertyMetadata = new Dictionary<Type, IPropertyMetadata>();
-            _propertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
-            _objectMetadata = new Dictionary<Type, IObjectMetadata>();
+            DefaultMetadata = new Dictionary<Type, IPropertyMetadata>();
+            PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
+            ObjectMetadata = new Dictionary<Type, IObjectMetadata>();
             _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
         }
+
+        public IDictionary<Type, IPropertyMetadata> DefaultMetadata { get; }
+
+        public IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
+
+        public IDictionary<Type, IObjectMetadata> ObjectMetadata { get; }
 
         public void AddObjectMetadata<TEntity>(IObjectMetadata objectMetadata)
         {
@@ -39,7 +41,7 @@ namespace Fluorite.Strainer.Services.Metadata
                     $"be able to use it.");
             }
 
-            _objectMetadata[typeof(TEntity)] = objectMetadata;
+            ObjectMetadata[typeof(TEntity)] = objectMetadata;
         }
 
         public void AddPropertyMetadata<TEntity>(IPropertyMetadata propertyMetadata)
@@ -58,147 +60,26 @@ namespace Fluorite.Strainer.Services.Metadata
                     $"be able to use it.");
             }
 
-            if (!_propertyMetadata.ContainsKey(typeof(TEntity)))
+            if (!PropertyMetadata.ContainsKey(typeof(TEntity)))
             {
-                _propertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
+                PropertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
             }
 
             if (propertyMetadata.IsDefaultSorting)
             {
-                _defaultPropertyMetadata[typeof(TEntity)] = propertyMetadata;
+                DefaultMetadata[typeof(TEntity)] = propertyMetadata;
             }
 
             var metadataKey = propertyMetadata.DisplayName ?? propertyMetadata.Name;
 
-            _propertyMetadata[typeof(TEntity)][metadataKey] = propertyMetadata;
+            PropertyMetadata[typeof(TEntity)][metadataKey] = propertyMetadata;
         }
 
-        public IPropertyMetadata GetDefaultMetadata<TEntity>()
+        public IObjectMetadataBuilder<TEntity> Object<TEntity>(Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
         {
-            return GetDefaultMetadata(typeof(TEntity));
-        }
-
-        public IPropertyMetadata GetDefaultMetadata(Type modelType)
-        {
-            if (modelType is null)
+            if (defaultSortingPropertyExpression == null)
             {
-                throw new ArgumentNullException(nameof(modelType));
-            }
-
-            if (!IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
-            {
-                return null;
-            }
-
-            _defaultPropertyMetadata.TryGetValue(modelType, out var propertyMetadata);
-
-            if (propertyMetadata == null)
-            {
-                if (_objectMetadata.TryGetValue(modelType, out var objectMetadata))
-                {
-                    propertyMetadata = new PropertyMetadata
-                    {
-                        IsDefaultSorting = true,
-                        IsDefaultSortingDescending = objectMetadata.IsDefaultSortingDescending,
-                        IsFilterable = objectMetadata.IsFilterable,
-                        IsSortable = objectMetadata.IsSortable,
-                        Name = objectMetadata.DefaultSortingPropertyName,
-                        PropertyInfo = objectMetadata.DefaultSortingPropertyInfo,
-                    };
-                }
-            }
-
-            return propertyMetadata;
-        }
-
-        public IPropertyMetadata GetPropertyMetadata<TEntity>(
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
-        {
-            return GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
-        }
-
-        public IPropertyMetadata GetPropertyMetadata(
-            Type modelType,
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
-        {
-            if (modelType is null)
-            {
-                throw new ArgumentNullException(nameof(modelType));
-            }
-
-            if (!IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
-            {
-                return null;
-            }
-
-            if (_propertyMetadata.TryGetValue(modelType, out IDictionary<string, IPropertyMetadata> metadataSet))
-            {
-                var comparisonMethod = _options.IsCaseInsensitiveForNames
-                    ? StringComparison.OrdinalIgnoreCase
-                    : StringComparison.Ordinal;
-
-                var propertyMetadata = metadataSet.FirstOrDefault(pair =>
-                {
-                    return pair.Key.Equals(name, comparisonMethod)
-                        && (!isSortableRequired || pair.Value.IsSortable)
-                        && (!isFilterableRequired || pair.Value.IsFilterable);
-                }).Value;
-
-                if (propertyMetadata != null)
-                {
-                    return propertyMetadata;
-                }
-            }
-
-            if (_objectMetadata.TryGetValue(modelType, out var objectMetadata))
-            {
-                if ((!isSortableRequired || objectMetadata.IsSortable)
-                    && (!isFilterableRequired || objectMetadata.IsFilterable))
-                {
-                    return new PropertyMetadata
-                    {
-                        IsDefaultSorting = true,
-                        IsDefaultSortingDescending = objectMetadata.IsDefaultSortingDescending,
-                        IsFilterable = objectMetadata.IsFilterable,
-                        IsSortable = objectMetadata.IsSortable,
-                        Name = objectMetadata.DefaultSortingPropertyName,
-                        PropertyInfo = objectMetadata.DefaultSortingPropertyInfo,
-                    };
-                }
-            }
-
-            return null;
-        }
-
-        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
-        {
-            return GetPropertyMetadatas(typeof(TEntity));
-        }
-
-        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
-        {
-            if (modelType is null)
-            {
-                throw new ArgumentNullException(nameof(modelType));
-            }
-
-            if (_propertyMetadata.TryGetValue(modelType, out var metadatas))
-            {
-                return metadatas.Values;
-            }
-
-            return null;
-        }
-
-        public IObjectMetadataBuilder<TEntity> Object<TEntity>(Expression<Func<TEntity, object>> expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
             }
 
             if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
@@ -210,14 +91,14 @@ namespace Fluorite.Strainer.Services.Metadata
                     $"be able to use it.");
             }
 
-            return new ObjectMetadataBuilder<TEntity>(this, expression);
+            return new ObjectMetadataBuilder<TEntity>(ObjectMetadata, defaultSortingPropertyExpression);
         }
 
-        public IPropertyMetadataBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> expression)
+        public IPropertyMetadataBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> propertyExpression)
         {
-            if (expression == null)
+            if (propertyExpression == null)
             {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException(nameof(propertyExpression));
             }
 
             if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
@@ -229,15 +110,12 @@ namespace Fluorite.Strainer.Services.Metadata
                     $"be able to use it.");
             }
 
-            if (!_propertyMetadata.ContainsKey(typeof(TEntity)))
+            if (!PropertyMetadata.ContainsKey(typeof(TEntity)))
             {
-                _propertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
+                PropertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
             }
 
-            return new PropertyMetadataBuilder<TEntity>(this, expression);
+            return new PropertyMetadataBuilder<TEntity>(PropertyMetadata, DefaultMetadata, propertyExpression);
         }
-
-        private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
-            => _options.MetadataSourceType.HasFlag(metadataSourceType);
     }
 }

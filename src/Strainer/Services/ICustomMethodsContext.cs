@@ -1,5 +1,7 @@
-﻿using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Sorting;
+﻿using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Sorting;
+using System;
+using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services
 {
@@ -9,13 +11,13 @@ namespace Fluorite.Strainer.Services
     public interface ICustomMethodsContext
     {
         /// <summary>
-        /// Gets the custom filter method mapper.
+        /// Gets the custom filter method dictionary.
         /// </summary>
-        ICustomFilterMethodMapper Filter { get; }
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> Filter { get; }
 
         /// <summary>
-        /// Gets the custom sort method mapper.
+        /// Gets the custom sort method dictionary.
         /// </summary>
-        ICustomSortMethodMapper Sort { get; }
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> Sort { get; }
     }
 }

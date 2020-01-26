@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Services.Filtering;
+using System.Linq;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
@@ -11,10 +12,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             string input = null;
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-            var operatorParser = new FilterOperatorParser(mapper);
-            var parser = new FilterTermParser(operatorParser, mapper);
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var operatorParser = new FilterOperatorParser(filterOperators);
+            var parser = new FilterTermParser(operatorParser, filterOperators);
 
             // Act
             var filterTermList = parser.GetParsedTerms(input);
@@ -28,10 +29,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-            var operatorParser = new FilterOperatorParser(mapper);
-            var parser = new FilterTermParser(operatorParser, mapper);
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var operatorParser = new FilterOperatorParser(filterOperators);
+            var parser = new FilterTermParser(operatorParser, filterOperators);
 
             // Act
             var filterTermList = parser.GetParsedTerms(input);
@@ -45,10 +46,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
-            var operatorParser = new FilterOperatorParser(mapper);
-            var parser = new FilterTermParser(operatorParser, mapper);
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var operatorParser = new FilterOperatorParser(filterOperators);
+            var parser = new FilterTermParser(operatorParser, filterOperators);
 
             // Act
             var filterTermList = parser.GetParsedTerms(input);

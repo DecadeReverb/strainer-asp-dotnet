@@ -1,5 +1,7 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Fluorite.Extensions
@@ -67,6 +69,75 @@ namespace Fluorite.Extensions
                     return source.OrderBy(sortExpression.Expression);
                 }
             }
+        }
+
+        public static IDictionary<TKey, TValue> Merge<TKey, TValue>(
+            this IEnumerable<KeyValuePair<TKey, TValue>> keyValuePairs)
+        {
+            if (keyValuePairs is null)
+            {
+                throw new ArgumentNullException(nameof(keyValuePairs));
+            }
+
+            var result = new Dictionary<TKey, TValue>();
+
+            foreach (var pair in keyValuePairs)
+            {
+                result[pair.Key] = pair.Value;
+            }
+
+            return result;
+        }
+
+        public static TDictionary MergeLeft<TDictionary, TKey, TValue>(
+            this TDictionary source,
+            params IDictionary<TKey, TValue>[] others)
+            where TDictionary : IDictionary<TKey, TValue>, new()
+        {
+            var resultDictionary = new TDictionary();
+
+            foreach (var dictionary in new List<IDictionary<TKey, TValue>> { source }.Concat(others))
+            {
+                foreach (var pair in dictionary)
+                {
+                    resultDictionary[pair.Key] = pair.Value;
+                }
+            }
+
+            return resultDictionary;
+        }
+
+        public static IDictionary<TKey, TValue> ToDictionary<TKey, TValue>(
+            this IEnumerable<KeyValuePair<TKey, TValue>> source)
+        {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            return source.ToDictionary(pair => pair.Key, pair => pair.Value);
+        }
+
+        public static IReadOnlyDictionary<TKey, TValue> ToReadOnly<TKey, TValue>(
+            this IDictionary<TKey, TValue> source)
+        {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            return new ReadOnlyDictionary<TKey, TValue>(source);
+        }
+
+        public static IReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
+            this IEnumerable<KeyValuePair<TKey, TValue>> source)
+        {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            return new ReadOnlyDictionary<TKey, TValue>(source.ToDictionary());
         }
     }
 }

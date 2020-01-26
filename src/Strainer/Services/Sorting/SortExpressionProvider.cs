@@ -19,12 +19,12 @@ namespace Fluorite.Strainer.Services.Sorting
     /// </summary>
     public class SortExpressionProvider : ISortExpressionProvider
     {
-        private readonly IMetadataProvidersFacade _metadataProvidersFacade;
+        private readonly IMetadataFacade _metadataProvidersFacade;
 
         /// <summary>
         /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
         /// </summary>
-        public SortExpressionProvider(IMetadataProvidersFacade metadataProvidersFacade)
+        public SortExpressionProvider(IMetadataFacade metadataProvidersFacade)
         {
             _metadataProvidersFacade = metadataProvidersFacade
                 ?? throw new ArgumentNullException(nameof(metadataProvidersFacade));

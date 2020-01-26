@@ -1,10 +1,13 @@
 ﻿using FluentAssertions;
+using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using System.Linq;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
@@ -135,6 +138,45 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             result.Should().NotBeNull();
             result.IsFilterable.Should().BeTrue();
             result.IsSortable.Should().BeTrue();
+        }
+
+        [Fact]
+        public void AttributeMetadataProvider_Works_For_Object_Attribute()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            services.AddStrainer();
+            services.AddScoped<AttributeMetadataProvider>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Act
+            var attributeMetadataProvider = serviceProvider.GetRequiredService<AttributeMetadataProvider>();
+            var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Comment>();
+
+            // Assert
+            metadatas.Should().NotBeNullOrEmpty();
+            metadatas.Should().HaveCount(1);
+            metadatas.First().Name.Should().Be(nameof(Comment.Id));
+        }
+
+        [Fact]
+        public void AttributeMetadataProvider_Works_For_Property_Attribute()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            services.AddStrainer();
+            services.AddScoped<AttributeMetadataProvider>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Act
+            var attributeMetadataProvider = serviceProvider.GetRequiredService<AttributeMetadataProvider>();
+            var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Post>();
+
+            // Assert
+            metadatas.Should().NotBeNullOrEmpty();
+            metadatas.Should().HaveCount(1);
+            metadatas.First().Should().BeAssignableTo<StrainerPropertyAttribute>();
+            metadatas.First().Name.Should().Be(nameof(Post.Title));
         }
 
         private class Post

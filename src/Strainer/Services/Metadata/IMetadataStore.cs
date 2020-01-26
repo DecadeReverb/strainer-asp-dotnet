@@ -4,11 +4,15 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public interface IPropertyMetadataProvider
+    public interface IMetadataStore
     {
-        IPropertyMetadata GetDefaultMetadata<TEntity>();
+        IReadOnlyDictionary<Type, IObjectMetadata> GetAllObjectMetadata();
 
-        IPropertyMetadata GetDefaultMetadata(Type modelType);
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata();
+
+        IPropertyMetadata GetDefaultPropertyMetadata<TEntity>();
+
+        IPropertyMetadata GetDefaultPropertyMetadata(Type modelType);
 
         IPropertyMetadata GetPropertyMetadata<TEntity>(
             bool isSortableRequired,

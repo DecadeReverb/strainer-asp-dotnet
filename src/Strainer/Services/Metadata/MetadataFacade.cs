@@ -1,21 +1,34 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public class MetadataProvidersFacade : IMetadataProvidersFacade
+    public class MetadataFacade : IMetadataFacade
     {
-        private readonly IEnumerable<IPropertyMetadataProvider> _metadataProviders;
+        private readonly IEnumerable<IMetadataProvider> _metadataProviders;
 
-        public MetadataProvidersFacade(IEnumerable<IPropertyMetadataProvider> metadataProviders)
+        public MetadataFacade(IEnumerable<IMetadataProvider> metadataProviders)
         {
-            if (metadataProviders is null)
+            _metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
+        }
+
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
+        {
+            var metadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
+
+            foreach (var provider in _metadataProviders)
             {
-                throw new ArgumentNullException(nameof(metadataProviders));
+                var current = provider.GetAllPropertyMetadata();
+
+                if (current != null)
+                {
+                    return current;
+                }
             }
 
-            _metadataProviders = metadataProviders;
+            return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(metadata);
         }
 
         public IPropertyMetadata GetDefaultMetadata<TEntity>()

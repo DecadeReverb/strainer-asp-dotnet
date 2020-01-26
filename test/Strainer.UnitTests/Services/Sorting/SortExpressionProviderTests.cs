@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Fluorite.Extensions;
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
@@ -37,8 +39,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var optionsProvider = optionsMock.Object;
             var mapper = new MetadataMapper(optionsProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
-            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
-            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
+            var propertyMetadataProviders = new IMetadataProvider[]
+            {
+                fluentApiMetadataProvider,
+            };
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -71,8 +77,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
             var mapper = new MetadataMapper(optionsProvider);
-            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
-            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
+            var propertyMetadataProviders = new IMetadataProvider[]
+            {
+                fluentApiMetadataProvider,
+            };
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -103,8 +113,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var optionsProvider = optionsMock.Object;
             var mapper = new MetadataMapper(optionsProvider);
             mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
-            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper };
-            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
+            var propertyMetadataProviders = new IMetadataProvider[]
+            {
+                fluentApiMetadataProvider,
+            };
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -151,9 +165,14 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             mapper.Property<Comment>(c => c.Text).IsSortable();
             mapper.Property<Comment>(c => c.Id).IsSortable();
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
-            var propertyMetadataProviders = new IPropertyMetadataProvider[] { mapper, attributeMetadataProvider };
-            var mainMetadataProvider = new MetadataProvidersFacade(propertyMetadataProviders);
+            var propertyMetadataProviders = new IMetadataProvider[]
+            {
+                attributeMetadataProvider,
+                fluentApiMetadataProvider,
+            };
+            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
             var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
@@ -167,6 +186,27 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             firstExpression.IsSubsequent.Should().BeFalse();
             secondExpression.IsDescending.Should().BeFalse();
             secondExpression.IsSubsequent.Should().BeTrue();
+        }
+
+        private FluentApiMetadataProvider CreateFluentApiMetadataProvider(
+            IStrainerOptionsProvider optionsProvider,
+            MetadataMapper mapper)
+        {
+            var defaultMetadata = mapper.DefaultMetadata.ToReadOnly();
+            var objectMetadata = mapper.ObjectMetadata.ToReadOnly();
+            var propertyMetadata = mapper
+                .PropertyMetadata
+                .Select(pair =>
+                    new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                        pair.Key, pair.Value.ToReadOnly()))
+                .ToReadOnlyDictionary();
+            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
+                optionsProvider,
+                defaultMetadata,
+                objectMetadata,
+                propertyMetadata);
+
+            return fluentApiMetadataProvider;
         }
 
         private class Comment

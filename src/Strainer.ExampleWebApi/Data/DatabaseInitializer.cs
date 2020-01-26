@@ -65,6 +65,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Data
                 DateCreated = randomDateTime,
                 DateLastViewed = randomDateTime.AddDays(_random.Next((DateTime.Today - randomDateTime).Days)),
                 LikeCount = _random.Next(0, 48),
+                Symbol = "==",
                 Title = RandomizeText(),
             };
 

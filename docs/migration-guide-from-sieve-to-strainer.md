@@ -56,6 +56,28 @@ public class ApplicationStrainerProcessor : StrainerProcessor
 }
 ```
 
+### Strainer Modules - division and encapsulation of configuration
+
+Strainer introduces Modules as a way to provide and use configuration from different assemblies. Modules also make it possible to use Strainer configuration aside from Strainer service (e.g. Strainer processor).
+
+Strainer module has configuration methods allowing registration of a property, object, additional filter operator and custom methods.
+
+Module methods should be called from overriden `Load()` method (**not** from module constructor), like below:
+
+```cs
+public class AppStrainerModule : StrainerModule
+{
+    public override void Load()
+    {
+        AddProperty<Post>(p => p.Comments.Count)
+            .IsFilterable()
+            .IsSortable();
+    }
+}
+```
+
+`Load()` will be called once on application startup (ASP.NET Core) for all Strainer Modules dicovered.
+
 ### Validation attributes removed from sieve model
 
 So far, the `SieveModel` had validation attributes applied on pagination related properties:
@@ -97,38 +119,33 @@ public IQueryable<Post> Popularity(IQueryable<Post> source, bool useThenBy, bool
 }
 ```
 
-Strainer introduces new structure of adding such methods by overriding appropriate method in your processor and there adding the method using more comfortable fluent-like API.
+Strainer introduces new structure of adding such methods by calling appropriate method in your module and adding the method using more comfortable fluent-like API.
 
 For example, code adding the same method from the example above in Strainer would look like this:
 
 ```cs
-public class ApplicationStrainerProcessor : StrainerProcessor
+public class ApplicationStrainerModule : StrainerModule
 {
-    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    public override void Load()
     {
-
+            AddCustomSortMethod<Post>(nameof(Popularity))
+                .HasFunction(Popularity);
     }
 
-    protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
+    private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
     {
-        mapper.CustomMethod<Post>(nameof(Popularity))
-            .WithFunction(Popularity);
-    }
+        var result = isSubsequent
+                ? ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount)
+                : source.OrderBy(p => p.LikeCount)
+            .ThenBy(p => p.CommentCount)
+            .ThenBy(p => p.DateCreated);
 
-    private IQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
-    {
-        return context.IsSubsequent
-            ? (context.Source as IOrderedQueryable<Post>).ThenBy(p => p.LikeCount)
-            : context.Source.OrderBy(p => p.LikeCount)
-                .ThenBy(p => p.CommentCount)
-                .ThenBy(p => p.DateCreated);
+        return result;
     }
 }
 ```
 
-In `MapCustomSortMethods()` a custom sorting method for `Post` entity is added with a name _"Popularity"_. Then a transforming function is specified. Although `WithFunction()` method requires an argument of `Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>>`, you can easily provide a whole method which returns an `IQueryable` and has an `ICustomSortMethodContext` parameter. In that way you can seperete your sorting logic in a dedicated method which can be made private.
-
-`MapCustomSortMethods()` will be called on `StrainerProcessor` initialization, alongside with other similar methods like `MapCustomFilterMethods()`.
+In the code snippet above, a custom sorting method for `Post` entity is added with a name _"Popularity"_ and a sorting function. Although `HasFunction()` method requires an argument of `Func<T>`, you can easily provide a whole method which returns an `IQueryable` and has fitting parameters. In that way you can seperete your sorting logic in a dedicated method which can be made private.
 
 ### Object-level attribute
 

@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Fluorite.Strainer.Models.Filter.Operators;
+using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Services.Filtering;
 using System;
 using System.Linq.Expressions;

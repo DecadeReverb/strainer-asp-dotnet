@@ -6,12 +6,10 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public interface ICustomFilterMethodMapper
     {
-        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods { get; }
+        IDictionary<Type, IDictionary<string, ICustomFilterMethod>> Methods { get; }
 
         void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod);
 
         ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
-
-        ICustomFilterMethod<TEntity> GetMethod<TEntity>(string name);
     }
 }

@@ -33,10 +33,10 @@ Install-Package Fluorite.Strainer.AspNetCore
 
 ### Add required services
 
-Add Strainer services in `Startup` while specifying the implementation of [`IStrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/IStrainerProcessor.cs). For starters, you can use the default implementation - [`StrainerProcessor`](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/StrainerProcessor.cs).
+Add Strainer services in `Startup`:
 
 ```cs
-services.AddStrainer<StrainerProcessor>();
+services.AddStrainer();
 ```
 
 While adding Strainer, you can configure it with available [options](#configure-strainer).
@@ -85,7 +85,7 @@ Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is esp
 
 ### Use Strainer to filter/sort/paginate
 
-In example below, Strainer processor is injected to a controller. In `GetPosts()` method below, `Apply()` is called causing the source collection to be processed. Strainer processor will filter, sort and/or paginate the source `IQueryable` depending on model parameters.
+In example below, Strainer processor is injected to a controller. Then, `Apply()` is called causing the source collection to be processed. Strainer processor will filter, sort and/or paginate the source `IQueryable<T>` depending on provided model.
 
 ```cs
 private readonly ApplicationDbContext _dbContext;
@@ -133,42 +133,24 @@ result = _strainerProcessor.ApplyPagination(strainerModel, result);
 
 ## Fluent API
 
-You can use Fluent API instead of attributes to mark properties, object and even more. Start with implementing your own processor deriving from `StrainerProcessor`:
+You can use Fluent API instead of attributes to mark properties, objects and even more. Start with adding your own configuration module deriving from `StrainerModule`:
 
 ```cs
-public class ApplicationStrainerProcessor : StrainerProcessor
+public class ApplicationStrainerModule : StrainerModule
 {
-    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
+    public override void Load()
     {
-
-    }
-}
-```
-
-Enable it in `Startup`:
-
-```cs
-services.AddStrainer<ApplicationStrainerProcessor>();
-```
-
-Then override `MapProperties()`, for example:
-
-```cs
-public class ApplicationStrainerProcessor : StrainerProcessor
-{
-    public ApplicationStrainerProcessor(IStrainerContext context) : base(context)
-    {
-
-    }
-
-    protected override void MapProperties(IStrainerPropertyMapper mapper)
-    {
-        mapper.Property<Post>(p => p.Title)
-            .IsSortable()
+        AddProperty<Post>(p => p.Title)
             .IsFilterable()
-            .HasDisplayName("CustomTitleName");
+            .IsSortable();
     }
 }
+```
+
+Then, notify Strainer to use it in `Startup`:
+
+```cs
+services.AddStrainer(new[] { typeof(ApplicationStrainerModule) });
 ```
 
 Fluent API - as opposed to attributes - allows you to:
@@ -194,7 +176,7 @@ Strainer comes with following [`options`](https://gitlab.com/fluorite/strainer/b
 Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) to tell Strainer where to look for configuration. For example:
 
 ```cs
-services.AddStrainer<StrainerProcessor>(Configuration.GetSection("Strainer"));
+services.AddStrainer(Configuration.GetSection("Strainer"));
 ```
 
 Then you can add Strainer configuration to `appsetting.json`:
@@ -215,8 +197,30 @@ Then you can add Strainer configuration to `appsetting.json`:
 Strainer can be also configured via [`Action`](https://docs.microsoft.com/dotnet/api/system.action-1):
 
 ```cs
-services.AddStrainer<StrainerProcessor>(options => options.DefaultPageSize = 20);
+services.AddStrainer(options => options.DefaultPageSize = 20);
 ```
+
+## Strainer Modules
+
+Strainer builds its configuration from Modules (except for attribute-based metadata which is retrieved on runtime). Once created, the configuration cannot be changed and is read only. Modules provides a way to split the configuration into different assemblies. They also make it possible to use the configuration aside from Strainer services like Strainer processor.
+
+Strainer module has configuration methods allowing to add a property, object, additional filter operator and custom methods.
+
+Module methods need to be called from overriden `Load()` method (**not** from module constructor), like below:
+
+```cs
+public class AppStrainerModule : StrainerModule
+{
+    public override void Load()
+    {
+        AddProperty<Post>(p => p.Title)
+            .IsFilterable()
+            .IsSortable();
+    }
+}
+```
+
+`Load()` will be called once on application startup (ASP.NET Core) for all Strainer Modules dicovered based on types or assemblies provided.
 
 ## Sample request query
 
@@ -301,12 +305,12 @@ public class User {
 }
 ```
 
-In order to filter by post author name, override `MapProperties` in your custom Strainer processor and provide expression leading to nested property:
+In order to filter by post author name, override `Load()` in your custom Strainer Module and provide expression leading to nested property:
 
 ```cs
-protected override void MapProperties(IStrainerPropertyMapper mapper)
+public override void Load()
 {
-    mapper.Property<Post>(p => p.Author.Name)
+    AddProperty<Post>(p => p.Author.Name)
         .IsFilterable();
 }
 ```
@@ -317,19 +321,19 @@ Notice how nested property name is not just `Name` but it's constructed using fu
 
 ## Custom methods
 
-In order to add custom sort or filter methods, override appropriate mapping method in your custom Strainer processor.
+In order to add custom sort or filter methods, override appropriate mapping method in your .
 
 #### Custom filter methods
 
 ```cs
-protected override void MapCustomFilterMethods(ICustomFilterMethodMapper mapper)
+public override void Load()
 {
-    mapper.CustomMethod<Post>(nameof(IsPopular))
-        .WithFunction(IsPopular);
+    AddCustomMethod<Post>(nameof(IsPopular))
+        .HasFunction(IsPopular);
 }
 
-private IQueryable<Post> IsPopular(ICustomFilterMethodContext<Post> context)
-    => context.Source.Where(p => p.LikeCount < 100 && p.CommentCount < 5);
+private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperator)
+    => source.Where(p => p.LikeCount < 10);
 ```
 
 #### Custom sort methods
@@ -338,20 +342,15 @@ private IQueryable<Post> IsPopular(ICustomFilterMethodContext<Post> context)
 protected override void MapCustomSortMethods(ICustomSortMethodMapper mapper)
 {
     mapper.CustomMethod<Post>(nameof(Popularity))
-        .WithFunction(Popularity);
+        .HasFunction(Popularity);
 }
 
-private IOrderedQueryable<Post> Popularity(ICustomSortMethodContext<Post> context)
+private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
 {
-    return context.IsSubsequent
-        ? context.OrderedSource
-            .ThenBy(p => p.LikeCount)
-            .ThenBy(p => p.CommentCount)
-            .ThenBy(p => p.DateCreated)
-        : context.Source
-            .OrderBy(p => p.LikeCount)
-            .ThenBy(p => p.CommentCount)
-            .ThenBy(p => p.DateCreated);
+    return isSubsequent
+        ? (source as IOrderedQueryable<Post>).ThenByDescending(p => p.LikeCount)
+        : source.OrderByDescending(p => p.LikeCount)
+            .ThenByDescending(p => p.DateCreated);
 }
 ```
 
@@ -390,32 +389,32 @@ Case insensitive operators will force case insensitivity when comparing values e
 
 ## Custom filter operators
 
-Same manner as marking properties you can add new filter operators. Override `MapFilterOperators()` in a class deriving from `StrainerProcessor`:
+Same manner as marking properties you can add new filter operators:
 
 ```cs
-protected override void MapFilterOperators(IFilterOperatorMapper mapper)
+public override void Load()
 {
-	mapper.AddOperator(symbol: "%")
-		.HasName("modulo equal zero")
-		.HasExpression((context) => Expression.Equal(
-			Expression.Modulo(context.PropertyValue, context.FilterValue),
-			Expression.Constant(0)));
+    AddFilterOperator(symbol: "%")
+        .HasName("modulo equal zero")
+        .HasExpression((context) => Expression.Equal(
+            Expression.Modulo(context.PropertyValue, context.FilterValue),
+            Expression.Constant(0)));
 }
 ```
 
 ## Sorting way formatting
 
-In order to determine sorting way Strainer uses `ISortingWayFormatter`. Default implementation used is `DescendingPrefixSortingWayFormatter`. It checks against the presence of a prefix indicating descending sorting way, specifically a dash `-`. For example:
+In order to determine sorting way Strainer uses `ISortingWayFormatter` service with its default implementation `DescendingPrefixSortingWayFormatter`. It checks against the presence of a prefix indicating descending sorting way, specifically a dash `-`. For example:
 
  - `Name` will be translated to ascending sorting.
  - `-Name` will be translated to descending sorting.
 
 In order to perform your own sorting way determination and formatting, implement `ISortingWayFormatter` interface (see [DescendingPrefixSortingWayFormatter](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/Sorting/DescendingPrefixSortingWayFormatter.cs) for reference).
 
-Then, add custom formatter in `Startup` **after** adding Strainer:
+Then, add your custom formatter in `Startup` **after** adding Strainer:
 
 ```
-services.AddStrainer<StrainerProcessor>();
+services.AddStrainer();
 services.AddScoped<ISortingWayFormatter, CustomSortingWayFormatter>();
 ```
 

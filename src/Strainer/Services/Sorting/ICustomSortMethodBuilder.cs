@@ -6,13 +6,9 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     public interface ICustomSortMethodBuilder<TEntity>
     {
-        Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> Function { get; }
-
-        string Name { get; }
-
         ICustomSortMethod<TEntity> Build();
 
-        ICustomSortMethodBuilder<TEntity> WithFunction(
-            Func<ICustomSortMethodContext<TEntity>, IQueryable<TEntity>> function);
+        ICustomSortMethodBuilder<TEntity> HasFunction(
+            Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> function);
     }
 }

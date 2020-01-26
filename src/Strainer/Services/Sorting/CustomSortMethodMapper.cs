@@ -1,35 +1,17 @@
-﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models.Sorting;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
     public class CustomSortMethodMapper : ICustomSortMethodMapper
     {
-        private readonly Dictionary<Type, Dictionary<string, object>> _methods;
-        private readonly StrainerOptions _options;
-
-        public CustomSortMethodMapper(IStrainerOptionsProvider optionsProvider)
+        public CustomSortMethodMapper()
         {
-            _methods = new Dictionary<Type, Dictionary<string, object>>();
-            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
-                .GetStrainerOptions();
+            Methods = new Dictionary<Type, IDictionary<string, ICustomSortMethod>>();
         }
 
-        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>> Methods
-        {
-            get
-            {
-                var dictionary = _methods.ToDictionary(
-                    k => k.Key,
-                    v => new ReadOnlyDictionary<string, object>(v.Value) as IReadOnlyDictionary<string, object>);
-
-                return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, object>>(dictionary);
-            }
-        }
+        public IDictionary<Type, IDictionary<string, ICustomSortMethod>> Methods { get; }
 
         public void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod)
         {
@@ -38,12 +20,12 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(sortMethod));
             }
 
-            if (!_methods.ContainsKey(typeof(TEntity)))
+            if (!Methods.ContainsKey(typeof(TEntity)))
             {
-                _methods[typeof(TEntity)] = new Dictionary<string, object>();
+                Methods[typeof(TEntity)] = new Dictionary<string, ICustomSortMethod>();
             }
 
-            _methods[typeof(TEntity)][sortMethod.Name] = sortMethod;
+            Methods[typeof(TEntity)][sortMethod.Name] = sortMethod;
         }
 
         public ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
@@ -56,33 +38,12 @@ namespace Fluorite.Strainer.Services.Sorting
                     nameof(name));
             }
 
-            if (!_methods.ContainsKey(typeof(TEntity)))
+            if (!Methods.ContainsKey(typeof(TEntity)))
             {
-                _methods[typeof(TEntity)] = new Dictionary<string, object>();
+                Methods[typeof(TEntity)] = new Dictionary<string, ICustomSortMethod>();
             }
 
-            return new CustomSortMethodBuilder<TEntity>(this, name);
-        }
-
-        public ICustomSortMethod<TEntity> GetMethod<TEntity>(string name)
-        {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            if (!_methods.TryGetValue(typeof(TEntity), out var customMethods))
-            {
-                return null;
-            }
-
-            var comparisonType = _options.IsCaseInsensitiveForNames
-                ? StringComparison.OrdinalIgnoreCase
-                : StringComparison.Ordinal;
-
-            return customMethods
-                .FirstOrDefault(pair => pair.Key.Equals(name, comparisonType))
-                .Value as ICustomSortMethod<TEntity>;
+            return new CustomSortMethodBuilder<TEntity>(Methods, name);
         }
     }
 }

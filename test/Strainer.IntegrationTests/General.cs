@@ -3,8 +3,6 @@ using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.IntegrationTests.Services;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.TestModels;
 using System;
 using System.Collections.Generic;
@@ -43,10 +41,10 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 new Post() {
                     Id = 0,
-                    Title = "A",
-                    LikeCount = 100,
+                    Title = "A==",
+                    LikeCount = 200,
                     IsDraft = true,
-                    CategoryId = null,
+                    CategoryId = 2,
                     TopComment = _comments.ElementAt(0),
                     FeaturedComment = _comments.ElementAt(0)
                 },
@@ -63,7 +61,7 @@ namespace Fluorite.Strainer.IntegrationTests
                     Id = 2,
                     Title = "C",
                     LikeCount = 0,
-                    CategoryId = 1,
+                    CategoryId = null,
                     TopComment = _comments.ElementAt(2),
                     FeaturedComment = _comments.ElementAt(2)
                 },
@@ -87,7 +85,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "Title@=*a"
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -104,7 +102,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "Title!@=D",
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -121,7 +119,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "IsDraft==false"
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.ApplyFiltering(model, _posts);
@@ -138,7 +136,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Sorts = "-IsDraft"
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -155,7 +153,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Sorts = "-IsDraft,-LikeCount"
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -175,7 +173,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "CategoryId==1"
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -190,29 +188,15 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "IsNew",
+                Filters = "IsPopular",
             };
-            var processor = Factory.CreateProcessor((context) =>
-            {
-                var optionsProvider = Factory.CreateOptionsProvider();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProvider);
-                var newContext = new StrainerContext(
-                    optionsProvider,
-                    context.Filter,
-                    context.Sorting,
-                    context.Mapper,
-                    context.Metadata,
-                    customMethodsContext);
-
-                return new ApplicationStrainerProcessor(newContext);
-            });
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
 
             // Assert
-            result.Should().OnlyContain(p => p.LikeCount < 100);
+            result.Should().OnlyContain(p => p.LikeCount > 100);
         }
 
         [Fact]
@@ -221,29 +205,32 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "HasInTitle==A",
+                Filters = "HasInTitleFilterOperator==",
             };
-            var processor = Factory.CreateProcessor((context) =>
-            {
-                var optionsProvider = Factory.CreateOptionsProvider();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProvider);
-                var newContext = new StrainerContext(
-                    optionsProvider,
-                    context.Filter,
-                    context.Sorting,
-                    context.Mapper,
-                    context.Metadata,
-                    customMethodsContext);
-
-                return new ApplicationStrainerProcessor(newContext);
-            });
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
 
             // Assert
-            result.Should().OnlyContain(p => p.Title.Contains("A"));
+            result.Should().OnlyContain(p => p.Title.Contains("=="));
+        }
+
+        [Fact]
+        public void CustomFiltersWork_2()
+        {
+            // Arrange
+            var model = new StrainerModel()
+            {
+                Filters = "IsNew",
+            };
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+
+            // Act
+            var result = processor.Apply(model, _comments);
+
+            // Assert
+            result.Should().OnlyContain(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
         }
 
         [Fact]
@@ -252,29 +239,15 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "IsNew,CategoryId==2",
+                Filters = "IsPopular,CategoryId==2",
             };
-            var processor = Factory.CreateProcessor((context) =>
-            {
-                var optionsProvider = Factory.CreateOptionsProvider();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProvider);
-                var newContext = new StrainerContext(
-                    optionsProvider,
-                    context.Filter,
-                    context.Sorting,
-                    context.Mapper,
-                    context.Metadata,
-                    customMethodsContext);
-
-                return new ApplicationStrainerProcessor(newContext);
-            });
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
 
             // Assert
-            result.Should().OnlyContain(p => p.LikeCount < 100);
+            result.Should().OnlyContain(p => p.LikeCount > 100);
             result.Should().OnlyContain(p => p.CategoryId == 2);
         }
 
@@ -284,30 +257,15 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "CategoryId==2,IsNew",
+                Filters = "CategoryId==2,IsPopular",
             };
-            var processor = Factory.CreateProcessor((context) =>
-            {
-                var optionsProvider = Factory.CreateOptionsProvider();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProvider);
-                var newContext = new StrainerContext(
-                    optionsProvider,
-                    context.Filter,
-                    context.Sorting,
-                    context.Mapper,
-                    context.Metadata,
-                    customMethodsContext);
-
-                return new ApplicationStrainerProcessor(newContext);
-            });
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
 
             // Assert
-            result.Should().OnlyContain(p => p.CategoryId == 2);
-            result.Should().OnlyContain(p => p.LikeCount < 100);
+            result.Should().OnlyContain(p => p.CategoryId == 2 && p.LikeCount > 100);
         }
 
         [Fact]
@@ -316,30 +274,15 @@ namespace Fluorite.Strainer.IntegrationTests
             // Arrange
             var postModel = new StrainerModel()
             {
-                Filters = "CategoryId==2,IsNew",
+                Filters = "CategoryId==2,IsPopular",
             };
-            var processor = Factory.CreateProcessor((context) =>
-            {
-                var optionsProvider = Factory.CreateOptionsProvider();
-                var customFilterMethodMapper = new CustomFilterMethodMapper(optionsProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProvider);
-                var newContext = new StrainerContext(
-                    optionsProvider,
-                    context.Filter,
-                    context.Sorting,
-                    context.Mapper,
-                    context.Metadata,
-                    customMethodsContext);
-
-                return new ApplicationStrainerProcessor(newContext);
-            });
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var postResult = processor.Apply(postModel, _posts);
 
             // Assert
-            postResult.Should().OnlyContain(p => p.CategoryId == 2);
-            postResult.Should().OnlyContain(p => p.LikeCount < 100);
+            postResult.Should().OnlyContain(p => p.CategoryId == 2 && p.LikeCount > 100);
 
             // ###
 
@@ -364,27 +307,14 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Sorts = "Popularity",
             };
-            var processor = Factory.CreateProcessor((context) =>
-            {
-                var optionsProvider = Factory.CreateOptionsProvider();
-                var customSortMethodMapper = new CustomSortMethodMapper(optionsProvider);
-                var customMethodsContext = new CustomMethodsContext(optionsProvider);
-                var newContext = new StrainerContext(
-                    optionsProvider,
-                    context.Filter,
-                    context.Sorting,
-                    context.Mapper,
-                    context.Metadata,
-                    customMethodsContext);
-
-                return new ApplicationStrainerProcessor(newContext);
-            });
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
-            var customSortResult = _posts.OrderBy(p => p.LikeCount)
+            var customSortResult = _posts
+                .OrderBy(p => p.LikeCount)
                     .ThenBy(p => p.CommentCount)
-                    .ThenBy(p => p.DateCreated);
+                        .ThenBy(p => p.DateCreated);
 
             // Assert
             result.Should().HaveSameCount(_posts);
@@ -400,11 +330,11 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "does not exist",
             };
-            var processor = Factory.CreateProcessor((context) =>
+            var processor = Factory.CreateProcessor<TestStrainerModule>((context) =>
             {
                 context.Options.ThrowExceptions = true;
 
-                return new ApplicationStrainerProcessor(context);
+                return new StrainerProcessor(context);
             });
 
             // Assert
@@ -419,7 +349,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "(Title|LikeCount)==3",
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -436,7 +366,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "Title==C|D",
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -453,14 +383,14 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "Text@=(|)",
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _comments);
 
             // Assert
-            Assert.Equal(1, result.Count());
-            Assert.Equal(2, result.FirstOrDefault().Id);
+            result.Should().HaveCount(1);
+            result.FirstOrDefault().Id.Should().Be(2);
         }
 
         [Fact]
@@ -471,7 +401,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "TopComment.Text!@=A",
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -488,7 +418,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Sorts = "TopComment.Id",
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);
@@ -505,7 +435,7 @@ namespace Fluorite.Strainer.IntegrationTests
             {
                 Filters = "(topc|featc)@=*B",
             };
-            var processor = Factory.CreateProcessor((context) => new ApplicationStrainerProcessor(context));
+            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, _posts);

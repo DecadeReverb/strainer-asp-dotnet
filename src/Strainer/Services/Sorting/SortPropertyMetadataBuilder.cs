@@ -1,23 +1,23 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Metadata;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortPropertyMetadataBuilder<TEntity> : PropertyMetadataBuilder<TEntity>, ISortPropertyMetadataBuilder<TEntity>
     {
+        private readonly IDictionary<Type, IDictionary<string, IPropertyMetadata>> _propertyMetadata;
+        private readonly IDictionary<Type, IPropertyMetadata> _defaultMetadata;
+
         public SortPropertyMetadataBuilder(
-            IMetadataMapper strainerPropertyMapper,
+            IDictionary<Type, IDictionary<string, IPropertyMetadata>> propertyMetadata,
+            IDictionary<Type, IPropertyMetadata> defaultMetadata,
             Expression<Func<TEntity, object>> expression,
             IPropertyMetadata basePropertyMetadata)
-            : base(strainerPropertyMapper, expression)
+            : base(propertyMetadata, defaultMetadata, expression)
         {
-            if (strainerPropertyMapper == null)
-            {
-                throw new ArgumentNullException(nameof(strainerPropertyMapper));
-            }
-
             if (expression == null)
             {
                 throw new ArgumentNullException(nameof(expression));
@@ -36,14 +36,17 @@ namespace Fluorite.Strainer.Services.Sorting
             name = basePropertyMetadata.Name;
             propertyInfo = basePropertyMetadata.PropertyInfo;
 
-            UpdateMap(Build());
+            _propertyMetadata = propertyMetadata ?? throw new ArgumentNullException(nameof(propertyMetadata));
+            _defaultMetadata = defaultMetadata ?? throw new ArgumentNullException(nameof(defaultMetadata));
+
+            Save(Build());
         }
 
         public ISortPropertyMetadataBuilder<TEntity> IsDefaultSort(bool isDescending = false)
         {
             isDefaultSorting = true;
             isDefaultSortingDescending = isDescending;
-            UpdateMap(Build());
+            Save(Build());
 
             return this;
         }

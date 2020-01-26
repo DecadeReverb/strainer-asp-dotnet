@@ -18,14 +18,12 @@ namespace Fluorite.Strainer.Services
             IStrainerOptionsProvider optionsProvider,
             IFilterContext filteringContext,
             ISortingContext sortingContext,
-            IMetadataMapper mapper,
-            IMetadataProvidersFacade metadataProvidersFacade,
+            IMetadataFacade metadataProvidersFacade,
             ICustomMethodsContext customMethodsContext)
         {
             CustomMethods = customMethodsContext ?? throw new ArgumentNullException(nameof(customMethodsContext));
             Filter = filteringContext ?? throw new ArgumentNullException(nameof(filteringContext));
             Sorting = sortingContext ?? throw new ArgumentNullException(nameof(sortingContext));
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             Metadata = metadataProvidersFacade ?? throw new ArgumentNullException(nameof(metadataProvidersFacade));
             Options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
@@ -42,14 +40,9 @@ namespace Fluorite.Strainer.Services
         public IFilterContext Filter { get; }
 
         /// <summary>
-        /// Gets the property mapper.
-        /// </summary>
-        public IMetadataMapper Mapper { get; }
-
-        /// <summary>
         /// Gets the property metadata provider.
         /// </summary>
-        public IMetadataProvidersFacade Metadata { get; }
+        public IMetadataFacade Metadata { get; }
 
         /// <summary>
         /// Gets the Strainer options.

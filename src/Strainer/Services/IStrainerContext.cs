@@ -21,14 +21,9 @@ namespace Fluorite.Strainer.Services
         IFilterContext Filter { get; }
 
         /// <summary>
-        /// Gets the property mapper.
-        /// </summary>
-        IMetadataMapper Mapper { get; }
-
-        /// <summary>
         /// Gets the metadata providers facade.
         /// </summary>
-        IMetadataProvidersFacade Metadata { get; }
+        IMetadataFacade Metadata { get; }
 
         /// <summary>
         /// Gets the Strainer options.

@@ -1,18 +1,15 @@
-﻿using Fluorite.Strainer.Models.Filter.Operators;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
-    public interface IFilterOperatorMapper
+    public interface IFilterOperatorMapper :
+        IDictionary<string, IFilterOperator>,
+        ICollection<KeyValuePair<string, IFilterOperator>>,
+        IEnumerable<KeyValuePair<string, IFilterOperator>>,
+        IEnumerable
     {
-        IReadOnlyCollection<IFilterOperator> Operators { get; }
-
-        IReadOnlyCollection<string> Symbols { get; }
-
-        void AddMap(string symbol, IFilterOperator filterOperator);
-
-        IFilterOperator Find(string symbol);
-
         IFilterOperatorBuilder Operator(string symbol);
     }
 }
