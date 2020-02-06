@@ -134,25 +134,25 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
 
         private class PropertyTestModule : StrainerModule
         {
-            public override void Load()
+            public override void Load(IStrainerModuleBuilder builder)
             {
-                AddProperty<Post>(post => post.Id)
+                builder.AddProperty<Post>(post => post.Id)
                     .IsFilterable()
                     .IsSortable()
                     .IsDefaultSort();
 
-                AddObject<Comment>(comment => comment.Id)
+                builder.AddObject<Comment>(comment => comment.Id)
                     .IsFilterable()
                     .IsSortable();
 
-                AddFilterOperator(symbol: "###")
+                builder.AddFilterOperator(symbol: "###")
                     .HasName("hash")
                     .HasExpression(context => Expression.Constant(true));
 
-                AddCustomFilterMethod<Post>(nameof(TestCustomFilterMethod))
+                builder.AddCustomFilterMethod<Post>(nameof(TestCustomFilterMethod))
                     .HasFunction(TestCustomFilterMethod);
 
-                AddCustomSortMethod<Post>(nameof(TestCustomSortMethod))
+                builder.AddCustomSortMethod<Post>(nameof(TestCustomSortMethod))
                     .HasFunction(TestCustomSortMethod);
             }
 

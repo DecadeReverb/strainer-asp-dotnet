@@ -92,8 +92,10 @@ namespace Fluorite.Strainer.IntegrationTests
 
             modules.ForEach(strainerModule =>
             {
-                strainerModule.Options = optionsProvider.GetStrainerOptions();
-                strainerModule.Load();
+                var options = optionsProvider.GetStrainerOptions();
+                var moduleBuilder = new StrainerModuleBuilder(strainerModule, options);
+
+                strainerModule.Load(moduleBuilder);
             });
 
             var customFilerMethods = modules

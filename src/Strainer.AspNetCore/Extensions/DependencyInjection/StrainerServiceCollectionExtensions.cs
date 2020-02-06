@@ -382,7 +382,7 @@ namespace Fluorite.Extensions.DependencyInjection
                 {
                     throw new InvalidOperationException(
                         string.Format(
-                                "Valid Strainer Module cannot be an abstract class and must be deriving from {0}. " +
+                                "Valid Strainer module cannot be an abstract class and must be deriving from {0}. " +
                                 "Invalid types:\n{1}",
                             typeof(StrainerModule).FullName,
                             string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
@@ -395,8 +395,9 @@ namespace Fluorite.Extensions.DependencyInjection
 
                 modules.ForEach(strainerModule =>
                 {
-                    strainerModule.Options = options;
-                    strainerModule.Load();
+                    var moduleBuilder = new StrainerModuleBuilder(strainerModule, options);
+
+                    strainerModule.Load(moduleBuilder);
                 });
 
                 var customFilerMethods = modules
