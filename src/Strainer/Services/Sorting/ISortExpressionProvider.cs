@@ -10,7 +10,7 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     /// <summary>
     /// Provides means of tranlating <see cref="ISortTerm"/> into
-    /// <see cref="Expression{TDelegate}"/> of <see cref="Func{T, TResult}"/>.
+    /// <see cref="Expression{TDelegate}"/> of <see cref="System.Func{T, TResult}"/>.
     /// <para/>
     /// In other words - provides list of expressions which later can be used
     /// as arguments for ordering <see cref="IQueryable{T}"/>.
