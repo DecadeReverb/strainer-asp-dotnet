@@ -63,6 +63,57 @@ namespace Fluorite.Extensions.DependencyInjection
 
         /// <summary>
         /// Adds Strainer services to the <see cref="IServiceCollection"/>
+        /// with a collection of assemblies containing Strainer module types.
+        /// </summary>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="moduleAssemblies">
+        /// Assemblies that will be scanned in search for non-abstract classes
+        /// deriving from <see cref="StrainerModule"/>. Matching classes will
+        /// be added to Strainer as configuration modules.
+        /// <para />
+        /// Referenced assemblies will not be included.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="moduleAssemblies"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
+        public static IStrainerBuilder AddStrainer(
+            this IServiceCollection services,
+            IReadOnlyCollection<Assembly> moduleAssemblies,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (moduleAssemblies is null)
+            {
+                throw new ArgumentNullException(nameof(moduleAssemblies));
+            }
+
+            var moduleTypes = GetModuleTypesFromAssemblies(moduleAssemblies);
+
+            return services.AddStrainer(moduleTypes, serviceLifetime);
+        }
+
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>
         /// with a collection of Strainer module types.
         /// </summary>
         /// <param name="services">
@@ -207,7 +258,7 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            return services.AddStrainer(configuration, new List<Assembly>(), serviceLifetime);
+            return services.AddStrainer(configuration, new List<Type>(), serviceLifetime);
         }
 
         /// <summary>
@@ -264,12 +315,9 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var assemblies = moduleTypes
-                .Distinct()
-                .Select(type => type.Assembly)
-                .ToList();
+            services.Configure<StrainerOptions>(configuration);
 
-            return services.AddStrainer(configuration, assemblies, serviceLifetime);
+            return services.AddStrainer(moduleTypes, serviceLifetime);
         }
 
         /// <summary>
@@ -330,10 +378,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Configure<StrainerOptions>(configuration);
 
-            var moduleTypes = GetModuleTypesFromAssemblies(moduleAssemblies);
-            var builder = services.AddStrainer(moduleTypes, serviceLifetime);
-
-            return builder;
+            return services.AddStrainer(moduleAssemblies, serviceLifetime);
         }
 
         /// <summary>
@@ -378,7 +423,7 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configure));
             }
 
-            return services.AddStrainer(configure, new List<Assembly>(), serviceLifetime);
+            return services.AddStrainer(configure, new List<Type>(), serviceLifetime);
         }
 
         /// <summary>
@@ -435,12 +480,9 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configure));
             }
 
-            var assemblies = moduleTypes
-                .Distinct()
-                .Select(type => type.Assembly)
-                .ToList();
+            services.AddOptions<StrainerOptions>().Configure(configure);
 
-            return services.AddStrainer(configure, assemblies, serviceLifetime);
+            return services.AddStrainer(moduleTypes, serviceLifetime);
         }
 
         /// <summary>
@@ -501,10 +543,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.AddOptions<StrainerOptions>().Configure(configure);
 
-            var moduleTypes = GetModuleTypesFromAssemblies(moduleAssemblies);
-            var builder = services.AddStrainer(moduleTypes, serviceLifetime);
-
-            return builder;
+            return services.AddStrainer(moduleAssemblies, serviceLifetime);
         }
 
         private static void Add<TServiceType, TImplementationType>(
