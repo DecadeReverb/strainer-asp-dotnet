@@ -68,7 +68,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <param name="services">
         /// Current instance of <see cref="IServiceCollection"/>.
         /// </param>
-        /// <param name="moduleAssemblies">
+        /// <param name="assembliesToScan">
         /// Assemblies that will be scanned in search for non-abstract classes
         /// deriving from <see cref="StrainerModule"/>. Matching classes will
         /// be added to Strainer as configuration modules.
@@ -86,7 +86,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <paramref name="services"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="moduleAssemblies"/> is <see langword="null"/>.
+        /// <paramref name="assembliesToScan"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// Another Strainer processor was already registered within the
@@ -94,7 +94,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// </exception>
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
-            IReadOnlyCollection<Assembly> moduleAssemblies,
+            IReadOnlyCollection<Assembly> assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -102,12 +102,12 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (moduleAssemblies is null)
+            if (assembliesToScan is null)
             {
-                throw new ArgumentNullException(nameof(moduleAssemblies));
+                throw new ArgumentNullException(nameof(assembliesToScan));
             }
 
-            var moduleTypes = GetModuleTypesFromAssemblies(moduleAssemblies);
+            var moduleTypes = GetModuleTypesFromAssemblies(assembliesToScan);
 
             return services.AddStrainer(moduleTypes, serviceLifetime);
         }
@@ -216,53 +216,6 @@ namespace Fluorite.Extensions.DependencyInjection
             return new StrainerBuilder(services, serviceLifetime);
         }
 
-        /// <summary>
-        /// Adds Strainer services to the <see cref="IServiceCollection"/>
-        /// with a configuration.
-        /// </summary>
-        /// <param name="services">
-        /// Current instance of <see cref="IServiceCollection"/>.
-        /// </param>
-        /// <param name="configuration">
-        /// The types of Strainer modules.
-        /// </param>
-        /// <param name="serviceLifetime">
-        /// The service lifetime for Strainer services.
-        /// </param>
-        /// <returns>
-        /// An instance of <see cref="IServiceCollection"/> with added
-        /// Strainer services, so additional calls can be chained.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="services"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="configuration"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// Another Strainer processor was already registered within the
-        /// current <see cref="IServiceCollection"/>.
-        /// </exception>
-        public static IStrainerBuilder AddStrainer(
-            this IServiceCollection services,
-            IEnumerable<Assembly> assembliesToScan,
-            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
-        {
-            if (services is null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (assembliesToScan is null)
-            {
-                throw new ArgumentNullException(nameof(assembliesToScan));
-            }
-
-            var moduleTypes = GetModuleTypesFromAssemblies(assembliesToScan);
-
-            return services.AddStrainer(moduleTypes, serviceLifetime);
-        }
-
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
@@ -351,7 +304,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <param name="configuration">
         /// A configuration used to bind against <see cref="StrainerOptions"/>.
         /// </param>
-        /// <param name="moduleAssemblies">
+        /// <param name="assembliesToScan">
         /// Assemblies that will be scanned in search for non-abstract classes
         /// deriving from <see cref="StrainerModule"/>. Matching classes will
         /// be added to Strainer as configuration modules.
@@ -371,6 +324,9 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <exception cref="ArgumentNullException">
         /// <paramref name="configuration"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="assembliesToScan"/> is <see langword="null"/>.
+        /// </exception>
         /// <exception cref="InvalidOperationException">
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
@@ -378,7 +334,7 @@ namespace Fluorite.Extensions.DependencyInjection
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
-            IReadOnlyCollection<Assembly> moduleAssemblies,
+            IReadOnlyCollection<Assembly> assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -398,7 +354,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Configure<StrainerOptions>(configuration);
 
-            return services.AddStrainer(moduleAssemblies, serviceLifetime);
+            return services.AddStrainer(assembliesToScan, serviceLifetime);
         }
 
         /// <summary>
@@ -516,7 +472,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <param name="configure">
         /// An action used to configure <see cref="StrainerOptions"/>.
         /// </param>
-        /// <param name="moduleAssemblies">
+        /// <param name="assembliesToScan">
         /// Assemblies that will be scanned in search for non-abstract classes
         /// deriving from <see cref="StrainerModule"/>. Matching classes will
         /// be added to Strainer as configuration modules.
@@ -536,6 +492,9 @@ namespace Fluorite.Extensions.DependencyInjection
         /// <exception cref="ArgumentNullException">
         /// <paramref name="configure"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="assembliesToScan"/> is <see langword="null"/>.
+        /// </exception>
         /// <exception cref="InvalidOperationException">
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
@@ -543,7 +502,7 @@ namespace Fluorite.Extensions.DependencyInjection
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
-            IReadOnlyCollection<Assembly> moduleAssemblies,
+            IReadOnlyCollection<Assembly> assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -563,7 +522,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.AddOptions<StrainerOptions>().Configure(configure);
 
-            return services.AddStrainer(moduleAssemblies, serviceLifetime);
+            return services.AddStrainer(assembliesToScan, serviceLifetime);
         }
 
         private static void Add<TServiceType, TImplementationType>(
