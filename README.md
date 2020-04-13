@@ -202,11 +202,11 @@ services.AddStrainer(options => options.DefaultPageSize = 20);
 
 ## Strainer Modules
 
-Strainer builds its configuration from Modules (except for attribute-based metadata which is retrieved on runtime). Once created, the configuration cannot be changed and is read only. Modules provides a way to split the configuration into different assemblies. They also make it possible to use the configuration aside from Strainer services like Strainer processor.
+Strainer builds its configuration from Modules (except for attribute-based metadata which is retrieved on runtime). Once created, the configuration cannot be changed and is read only. Modules provides a way to split the configuration sources into different assemblies. They also make it possible to use the configuration aside from Strainer services like Strainer processor.
 
-Strainer module has configuration methods allowing to add a property, object, additional filter operator and custom methods.
+Strainer module comes with methods allowing to add a property, object, additional filter operator and custom methods.
 
-Module methods need to be called from overriden `Load()` method, like below:
+Module methods need to be called from a provided builder inside an overriden `Load()` method, like presented below:
 
 ```cs
 public class AppStrainerModule : StrainerModule
@@ -328,7 +328,7 @@ In order to add custom sort or filter methods, override appropriate mapping meth
 ```cs
 public override void Load(IStrainerModuleBuilder builder)
 {
-    builder.AddCustomMethod<Post>(nameof(IsPopular))
+    builder.AddCustomFilterMethod<Post>(nameof(IsPopular))
         .HasFunction(IsPopular);
 }
 
@@ -341,7 +341,7 @@ private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperato
 ```cs
 public override void Load(IStrainerModuleBuilder builder)
 {
-    builder.AddCustomMethod<Post>(nameof(Popularity))
+    builder.AddCustomSortMethod<Post>(nameof(Popularity))
         .HasFunction(Popularity);
 }
 

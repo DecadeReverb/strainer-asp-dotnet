@@ -67,9 +67,9 @@ Module methods should be called from overriden `Load()` method (**not** from mod
 ```cs
 public class AppStrainerModule : StrainerModule
 {
-    public override void Load()
+    public override void Load(IStrainerModuleBuilder builder)
     {
-        AddProperty<Post>(p => p.Comments.Count)
+        builder.AddProperty<Post>(p => p.Comments.Count)
             .IsFilterable()
             .IsSortable();
     }
@@ -126,9 +126,9 @@ For example, code adding the same method from the example above in Strainer woul
 ```cs
 public class ApplicationStrainerModule : StrainerModule
 {
-    public override void Load()
+    public override void Load(IStrainerModuleBuilder builder)
     {
-            AddCustomSortMethod<Post>(nameof(Popularity))
+            builder.AddCustomSortMethod<Post>(nameof(Popularity))
                 .HasFunction(Popularity);
     }
 
