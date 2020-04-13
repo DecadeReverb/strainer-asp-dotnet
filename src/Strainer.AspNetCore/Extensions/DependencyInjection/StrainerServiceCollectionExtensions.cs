@@ -1,9 +1,11 @@
 ﻿using Fluorite.Strainer.AspNetCore.Services;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
@@ -44,6 +46,9 @@ namespace Fluorite.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">
         /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="moduleTypes">
+        /// The types of Strainer modules.
         /// </param>
         /// <param name="serviceLifetime">
         /// The service lifetime for Strainer services.
@@ -111,11 +116,14 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
-            services.Add<ICustomMethodsContext, CustomMethodsContext>(serviceLifetime);
 
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
             services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
             services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
+
+            services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
+            services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
+            services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);
 
             services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
@@ -229,7 +237,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.Configure<StrainerOptions>(configuration);
 
-            var moduleTypes = GetTypesFromAssemblies(moduleAssemblies);
+            var moduleTypes = GetModuleTypesFromAssemblies(moduleAssemblies);
             var builder = services.AddStrainer(moduleTypes, serviceLifetime);
 
             return builder;
@@ -330,20 +338,16 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.AddOptions<StrainerOptions>().Configure(configure);
 
-            var assemblyTypes = GetTypesFromAssemblies(moduleAssemblies);
-            var builder = services.AddStrainer(assemblyTypes, serviceLifetime);
+            var moduleTypes = GetModuleTypesFromAssemblies(moduleAssemblies);
+            var builder = services.AddStrainer(moduleTypes, serviceLifetime);
 
             return builder;
-        }
-
-        private static object GetModuleTypes()
-        {
-            throw new NotImplementedException();
         }
 
         private static void Add<TServiceType, TImplementationType>(
             this IServiceCollection services,
             ServiceLifetime serviceLifetime)
+            where TImplementationType : TServiceType
         {
             services.Add(new ServiceDescriptor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime));
         }
@@ -354,14 +358,15 @@ namespace Fluorite.Extensions.DependencyInjection
             return services.Any(d => d.ServiceType == typeof(TImplementationType));
         }
 
-        private static IEnumerable<Type> GetTypesFromAssemblies(IEnumerable<Assembly> assemblies)
+        private static IEnumerable<Type> GetModuleTypesFromAssemblies(IEnumerable<Assembly> assemblies)
         {
             return assemblies
                 .Distinct()
                 .Where(a => a.GetReferencedAssemblies()
                     .All(name => !name.FullName.StartsWith("Microsoft.IntelliTrace.Core")))
                 .SelectMany(a => a.GetTypes())
-                .SelectMany(type => new[] { type }.Union(type.GetNestedTypes()));
+                .SelectMany(type => new[] { type }.Union(type.GetNestedTypes()))
+                .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)));
         }
 
         private static void AddModulesConfiguration(
@@ -370,9 +375,6 @@ namespace Fluorite.Extensions.DependencyInjection
         {
             using (var serviceProvider = services.BuildServiceProvider())
             {
-                var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
-                var options = optionsProvider.GetStrainerOptions();
-
                 var validModuleTypes = moduleTypes
                     .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)));
 
@@ -392,6 +394,9 @@ namespace Fluorite.Extensions.DependencyInjection
                     .Select(type => Activator.CreateInstance(type) as StrainerModule)
                     .Where(instance => instance != null)
                     .ToList();
+
+                var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
+                var options = optionsProvider.GetStrainerOptions();
 
                 modules.ForEach(strainerModule =>
                 {
@@ -438,12 +443,21 @@ namespace Fluorite.Extensions.DependencyInjection
                     .Merge()
                     .ToReadOnly();
 
-                services.AddSingleton(customFilerMethods);
-                services.AddSingleton(customSortMethods);
-                services.AddSingleton(defaultMetadata);
-                services.AddSingleton(filterOperators);
-                services.AddSingleton(objectMetadata);
-                services.AddSingleton(propertyMetadata);
+                var compiledConfiguration = new StrainerConfiguration(
+                    customFilerMethods,
+                    customSortMethods,
+                    defaultMetadata,
+                    filterOperators,
+                    objectMetadata,
+                    propertyMetadata);
+
+                // TODO:
+                // Make validation optional?
+                var filterOperatorValidator = serviceProvider.GetRequiredService<IFilterOperatorValidator>();
+                filterOperatorValidator.Validate(filterOperators.Values);
+
+                services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(sp =>
+                    new StrainerConfigurationProvider(compiledConfiguration));
             }
         }
     }

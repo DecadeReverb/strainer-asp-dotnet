@@ -33,13 +33,13 @@ namespace Fluorite.Strainer.Services.Modules
         IDictionary<string, IFilterOperator> FilterOperators { get; }
 
         /// <summary>
-        /// Gets the object property dictionary.
-        /// </summary>
-        IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
-
-        /// <summary>
         /// Gets the object metadata dictionary.
         /// </summary>
         IDictionary<Type, IObjectMetadata> ObjectMetadata { get; }
+
+        /// <summary>
+        /// Gets the object property dictionary.
+        /// </summary>
+        IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
     }
 }

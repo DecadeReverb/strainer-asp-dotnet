@@ -1,5 +1,4 @@
-﻿using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Models.Filtering.Terms;
+﻿using Fluorite.Strainer.Models.Filtering.Terms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +12,15 @@ namespace Fluorite.Strainer.Services.Filtering
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
         private readonly IFilterOperatorParser _parser;
-        private readonly IReadOnlyDictionary<string, IFilterOperator> _filterOperators;
+        private readonly IConfigurationFilterOperatorsProvider _filterOperatorsConfigurationProvider;
 
-        public FilterTermParser(IFilterOperatorParser parser, IReadOnlyDictionary<string, IFilterOperator> filterOperators)
+        public FilterTermParser(
+            IFilterOperatorParser parser,
+            IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
         {
             _parser = parser ?? throw new ArgumentNullException(nameof(parser));
-            this._filterOperators = filterOperators ?? throw new ArgumentNullException(nameof(filterOperators));
+            _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider
+                ?? throw new ArgumentNullException(nameof(filterOperatorsConfigurationProvider));
         }
 
         public IList<IFilterTerm> GetParsedTerms(string input)
@@ -88,7 +90,8 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private List<string> GetFilterSplits(string input)
         {
-            var symbols = _filterOperators
+            var symbols = _filterOperatorsConfigurationProvider
+                .GetFilterOperators()
                 .Keys
                 .OrderByDescending(s => s.Length)
                 .ToArray();

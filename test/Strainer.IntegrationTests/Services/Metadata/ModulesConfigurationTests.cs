@@ -1,12 +1,10 @@
 ﻿using FluentAssertions;
 using Fluorite.Extensions.DependencyInjection;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Models.Sorting;
+using Fluorite.Strainer.Services.Configuration;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -22,7 +20,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
             // Arrange
             var services = new ServiceCollection();
             services.AddStrainer(new[] { typeof(PropertyTestModule) });
-            var serviceProvider = services.BuildServiceProvider();
+            using var serviceProvider = services.BuildServiceProvider();
             var metadataProviders = serviceProvider.GetRequiredService<IEnumerable<IMetadataProvider>>();
             var fluentApiMetadataProvider = metadataProviders
                 .OfType<FluentApiMetadataProvider>()
@@ -43,7 +41,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
             // Arrange
             var services = new ServiceCollection();
             services.AddStrainer(new[] { typeof(PropertyTestModule) });
-            var serviceProvider = services.BuildServiceProvider();
+            using var serviceProvider = services.BuildServiceProvider();
             var metadataProviders = serviceProvider.GetRequiredService<IEnumerable<IMetadataProvider>>();
             var fluentApiMetadataProvider = metadataProviders
                 .OfType<FluentApiMetadataProvider>()
@@ -63,17 +61,15 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
             // Arrange
             var services = new ServiceCollection();
             services.AddStrainer(new[] { typeof(PropertyTestModule) });
-            var operatorSymbol = "###";
-            var serviceProvider = services.BuildServiceProvider();
-            var filterOperators = serviceProvider.GetRequiredService<IReadOnlyDictionary<string, IFilterOperator>>();
+            using var serviceProvider = services.BuildServiceProvider();
+            var filterOperatorsProvider = serviceProvider.GetRequiredService<IConfigurationFilterOperatorsProvider>();
 
             // Act
-            var result = filterOperators.TryGetValue(operatorSymbol, out var filterOperator);
+            var result = filterOperatorsProvider.GetFilterOperators();
 
             // Assert
-            result.Should().BeTrue();
-            filterOperator.Should().NotBeNull();
-            filterOperator.Symbol.Should().Be(operatorSymbol);
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCountGreaterThan(FilterOperatorMapper.DefaultOperators.Count);
         }
 
         [Fact]
@@ -82,21 +78,15 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
             // Arrange
             var services = new ServiceCollection();
             services.AddStrainer(new[] { typeof(PropertyTestModule) });
-            var customMethodName = nameof(PropertyTestModule.TestCustomFilterMethod);
-            var serviceProvider = services.BuildServiceProvider();
-            var customFilterMethods = serviceProvider
-                .GetRequiredService<IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>>();
+            using var serviceProvider = services.BuildServiceProvider();
+            var customMethodsProvider = serviceProvider.GetRequiredService<IConfigurationCustomMethodsProvider>();
 
             // Act
-            var result = customFilterMethods.TryGetValue(typeof(Post), out var customFilterMethodsForPost);
-            var result2 = customFilterMethodsForPost.TryGetValue(customMethodName, out var customFilterMethod);
+            var customFilterMethods = customMethodsProvider.GetCustomFilterMethods();
 
             // Assert
-            result.Should().BeTrue();
-            result2.Should().BeTrue();
-            customFilterMethodsForPost.Should().NotBeNullOrEmpty();
-            customFilterMethod.Should().NotBeNull();
-            customFilterMethod.Name.Should().Be(customMethodName);
+            customFilterMethods.Should().NotBeNullOrEmpty();
+            customFilterMethods.Should().ContainSingle(m => m.Key == typeof(Post));
         }
 
         [Fact]
@@ -105,21 +95,15 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
             // Arrange
             var services = new ServiceCollection();
             services.AddStrainer(new[] { typeof(PropertyTestModule) });
-            var customMethodName = "TestCustomSortMethod";
-            var serviceProvider = services.BuildServiceProvider();
-            var customSortMethods = serviceProvider
-                .GetRequiredService<IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>>();
+            using var serviceProvider = services.BuildServiceProvider();
+            var customMethodsProvider = serviceProvider.GetRequiredService<IConfigurationCustomMethodsProvider>();
 
             // Act
-            var result = customSortMethods.TryGetValue(typeof(Post), out var customSortMethodsForPost);
-            var result2 = customSortMethodsForPost.TryGetValue(customMethodName, out var customSortMethod);
+            var customSortMethods = customMethodsProvider.GetCustomSortMethods();
 
             // Assert
-            result.Should().BeTrue();
-            result2.Should().BeTrue();
-            customSortMethodsForPost.Should().NotBeNullOrEmpty();
-            customSortMethod.Should().NotBeNull();
-            customSortMethod.Name.Should().Be(customMethodName);
+            customSortMethods.Should().NotBeNullOrEmpty();
+            customSortMethods.Should().ContainSingle(m => m.Key == typeof(Post));
         }
 
         private class Post

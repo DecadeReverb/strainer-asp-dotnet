@@ -1,0 +1,42 @@
+﻿using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Models.Sorting;
+using System;
+using System.Collections.Generic;
+
+namespace Fluorite.Strainer.Models.Configuration
+{
+    public interface IStrainerConfiguration
+    {
+        /// <summary>
+        /// Gets the object custom filter methods dictionary.
+        /// </summary>
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> CustomFilterMethods { get; }
+
+        /// <summary>
+        /// Gets the object custom sorting methods dictionary.
+        /// </summary>
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> CustomSortMethods { get; }
+
+        /// <summary>
+        /// Gets the object default dictionary.
+        /// </summary>
+        IReadOnlyDictionary<Type, IPropertyMetadata> DefaultMetadata { get; }
+
+        /// <summary>
+        /// Gets the object filter operator dictionary.
+        /// </summary>
+        IReadOnlyDictionary<string, IFilterOperator> FilterOperators { get; }
+
+        /// <summary>
+        /// Gets the object property dictionary.
+        /// </summary>
+        IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
+
+        /// <summary>
+        /// Gets the object metadata dictionary.
+        /// </summary>
+        IReadOnlyDictionary<Type, IObjectMetadata> ObjectMetadata { get; }
+    }
+}

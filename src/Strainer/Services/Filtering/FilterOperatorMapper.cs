@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,83 +7,30 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
-    public class FilterOperatorMapper :
-        IFilterOperatorMapper,
-        IDictionary<string, IFilterOperator>,
-        ICollection<KeyValuePair<string, IFilterOperator>>,
-        IEnumerable<KeyValuePair<string, IFilterOperator>>,
-        IEnumerable
+    public class FilterOperatorMapper : IFilterOperatorMapper
     {
         private readonly IDictionary<string, IFilterOperator> _filterOperators;
         private readonly IFilterOperatorValidator _validator;
 
-        public static IReadOnlyDictionary<string, IFilterOperator> DefaultOperators
+        public static IReadOnlyDictionary<string, IFilterOperator> DefaultOperators;
+
+        static FilterOperatorMapper()
         {
-            get
-            {
-                return new ReadOnlyDictionary<string, IFilterOperator>(
+            DefaultOperators =
+                new ReadOnlyDictionary<string, IFilterOperator>(
                     GetDefaultFilterOperators()
-                        .ToDictionary(
-                            filterOperator => filterOperator.Symbol,
-                            FilterOperator => FilterOperator));
-            }
+                    .ToDictionary(filterOperator => filterOperator.Symbol, filterOperator => filterOperator));
         }
 
         public FilterOperatorMapper(IFilterOperatorValidator validator)
         {
-            _filterOperators = new Dictionary<string, IFilterOperator>();
+            _filterOperators = DefaultOperators.ToDictionary(pair => pair.Key, pair => pair.Value);
             _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-
-            GetDefaultFilterOperators()
-                .ToList()
-                .ForEach(filterOperator => _filterOperators[filterOperator.Symbol] = filterOperator);
-
+            
             _validator.Validate(_filterOperators.Values);
         }
 
-        public IFilterOperator this[string key]
-        {
-            get
-            {
-                return _filterOperators[key];
-            }
-            set
-            {
-                _filterOperators[key] = value;
-            }
-
-        }
-
         public int Count => _filterOperators.Count;
-
-        public bool IsReadOnly => false;
-
-        public ICollection<string> Keys => _filterOperators.Keys;
-
-        public ICollection<IFilterOperator> Values => _filterOperators.Values;
-
-        public void Add(string key, IFilterOperator value)
-        {
-            _filterOperators.Add(key, value);
-        }
-
-        public void Add(KeyValuePair<string, IFilterOperator> item)
-        {
-            _filterOperators.Add(item);
-        }
-
-        public void AddMap(string symbol, IFilterOperator filterOperator)
-        {
-            if (string.IsNullOrWhiteSpace(symbol))
-            {
-                throw new ArgumentException(
-                    $"{nameof(symbol)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
-                    nameof(symbol));
-            }
-
-            _filterOperators[symbol] = filterOperator ?? throw new ArgumentNullException(nameof(filterOperator));
-        }
 
         public IFilterOperator Find(string symbol)
         {
@@ -93,12 +39,9 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(symbol));
             }
 
-            if (_filterOperators.TryGetValue(symbol, out var filterOperator))
-            {
-                return filterOperator;
-            }
+            _filterOperators.TryGetValue(symbol, out var filterOperator);
 
-            return null;
+            return filterOperator;
         }
 
         public IFilterOperatorBuilder Operator(string symbol)
@@ -111,47 +54,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(symbol));
             }
 
-            //if (Keys.Contains(symbol))
-            //{
-            //    throw new InvalidOperationException(
-            //        $"There is already existing operator with a symbol {symbol}. " +
-            //        $"Choose a different symbol.");
-            //}
-
             return new FilterOperatorBuilder(_filterOperators, symbol);
-        }
-
-        public IEnumerator GetEnumerator() => _filterOperators.GetEnumerator();
-
-        public void Clear()
-        {
-            _filterOperators.Clear();
-        }
-
-        public bool Contains(KeyValuePair<string, IFilterOperator> item)
-        {
-            return _filterOperators.Contains(item);
-        }
-
-        public void CopyTo(KeyValuePair<string, IFilterOperator>[] array, int arrayIndex)
-        {
-            _filterOperators.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(KeyValuePair<string, IFilterOperator> item) => _filterOperators.Remove(item);
-
-        public bool ContainsKey(string key) => _filterOperators.ContainsKey(key);
-
-        public bool Remove(string key) => _filterOperators.Remove(key);
-
-        public bool TryGetValue(string key, out IFilterOperator value)
-        {
-            return _filterOperators.TryGetValue(key, out value);
-        }
-
-        IEnumerator<KeyValuePair<string, IFilterOperator>> IEnumerable<KeyValuePair<string, IFilterOperator>>.GetEnumerator()
-        {
-            return _filterOperators.GetEnumerator();
         }
 
         private static IFilterOperator[] GetDefaultFilterOperators()

@@ -1,4 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
@@ -11,9 +12,9 @@ namespace Fluorite.Strainer.Services
     public interface IStrainerContext
     {
         /// <summary>
-        /// Gets the context for custom methods.
+        /// Gets the custom methods provider.
         /// </summary>
-        ICustomMethodsContext CustomMethods { get; }
+        IConfigurationCustomMethodsProvider CustomMethods { get; }
 
         /// <summary>
         /// Gets the filtering context.

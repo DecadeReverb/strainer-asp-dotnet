@@ -22,8 +22,8 @@ namespace Fluorite.Strainer.Services.Modules
             CustomSortMethods = new Dictionary<Type, IDictionary<string, ICustomSortMethod>>();
             DefaultMetadata = new Dictionary<Type, IPropertyMetadata>();
             FilterOperators = new Dictionary<string, IFilterOperator>();
-            PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
             ObjectMetadata = new Dictionary<Type, IObjectMetadata>();
+            PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
         }
 
         /// <summary>
@@ -47,14 +47,14 @@ namespace Fluorite.Strainer.Services.Modules
         public IDictionary<string, IFilterOperator> FilterOperators { get; }
 
         /// <summary>
-        /// Gets the object property dictionary.
-        /// </summary>
-        public IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
-
-        /// <summary>
         /// Gets the object metadata dictionary.
         /// </summary>
         public IDictionary<Type, IObjectMetadata> ObjectMetadata { get; }
+
+        /// <summary>
+        /// Gets the object property dictionary.
+        /// </summary>
+        public IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
 
         /// <summary>
         /// Loads configuration in module.

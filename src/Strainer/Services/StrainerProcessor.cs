@@ -3,6 +3,7 @@ using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
+using Fluorite.Strainer.Services.Modules;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -29,14 +30,6 @@ namespace Fluorite.Strainer.Services
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
 
-            //MapFilterOperators(context.Filter.OperatorMapper);
-
-            // TODO:
-            // Move filter operator validation to service injection.
-            Context.Filter.OperatorValidator.Validate(Context.Filter.OperatorDictionary.Values);
-
-            //MapProperties(context.Mapper);
-
             // TODO:
             // Move sort expression validation to service injection.
             //var properties = Context.Mapper.GetAllMetadata();
@@ -46,9 +39,6 @@ namespace Fluorite.Strainer.Services
             //    dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
             //    //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
             //}
-
-            //MapCustomFilterMethods(context.CustomMethods.Filter);
-            //MapCustomSortMethods(context.CustomMethods.Sort);
         }
 
         /// <summary>
@@ -216,8 +206,8 @@ namespace Fluorite.Strainer.Services
                         }
                         else
                         {
-                            if (Context.CustomMethods.Filter.ContainsKey(typeof(TEntity))
-                                && Context.CustomMethods.Filter[typeof(TEntity)].TryGetValue(filterTermName, out var customMethod))
+                            if (Context.CustomMethods.GetCustomFilterMethods().TryGetValue(typeof(TEntity), out var customFilterMethods)
+                                && customFilterMethods.TryGetValue(filterTermName, out var customMethod))
                             {
                                 source = (customMethod as ICustomFilterMethod<TEntity>).Function(source, filterTerm.Operator?.Symbol);
                             }
@@ -382,8 +372,8 @@ namespace Fluorite.Strainer.Services
                 {
                     try
                     {
-                        if (Context.CustomMethods.Sort.ContainsKey(typeof(TEntity))
-                            && Context.CustomMethods.Sort[typeof(TEntity)].TryGetValue(sortTerm.Name, out var customMethod))
+                        if (Context.CustomMethods.GetCustomSortMethods().TryGetValue(typeof(TEntity), out var customSortMethods)
+                            && customSortMethods.TryGetValue(sortTerm.Name, out var customMethod))
                         {
                             source = (customMethod as ICustomSortMethod<TEntity>).Function(source, sortTerm.IsDescending, isSubsequent);
                             sortingPerformed = true;

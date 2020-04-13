@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
+using Fluorite.Strainer.Models.Configuration;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
+using Moq;
 using System.Linq;
 using Xunit;
 
@@ -14,11 +17,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             string input = null;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var operatorParser = new FilterOperatorParser(filterOperators);
-            var parser = new FilterTermParser(operatorParser, filterOperators);
+            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+                .Returns(filterOperators);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
 
             // Act
-            var filterTermList = parser.GetParsedTerms(input);
+            var filterTermList = termParser.GetParsedTerms(input);
 
             // Assert
             filterTermList.Should().BeEmpty();
@@ -31,11 +39,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var input = string.Empty;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var operatorParser = new FilterOperatorParser(filterOperators);
-            var parser = new FilterTermParser(operatorParser, filterOperators);
+            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+                .Returns(filterOperators);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
 
             // Act
-            var filterTermList = parser.GetParsedTerms(input);
+            var filterTermList = termParser.GetParsedTerms(input);
 
             // Assert
             filterTermList.Should().BeEmpty();
@@ -48,11 +61,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var input = string.Empty;
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            var operatorParser = new FilterOperatorParser(filterOperators);
-            var parser = new FilterTermParser(operatorParser, filterOperators);
+            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+                .Returns(filterOperators);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
 
             // Act
-            var filterTermList = parser.GetParsedTerms(input);
+            var filterTermList = termParser.GetParsedTerms(input);
 
             // Assert
             filterTermList.Should().BeEmpty();

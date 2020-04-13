@@ -2,10 +2,16 @@
 using Fluorite.Extensions;
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Configuration;
+using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using Moq;
 using System;
@@ -200,11 +206,18 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                     new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
                         pair.Key, pair.Value.ToReadOnly()))
                 .ToReadOnlyDictionary();
-            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
-                optionsProvider,
+            var strainerConfiguration = new StrainerConfiguration(
+                new Dictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(),
+                new Dictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(),
                 defaultMetadata,
+                new Dictionary<string, IFilterOperator>(),
                 objectMetadata,
                 propertyMetadata);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfiguration);
+            var configurationMetadataProvider = new ConfigurationMetadataProvider(strainerConfigurationProvider);
+            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
+                optionsProvider,
+                configurationMetadataProvider);
 
             return fluentApiMetadataProvider;
         }

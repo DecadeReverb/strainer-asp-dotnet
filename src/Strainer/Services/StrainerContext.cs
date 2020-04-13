@@ -1,4 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
@@ -15,13 +16,14 @@ namespace Fluorite.Strainer.Services
         /// Initializes new instance of <see cref="StrainerContext"/> class.
         /// </summary>
         public StrainerContext(
+            IConfigurationCustomMethodsProvider customMethodsConfigurationProvider,
             IStrainerOptionsProvider optionsProvider,
             IFilterContext filteringContext,
             ISortingContext sortingContext,
-            IMetadataFacade metadataProvidersFacade,
-            ICustomMethodsContext customMethodsContext)
+            IMetadataFacade metadataProvidersFacade)
         {
-            CustomMethods = customMethodsContext ?? throw new ArgumentNullException(nameof(customMethodsContext));
+            CustomMethods = customMethodsConfigurationProvider
+                ?? throw new ArgumentNullException(nameof(customMethodsConfigurationProvider));
             Filter = filteringContext ?? throw new ArgumentNullException(nameof(filteringContext));
             Sorting = sortingContext ?? throw new ArgumentNullException(nameof(sortingContext));
             Metadata = metadataProvidersFacade ?? throw new ArgumentNullException(nameof(metadataProvidersFacade));
@@ -30,9 +32,9 @@ namespace Fluorite.Strainer.Services
         }
 
         /// <summary>
-        /// Gets the context for custom methods.
+        /// Gets the custom methods provider.
         /// </summary>
-        public ICustomMethodsContext CustomMethods { get; }
+        public IConfigurationCustomMethodsProvider CustomMethods { get; }
 
         /// <summary>
         /// Gets the filtering context.

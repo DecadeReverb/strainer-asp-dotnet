@@ -1,9 +1,11 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
@@ -136,33 +138,43 @@ namespace Fluorite.Strainer.IntegrationTests
                 .Merge()
                 .ToReadOnly();
 
-            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
-                optionsProvider,
+            var strainerConfiguration = new StrainerConfiguration(
+                customFilerMethods,
+                customSortMethods,
                 defaultMetadata,
+                filterOperators,
                 objectMetadata,
                 propertyMetadata);
+
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfiguration);
+            var configurationMetadataProvider = new ConfigurationMetadataProvider(strainerConfigurationProvider);
+            var configurationFilterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var configurationCustomFilterMethodsProvider = new ConfigurationCustomMethodsProvider(strainerConfigurationProvider);
+
+            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
+                optionsProvider,
+                configurationMetadataProvider);
             var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
                 fluentApiMetadataProvider,
                 attributeMetadataProvider
             };
-            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
+            var metadataFacade = new MetadataFacade(propertyMetadataProviders);
 
             var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
-            var filterOperatorParser = new FilterOperatorParser(filterOperators);
+            var filterOperatorParser = new FilterOperatorParser(configurationFilterOperatorsProvider);
             var filterTermParser = new FilterTermParser(
                 filterOperatorParser,
-                filterOperators);
+                configurationFilterOperatorsProvider);
             var filteringContext = new FilterContext(
                 filterExpressionProvider,
-                filterOperators,
                 filterOperatorParser,
                 filterOperatorValidator,
                 filterTermParser);
 
-            var sortExpressionProvider = new SortExpressionProvider(mainMetadataProvider);
+            var sortExpressionProvider = new SortExpressionProvider(metadataFacade);
             var sortExpressionValidator = new SortExpressionValidator();
             var sortingWayFormatter = new DescendingPrefixSortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter, optionsProvider);
@@ -172,16 +184,12 @@ namespace Fluorite.Strainer.IntegrationTests
                 sortingWayFormatter,
                 sortTermParser);
 
-            var customMethodsContext = new CustomMethodsContext(
-                customFilerMethods,
-                customSortMethods);
-
             return new StrainerContext(
+                configurationCustomFilterMethodsProvider,
                 optionsProvider,
                 filteringContext,
                 sortingContext,
-                mainMetadataProvider,
-                customMethodsContext);
+                metadataFacade);
         }
     }
 }
