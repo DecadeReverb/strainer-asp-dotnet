@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Services.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,24 +11,15 @@ namespace Fluorite.Strainer.Services.Metadata
     public class FluentApiMetadataProvider : IMetadataProvider
     {
         private readonly StrainerOptions _options;
-        private readonly IReadOnlyDictionary<Type, IPropertyMetadata> _defaultMetadata;
-        private readonly IReadOnlyDictionary<Type, IObjectMetadata> _objectMetadata;
-        private readonly IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> _propertyMetadata;
+        private readonly IConfigurationMetadataProvider _metadataProvider;
 
         public FluentApiMetadataProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
-            IReadOnlyDictionary<Type, IPropertyMetadata> defaultMetadataDictionary,
-            IReadOnlyDictionary<Type, IObjectMetadata> objectMetadataDictionary,
-            IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadataDictionary)
+            IConfigurationMetadataProvider metadataProvider)
         {
             _options = (strainerOptionsProvider?.GetStrainerOptions()
                 ?? throw new ArgumentNullException(nameof(strainerOptionsProvider)));
-            _defaultMetadata = defaultMetadataDictionary
-                ?? throw new ArgumentNullException(nameof(defaultMetadataDictionary));
-            _objectMetadata = objectMetadataDictionary
-                ?? throw new ArgumentNullException(nameof(objectMetadataDictionary));
-            _propertyMetadata = propertyMetadataDictionary
-                ?? throw new ArgumentNullException(nameof(propertyMetadataDictionary));
+            _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -37,12 +29,12 @@ namespace Fluorite.Strainer.Services.Metadata
                 return null;
             }
 
-            var joinedTypes = _propertyMetadata.Keys.Union(_objectMetadata.Keys);
+            var joinedTypes = _metadataProvider.GetPropertyMetadata().Keys.Union(_metadataProvider.GetObjectMetadata().Keys);
 
             return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
                 joinedTypes.Select(type =>
                 {
-                    if (_propertyMetadata.TryGetValue(type, out var metadatas))
+                    if (_metadataProvider.GetPropertyMetadata().TryGetValue(type, out var metadatas))
                     {
                         return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
                             type,
@@ -50,7 +42,7 @@ namespace Fluorite.Strainer.Services.Metadata
                                 metadatas.ToDictionary(pair => pair.Key, pair => pair.Value)));
                     }
 
-                    var objectMetadata = _objectMetadata[type];
+                    var objectMetadata = _metadataProvider.GetObjectMetadata()[type];
 
                     return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
                         type,
@@ -94,11 +86,11 @@ namespace Fluorite.Strainer.Services.Metadata
                 return null;
             }
 
-            _defaultMetadata.TryGetValue(modelType, out var propertyMetadata);
+            _metadataProvider.GetDefaultMetadata().TryGetValue(modelType, out var propertyMetadata);
 
             if (propertyMetadata == null)
             {
-                if (_objectMetadata.TryGetValue(modelType, out var objectMetadata))
+                if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
                 {
                     propertyMetadata = new PropertyMetadata
                     {
@@ -139,7 +131,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 return null;
             }
 
-            if (_propertyMetadata.TryGetValue(modelType, out var propertyMetadatas))
+            if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var propertyMetadatas))
             {
                 var propertyMetadata = propertyMetadatas.FirstOrDefault(pair =>
                 {
@@ -166,7 +158,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            if (_propertyMetadata.TryGetValue(modelType, out var metadatas))
+            if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var metadatas))
             {
                 return metadatas.Values;
             }

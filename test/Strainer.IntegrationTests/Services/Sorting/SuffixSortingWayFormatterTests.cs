@@ -41,11 +41,11 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Sorting
                         customSortingWayFormatter,
                         Factory.CreateOptionsProvider()));
                 var newContext = new StrainerContext(
+                    context.CustomMethods,
                     Factory.CreateOptionsProvider(),
                     context.Filter,
                     newSortingContext,
-                    context.Metadata,
-                    context.CustomMethods);
+                    context.Metadata);
 
                 return new StrainerProcessor(newContext);
             });

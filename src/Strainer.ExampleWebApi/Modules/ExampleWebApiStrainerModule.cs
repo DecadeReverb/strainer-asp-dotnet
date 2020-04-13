@@ -14,23 +14,23 @@ namespace Fluorite.Strainer.ExampleWebApi.Modules
 
         }
 
-        public override void Load()
+        public override void Load(IStrainerModuleBuilder builder)
         {
-            AddCustomFilterMethod<Post>(nameof(IsNew))
+            builder.AddCustomFilterMethod<Post>(nameof(IsNew))
                 .HasFunction(IsNew);
-            AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
+            builder.AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
                 .HasFunction(HasInTitleFilterOperator);
 
-            AddCustomSortMethod<Post>(nameof(Popularity))
+            builder.AddCustomSortMethod<Post>(nameof(Popularity))
                 .HasFunction(Popularity);
 
-            AddFilterOperator(symbol: "%")
+            builder.AddFilterOperator(symbol: "%")
                 .HasName("modulo equal zero")
                 .HasExpression((context) => Expression.Equal(
                     Expression.Modulo(context.PropertyValue, context.FilterValue),
                     Expression.Constant(0)));
 
-            AddProperty<Post>(p => p.Comments.Count)
+            builder.AddProperty<Post>(p => p.Comments.Count)
                 .IsFilterable()
                 .IsSortable();
         }

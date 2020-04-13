@@ -1,16 +1,17 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Services.Configuration;
 using System;
-using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterOperatorParser : IFilterOperatorParser
     {
-        private readonly IReadOnlyDictionary<string, IFilterOperator> _filterOperators;
+        private readonly IConfigurationFilterOperatorsProvider _filterOperatorsConfigurationProvider;
 
-        public FilterOperatorParser(IReadOnlyDictionary<string, IFilterOperator> filterOperators)
+        public FilterOperatorParser(IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
         {
-            _filterOperators = filterOperators ?? throw new ArgumentNullException(nameof(filterOperators));
+            _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider
+                ?? throw new ArgumentNullException(nameof(filterOperatorsConfigurationProvider));
         }
 
         public virtual IFilterOperator GetParsedOperator(string symbol)
@@ -20,12 +21,9 @@ namespace Fluorite.Strainer.Services.Filtering
                 return null;
             }
 
-            if (_filterOperators.TryGetValue(symbol, out var filterOperator))
-            {
-                return filterOperator;
-            }
+            _filterOperatorsConfigurationProvider.GetFilterOperators().TryGetValue(symbol, out var filterOperator);
 
-            return null;
+            return filterOperator;
         }
     }
 }

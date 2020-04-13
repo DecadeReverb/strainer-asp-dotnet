@@ -14,44 +14,44 @@ namespace Fluorite.Strainer.IntegrationTests.Services
 
         }
 
-        public override void Load()
+        public override void Load(IStrainerModuleBuilder builder)
         {
-            AddCustomFilterMethod<Post>(nameof(IsPopular))
+            builder.AddCustomFilterMethod<Post>(nameof(IsPopular))
                .HasFunction(IsPopular);
-            AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
+            builder.AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
                 .HasFunction(HasInTitleFilterOperator);
-            AddCustomFilterMethod<Comment>(nameof(IsNew))
+            builder.AddCustomFilterMethod<Comment>(nameof(IsNew))
                 .HasFunction(IsNew);
-            AddCustomFilterMethod<Comment>(nameof(TestComment))
+            builder.AddCustomFilterMethod<Comment>(nameof(TestComment))
                 .HasFunction(TestComment);
 
-            AddCustomSortMethod<Post>(nameof(Popularity))
+            builder.AddCustomSortMethod<Post>(nameof(Popularity))
                 .HasFunction(Popularity);
 
-            AddProperty<Post>(p => p.ThisHasNoAttributeButIsAccessible)
+            builder.AddProperty<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .IsSortable()
                 .IsFilterable()
                 .HasDisplayName("shortname");
 
-            AddProperty<Post>(p => p.TopComment.Text)
+            builder.AddProperty<Post>(p => p.TopComment.Text)
                 .IsFilterable();
 
-            AddProperty<Post>(p => p.TopComment.Id)
+            builder.AddProperty<Post>(p => p.TopComment.Id)
                 .IsSortable()
                 .IsDefaultSort();
 
-            AddProperty<Post>(p => p.OnlySortableViaFluentApi)
+            builder.AddProperty<Post>(p => p.OnlySortableViaFluentApi)
                 .IsSortable();
 
-            AddProperty<Post>(p => p.TopComment.Text)
+            builder.AddProperty<Post>(p => p.TopComment.Text)
                 .IsFilterable()
                 .HasDisplayName("topc");
 
-            AddProperty<Post>(p => p.FeaturedComment.Text)
+            builder.AddProperty<Post>(p => p.FeaturedComment.Text)
                 .IsFilterable()
                 .HasDisplayName("featc");
 
-            AddObject<Comment>(comment => comment.Id)
+            builder.AddObject<Comment>(comment => comment.Id)
                 .IsFilterable()
                 .IsSortable();
         }

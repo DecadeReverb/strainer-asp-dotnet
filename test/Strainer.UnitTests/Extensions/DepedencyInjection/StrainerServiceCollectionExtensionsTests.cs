@@ -196,9 +196,9 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
         private class DerivedModule : BaseModule
         {
-            public override void Load()
+            public override void Load(IStrainerModuleBuilder builder)
             {
-                AddObject<Post>(p => p.Title);
+                builder.AddObject<Post>(p => p.Title);
             }
         }
 
