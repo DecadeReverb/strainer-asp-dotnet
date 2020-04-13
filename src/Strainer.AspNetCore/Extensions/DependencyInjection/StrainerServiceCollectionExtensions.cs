@@ -245,6 +245,26 @@ namespace Fluorite.Extensions.DependencyInjection
         /// </exception>
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
+            IEnumerable<Assembly> assembliesToScan,
+            ServiceLifetime serviceLifetime = DefaultServiceLifetime)
+        {
+            if (services is null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (assembliesToScan is null)
+            {
+                throw new ArgumentNullException(nameof(assembliesToScan));
+            }
+
+            var moduleTypes = GetModuleTypesFromAssemblies(assembliesToScan);
+
+            return services.AddStrainer(moduleTypes, serviceLifetime);
+        }
+
+        public static IStrainerBuilder AddStrainer(
+            this IServiceCollection services,
             IConfiguration configuration,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
@@ -366,9 +386,9 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (moduleAssemblies is null)
+            if (assembliesToScan is null)
             {
-                throw new ArgumentNullException(nameof(moduleAssemblies));
+                throw new ArgumentNullException(nameof(assembliesToScan));
             }
 
             if (configuration == null)
@@ -531,9 +551,9 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (moduleAssemblies is null)
+            if (assembliesToScan is null)
             {
-                throw new ArgumentNullException(nameof(moduleAssemblies));
+                throw new ArgumentNullException(nameof(assembliesToScan));
             }
 
             if (configure == null)
