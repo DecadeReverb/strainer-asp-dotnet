@@ -7,6 +7,10 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Models.Configuration
 {
+    /// <summary>
+    /// Provides readonly information about metadata, filter operators
+    /// and custom methods for Strainer.
+    /// </summary>
     public interface IStrainerConfiguration
     {
         /// <summary>

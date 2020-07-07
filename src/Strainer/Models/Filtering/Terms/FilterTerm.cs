@@ -6,13 +6,16 @@ using System.Linq;
 namespace Fluorite.Strainer.Models.Filtering.Terms
 {
     /// <summary>
-    /// Provides detailed information about filter expression.
+    /// Provides detailed information about filter term.
     /// </summary>
     public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     {
         /// <summary>
         /// Initializes new instance of <see cref="FilterTerm"/> class.
         /// </summary>
+        /// <param name="input">
+        /// The filter input from Strainer model.
+        /// </param>
         public FilterTerm(string input)
         {
             Input = input;
