@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Fluorite.Extensions
 {
-    public static class QuerableExtensions
+    public static class SortExpressionQuerableExtensions
     {
         /// <summary>
         /// Sorts the elements of a sequence in an order according to
