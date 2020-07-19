@@ -5,7 +5,7 @@
     <AssemblyName>Fluorite.Strainer.AspNetCore</AssemblyName>
     <RootNamespace>Fluorite.Strainer.AspNetCore</RootNamespace>
     <Authors>Fluorite</Authors>
-    <Version>3.0.0-preview8</Version>
+    <Version>3.0.0-preview9</Version>
     <Description>
       Extensions for using Strainer with ASP.NET Core.</Description>
     <Copyright>Copyright 2019</Copyright>
