@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Exceptions;
-using Fluorite.Strainer.IntegrationTests.Services;
+using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.TestModels;
@@ -11,12 +11,12 @@ using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests
 {
-    public class General : StrainerFixtureBase
+    public class GeneralTests : StrainerFixtureBase
     {
         private readonly IQueryable<Post> _posts;
         private readonly IQueryable<Comment> _comments;
 
-        public General(StrainerFactory factory) : base(factory)
+        public GeneralTests(StrainerFactory factory) : base(factory)
         {
             _comments = new List<Comment>
             {

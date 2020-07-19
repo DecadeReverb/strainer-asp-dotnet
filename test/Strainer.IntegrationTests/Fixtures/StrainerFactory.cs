@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fluorite.Strainer.IntegrationTests
+namespace Fluorite.Strainer.IntegrationTests.Fixtures
 {
     public class StrainerFactory
     {

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Attributes;
+using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;

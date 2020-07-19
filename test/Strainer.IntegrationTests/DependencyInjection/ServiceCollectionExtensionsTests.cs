@@ -10,9 +10,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Metadata
+namespace Fluorite.Strainer.IntegrationTests.DependencyInjection
 {
-    public class ModulesConfigurationTests
+    public class ServiceCollectionExtensionsTests
     {
         [Fact]
         public void ModuleConfiguration_Works_For_Adding_Property()

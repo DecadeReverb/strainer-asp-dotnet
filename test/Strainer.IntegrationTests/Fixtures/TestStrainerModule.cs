@@ -1,11 +1,9 @@
-﻿using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Sorting;
-using Fluorite.Strainer.Services.Modules;
+﻿using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.TestModels;
 using System;
 using System.Linq;
 
-namespace Fluorite.Strainer.IntegrationTests.Services
+namespace Fluorite.Strainer.IntegrationTests.Fixtures
 {
     public class TestStrainerModule : StrainerModule
     {

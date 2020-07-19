@@ -1,7 +1,7 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 
-namespace Fluorite.Strainer.IntegrationTests
+namespace Fluorite.Strainer.IntegrationTests.Fixtures
 {
     public class IntegrationTestsStrainerOptionsProvider : IStrainerOptionsProvider
     {
