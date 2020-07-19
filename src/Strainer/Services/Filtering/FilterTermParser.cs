@@ -38,97 +38,42 @@ namespace Fluorite.Strainer.Services.Filtering
                     continue;
                 }
 
+                string filterTermInput = filter;
+
                 if (filter.StartsWith("("))
                 {
                     var filterOperatorAndValue = ParseFilterOperatorAndValue(filter);
                     var subfilters = ParseSubfilters(filter, filterOperatorAndValue);
-                    var filterTerm = ParseFilterTerm(subfilters + filterOperatorAndValue);
-                    if (filterTerm is null)
-                    {
-                        continue;
-                    }
-
-                    if (!list.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
-                    {
-                        list.Add(filterTerm);
-                    }
+                    filterTermInput = subfilters + filterOperatorAndValue;
                 }
-                else
-                {
-                    var filterTerm = ParseFilterTerm(filter);
-                    if (filterTerm is null)
-                    {
-                        continue;
-                    }
 
-                    if (!list.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
-                    {
-                        list.Add(filterTerm);
-                    }
+                var filterTerm = ParseFilterTerm(filterTermInput);
+                if (filterTerm is null)
+                {
+                    continue;
+                }
+
+                if (!list.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
+                {
+                    list.Add(filterTerm);
                 }
             }
 
             return list;
         }
 
-        private List<string> GetFilterNames(List<string> filterSplits)
-        {
-            return Regex.Split(filterSplits.First(), EscapedPipePattern)
-                .Select(filterName => filterName.Trim())
-                .Where(filterName => !string.IsNullOrWhiteSpace(filterName))
-                .ToList();
-        }
-
-        private string GetFilterOperatorSymbol(string input, List<string> filterSplits)
-        {
-            foreach (var part in filterSplits)
-            {
-                input = input.Replace(part, string.Empty);
-            }
-
-            return input;
-        }
-
-        private List<string> GetFilterSplits(string input)
-        {
-            var symbols = _filterOperatorsConfigurationProvider
-                .GetFilterOperators()
-                .Keys
-                .OrderByDescending(s => s.Length)
-                .ToArray();
-
-            return input
-                .Split(symbols, StringSplitOptions.RemoveEmptyEntries)
-                .Select(t => t.Trim())
-                .ToList();
-        }
-
-        private List<string> GetFilterValues(List<string> filterSplits)
-        {
-            return filterSplits.Count() > 1
-                ? Regex.Split(filterSplits[1], EscapedPipePattern)
-                    .Select(t => t.Trim())
-                    .ToList()
-                : new List<string>();
-        }
-
-        private string ParseFilterOperatorAndValue(string filter)
-        {
-            return filter.Substring(filter.LastIndexOf(")") + 1);
-        }
-
         private IFilterTerm ParseFilterTerm(string input)
         {
-            var filterSplits = GetFilterSplits(input);
-            var names = GetFilterNames(filterSplits);
-            var values = GetFilterValues(filterSplits);
-            var symbol = GetFilterOperatorSymbol(input, filterSplits);
-            var operatorParsed = _parser.GetParsedOperator(symbol);
+            var (filterName, filterOpertatorSymbol, filterValues) = GetFilterSplits(input);
+            var names = GetFilterNames(filterName);
 
             if (!names.Any())
             {
                 return null;
             }
+
+            var values = GetFilterValues(filterValues);
+            var operatorParsed = _parser.GetParsedOperator(filterOpertatorSymbol);
 
             return new FilterTerm(input)
             {
@@ -136,6 +81,59 @@ namespace Fluorite.Strainer.Services.Filtering
                 Values = values,
                 Operator = operatorParsed,
             };
+        }
+
+        private (string FilterName, string FilterOperatorSymbol, string FilterValues) GetFilterSplits(string input)
+        {
+            var symbols = _filterOperatorsConfigurationProvider
+                .GetFilterOperators()
+                .Keys
+                .OrderByDescending(s => s.Length)
+                .ToArray();
+            var splitPattern = string.Join("|", symbols.Select(s => $"({Regex.Escape(s)})"));
+            var substrings = Regex.Split(input, splitPattern);
+
+            if (substrings.Length <= 1)
+            {
+                return (substrings.FirstOrDefault(), string.Empty, string.Empty);
+            }
+
+            if (substrings.Length >= 3)
+            {
+                return (substrings[0], substrings[1], substrings[2]);
+            }
+
+            return (string.Empty, string.Empty, string.Empty);
+        }
+
+        private List<string> GetFilterNames(string names)
+        {
+            if (names.Equals(string.Empty))
+            {
+                return new List<string>();
+            }
+
+            return Regex.Split(names, EscapedPipePattern)
+                .Select(filterName => filterName.Trim())
+                .Where(filterName => !string.IsNullOrWhiteSpace(filterName))
+                .ToList();
+        }
+
+        private List<string> GetFilterValues(string values)
+        {
+            if (values.Equals(string.Empty))
+            {
+                return new List<string>();
+            }
+
+            return Regex.Split(values, EscapedPipePattern)
+                .Select(t => t.Trim())
+                .ToList();
+        }
+
+        private string ParseFilterOperatorAndValue(string filter)
+        {
+            return filter.Substring(filter.LastIndexOf(")") + 1);
         }
 
         private string ParseSubfilters(string filter, string filterOpAndVal)
