@@ -323,77 +323,6 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void MethodNotFoundExceptionWork()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "does not exist",
-            };
-            var processor = Factory.CreateProcessor<TestStrainerModule>((context) =>
-            {
-                context.Options.ThrowExceptions = true;
-
-                return new StrainerProcessor(context);
-            });
-
-            // Assert
-            Assert.Throws<StrainerMethodNotFoundException>(() => processor.Apply(model, _posts));
-        }
-
-        [Fact]
-        public void OrNameFilteringWorks()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "(Title|LikeCount)==3",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.Title == "3" || p.LikeCount == 3);
-        }
-
-        [Fact]
-        public void OrValueFilteringWorks()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "Title==C|D",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.Title == "C" || p.Title == "D");
-        }
-
-        [Fact]
-        public void OrValueFilteringWorks2()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "Text@=(|)",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _comments);
-
-            // Assert
-            result.Should().HaveCount(1);
-            result.FirstOrDefault().Id.Should().Be(2);
-        }
-
-        [Fact]
         public void NestedFilteringWorks()
         {
             // Arrange
@@ -428,23 +357,22 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void NestedFilteringWithIdenticTypesWorks()
+        public void MethodNotFoundExceptionWork()
         {
             // Arrange
             var model = new StrainerModel()
             {
-                Filters = "(topc|featc)@=*B",
+                Filters = "does not exist",
             };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+            var processor = Factory.CreateProcessor<TestStrainerModule>((context) =>
+            {
+                context.Options.ThrowExceptions = true;
 
-            // Act
-            var result = processor.Apply(model, _posts);
+                return new StrainerProcessor(context);
+            });
 
             // Assert
-            result.Should().OnlyContain(p =>
-                p.TopComment.Text.Contains("B", StringComparison.OrdinalIgnoreCase)
-                || p.FeaturedComment.Text.Contains("B", StringComparison.OrdinalIgnoreCase)
-            );
+            Assert.Throws<StrainerMethodNotFoundException>(() => processor.Apply(model, _posts));
         }
     }
 }
