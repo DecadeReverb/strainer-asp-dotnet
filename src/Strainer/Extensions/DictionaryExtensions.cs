@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Fluorite.Strainer.Extensions
+namespace Fluorite.Extensions
 {
     public static class DictionaryExtensions
     {

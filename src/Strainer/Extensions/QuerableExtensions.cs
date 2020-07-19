@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Fluorite.Strainer.Extensions
+namespace Fluorite.Extensions
 {
     public static class QuerableExtensions
     {
