@@ -43,7 +43,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     var filterOperatorAndValue = ParseFilterOperatorAndValue(filter);
                     var subfilters = ParseSubfilters(filter, filterOperatorAndValue);
                     var filterTerm = ParseFilterTerm(subfilters + filterOperatorAndValue);
-                    if (filterTerm == null)
+                    if (filterTerm is null)
                     {
                         continue;
                     }
@@ -56,7 +56,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 else
                 {
                     var filterTerm = ParseFilterTerm(filter);
-                    if (filterTerm == null)
+                    if (filterTerm is null)
                     {
                         continue;
                     }
@@ -74,7 +74,8 @@ namespace Fluorite.Strainer.Services.Filtering
         private List<string> GetFilterNames(List<string> filterSplits)
         {
             return Regex.Split(filterSplits.First(), EscapedPipePattern)
-                .Select(t => t.Trim())
+                .Select(filterName => filterName.Trim())
+                .Where(filterName => !string.IsNullOrWhiteSpace(filterName))
                 .ToList();
         }
 
