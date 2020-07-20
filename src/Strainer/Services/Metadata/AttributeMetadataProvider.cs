@@ -45,7 +45,7 @@ namespace Fluorite.Strainer.Services.Metadata
                                 return new PropertyMetadata
                                 {
                                     IsDefaultSorting = isDefaultSorting,
-                                    IsDefaultSortingDescending = isDefaultSorting ? pair.Attribute.IsDefaultSortingDescending : false,
+                                    IsDefaultSortingDescending = isDefaultSorting && pair.Attribute.IsDefaultSortingDescending,
                                     IsFilterable = pair.Attribute.IsFilterable,
                                     IsSortable = pair.Attribute.IsSortable,
                                     Name = propertyInfo.Name,
@@ -265,15 +265,15 @@ namespace Fluorite.Strainer.Services.Metadata
 
                 if (attribute != null
                     && propertyInfo != null
-                    && (isSortableRequired ? attribute.IsSortable : true)
-                    && (isFilterableRequired ? attribute.IsFilterable : true))
+                    && (!isSortableRequired || attribute.IsSortable)
+                    && (!isFilterableRequired || attribute.IsFilterable))
                 {
                     var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
 
                     return new PropertyMetadata
                     {
                         IsDefaultSorting = isDefaultSorting,
-                        IsDefaultSortingDescending = isDefaultSorting ? attribute.IsDefaultSortingDescending : false,
+                        IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
                         IsFilterable = attribute.IsFilterable,
                         IsSortable = attribute.IsSortable,
                         Name = propertyInfo.Name,
@@ -312,7 +312,7 @@ namespace Fluorite.Strainer.Services.Metadata
                             return new PropertyMetadata
                             {
                                 IsDefaultSorting = isDefaultSorting,
-                                IsDefaultSortingDescending = isDefaultSorting ? attribute.IsDefaultSortingDescending : false,
+                                IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
                                 IsFilterable = attribute.IsFilterable,
                                 IsSortable = attribute.IsSortable,
                                 Name = propertyInfo.Name,
@@ -352,8 +352,8 @@ namespace Fluorite.Strainer.Services.Metadata
                     var propertyInfo = pair.Key;
                     var attribute = pair.Value;
 
-                    return (isSortableRequired ? attribute.IsSortable : true)
-                        && (isFilterableRequired ? attribute.IsFilterable : true)
+                    return (!isSortableRequired || attribute.IsSortable)
+                        && (!isFilterableRequired || attribute.IsFilterable)
                         && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name));
                 });
 
