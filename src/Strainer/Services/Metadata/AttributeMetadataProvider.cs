@@ -22,12 +22,16 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
         {
+            // TODO:
+            // Check if TraceDataCollector is still causing an issue.
             var types = AppDomain.CurrentDomain
                 .GetAssemblies()
                 .Where(assembly => !assembly.FullName.StartsWith("Microsoft.VisualStudio.TraceDataCollector"))
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => type.IsClass || type.IsValueType);
 
+            // TODO:
+            // Refactor this monster below:
             var objectMetadatas = types
                 .Select(type => new { Type = type, Attribute = type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false) })
                 .Where(pair => pair.Attribute != null)
@@ -57,6 +61,8 @@ namespace Fluorite.Strainer.Services.Metadata
                 })
                 .ToDictionary(pair => pair.Type, pair => pair.Metadatas);
 
+            // TODO:
+            // Refactor this monster below:
             var propertyMetadatas = types
                 .Select(type => new
                 {
@@ -188,12 +194,12 @@ namespace Fluorite.Strainer.Services.Metadata
 
                     return new PropertyMetadata
                     {
+                        IsDefaultSorting = true,
+                        IsDefaultSortingDescending = attribute.IsDefaultSortingDescending,
                         IsFilterable = attribute.IsFilterable,
                         IsSortable = attribute.IsSortable,
                         Name = propertyInfo.Name,
                         PropertyInfo = propertyInfo,
-                        IsDefaultSorting = true,
-                        IsDefaultSortingDescending = attribute.IsDefaultSortingDescending,
                     };
                 }
 
@@ -354,7 +360,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
                     return (!isSortableRequired || attribute.IsSortable)
                         && (!isFilterableRequired || attribute.IsFilterable)
-                        && ((attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name));
+                        && (attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name);
                 });
 
             if (keyValue.Value != null)

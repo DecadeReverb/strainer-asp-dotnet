@@ -29,8 +29,13 @@ namespace Fluorite.Strainer.Services.Metadata
                 return null;
             }
 
-            var joinedTypes = _metadataProvider.GetPropertyMetadata().Keys.Union(_metadataProvider.GetObjectMetadata().Keys);
+            var joinedTypes = _metadataProvider
+                .GetPropertyMetadata()
+                .Keys
+                .Union(_metadataProvider.GetObjectMetadata().Keys);
 
+            // TODO:
+            // Refactor this monster below:
             return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
                 joinedTypes.Select(type =>
                 {
