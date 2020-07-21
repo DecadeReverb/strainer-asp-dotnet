@@ -340,23 +340,6 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void NestedSortingWorks()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Sorts = "TopComment.Id",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().BeInAscendingOrder(post => post.TopComment.Id);
-        }
-
-        [Fact]
         public void MethodNotFoundExceptionWork()
         {
             // Arrange

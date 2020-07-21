@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests
 {
-    public class ConditionalFiltersTests : StrainerFixtureBase
+    public class ConditionalFilteringTests : StrainerFixtureBase
     {
-        public ConditionalFiltersTests(StrainerFactory factory) : base(factory)
+        public ConditionalFilteringTests(StrainerFactory factory) : base(factory)
         {
 
         }
