@@ -323,23 +323,6 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void NestedFilteringWorks()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "TopComment.Text!@=A",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().NotContain(p => p.TopComment.Text.Contains("A"));
-        }
-
-        [Fact]
         public void MethodNotFoundExceptionWork()
         {
             // Arrange
