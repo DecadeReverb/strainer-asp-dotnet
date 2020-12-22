@@ -23,9 +23,6 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             builder.AddCustomFilterMethod<Comment>(nameof(TestComment))
                 .HasFunction(TestComment);
 
-            builder.AddCustomSortMethod<Post>(nameof(Popularity))
-                .HasFunction(Popularity);
-
             builder.AddProperty<Post>(p => p.ThisHasNoAttributeButIsAccessible)
                 .IsSortable()
                 .IsFilterable()
@@ -55,6 +52,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
         }
 
         #region custom filter methods
+
         private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperator)
         {
             return source.Where(p => p.LikeCount > 100);
@@ -74,21 +72,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
         {
             return source;
         }
-        #endregion
 
-        #region custom sort methods
-        private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-        {
-            return isSubsequent
-                ? (source as IOrderedQueryable<Post>)
-                    .ThenBy(p => p.LikeCount)
-                    .ThenBy(p => p.CommentCount)
-                    .ThenBy(p => p.DateCreated)
-                : source
-                    .OrderBy(p => p.LikeCount)
-                    .ThenBy(p => p.CommentCount)
-                    .ThenBy(p => p.DateCreated);
-        }
         #endregion
     }
 }

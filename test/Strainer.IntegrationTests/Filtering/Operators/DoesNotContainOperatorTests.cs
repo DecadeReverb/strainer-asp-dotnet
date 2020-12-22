@@ -6,49 +6,17 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 {
-    public class EqualsCaseInsensitiveTests : StrainerFixtureBase
+    public class DoesNotContainOperatorTests : StrainerFixtureBase
     {
-        public EqualsCaseInsensitiveTests(StrainerFactory factory) : base(factory)
+        public DoesNotContainOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
 
         [Fact]
-        public void EqualsCaseInsensitive_Works_When_CaseSensivity_IsDisabled()
-        {
-            // Arrange
-            var source = new[]
-            {
-                new Comment
-                {
-                    Text = "foo",
-                },
-                new Comment
-                {
-                    Text = "bar",
-                },
-                new Comment
-                {
-                    Text = "FOO",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.IsCaseInsensitiveForValues = true);
-            var model = new StrainerModel
-            {
-                Filters = "Text==*foo",
-            };
-
-            // Act
-            var result = processor.ApplyFiltering(model, source);
-
-            // Assert
-            result.Should().OnlyContain(b => b.Text.Equals("foo", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [Fact]
-        public void EqualsCaseInsensitive_Works_Even_When_CaseSensivity_IsEnabled()
+        public void DoesNotContain_Works_When_CaseSensivity_IsDisabled()
         {
             // Arrange
             var source = new[]
@@ -66,21 +34,57 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
                     Text = "FOO",
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
+            var processor = Factory.CreateDefaultProcessor(options =>
+            {
+                options.IsCaseInsensitiveForValues = true;
+                options.ThrowExceptions = true;
+            });
             var model = new StrainerModel
             {
-                Filters = "Text==*foo",
+                Filters = "Text!@=OO",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(b => b.Text.Equals("foo", StringComparison.OrdinalIgnoreCase));
+            result.Should().OnlyContain(c => !c.Text.Contains("OO", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]
-        public void EqualsCaseInsensitive_Works_For_NonStringValues()
+        public void DoesNotContain_Works_When_CaseSensivity_IsEnabled()
+        {
+            // Arrange
+            var source = new[]
+            {
+                new Comment
+                {
+                    Text = "foo",
+                },
+                new Comment
+                {
+                    Text = "bar",
+                },
+                new Comment
+                {
+                    Text = "FOO",
+                },
+            }.AsQueryable();
+            var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
+            var model = new StrainerModel
+            {
+                Filters = "Text!@=oo",
+            };
+
+            // Act
+            var result = processor.ApplyFiltering(model, source);
+
+            // Assert
+            result.Should().OnlyContain(c => !c.Text.Contains("oo", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void DoesNotContain_Works_For_NonStringValues()
         {
             // Arrange
             var source = new[]
@@ -98,17 +102,17 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
                     LikeCount = 50,
                 },
             }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
+            var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "LikeCount==*20",
+                Filters = "LikeCount!@=2",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.LikeCount.Equals(20));
+            result.Should().OnlyContain(c => !c.LikeCount.ToString().Contains("2", StringComparison.Ordinal));
         }
 
         private class Comment

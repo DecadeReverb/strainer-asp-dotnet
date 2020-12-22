@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿
+using FluentAssertions;
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.IntegrationTests.Fixtures;
@@ -7,17 +8,17 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 {
-    public class LessThanOperatorTests : StrainerFixtureBase
+    public class LessThanOrEqualToOperatorTests : StrainerFixtureBase
     {
-        public LessThanOperatorTests(StrainerFactory factory) : base(factory)
+        public LessThanOrEqualToOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
 
         [Fact]
-        public void LessThan_Works_For_Numbers()
+        public void LessThanOrEqualTo_Works_For_Numbers()
         {
             // Arrange
             var source = new[]
@@ -34,46 +35,46 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel
             {
-                Filters = "LikeCount<3",
+                Filters = "LikeCount<=3",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.LikeCount < 3);
+            result.Should().OnlyContain(c => c.LikeCount <= 3);
         }
 
         [Fact]
-        public void LessThan_Works_For_ComplexTypes()
+        public void LessThanOrEqualTo_Works_For_ComplexTypes()
         {
             // Arrange
             var source = new[]
             {
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(-3),
+                    TimeSpan = TimeSpan.FromMinutes(5),
                 },
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(2),
+                    TimeSpan = TimeSpan.FromMinutes(10),
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = $"DateTime<{DateTime.Now}",
+                Filters = $"TimeSpan<={TimeSpan.FromMinutes(10)}",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.DateTime < DateTime.Now);
+            result.Should().OnlyContain(c => c.TimeSpan <= TimeSpan.FromMinutes(10));
         }
 
         [Fact]
-        public void LessThan_DoesNot_Work_For_StringValues()
+        public void LessThanOrEqualTo_DoesNot_Work_For_StringValues()
         {
             // Arrange
             var source = new[]
@@ -90,7 +91,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Text<3",
+                Filters = "Text<=3",
             };
 
             // Act & Assert
@@ -98,7 +99,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
         }
 
         [Fact]
-        public void LessThan_DoesNot_Work_For_ComplexValues_Without_DedicatedTypeConverter()
+        public void LessThanOrEqualTo_DoesNot_Work_For_ComplexValues_Without_DedicatedTypeConverter()
         {
             // Arrange
             var source = new[]
@@ -115,7 +116,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Point<3",
+                Filters = "Point<=3",
             };
 
             // Act & Assert
@@ -134,7 +135,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             public string Text { get; set; }
 
             [StrainerProperty(IsFilterable = true)]
-            public DateTime DateTime { get; set; }
+            public TimeSpan TimeSpan { get; set; }
         }
 
         private readonly struct Point

@@ -6,17 +6,17 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 {
-    public class DoesNotContainOperatorTests : StrainerFixtureBase
+    public class DoesNotStartWithOperatorTests : StrainerFixtureBase
     {
-        public DoesNotContainOperatorTests(StrainerFactory factory) : base(factory)
+        public DoesNotStartWithOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
 
         [Fact]
-        public void DoesNotContain_Works_When_CaseSensivity_IsDisabled()
+        public void DoesNotStartWith_Works_When_CaseSensivity_IsDisabled()
         {
             // Arrange
             var source = new[]
@@ -41,18 +41,18 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             });
             var model = new StrainerModel
             {
-                Filters = "Text!@=OO",
+                Filters = "Text!_=f",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => !c.Text.Contains("OO", StringComparison.OrdinalIgnoreCase));
+            result.Should().OnlyContain(c => !c.Text.StartsWith("f", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]
-        public void DoesNotContain_Works_When_CaseSensivity_IsEnabled()
+        public void DoesNotStartWith_Works_When_CaseSensivity_IsEnabled()
         {
             // Arrange
             var source = new[]
@@ -73,18 +73,18 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Text!@=oo",
+                Filters = "Text!_=f",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => !c.Text.Contains("oo", StringComparison.Ordinal));
+            result.Should().OnlyContain(c => !c.Text.StartsWith("f", StringComparison.Ordinal));
         }
 
         [Fact]
-        public void DoesNotContain_Works_For_NonStringValues()
+        public void DoesNotStartWith_Works_For_NonStringValues()
         {
             // Arrange
             var source = new[]
@@ -105,14 +105,14 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "LikeCount!@=2",
+                Filters = "LikeCount!_=2",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => !c.LikeCount.ToString().Contains("2", StringComparison.Ordinal));
+            result.Should().OnlyContain(c => !c.LikeCount.ToString().StartsWith("2", StringComparison.Ordinal));
         }
 
         private class Comment

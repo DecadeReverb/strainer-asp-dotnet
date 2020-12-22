@@ -8,17 +8,17 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 {
-    public class LessThanOrEqualToOperatorTests : StrainerFixtureBase
+    public class GreaterThanOrEqualToOperatorTests : StrainerFixtureBase
     {
-        public LessThanOrEqualToOperatorTests(StrainerFactory factory) : base(factory)
+        public GreaterThanOrEqualToOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
 
         [Fact]
-        public void LessThanOrEqualTo_Works_For_Numbers()
+        public void GreaterThanOrEqualTo_Works_For_Numbers()
         {
             // Arrange
             var source = new[]
@@ -35,46 +35,47 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor();
             var model = new StrainerModel
             {
-                Filters = "LikeCount<=3",
+                Filters = "LikeCount>=2",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.LikeCount <= 3);
+            result.Should().OnlyContain(c => c.LikeCount >= 2);
         }
 
         [Fact]
-        public void LessThanOrEqualTo_Works_For_ComplexTypes()
+        public void GreaterThanOrEqualTo_Works_For_ComplexTypes()
         {
             // Arrange
+            var dateTimeNow = DateTime.Now;
             var source = new[]
             {
                 new Comment
                 {
-                    TimeSpan = TimeSpan.FromMinutes(5),
+                    DateTime = DateTime.Now.AddDays(-3),
                 },
                 new Comment
                 {
-                    TimeSpan = TimeSpan.FromMinutes(10),
+                    DateTime = dateTimeNow,
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = $"TimeSpan<={TimeSpan.FromMinutes(10)}",
+                Filters = $"DateTime>={dateTimeNow}",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.TimeSpan <= TimeSpan.FromMinutes(10));
+            result.Should().OnlyContain(c => c.DateTime >= dateTimeNow);
         }
 
         [Fact]
-        public void LessThanOrEqualTo_DoesNot_Work_For_StringValues()
+        public void GreaterThanOrEqualTo_DoesNot_Work_For_StringValues()
         {
             // Arrange
             var source = new[]
@@ -91,7 +92,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Text<=3",
+                Filters = "Text>=2",
             };
 
             // Act & Assert
@@ -99,7 +100,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
         }
 
         [Fact]
-        public void LessThanOrEqualTo_DoesNot_Work_For_ComplexValues_Without_DedicatedTypeConverter()
+        public void GreaterThanOrEqualTo_DoesNot_Work_For_ComplexValues_Without_DedicatedTypeConverter()
         {
             // Arrange
             var source = new[]
@@ -116,7 +117,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Point<=3",
+                Filters = "Point>=2",
             };
 
             // Act & Assert
@@ -135,7 +136,7 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             public string Text { get; set; }
 
             [StrainerProperty(IsFilterable = true)]
-            public TimeSpan TimeSpan { get; set; }
+            public DateTime DateTime { get; set; }
         }
 
         private readonly struct Point

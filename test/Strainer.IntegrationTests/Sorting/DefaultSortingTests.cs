@@ -5,7 +5,7 @@ using Fluorite.Strainer.Models;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Sorting
+namespace Fluorite.Strainer.IntegrationTests.Sorting
 {
     public class DefaultSortingTests : StrainerFixtureBase
     {

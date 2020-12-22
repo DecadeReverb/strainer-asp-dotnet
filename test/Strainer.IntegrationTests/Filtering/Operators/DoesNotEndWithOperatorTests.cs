@@ -6,24 +6,24 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 {
-    public class ContainsOperatorTests : StrainerFixtureBase
+    public class DoesNotEndWithOperatorTests : StrainerFixtureBase
     {
-        public ContainsOperatorTests(StrainerFactory factory) : base(factory)
+        public DoesNotEndWithOperatorTests(StrainerFactory factory) : base(factory)
         {
 
         }
 
         [Fact]
-        public void Contains_Works_When_CaseSensivity_IsDisabled()
+        public void DoesNotEndWith_Works_When_CaseSensivity_IsDisabled()
         {
             // Arrange
             var source = new[]
             {
                 new Comment
                 {
-                    Text = "foo",
+                    Text = "ARR",
                 },
                 new Comment
                 {
@@ -41,25 +41,25 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             });
             var model = new StrainerModel
             {
-                Filters = "Text@=foo",
+                Filters = "Text!=_r",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(b => b.Text.Contains("foo", StringComparison.OrdinalIgnoreCase));
+            result.Should().OnlyContain(c => !c.Text.EndsWith("r", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]
-        public void Contains_Works_When_CaseSensivity_IsEnabled()
+        public void DoesNotEndWith_Works_When_CaseSensivity_IsEnabled()
         {
             // Arrange
             var source = new[]
             {
                 new Comment
                 {
-                    Text = "foo",
+                    Text = "ARR",
                 },
                 new Comment
                 {
@@ -73,29 +73,29 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "Text@=oo",
+                Filters = "Text!=_r",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(b => b.Text.Contains("oo", StringComparison.Ordinal));
+            result.Should().OnlyContain(c => !c.Text.EndsWith("r", StringComparison.Ordinal));
         }
 
         [Fact]
-        public void Contains_Works_For_NonStringValues()
+        public void DoesNotEndWith_Works_For_NonStringValues()
         {
             // Arrange
             var source = new[]
             {
                 new Comment
                 {
-                    LikeCount = 20,
+                    LikeCount = 22,
                 },
                 new Comment
                 {
-                    LikeCount = 10,
+                    LikeCount = 12,
                 },
                 new Comment
                 {
@@ -105,14 +105,14 @@ namespace Fluorite.Strainer.IntegrationTests.Services.Filtering.Operators
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = "LikeCount@=2",
+                Filters = "LikeCount!=_2",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.LikeCount.ToString().Contains("2", StringComparison.Ordinal));
+            result.Should().OnlyContain(c => !c.LikeCount.ToString().EndsWith("2", StringComparison.Ordinal));
         }
 
         private class Comment

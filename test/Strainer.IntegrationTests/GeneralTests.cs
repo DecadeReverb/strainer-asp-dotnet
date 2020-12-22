@@ -1,8 +1,6 @@
 ﻿using FluentAssertions;
-using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Services;
 using Fluorite.Strainer.TestModels;
 using System;
 using System.Collections.Generic;
@@ -297,48 +295,6 @@ namespace Fluorite.Strainer.IntegrationTests
 
             // Assert
             commentResult.Should().OnlyContain(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
-        }
-
-        [Fact]
-        public void CustomSortsWork()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Sorts = "Popularity",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _posts);
-            var customSortResult = _posts
-                .OrderBy(p => p.LikeCount)
-                    .ThenBy(p => p.CommentCount)
-                        .ThenBy(p => p.DateCreated);
-
-            // Assert
-            result.Should().HaveSameCount(_posts);
-            result.Should().BeInAscendingOrder(p => p.LikeCount)
-                .And.ContainInOrder(customSortResult);
-        }
-
-        [Fact]
-        public void MethodNotFoundExceptionWork()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "does not exist",
-            };
-            var processor = Factory.CreateProcessor<TestStrainerModule>((context) =>
-            {
-                context.Options.ThrowExceptions = true;
-
-                return new StrainerProcessor(context);
-            });
-
-            // Assert
-            Assert.Throws<StrainerMethodNotFoundException>(() => processor.Apply(model, _posts));
         }
     }
 }

@@ -61,12 +61,9 @@ namespace Fluorite.Strainer.Services.Modules
         /// <para/>
         /// Override this method to specify configuration for this module.
         /// </summary>
-        /// <param name="strainerModuleBuilder">
+        /// <param name="builder">
         /// The Strainer Module builder.
         /// </param>
-        public virtual void Load(IStrainerModuleBuilder strainerModuleBuilder)
-        {
-
-        }
+        public abstract void Load(IStrainerModuleBuilder builder);
     }
 }
