@@ -14,12 +14,6 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
 
         public override void Load(IStrainerModuleBuilder builder)
         {
-            builder.AddCustomFilterMethod<Post>(nameof(IsPopular))
-               .HasFunction(IsPopular);
-            builder.AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
-                .HasFunction(HasInTitleFilterOperator);
-            builder.AddCustomFilterMethod<Comment>(nameof(IsNew))
-                .HasFunction(IsNew);
             builder.AddCustomFilterMethod<Comment>(nameof(TestComment))
                 .HasFunction(TestComment);
 
@@ -52,21 +46,6 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
         }
 
         #region custom filter methods
-
-        private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperator)
-        {
-            return source.Where(p => p.LikeCount > 100);
-        }
-
-        private IQueryable<Post> HasInTitleFilterOperator(IQueryable<Post> source, string filterOperator)
-        {
-            return source.Where(p => p.Title.Contains(filterOperator));
-        }
-
-        private IQueryable<Comment> IsNew(IQueryable<Comment> source, string filterOperator)
-        {
-            return source.Where(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
-        }
 
         private IQueryable<Comment> TestComment(IQueryable<Comment> source, string filterOperator)
         {

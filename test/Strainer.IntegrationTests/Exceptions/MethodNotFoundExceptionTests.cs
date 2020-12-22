@@ -23,7 +23,7 @@ namespace Fluorite.Strainer.IntegrationTests.Exceptions
             {
                 Filters = "does not exist",
             };
-            var processor = Factory.CreateProcessor<TestStrainerModule>((context) =>
+            var processor = Factory.CreateProcessor((context) =>
             {
                 context.Options.ThrowExceptions = true;
 

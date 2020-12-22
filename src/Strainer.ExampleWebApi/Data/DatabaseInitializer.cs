@@ -76,7 +76,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Data
 
         private static DateTime RandomizeDateTime()
         {
-            var start = DateTime.Now.AddYears(-2);
+            var start = DateTime.UtcNow.AddYears(-2);
             var range = (DateTime.Today - start).Days;
 
             return start.AddDays(_random.Next(range));

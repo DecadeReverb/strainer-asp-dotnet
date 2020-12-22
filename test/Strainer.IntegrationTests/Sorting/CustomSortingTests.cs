@@ -26,19 +26,19 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
                 {
                     LikeCount = 0,
                     CommentCount = 0,
-                    DateCreated = DateTime.Now.AddDays(-2),
+                    DateCreated = DateTime.UtcNow.AddDays(-2),
                 },
                 new Post
                 {
                     LikeCount = 2,
                     CommentCount = 0,
-                    DateCreated = DateTime.Now.AddDays(-2),
+                    DateCreated = DateTime.UtcNow.AddDays(-2),
                 },
                 new Post
                 {
                     LikeCount = 0,
                     CommentCount = 2,
-                    DateCreated = DateTime.Now,
+                    DateCreated = DateTime.UtcNow,
                 },
             }.AsQueryable();
             var model = new StrainerModel()

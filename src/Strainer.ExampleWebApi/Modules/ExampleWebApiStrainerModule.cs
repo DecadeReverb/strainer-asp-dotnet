@@ -39,7 +39,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Modules
             => source.Where(p => p.Title.Contains(filterOperator));
 
         private IQueryable<Post> IsNew(IQueryable<Post> source, string filterOperator)
-            => source.Where(p => EF.Functions.DateDiffDay(DateTime.Now, p.DateCreated) < 7);
+            => source.Where(p => EF.Functions.DateDiffDay(DateTime.UtcNow, p.DateCreated) < 7);
 
         private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
         {

@@ -49,12 +49,12 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
         public void GreaterThanOrEqualTo_Works_For_ComplexTypes()
         {
             // Arrange
-            var dateTimeNow = DateTime.Now;
+            var dateTimeNow = DateTime.UtcNow;
             var source = new[]
             {
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(-3),
+                    DateTime = DateTime.UtcNow.AddDays(-3),
                 },
                 new Comment
                 {

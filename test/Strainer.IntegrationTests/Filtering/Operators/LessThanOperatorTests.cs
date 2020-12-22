@@ -52,24 +52,24 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
             {
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(-3),
+                    DateTime = DateTime.UtcNow.AddDays(-3),
                 },
                 new Comment
                 {
-                    DateTime = DateTime.Now.AddDays(2),
+                    DateTime = DateTime.UtcNow.AddDays(2),
                 },
             }.AsQueryable();
             var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
             var model = new StrainerModel
             {
-                Filters = $"DateTime<{DateTime.Now}",
+                Filters = $"DateTime<{DateTime.UtcNow}",
             };
 
             // Act
             var result = processor.ApplyFiltering(model, source);
 
             // Assert
-            result.Should().OnlyContain(c => c.DateTime < DateTime.Now);
+            result.Should().OnlyContain(c => c.DateTime < DateTime.UtcNow);
         }
 
         [Fact]
