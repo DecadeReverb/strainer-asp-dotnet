@@ -183,7 +183,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         {
             public int Id { get; set; }
 
-            [StrainerProperty(IsFilterable = true, IsSortable = true)]
+            [StrainerProperty]
             public string Title { get; set; }
         }
 

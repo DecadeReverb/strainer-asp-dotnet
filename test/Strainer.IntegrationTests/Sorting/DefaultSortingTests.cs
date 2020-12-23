@@ -29,36 +29,8 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
                     Name = "Bar",
                 },
             }.AsQueryable();
+            var model = new StrainerModel();
             var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel();
-
-            // Act
-            var result = processor.ApplySorting(model, source);
-
-            // Assert
-            result.Should().BeInAscendingOrder(e => e.Name);
-        }
-
-        [Fact]
-        public void DefaultSorting_Works()
-        {
-            // Arrange
-            var source = new[]
-            {
-                new Post
-                {
-                    Name = "Foo",
-                },
-                new Post
-                {
-                    Name = "Bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options =>
-            {
-                options.ThrowExceptions = false;
-            });
-            var model = new StrainerModel();
 
             // Act
             var result = processor.ApplySorting(model, source);
@@ -90,12 +62,12 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
 
             // Assert
             result.Should().BeEquivalentTo(source);
-            result.Should().BeInDescendingOrder(c => c.Text);
+            result.Should().NotBeInAscendingOrder(c => c.Text);
         }
 
         private class Post
         {
-            [StrainerProperty(IsSortable = true, IsDefaultSorting = true)]
+            [StrainerProperty(IsDefaultSorting = true)]
             public string Name { get; set; }
         }
 

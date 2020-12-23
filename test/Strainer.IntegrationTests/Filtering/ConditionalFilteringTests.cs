@@ -15,41 +15,6 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
         }
 
         [Fact]
-        public void OrNameFiltering_Works()
-        {
-            // Arrange
-            var posts = new Post[]
-            {
-                new Post
-                {
-                    CommentCount = 0,
-                    LikeCount = 20,
-                },
-                new Post
-                {
-                    CommentCount = 20,
-                    LikeCount = 0,
-                },
-                new Post
-                {
-                    CommentCount = 0,
-                    LikeCount = 0,
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
-            {
-                Filters = "(CommentCount|LikeCount)==20",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.CommentCount == 20 || p.LikeCount == 20);
-        }
-
-        [Fact]
         public void OrValueFiltering_Works()
         {
             // Arrange
@@ -72,7 +37,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
             {
                 Filters = "Title_=How|Why",
             };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+            var processor = Factory.CreateDefaultProcessor();
 
             // Act
             var result = processor.Apply(model, posts);
@@ -104,7 +69,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
             {
                 Filters = "Title@=(|)",
             };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+            var processor = Factory.CreateDefaultProcessor();
 
             // Act
             var result = processor.Apply(model, posts);
@@ -114,7 +79,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
         }
 
         [Fact]
-        public void OrName_Works()
+        public void OrName_FilteringWorks()
         {
             // Arrange
             var posts = new Post[]
@@ -136,7 +101,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
             {
                 Filters = "(CommentCount|LikeCount)==20",
             };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+            var processor = Factory.CreateDefaultProcessor();
 
             // Act
             var result = processor.Apply(model, posts);
@@ -153,10 +118,6 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
             {
                 new Post
                 {
-                    Id = 20,
-                },
-                new Post
-                {
                     CommentCount = 20,
                 },
                 new Post
@@ -168,7 +129,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
             {
                 Filters = "(CommentCount|)==20",
             };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+            var processor = Factory.CreateDefaultProcessor();
 
             // Act
             var result = processor.Apply(model, posts);

@@ -203,7 +203,7 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes
         [StrainerObject(nameof(Name), IsFilterable = false)]
         private class ObjectAndPropertyAttributesEntity
         {
-            [StrainerProperty(IsFilterable = true)]
+            [StrainerProperty]
             public string Name { get; set; }
         }
 

@@ -39,7 +39,7 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
             {
                 Filters = "Comment.Text==Nice!",
             };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+            var processor = Factory.CreateDefaultProcessor();
 
             // Act
             var result = processor.ApplyFiltering(model, posts);
@@ -48,19 +48,15 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
             result.Should().Contain(p => p.Comment.Text == "Nice!");
         }
 
-        [StrainerObject(nameof(Id))]
+        [StrainerObject(nameof(Comment))]
         private class Post
         {
             public Comment Comment { get; set; }
-
-            public int Id { get; set; }
         }
 
-        [StrainerObject(nameof(Id))]
+        [StrainerObject(nameof(Text))]
         private class Comment
         {
-            public int Id { get; set; }
-
             public string Text { get; set; }
         }
     }

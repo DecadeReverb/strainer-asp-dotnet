@@ -45,34 +45,6 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
         }
 
         [Fact]
-        public void CustomFiltersWork_2()
-        {
-            // Arrange
-            var queryable = new List<Post>
-            {
-                new Post
-                {
-                    DateCreated = DateTime.UtcNow,
-                },
-                new Post
-                {
-                    DateCreated = DateTime.UtcNow.AddDays(-7),
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
-            {
-                Filters = "IsNew",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, queryable);
-
-            // Assert
-            result.Should().OnlyContain(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
-        }
-
-        [Fact]
         public void CustomFiltersWithOperatorsWork()
         {
             // Arrange

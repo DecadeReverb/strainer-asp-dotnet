@@ -224,12 +224,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
 
         private class Comment
         {
-            [StrainerProperty(IsFilterable = true, IsSortable = true)]
+            [StrainerProperty]
             public DateTimeOffset DateCreated { get; set; }
 
             public int Id { get; set; }
 
-            [StrainerProperty(IsFilterable = true)]
+            [StrainerProperty]
             public string Text { get; set; }
         }
 

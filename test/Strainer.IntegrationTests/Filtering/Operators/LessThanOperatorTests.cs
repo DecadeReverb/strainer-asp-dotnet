@@ -124,16 +124,16 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 
         private class Comment
         {
-            [StrainerProperty(IsFilterable = true)]
+            [StrainerProperty]
             public int LikeCount { get; set; }
 
-            [StrainerProperty(IsFilterable = true)]
+            [StrainerProperty]
             public Point Point { get; set; }
 
-            [StrainerProperty(IsFilterable = true)]
+            [StrainerProperty]
             public string Text { get; set; }
 
-            [StrainerProperty(IsFilterable = true)]
+            [StrainerProperty]
             public DateTime DateTime { get; set; }
         }
 

@@ -47,6 +47,9 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <exception cref="ArgumentException">
         /// <paramref name="sortingWay"/> is <see cref="SortingWay.Unknown"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <see langword="null"/>.
+        /// </exception>
         public string Format(string input, SortingWay sortingWay)
         {
             if (sortingWay == SortingWay.Unknown)
@@ -162,9 +165,8 @@ namespace Fluorite.Strainer.Services.Sorting
                 case SortingWay.Ascending:
                     return AscendingSuffix;
                 default:
-                    throw new ArgumentException(
-                        $"{nameof(sortingWay)} with value '{sortingWay}' is not supported.",
-                        nameof(sortingWay));
+                    throw new NotSupportedException(
+                        $"{nameof(sortingWay)} with value '{sortingWay}' is not supported.");
             }
         }
     }
