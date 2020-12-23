@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>Fluorite.Strainer.UnitTests</AssemblyName>
     <RootNamespace>Fluorite.Strainer.UnitTests</RootNamespace>
     <IsPackable>false</IsPackable>
@@ -10,10 +10,10 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="Moq" Version="4.13.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="Moq" Version="4.15.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Strainer.AspNetCore\Strainer.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Strainer\Strainer.csproj" />
-    <ProjectReference Include="..\Strainer.TestModels\Strainer.TestModels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
     public class FilterTermParserTests
     {
         [Fact]
-        public void Parser_ReturnsNoFilterTerms_WhenInputIsNull()
+        public void Parser_ReturnsNoFilterTerms_When_InputIsNull()
         {
             // Arrange
             string input = null;
@@ -33,7 +33,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         }
 
         [Fact]
-        public void Parser_ReturnsNoFilterTerms_WhenInputIsEmpty()
+        public void Parser_ReturnsNoFilterTerms_When_InputIsEmpty()
         {
             // Arrange
             var input = string.Empty;
@@ -55,10 +55,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         }
 
         [Fact]
-        public void Parser_ReturnsNoFilterTerms_WhenInputIsOnlyWhitespace()
+        public void Parser_ReturnsNoFilterTerms_When_InputIsOnlyWhitespace()
         {
             // Arrange
-            var input = string.Empty;
+            var input = " ";
             var filterOperators = FilterOperatorMapper.DefaultOperators
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
@@ -74,6 +74,94 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
 
             // Assert
             filterTermList.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Parser_ReturnsNoFilterTerms_When_ThereIsNoName()
+        {
+            // Arrange
+            var input = "==SomeValue";
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+                .Returns(filterOperators);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+
+            // Act
+            var filterTermList = termParser.GetParsedTerms(input);
+
+            // Assert
+            filterTermList.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Parser_ReturnsNoFilterTerms_When_ThereIsOnlyOperator()
+        {
+            // Arrange
+            var input = "==";
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+                .Returns(filterOperators);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+
+            // Act
+            var filterTermList = termParser.GetParsedTerms(input);
+
+            // Assert
+            filterTermList.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Parser_ReturnsFilterTerm_When_ThereIsOnlyName()
+        {
+            // Arrange
+            var input = "CustomFilterName";
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+                .Returns(filterOperators);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+
+            // Act
+            var filterTermList = termParser.GetParsedTerms(input);
+
+            // Assert
+            filterTermList.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void Parser_ReturnsFilterTerm_When_ThereIsNameWithOperator()
+        {
+            // Arrange
+            var input = "CustomFilterName==";
+            var filterOperators = FilterOperatorMapper.DefaultOperators
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+                .Returns(filterOperators);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
+            var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+
+            // Act
+            var filterTermList = termParser.GetParsedTerms(input);
+
+            // Assert
+            filterTermList.Should().HaveCount(1);
         }
     }
 }

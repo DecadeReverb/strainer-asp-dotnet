@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Fluorite.Strainer.Attributes;
+using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 using System;
 using System.Linq;
@@ -202,7 +203,7 @@ namespace Fluorite.Strainer.IntegrationTests.Attributes
         [StrainerObject(nameof(Name), IsFilterable = false)]
         private class ObjectAndPropertyAttributesEntity
         {
-            [StrainerProperty(IsFilterable = true)]
+            [StrainerProperty]
             public string Name { get; set; }
         }
 

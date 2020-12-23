@@ -63,7 +63,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(sortTerm));
             }
 
-            var metadata = GetPropertyMetadata<TEntity>(
+            var metadata = _metadataProvidersFacade.GetMetadata<TEntity>(
                 isSortableRequired: true,
                 isFilterableRequired: false,
                 name: sortTerm.Name);
@@ -141,24 +141,6 @@ namespace Fluorite.Strainer.Services.Sorting
             }
 
             return expressions.AsReadOnly();
-        }
-
-        private IPropertyMetadata GetPropertyMetadata<TEntity>(
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
-        {
-            var metadata = _metadataProvidersFacade.GetMetadata<TEntity>(
-                isSortableRequired,
-                isFilterableRequired,
-                name);
-
-            if (metadata == null)
-            {
-                return _metadataProvidersFacade.GetMetadata<TEntity>(isSortableRequired, isFilterableRequired, name);
-            }
-
-            return metadata;
         }
     }
 }

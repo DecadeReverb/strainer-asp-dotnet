@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
-    /// Provides information about filtering symbol.
+    /// Provides information about filtering operator.
     /// </summary>
     public interface IFilterOperator
     {

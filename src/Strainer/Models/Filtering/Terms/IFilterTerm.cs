@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Fluorite.Strainer.Models.Filtering.Terms
 {
     /// <summary>
-    /// Provides detailed information about filter expression.
+    /// Provides detailed information about filter term.
     /// </summary>
     public interface IFilterTerm
     {

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 namespace Fluorite.Strainer.Models.Filtering.Operators
 {
     /// <summary>
-    /// Represents filter operator.
+    /// Provides information about filtering operator.
     /// </summary>
     [DebuggerDisplay("{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}")]
     public class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
@@ -26,7 +26,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         public Func<IFilterExpressionContext, Expression> Expression { get; set;  }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current
+        /// Gets or sets a <see cref="bool"/> value indictating whether current
         /// operator is case insensitive.
         /// </summary>
         public bool IsCaseInsensitive { get; set; }
@@ -40,12 +40,12 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         public bool IsStringBased { get; set; }
 
         /// <summary>
-        /// Gets the operator name.
+        /// Gets or sets the operator name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets a <see cref="string"/> representation of the operator.
+        /// Gets or sets a <see cref="string"/> representation of the operator.
         /// </summary>
         public string Symbol { get; set; }
 
