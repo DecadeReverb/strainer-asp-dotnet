@@ -2,7 +2,7 @@
 
 # Strainer
 
-Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting**, **filtering** and **pagination** trival.
+Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting**, **filtering** and **pagination** trivial.
 
 **Note:** This project is a port of [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
 
@@ -59,7 +59,6 @@ Set a custom display name:
 public int Id { get; set; }
 ```
 
-
 Mark property as sortable, but not filterable:
 
 ```cs
@@ -75,9 +74,9 @@ You can also use [`[StrainerObject]`](https://gitlab.com/fluorite/strainer/blob/
 [StrainerObject(nameof(Id))]
 public class Post
 {
-	public int Id { get; set; }
-	public DateTime Created { get; set; }
-	public string Title { get; set; }
+    public int Id { get; set; }
+    public DateTime Created { get; set; }
+    public string Title { get; set; }
 }
 ```
 
@@ -85,7 +84,7 @@ Alternatively, you can use [Fluent API](#fluent-api) to do the same. This is esp
 
 ### Use Strainer to filter/sort/paginate
 
-In example below, Strainer processor is injected to a controller. Then, `Apply()` is called causing the source collection to be processed. Strainer processor will filter, sort and/or paginate the source `IQueryable<T>` depending on provided model.
+In the example below, Strainer processor is injected to a controller. Then, `Apply()` is called causing the source collection to be processed. Strainer processor will filter, sort and/or paginate the source `IQueryable<T>` depending on provided model.
 
 ```cs
 private readonly ApplicationDbContext _dbContext;
@@ -106,6 +105,16 @@ public JsonResult GetPosts(StrainerModel strainerModel)
 }
 ```
 
+Instead of calling `Apply()` from `IStrainerProcess` explicitly, you can also chain an extension method for `IQueryable<T>`:
+
+```cs
+var result = _dbContext
+    .Posts
+    .Where(p => !p.IsDeleted)
+    .Apply(strainerModel, _strainerProcessor)
+    .ToList();
+```
+
 You can explicitly specify whether only filtering, sorting, and/or pagination should be applied via optional `bool` arguments:
 
 ```cs
@@ -117,13 +126,13 @@ var result = _strainerProcessor.Apply(
     applyPagination: false);
 ```
 
-or just call only one desired processing method:
+or just call only particular processing method:
 
 ```
 var result = _strainerProcessor.ApplyPagination(strainerModel, source);
 ```
 
-This is particulary useful when you want to count the resulted collection before pagination:
+This is especially useful when you want to count the items in the resulting collection before pagination is applied:
 
 ```cs
 var result = _strainerProcessor.Apply(strainerModel, questions, applyPagination: false);
@@ -168,9 +177,9 @@ Strainer comes with following [`options`](https://gitlab.com/fluorite/strainer/b
 | DefaultPageNumber | `int` | 1 | Default page number. |
 | DefaultPageSize | `int` | 10 | Default page size. |
 | DefaultSortingWay | `SortingWay` (`Ascending` or `Descending`) | `Ascending` | An enum value used when applying default sorting. |
-| IsCaseInsensitiveForValues | `bool` | false | A `bool` value indictating whether Strainer should operatre in case insensitive mode when comparing `string` values. This affects for example the way of comparing filter value with `string` value of an actual property. |
+| IsCaseInsensitiveForValues | `bool` | false | A `bool` value indicating whether Strainer should operate in case-insensitive mode when comparing `string` values. This affects for example the way of comparing filter value with `string` value of an actual property. |
 | MaxPageSize | `int` | 50 | Maximum page number. |
-| ThrowExceptions | `bool` | false | A `bool` value indictating whether Strainer should throw [StrainerExceptions](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Exceptions/StrainerException.cs) and the like. |
+| ThrowExceptions | `bool` | false | A `bool` value indicating whether Strainer should throw [StrainerExceptions](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Exceptions/StrainerException.cs) and the like. |
 
 Use the [ASP.NET Core options pattern](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) to tell Strainer where to look for configuration. For example:
 
@@ -201,11 +210,9 @@ services.AddStrainer(options => options.DefaultPageSize = 20);
 
 ## Strainer Modules
 
-Strainer builds its configuration from Modules (except for attribute-based metadata which is retrieved on runtime). Once created, the configuration cannot be changed and is read only. Modules provides a way to split the configuration sources into different assemblies. They also make it possible to use the configuration aside from Strainer services like Strainer processor.
+Strainer builds its configuration from Modules (except for attribute-based metadata which is retrieved at runtime). Once created, the configuration cannot be changed and is read-only. Modules provide a way to split the configuration sources into different assemblies. They also make it possible to use the configuration aside from Strainer services like Strainer processor.
 
-Strainer module comes with methods allowing to add a property, object, additional filter operator and custom methods.
-
-Module methods need to be called from a provided builder inside an overriden `Load()` method, like presented below:
+Strainer module comes with builder allowing to add a property, object, additional filter operator and custom methods:
 
 ```cs
 public class AppStrainerModule : StrainerModule
@@ -219,7 +226,34 @@ public class AppStrainerModule : StrainerModule
 }
 ```
 
-`Load()` will be called once on application startup (ASP.NET Core) per every Strainer Module dicovered based on types or assemblies provided.
+`Load()` will be called once on application startup (ASP.NET Core) per every Strainer Module discovered based on types or assemblies provided.
+
+### Attributes vs Fluent API
+
+Marking properties with fluent API needs to be explicit. Calling just `AddProperty<T>()` *is not equivalent** with applying `[StrainerProperty]` on a property. `[StrainerProperty]` attribute will mark the property as filterable and sortable by default (unless explicitly configured otherwise) while fluent API requires calling `IsFilterable()` and `IsSortable()` right after `AddProperty<T>()`.
+
+Equivalent configurations:
+
+```cs
+public class Post
+{
+    [StrainerProperty]
+    public string Title { get; set; }
+}
+```
+
+```cs
+public SampleStrainerModule : StrainerModule
+{
+    public override void Load(IStrainerModuleBuilder builder)
+    {
+        builder
+            .AddProperty<Post>(p => p.Title)
+            .IsFilterable()
+            .IsSortable();
+    }
+}
+```
 
 ## Sample request query
 
@@ -233,10 +267,10 @@ That request will be translated by Strainer to:
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| sorts | LikeCount,CommentCount,-created | Sort ascendingly by like count, then ascendingly by comment count and then descendingly by creation date. |
-| filters | LikeCount>10,Title@=awesome title | Filter to posts with more then 10 likes and with title containing the phrase _"awesome title"_. |
+| sorts | LikeCount,CommentCount,-created | Sort by like count in ascending order, then by comment count in ascending order and then by creation date in descending order. |
+| filters | LikeCount>10,Title@=awesome title | Filter to posts with more than 10 likes and with title containing the phrase _"awesome title"_. |
 | page | 1 | Select the first page of resulted collection. |
-| pageSize | 10 | Split the resulted collection into a 10-element pages. |
+| pageSize | 10 | Split the resulted collection into 10-element pages. |
 
 ## Strainer model
 
@@ -244,17 +278,17 @@ Strainer model is based on four properties:
 
 ### Sorts
 
-`Sorts` is a comma-delimited list of property names to sort by. Order of properties **does matter**. Strainer by default sorts ascendingly (you can configure it via [options](#configure-strainer)). Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control this behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
+`Sorts` is a comma-delimited list of property names to sort by. The order of properties **does matter**. Strainer by default sorts in ascending order (you can configure it via [options](#configure-strainer)). Adding a dash prefix (`-`) before the property name switches the sorting way to descending. You can control this behaviour with [custom sorting way formatter](#custom-sorting-way-formatter).
 
 ### Filters
 
 `Filters` is a comma-delimited list of `{Name}{Operator}{Value}` where
 
 * `{Name}` is the name of a property with the `StrainerProperty` attribute or the name of a custom filter method;
-  * You can also have multiple names (for OR logic) by enclosing them in brackets and using a pipe delimiter, eg. `(LikeCount|CommentCount)>10` filters to posts where `LikeCount` or `CommentCount` is greater than `10`;
+  * You can also have multiple names (for OR logic) by enclosing them in brackets and using a pipe delimiter, e.g. `(LikeCount|CommentCount)>10` filters to posts where `LikeCount` or `CommentCount` is greater than `10`;
 * `{Operator}` is one of the [Operators](#filter-operators);
 * `{Value}` is the value to use for filtering
-    * You can also have multiple values (for OR logic) by using a pipe delimiter, eg. `Title@=new|hot` filters to posts with titles that contain the phrase _"new"_ or _"hot"_.
+    * You can also have multiple values (for OR logic) by using a pipe delimiter, e.g. `Title@=new|hot` filters to posts with titles that contain the phrase _"new"_ or _"hot"_.
 
 ### Page
 
@@ -268,7 +302,7 @@ Strainer model is based on four properties:
 
 * You can use backslashes (`\`) to escape commas and pipes (`|`) within value fields to enable conditional filtering;
 * You can have spaces anywhere except **within** `{Name}` or `{Operator}` fields;
-* If you need to look at the data before applying pagination (eg. get total count), use the optional paramters on `Apply` to defer pagination or explicitly call `ApplyPagination()` after manually counting resulted collection (an [example](https://github.com/Biarity/Sieve/issues/34));
+* If you need to look at the data before applying pagination (e.g. get total count), use the optional parameters on `Apply` to defer pagination or explicitly call `ApplyPagination()` after manually counting resulted collection (an [example](https://github.com/Biarity/Sieve/issues/34));
 * Here's a good example on how to work with [enumerables](https://github.com/Biarity/Sieve/issues/2);
 * Another example on [how to do OR logic using pipes (`|`)](https://github.com/Biarity/Sieve/issues/8).
 
@@ -382,7 +416,7 @@ Strainer comes with following filter operators:
 | `!_=*`     | Does not start with _(case-insensitive)_     |
 | `!=_*`     | Does not end with _(case-insensitive)_       |
 
-Case insensitive operators will force case insensitivity when comparing values even when [`IsCaseInsensitiveForValues`](#configure-strainer) option is set to `false`.
+Case-insensitive operators will force case insensitivity when comparing values even when [`IsCaseInsensitiveForValues`](#configure-strainer) option is set to `false`.
 
 **Note:** even though Strainer supports different case sensitivity modes, whether the case sensitivity will be taken into account when comparing values, depends entirely on the source `IQueryable` provider, which in most scenarios is the database provider.
 
@@ -403,10 +437,10 @@ public override void Load(IStrainerModuleBuilder builder)
 
 ## Sorting way formatting
 
-In order to determine sorting way Strainer uses `ISortingWayFormatter` service with its default implementation `DescendingPrefixSortingWayFormatter`. It checks against the presence of a prefix indicating descending sorting way, specifically a dash `-`. For example:
+In order to determine sorting way Strainer uses `ISortingWayFormatter` service with its default implementation `DescendingPrefixSortingWayFormatter`. It checks against the presence of a prefix indicating a descending sorting way, specifically a dash `-`. For example:
 
- - `Name` will be translated to ascending sorting.
- - `-Name` will be translated to descending sorting.
+ - `Name` will be translated to sorting in ascending order.
+ - `-Name` will be translated to sorting in descending order.
 
 In order to perform your own sorting way determination and formatting, implement `ISortingWayFormatter` interface (see [DescendingPrefixSortingWayFormatter](https://gitlab.com/fluorite/strainer/blob/master/src/Strainer/Services/Sorting/DescendingPrefixSortingWayFormatter.cs) for reference).
 
@@ -419,7 +453,7 @@ services.AddScoped<ISortingWayFormatter, CustomSortingWayFormatter>();
 
 ## Strainer's exceptions
 
-Strainer will silently fail unless [`ThrowExceptions`](#configure-strainer) in the configuration is set to `true`. Following kinds of custom exceptions can be thrown:
+Strainer will silently fail unless [`ThrowExceptions`](#configure-strainer) in the configuration is set to `true`. The following kinds of custom exceptions can be thrown:
 
 * `StrainerMethodNotFoundException` with a `MethodName`
 * `StrainerException` which encapsulates any other exception types in its `InnerException`
@@ -440,5 +474,4 @@ Strainer is licensed under Apache 2.0. Any contributions highly appreciated!
 
 ### Acknowledgements
 
-Project icon is based on one made by [Freepik](https://www.freepik.com/) from [www.flaticon.com](https://www.flaticon.com/) and [Visual Studio Icons](https://www.microsoft.com/en-us/download/details.aspx?id=35825).
-
+Top README graphic with strainer is based on one made by [Freepik](https://www.freepik.com/) from [www.flaticon.com](https://www.flaticon.com/) and [Visual Studio Icons](https://www.microsoft.com/en-us/download/details.aspx?id=35825).
