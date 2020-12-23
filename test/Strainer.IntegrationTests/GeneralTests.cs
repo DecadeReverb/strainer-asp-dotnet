@@ -163,21 +163,6 @@ namespace Fluorite.Strainer.IntegrationTests
             result.Should().ContainInOrder(sortedResult);
         }
 
-        [Fact]
-        public void IsFilterableNullableInts()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "CategoryId==1"
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.CategoryId == 1);
-        }
     }
 }

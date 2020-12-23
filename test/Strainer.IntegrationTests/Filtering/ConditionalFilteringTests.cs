@@ -5,7 +5,7 @@ using Fluorite.Strainer.Models;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests
+namespace Fluorite.Strainer.IntegrationTests.Filtering
 {
     public class ConditionalFilteringTests : StrainerFixtureBase
     {
@@ -118,7 +118,7 @@ namespace Fluorite.Strainer.IntegrationTests
         {
             // Arrange
             var posts = new Post[]
-           {
+            {
                 new Post
                 {
                     Id = 20,
@@ -131,7 +131,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 {
                     LikeCount = 20,
                 },
-           }.AsQueryable();
+            }.AsQueryable();
             var model = new StrainerModel()
             {
                 Filters = "(CommentCount|LikeCount)==20",
@@ -150,7 +150,7 @@ namespace Fluorite.Strainer.IntegrationTests
         {
             // Arrange
             var posts = new Post[]
-           {
+            {
                 new Post
                 {
                     Id = 20,
@@ -163,7 +163,7 @@ namespace Fluorite.Strainer.IntegrationTests
                 {
                     LikeCount = 20,
                 },
-           }.AsQueryable();
+            }.AsQueryable();
             var model = new StrainerModel()
             {
                 Filters = "(CommentCount|)==20",

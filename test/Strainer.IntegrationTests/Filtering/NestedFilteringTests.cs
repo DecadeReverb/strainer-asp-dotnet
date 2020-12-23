@@ -5,7 +5,7 @@ using Fluorite.Strainer.Models;
 using System.Linq;
 using Xunit;
 
-namespace Fluorite.Strainer.IntegrationTests
+namespace Fluorite.Strainer.IntegrationTests.Filtering
 {
     public class NestedFilteringTests : StrainerFixtureBase
     {
