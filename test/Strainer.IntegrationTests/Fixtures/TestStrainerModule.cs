@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.TestModels;
-using System;
 using System.Linq;
 
 namespace Fluorite.Strainer.IntegrationTests.Fixtures

@@ -76,40 +76,6 @@ namespace Fluorite.Strainer.IntegrationTests
         }
 
         [Fact]
-        public void ContainsCanBeCaseInsensitive()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "Title@=*a"
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.Title.Contains("a", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [Fact]
-        public void NotContainsWorks()
-        {
-            // Arrange
-            var model = new StrainerModel()
-            {
-                Filters = "Title!@=D",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.Apply(model, _posts);
-
-            // Assert
-            result.Should().OnlyContain(p => !p.Title.Contains("D", StringComparison.Ordinal));
-        }
-
-        [Fact]
         public void IsFilterableBools()
         {
             // Arrange
