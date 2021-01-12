@@ -8,6 +8,7 @@ using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Modules
 {
@@ -26,14 +27,24 @@ namespace Fluorite.Strainer.Services.Modules
         /// <param name="strainerOptions">
         /// The Stariner options.
         /// </param>
+        /// <param name="propertyInfoProvider">
+        /// The <see cref="PropertyInfo"/> provider.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="strainerModule"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="strainerOptions"/> is <see langword="null"/>.
         /// </exception>
-        public StrainerModuleBuilder(IStrainerModule strainerModule, StrainerOptions strainerOptions)
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="propertyInfoProvider"/> is <see langword="null"/>.
+        /// </exception>
+        public StrainerModuleBuilder(
+            IPropertyInfoProvider propertyInfoProvider,
+            IStrainerModule strainerModule,
+            StrainerOptions strainerOptions)
         {
+            PropertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
             Module = strainerModule ?? throw new ArgumentNullException(nameof(strainerModule));
             Options = strainerOptions ?? throw new ArgumentNullException(nameof(strainerOptions));
         }
@@ -47,6 +58,11 @@ namespace Fluorite.Strainer.Services.Modules
         /// Gets the Strainer module on which this builder operates on.
         /// </summary>
         protected IStrainerModule Module { get; }
+
+        /// <summary>
+        /// Gets the property info provider.
+        /// </summary>
+        protected IPropertyInfoProvider PropertyInfoProvider { get; }
 
         /// <summary>
         /// Adds custom filtering method.
@@ -234,7 +250,9 @@ namespace Fluorite.Strainer.Services.Modules
                 Module.PropertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
             }
 
-            return new PropertyMetadataBuilder<TEntity>(Module.PropertyMetadata, Module.DefaultMetadata, propertyExpression);
+            var (fullName, propertyInfo) = PropertyInfoProvider.GetPropertyInfoAndFullName(propertyExpression);
+
+            return new PropertyMetadataBuilder<TEntity>(Module.PropertyMetadata, Module.DefaultMetadata, propertyInfo, fullName);
         }
     }
 }

@@ -192,6 +192,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
 
+            services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
             services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
             services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
@@ -579,10 +580,11 @@ namespace Fluorite.Extensions.DependencyInjection
 
                 var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
                 var options = optionsProvider.GetStrainerOptions();
+                var propertyInfoProvider = new PropertyInfoProvider();
 
                 modules.ForEach(strainerModule =>
                 {
-                    var moduleBuilder = new StrainerModuleBuilder(strainerModule, options);
+                    var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
 
                     strainerModule.Load(moduleBuilder);
                 });

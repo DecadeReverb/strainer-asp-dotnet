@@ -86,6 +86,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             }
 
             var optionsProvider = new IntegrationTestsStrainerOptionsProvider();
+            var propertyInfoProvider = new PropertyInfoProvider();
 
             var modules = strainerModuleTypes
                 .Select(type => Activator.CreateInstance(type) as StrainerModule)
@@ -95,7 +96,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             modules.ForEach(strainerModule =>
             {
                 var options = optionsProvider.GetStrainerOptions();
-                var moduleBuilder = new StrainerModuleBuilder(strainerModule, options);
+                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
 
                 strainerModule.Load(moduleBuilder);
             });
