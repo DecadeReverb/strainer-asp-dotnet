@@ -6,6 +6,7 @@
     <RootNamespace>Fluorite.Strainer.UnitTests</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

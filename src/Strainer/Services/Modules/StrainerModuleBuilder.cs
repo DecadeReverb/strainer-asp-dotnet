@@ -250,7 +250,7 @@ namespace Fluorite.Strainer.Services.Modules
                 Module.PropertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
             }
 
-            var (fullName, propertyInfo) = PropertyInfoProvider.GetPropertyInfoAndFullName(propertyExpression);
+            var (propertyInfo, fullName) = PropertyInfoProvider.GetPropertyInfoAndFullName(propertyExpression);
 
             return new PropertyMetadataBuilder<TEntity>(Module.PropertyMetadata, Module.DefaultMetadata, propertyInfo, fullName);
         }

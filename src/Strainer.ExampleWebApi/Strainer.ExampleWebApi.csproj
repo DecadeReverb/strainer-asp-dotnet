@@ -5,6 +5,7 @@
     <AssemblyName>Fluorite.Strainer.ExampleWebApi</AssemblyName>
     <RootNamespace>Fluorite.Strainer.ExampleWebApi</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
