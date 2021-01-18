@@ -74,7 +74,7 @@ namespace Fluorite.Strainer.Services.Metadata
             {
                 throw new ArgumentException(
                     $"{nameof(displayName)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
+                    $"or contain only whitespace characters.",
                     nameof(displayName));
             }
 

@@ -50,7 +50,7 @@ namespace Fluorite.Strainer.Services.Filtering
             {
                 throw new ArgumentException(
                     $"{nameof(symbol)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
+                    $"or contain only whitespace characters.",
                     nameof(symbol));
             }
 

@@ -17,7 +17,7 @@ namespace Fluorite.Strainer.Services.Sorting
             {
                 throw new ArgumentException(
                     $"{nameof(name)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
+                    $"or contain only whitespace characters.",
                     nameof(name));
             }
 
