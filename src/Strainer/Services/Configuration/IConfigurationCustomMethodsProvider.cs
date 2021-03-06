@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Configuration
 {
+    /// <summary>
+    /// Provides read-only configuration for custom methods.
+    /// </summary>
     public interface IConfigurationCustomMethodsProvider
     {
         /// <summary>

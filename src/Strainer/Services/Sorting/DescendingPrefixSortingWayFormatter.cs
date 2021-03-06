@@ -17,7 +17,7 @@ namespace Fluorite.Strainer.Services.Sorting
         public static readonly string DescendingPrefix = "-";
 
         /// <summary>
-        /// Initializes new instance of <see cref="DescendingPrefixSortingWayFormatter"/>
+        /// Initializes a new instance of the <see cref="DescendingPrefixSortingWayFormatter"/>
         /// class.
         /// </summary>
         public DescendingPrefixSortingWayFormatter()

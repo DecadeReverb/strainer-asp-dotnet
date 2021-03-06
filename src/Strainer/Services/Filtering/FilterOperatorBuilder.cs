@@ -9,12 +9,6 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         private readonly IDictionary<string, IFilterOperator> _filterOperators;
 
-        protected Func<IFilterExpressionContext, Expression> _expression;
-        protected string _name;
-        protected bool _isCaseInsensitive;
-        protected bool _isStringBased;
-        protected string _symbol;
-
         public FilterOperatorBuilder(
             IDictionary<string, IFilterOperator> filterOperators,
             string symbol)
@@ -27,24 +21,34 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(symbol));
             }
 
-            _filterOperators = filterOperators;;
-            _symbol = symbol;
+            _filterOperators = filterOperators;
+            Symbol = symbol;
 
             Save(Build()); // Is this really needed?
         }
 
+        protected Func<IFilterExpressionContext, Expression> Expression { get; set; }
+
+        protected bool IsCaseInsensitive1 { get; set; }
+
+        protected bool IsStringBased1 { get; set; }
+
+        protected string Name { get; set; }
+
+        protected string Symbol { get; set; }
+
         public IFilterOperator Build() => new FilterOperator
         {
-            Expression = _expression,
-            IsCaseInsensitive = _isCaseInsensitive,
-            IsStringBased = _isStringBased,
-            Name = _name,
-            Symbol = _symbol,
+            Expression = Expression,
+            IsCaseInsensitive = IsCaseInsensitive1,
+            IsStringBased = IsStringBased1,
+            Name = Name,
+            Symbol = Symbol,
         };
 
         public IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression)
         {
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
             Save(Build());
 
             return this;
@@ -60,7 +64,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     nameof(name));
             }
 
-            _name = name;
+            Name = name;
             Save(Build());
 
             return this;
@@ -68,7 +72,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public IFilterOperatorBuilder IsCaseInsensitive()
         {
-            _isCaseInsensitive = true;
+            IsCaseInsensitive1 = true;
             Save(Build());
 
             return this;
@@ -76,7 +80,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
         public IFilterOperatorBuilder IsStringBased()
         {
-            _isStringBased = true;
+            IsStringBased1 = true;
             Save(Build());
 
             return this;
@@ -94,7 +98,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 throw new ArgumentNullException(nameof(filterOperator));
             }
 
-            _filterOperators[_symbol] = filterOperator;
+            _filterOperators[Symbol] = filterOperator;
         }
     }
 }

@@ -243,7 +243,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Current instance of <see cref="IServiceCollection"/>.
         /// </param>
         /// <param name="configuration">
-        /// The types of Strainer modules.
+        /// A configuration used to bind against <see cref="StrainerOptions"/>.
         /// </param>
         /// <param name="moduleTypes">
         /// The types of Strainer modules.
@@ -567,8 +567,8 @@ namespace Fluorite.Extensions.DependencyInjection
                 {
                     throw new InvalidOperationException(
                         string.Format(
-                                "Valid Strainer module cannot be an abstract class and must be deriving from {0}. " +
-                                "Invalid types:\n{1}",
+                            "Valid Strainer module cannot be an abstract class and must be deriving from {0}. " +
+                            "Invalid types:\n{1}",
                             typeof(StrainerModule).FullName,
                             string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
                 }

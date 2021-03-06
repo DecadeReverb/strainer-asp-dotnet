@@ -16,7 +16,7 @@ namespace Fluorite.Strainer.Services.Modules
     public abstract class StrainerModule<T> : IStrainerModule<T>
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerModule"/> class.
+        /// Initializes a new instance of the <see cref="StrainerModule{T}"/> class.
         /// </summary>
         protected StrainerModule()
         {

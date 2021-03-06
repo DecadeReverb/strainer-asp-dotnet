@@ -21,20 +21,19 @@ namespace Fluorite.Strainer.Services.Sorting
                 throw new ArgumentNullException(nameof(basePropertyMetadata));
             }
 
-            displayName = basePropertyMetadata.DisplayName;
-            isDefaultSorting = basePropertyMetadata.IsDefaultSorting;
-            isDefaultSortingDescending = basePropertyMetadata.IsDefaultSortingDescending;
-            isFilterable = basePropertyMetadata.IsFilterable;
-            isSortable = basePropertyMetadata.IsSortable;
-            base.fullName = basePropertyMetadata.Name;
+            DisplayName = basePropertyMetadata.DisplayName;
+            IsDefaultSorting = basePropertyMetadata.IsDefaultSorting;
+            IsDefaultSortingDescending = basePropertyMetadata.IsDefaultSortingDescending;
+            IsFilterableValue = basePropertyMetadata.IsFilterable;
+            IsSortableValue = basePropertyMetadata.IsSortable;
 
             Save(Build());
         }
 
         public ISortPropertyMetadataBuilder<TEntity> IsDefaultSort(bool isDescending = false)
         {
-            isDefaultSorting = true;
-            isDefaultSortingDescending = isDescending;
+            IsDefaultSorting = true;
+            IsDefaultSortingDescending = isDescending;
             Save(Build());
 
             return this;

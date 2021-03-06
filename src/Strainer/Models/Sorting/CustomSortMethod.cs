@@ -3,7 +3,7 @@
     public class CustomSortMethod : ICustomSortMethod
     {
         /// <summary>
-        /// Initializes new instance of the <see cref="CustomSortMethod"/>
+        /// Initializes a new instance of the <see cref="CustomSortMethod"/>
         /// class.
         /// </summary>
         public CustomSortMethod()
@@ -12,7 +12,7 @@
         }
 
         /// <summary>
-        /// Gets the custom method name.
+        /// Gets or sets the custom method name.
         /// </summary>
         public string Name { get; set; }
     }

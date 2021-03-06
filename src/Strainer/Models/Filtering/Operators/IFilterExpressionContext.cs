@@ -13,7 +13,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         Expression FilterValue { get; }
 
         /// <summary>
-        /// Get the expression for property value access.
+        /// Gets the expression for property value access.
         /// </summary>
         Expression PropertyValue { get; }
     }

@@ -1,5 +1,4 @@
-﻿using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Metadata;
 using System;
@@ -22,7 +21,7 @@ namespace Fluorite.Strainer.Services.Sorting
         private readonly IMetadataFacade _metadataProvidersFacade;
 
         /// <summary>
-        /// Initializes new instance of <see cref="SortExpressionProvider"/> class.
+        /// Initializes a new instance of the <see cref="SortExpressionProvider"/> class.
         /// </summary>
         public SortExpressionProvider(IMetadataFacade metadataProvidersFacade)
         {
@@ -42,7 +41,7 @@ namespace Fluorite.Strainer.Services.Sorting
             var sortTerm = new SortTerm
             {
                 IsDescending = propertyMetadata.IsDefaultSortingDescending,
-                Name = propertyMetadata.DisplayName ?? propertyMetadata.Name
+                Name = propertyMetadata.DisplayName ?? propertyMetadata.Name,
             };
 
             return GetExpression<TEntity>(propertyMetadata.PropertyInfo, sortTerm, isSubsequent: false);

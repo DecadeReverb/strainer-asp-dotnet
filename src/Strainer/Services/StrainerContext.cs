@@ -13,7 +13,7 @@ namespace Fluorite.Strainer.Services
     public class StrainerContext : IStrainerContext
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerContext"/> class.
+        /// Initializes a new instance of the <see cref="StrainerContext"/> class.
         /// </summary>
         public StrainerContext(
             IConfigurationCustomMethodsProvider customMethodsConfigurationProvider,

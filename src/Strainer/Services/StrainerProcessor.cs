@@ -16,7 +16,7 @@ namespace Fluorite.Strainer.Services
     public class StrainerProcessor : IStrainerProcessor
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerProcessor"/> class
+        /// Initializes a new instance of the <see cref="StrainerProcessor"/> class
         /// with specified context.
         /// </summary>
         /// <param name="context">
@@ -127,16 +127,9 @@ namespace Fluorite.Strainer.Services
 
                 return source;
             }
-            catch (StrainerException ex)
+            catch (StrainerException) when (!Context.Options.ThrowExceptions)
             {
-                if (Context.Options.ThrowExceptions)
-                {
-                    throw ex;
-                }
-                else
-                {
-                    return source;
-                }
+                return source;
             }
         }
 
@@ -180,7 +173,7 @@ namespace Fluorite.Strainer.Services
             }
 
             var parsedTerms = Context.Filter.TermParser.GetParsedTerms(model.Filters);
-            if (!parsedTerms.Any())
+            if (parsedTerms.Count == 0)
             {
                 return source;
             }
@@ -218,16 +211,9 @@ namespace Fluorite.Strainer.Services
                             }
                         }
                     }
-                    catch (StrainerException ex)
+                    catch (StrainerException) when (!Context.Options.ThrowExceptions)
                     {
-                        if (Context.Options.ThrowExceptions)
-                        {
-                            throw ex;
-                        }
-                        else
-                        {
-                            return source;
-                        }
+                        return source;
                     }
                 }
 
@@ -384,16 +370,9 @@ namespace Fluorite.Strainer.Services
                                 $"Property or custom sorting method '{sortTerm.Name}' was not found.");
                         }
                     }
-                    catch (StrainerException ex)
+                    catch (StrainerException) when (!Context.Options.ThrowExceptions)
                     {
-                        if (Context.Options.ThrowExceptions)
-                        {
-                            throw ex;
-                        }
-                        else
-                        {
-                            return source;
-                        }
+                        return source;
                     }
                 }
 
@@ -406,7 +385,6 @@ namespace Fluorite.Strainer.Services
                 if (defaultSortExpression != null)
                 {
                     source = source.OrderWithSortExpression(defaultSortExpression);
-                    sortingPerformed = true;
                 }
             }
 

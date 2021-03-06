@@ -13,7 +13,7 @@ namespace Fluorite.Strainer.Models.Sorting.Terms
     public class SortTerm : ISortTerm, IEquatable<SortTerm>
     {
         /// <summary>
-        /// Initializes new instance of <see cref="SortTerm"/> class.
+        /// Initializes a new instance of the <see cref="SortTerm"/> class.
         /// </summary>
         public SortTerm()
         {
@@ -26,7 +26,7 @@ namespace Fluorite.Strainer.Models.Sorting.Terms
         public string Input { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indictating whether current sorting
+        /// Gets or sets a value indicating whether current sorting
         /// direction is descending.
         /// </summary>
         public bool IsDescending { get; set; }
@@ -35,6 +35,16 @@ namespace Fluorite.Strainer.Models.Sorting.Terms
         /// Gets or sets the name of sorting method.
         /// </summary>
         public string Name { get; set; }
+
+        public static bool operator ==(SortTerm term1, SortTerm term2)
+        {
+            return EqualityComparer<SortTerm>.Default.Equals(term1, term2);
+        }
+
+        public static bool operator !=(SortTerm term1, SortTerm term2)
+        {
+            return !(term1 == term2);
+        }
 
         /// <summary>
         /// Checks if current instance of <see cref="SortTerm"/>
@@ -80,19 +90,9 @@ namespace Fluorite.Strainer.Models.Sorting.Terms
         public override int GetHashCode()
         {
             var hashCode = 1436560617;
-            hashCode = hashCode * -1521134295 + IsDescending.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = (hashCode * -1521134295) + IsDescending.GetHashCode();
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
             return hashCode;
-        }
-
-        public static bool operator ==(SortTerm term1, SortTerm term2)
-        {
-            return EqualityComparer<SortTerm>.Default.Equals(term1, term2);
-        }
-
-        public static bool operator !=(SortTerm term1, SortTerm term2)
-        {
-            return !(term1 == term2);
         }
     }
 }

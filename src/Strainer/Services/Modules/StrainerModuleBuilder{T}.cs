@@ -21,7 +21,7 @@ namespace Fluorite.Strainer.Services.Modules
     public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="StrainerModuleBuilder"/>
+        /// Initializes a new instance of the <see cref="StrainerModuleBuilder{T}"/>
         /// class.
         /// </summary>
         /// <param name="strainerModule">
@@ -53,7 +53,7 @@ namespace Fluorite.Strainer.Services.Modules
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="StrainerOptions"/>.
+        /// Gets the <see cref="StrainerOptions"/>.
         /// </summary>
         public StrainerOptions Options { get; }
 

@@ -12,7 +12,7 @@ namespace Fluorite.Strainer.Models.Metadata
     public class PropertyMetadata : IPropertyMetadata, IEquatable<PropertyMetadata>
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerModel"/> class.
+        /// Initializes a new instance of the <see cref="PropertyMetadata"/> class.
         /// </summary>
         public PropertyMetadata()
         {
@@ -25,7 +25,7 @@ namespace Fluorite.Strainer.Models.Metadata
         public string DisplayName { get; set; }
 
         /// <summary>
-        /// Gets or sets <see cref="bool"/> value indicating whether related
+        /// Gets or sets a value indicating whether related
         /// property should be used as a default (fallback) property when
         /// no sorting information was provided but sorting was still requested.
         /// <para/>
@@ -35,19 +35,19 @@ namespace Fluorite.Strainer.Models.Metadata
         public bool IsDefaultSorting { get; set; }
 
         /// <summary>
-        /// Gets or sets <see cref="bool"/> value indicating whether default
+        /// Gets or sets a value indicating whether default
         /// sorting should be performed in a descending way.
         /// </summary>
         public bool IsDefaultSortingDescending { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets a value indicating whether related
         /// property is marked as filterable for Strainer.
         /// </summary>
         public bool IsFilterable { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets a value indicating whether related
         /// property is marked as sortable for Strainer.
         /// </summary>
         public bool IsSortable { get; set; }
@@ -62,6 +62,16 @@ namespace Fluorite.Strainer.Models.Metadata
         /// property.
         /// </summary>
         public PropertyInfo PropertyInfo { get; set; }
+
+        public static bool operator ==(PropertyMetadata metadata1, PropertyMetadata metadata2)
+        {
+            return EqualityComparer<PropertyMetadata>.Default.Equals(metadata1, metadata2);
+        }
+
+        public static bool operator !=(PropertyMetadata metadata1, PropertyMetadata metadata2)
+        {
+            return !(metadata1 == metadata2);
+        }
 
         /// <summary>
         /// Checks if current instance of <see cref="PropertyMetadata"/>
@@ -112,24 +122,14 @@ namespace Fluorite.Strainer.Models.Metadata
         public override int GetHashCode()
         {
             var hashCode = -1500598692;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(DisplayName);
-            hashCode = hashCode * -1521134295 + IsDefaultSorting.GetHashCode();
-            hashCode = hashCode * -1521134295 + IsDefaultSortingDescending.GetHashCode();
-            hashCode = hashCode * -1521134295 + IsFilterable.GetHashCode();
-            hashCode = hashCode * -1521134295 + IsSortable.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<PropertyInfo>.Default.GetHashCode(PropertyInfo);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(DisplayName);
+            hashCode = (hashCode * -1521134295) + IsDefaultSorting.GetHashCode();
+            hashCode = (hashCode * -1521134295) + IsDefaultSortingDescending.GetHashCode();
+            hashCode = (hashCode * -1521134295) + IsFilterable.GetHashCode();
+            hashCode = (hashCode * -1521134295) + IsSortable.GetHashCode();
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<PropertyInfo>.Default.GetHashCode(PropertyInfo);
             return hashCode;
-        }
-
-        public static bool operator ==(PropertyMetadata metadata1, PropertyMetadata metadata2)
-        {
-            return EqualityComparer<PropertyMetadata>.Default.Equals(metadata1, metadata2);
-        }
-
-        public static bool operator !=(PropertyMetadata metadata1, PropertyMetadata metadata2)
-        {
-            return !(metadata1 == metadata2);
         }
     }
 }

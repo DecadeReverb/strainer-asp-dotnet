@@ -10,7 +10,7 @@ namespace Fluorite.Extensions.DependencyInjection
     public class StrainerBuilder : IStrainerBuilder
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerBuilder"/> class.
+        /// Initializes a new instance of the <see cref="StrainerBuilder"/> class.
         /// </summary>
         /// <param name="services">
         /// The service collection.

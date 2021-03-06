@@ -56,7 +56,7 @@ namespace Fluorite.Strainer.Services.Metadata
                                     PropertyInfo = propertyInfo,
                                 };
                             })
-                            .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata))
+                            .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata)),
                     };
                 })
                 .ToDictionary(pair => pair.Type, pair => pair.Metadatas);
@@ -81,7 +81,7 @@ namespace Fluorite.Strainer.Services.Metadata
                             return attribute;
                         })
                         .Where(attribute => attribute != null)
-                        .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute))
+                        .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)),
                 })
                 .Where(pair => pair.Attributes.Any())
                 .ToDictionary(pair => pair.Type, pair => pair.Attributes);
@@ -205,7 +205,8 @@ namespace Fluorite.Strainer.Services.Metadata
 
                 currentType = currentType.BaseType;
 
-            } while (currentType != typeof(object) && currentType != typeof(ValueType));
+            }
+            while (currentType != typeof(object) && currentType != typeof(ValueType));
 
             return null;
         }
@@ -289,7 +290,8 @@ namespace Fluorite.Strainer.Services.Metadata
 
                 currentType = currentType.BaseType;
 
-            } while (currentType != typeof(object) && currentType != typeof(ValueType));
+            }
+            while (currentType != typeof(object) && currentType != typeof(ValueType));
 
             return null;
         }
@@ -328,7 +330,8 @@ namespace Fluorite.Strainer.Services.Metadata
                 }
 
                 currentType = currentType.BaseType;
-            } while (currentType != typeof(object) && currentType != typeof(ValueType));
+            }
+            while (currentType != typeof(object) && currentType != typeof(ValueType));
 
             return null;
         }

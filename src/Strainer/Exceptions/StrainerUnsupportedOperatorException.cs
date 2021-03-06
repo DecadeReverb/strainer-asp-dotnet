@@ -47,9 +47,9 @@ namespace Fluorite.Strainer.Exceptions
 
         }
 
-        public IFilterOperator FilterOperator { get; set; }
+        public IFilterOperator FilterOperator { get; }
 
-        public PropertyInfo PropertyInfo { get; set; }
+        public PropertyInfo PropertyInfo { get; }
 
         public object Value { get; }
     }

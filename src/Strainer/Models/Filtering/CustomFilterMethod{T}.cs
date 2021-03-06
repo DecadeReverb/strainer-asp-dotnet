@@ -6,13 +6,13 @@ namespace Fluorite.Strainer.Models.Filtering
     /// <summary>
     /// Represents custom filter method.
     /// </summary>
-    /// <typeparam name="TEntity">
+    /// <typeparam name="T">
     /// The type of entity processed by the custom method.
     /// </typeparam>
-    public class CustomFilterMethod<TEntity> : CustomFilterMethod, ICustomFilterMethod<TEntity>
+    public class CustomFilterMethod<T> : CustomFilterMethod, ICustomFilterMethod<T>
     {
         /// <summary>
-        /// Initializes new instance of the <see cref="CustomFilterMethod{TEntity}"/>
+        /// Initializes a new instance of the <see cref="CustomFilterMethod{TEntity}"/>
         /// class.
         /// </summary>
         public CustomFilterMethod()
@@ -23,6 +23,6 @@ namespace Fluorite.Strainer.Models.Filtering
         /// <summary>
         /// Gets or sets the function used for custom filtering.
         /// </summary>
-        public Func<IQueryable<TEntity>, string, IQueryable<TEntity>> Function { get; set; }
+        public Func<IQueryable<T>, string, IQueryable<T>> Function { get; set; }
     }
 }

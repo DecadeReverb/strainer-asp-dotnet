@@ -14,19 +14,19 @@ namespace Fluorite.Strainer.Models.Metadata
         string DefaultSortingPropertyName { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether default
+        /// Gets a value indicating whether default
         /// sorting way for marked object is descending.
         /// </summary>
         bool IsDefaultSortingDescending { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether related
+        /// Gets a value indicating whether related
         /// object is marked as filterable.
         /// </summary>
         bool IsFilterable { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether related
+        /// Gets a value indicating whether related
         /// object is marked as filterable.
         /// <para/>
         /// Defaults to <see langword="true"/>.

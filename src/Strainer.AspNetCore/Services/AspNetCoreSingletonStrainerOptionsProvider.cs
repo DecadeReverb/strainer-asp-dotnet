@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.AspNetCore.Services
         private readonly IOptions<StrainerOptions> _options;
 
         /// <summary>
-        /// Initializes new instance of <see cref="AspNetCoreStrainerOptionsProvider"/>
+        /// Initializes a new instance of the <see cref="AspNetCoreSingletonStrainerOptionsProvider"/>
         /// class.
         /// </summary>
         /// <param name="options">

@@ -2,6 +2,9 @@
 
 namespace Fluorite.Strainer.Services.Configuration
 {
+    /// <summary>
+    /// Provides read-only <see cref="IStrainerConfiguration"/>.
+    /// </summary>
     public interface IStrainerConfigurationProvider
     {
         /// <summary>

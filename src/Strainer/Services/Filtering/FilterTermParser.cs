@@ -139,9 +139,9 @@ namespace Fluorite.Strainer.Services.Filtering
         private string ParseSubfilters(string filter, string filterOpAndVal)
         {
             return filter
-                .Replace(filterOpAndVal, "")
-                .Replace("(", "")
-                .Replace(")", "");
+                .Replace(filterOpAndVal, string.Empty)
+                .Replace("(", string.Empty)
+                .Replace(")", string.Empty);
         }
     }
 }

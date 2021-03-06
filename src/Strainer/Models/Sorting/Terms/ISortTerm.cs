@@ -11,7 +11,7 @@
         string Input { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current sorting
+        /// Gets a value indicating whether current sorting
         /// direction is descending.
         /// </summary>
         bool IsDescending { get; }

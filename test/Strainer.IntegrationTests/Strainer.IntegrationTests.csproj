@@ -6,7 +6,9 @@
     <RootNamespace>Fluorite.Strainer.IntegrationTests</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-	<LangVersion>9.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

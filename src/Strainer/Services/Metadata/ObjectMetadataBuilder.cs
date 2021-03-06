@@ -9,13 +9,8 @@ namespace Fluorite.Strainer.Services.Metadata
     public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
     {
         private readonly IDictionary<Type, IObjectMetadata> _objectMetadata;
-
-        protected readonly string defaultSortingPropertyName;
-        protected readonly PropertyInfo defaultSortingPropertyInfo;
-
-        protected bool isDefaultSortingDescending;
-        protected bool isFilterable;
-        protected bool isSortable;
+        private readonly string _defaultSortingPropertyName;
+        private readonly PropertyInfo _defaultSortingPropertyInfo;
 
         public ObjectMetadataBuilder(
             IDictionary<Type, IObjectMetadata> objectMetadata,
@@ -26,27 +21,33 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
             }
 
-            (defaultSortingPropertyName, defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
+            (_defaultSortingPropertyName, _defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
             _objectMetadata = objectMetadata ?? throw new ArgumentNullException(nameof(objectMetadata));
 
             Save(Build());
         }
 
+        protected bool IsDefaultSortingDescendingValue { get; set; }
+
+        protected bool IsFilterableValue { get; set; }
+
+        protected bool IsSortableValue { get; set; }
+
         public IObjectMetadata Build()
         {
             return new ObjectMetadata
             {
-                DefaultSortingPropertyInfo = defaultSortingPropertyInfo,
-                DefaultSortingPropertyName = defaultSortingPropertyName,
-                IsDefaultSortingDescending = isDefaultSortingDescending,
-                IsFilterable = isFilterable,
-                IsSortable = isSortable,
+                DefaultSortingPropertyInfo = _defaultSortingPropertyInfo,
+                DefaultSortingPropertyName = _defaultSortingPropertyName,
+                IsDefaultSortingDescending = IsDefaultSortingDescendingValue,
+                IsFilterable = IsFilterableValue,
+                IsSortable = IsSortableValue,
             };
         }
 
         public IObjectMetadataBuilder<TEntity> IsFilterable()
         {
-            isFilterable = true;
+            IsFilterableValue = true;
             Save(Build());
 
             return this;
@@ -54,7 +55,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public IObjectMetadataBuilder<TEntity> IsSortable()
         {
-            isSortable = true;
+            IsSortableValue = true;
             Save(Build());
 
             return this;
@@ -62,7 +63,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending()
         {
-            isDefaultSortingDescending = true;
+            IsDefaultSortingDescendingValue = true;
             Save(Build());
 
             return this;
@@ -85,7 +86,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            if (!(expression.Body is MemberExpression body))
+            if (expression.Body is not MemberExpression body)
             {
                 var ubody = expression.Body as UnaryExpression;
                 body = ubody.Operand as MemberExpression;

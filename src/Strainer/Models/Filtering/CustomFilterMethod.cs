@@ -3,7 +3,7 @@
     public class CustomFilterMethod : ICustomFilterMethod
     {
         /// <summary>
-        /// Initializes new instance of the <see cref="CustomFilterMethod"/>
+        /// Initializes a new instance of the <see cref="CustomFilterMethod"/>
         /// class.
         /// </summary>
         public CustomFilterMethod()

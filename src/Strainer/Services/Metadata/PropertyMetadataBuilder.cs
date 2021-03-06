@@ -11,14 +11,6 @@ namespace Fluorite.Strainer.Services.Metadata
         private readonly IDictionary<Type, IDictionary<string, IPropertyMetadata>> _propertyMetadata;
         private readonly IDictionary<Type, IPropertyMetadata> _defaultMetadata;
 
-        protected string displayName;
-        protected bool isDefaultSorting;
-        protected bool isDefaultSortingDescending;
-        protected bool isFilterable;
-        protected bool isSortable;
-        protected string fullName;
-        protected PropertyInfo propertyInfo;
-
         public PropertyMetadataBuilder(
             IDictionary<Type, IDictionary<string, IPropertyMetadata>> propertyMetadata,
             IDictionary<Type, IPropertyMetadata> defaultMetadata,
@@ -32,29 +24,43 @@ namespace Fluorite.Strainer.Services.Metadata
 
             _propertyMetadata = propertyMetadata ?? throw new ArgumentNullException(nameof(propertyMetadata));
             _defaultMetadata = defaultMetadata ?? throw new ArgumentNullException(nameof(defaultMetadata));
-            this.propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
-            this.fullName = fullName;
+            PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+            FullName = fullName;
 
             Save(Build());
         }
+
+        protected string DisplayName { get; set; }
+
+        protected string FullName { get; }
+
+        protected bool IsDefaultSorting { get; set; }
+
+        protected bool IsDefaultSortingDescending { get; set; }
+
+        protected bool IsFilterableValue { get; set; }
+
+        protected bool IsSortableValue { get; set; }
+
+        protected PropertyInfo PropertyInfo { get; }
 
         public virtual IPropertyMetadata Build()
         {
             return new PropertyMetadata
             {
-                DisplayName = displayName,
-                IsDefaultSorting = isDefaultSorting,
-                IsDefaultSortingDescending = isDefaultSortingDescending,
-                IsFilterable = isFilterable,
-                IsSortable = isSortable,
-                Name = fullName,
-                PropertyInfo = propertyInfo,
+                DisplayName = DisplayName,
+                IsDefaultSorting = IsDefaultSorting,
+                IsDefaultSortingDescending = IsDefaultSortingDescending,
+                IsFilterable = IsSortableValue,
+                IsSortable = IsSortableValue,
+                Name = FullName,
+                PropertyInfo = PropertyInfo,
             };
         }
 
         public virtual IPropertyMetadataBuilder<TEntity> IsFilterable()
         {
-            isFilterable = true;
+            IsSortableValue = true;
             Save(Build());
 
             return this;
@@ -62,10 +68,10 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public virtual ISortPropertyMetadataBuilder<TEntity> IsSortable()
         {
-            isSortable = true;
+            IsSortableValue = true;
             Save(Build());
 
-            return new SortPropertyMetadataBuilder<TEntity>(_propertyMetadata, _defaultMetadata, propertyInfo, fullName, Build());
+            return new SortPropertyMetadataBuilder<TEntity>(_propertyMetadata, _defaultMetadata, PropertyInfo, FullName, Build());
         }
 
         public virtual IPropertyMetadataBuilder<TEntity> HasDisplayName(string displayName)
@@ -78,7 +84,7 @@ namespace Fluorite.Strainer.Services.Metadata
                     nameof(displayName));
             }
 
-            this.displayName = displayName;
+            DisplayName = displayName;
             Save(Build());
 
             return this;

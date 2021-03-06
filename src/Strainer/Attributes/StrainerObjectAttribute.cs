@@ -12,7 +12,7 @@ namespace Fluorite.Strainer.Attributes
     public class StrainerObjectAttribute : Attribute, IObjectMetadata
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerObjectAttribute"/>
+        /// Initializes a new instance of the <see cref="StrainerObjectAttribute"/>
         /// class.
         /// </summary>
         /// <param name="defaultSortingPropertyName">
@@ -28,7 +28,7 @@ namespace Fluorite.Strainer.Attributes
             {
                 throw new ArgumentException(
                     $"{nameof(defaultSortingPropertyName)} cannot be null, empty " +
-                    $"or contain only whitespace characters.",
+                    "or contain only whitespace characters.",
                     nameof(defaultSortingPropertyName));
             }
 
@@ -36,7 +36,7 @@ namespace Fluorite.Strainer.Attributes
         }
 
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerObjectAttribute"/>
+        /// Initializes a new instance of the <see cref="StrainerObjectAttribute"/>
         /// class.
         /// </summary>
         /// <param name="defaultSortingPropertyName">
@@ -61,7 +61,7 @@ namespace Fluorite.Strainer.Attributes
         public string DefaultSortingPropertyName { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indicating whether default
+        /// Gets a value indicating whether default
         /// sorting way for marked object is descending.
         /// <para/>
         /// Defaults to <see langword="false"/>.
@@ -69,7 +69,7 @@ namespace Fluorite.Strainer.Attributes
         public bool IsDefaultSortingDescending { get; } = false;
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether marked
+        /// Gets or sets a value indicating whether marked
         /// object is marked as filterable.
         /// <para/>
         /// Defaults to <see langword="true"/>.
@@ -77,7 +77,7 @@ namespace Fluorite.Strainer.Attributes
         public bool IsFilterable { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether marked
+        /// Gets or sets a value indicating whether marked
         /// object is marked as filterable.
         /// <para/>
         /// Defaults to <see langword="true"/>.

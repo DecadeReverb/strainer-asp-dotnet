@@ -5,10 +5,23 @@ using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Configuration
 {
+    /// <summary>
+    /// Provides read-only configuration for custom methods.
+    /// </summary>
     public class ConfigurationCustomMethodsProvider : IConfigurationCustomMethodsProvider
     {
         private readonly IStrainerConfigurationProvider _strainerConfigurationProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigurationCustomMethodsProvider"/>
+        /// class.
+        /// </summary>
+        /// <param name="strainerConfigurationProvider">
+        /// The main Stariner configuration provider to use.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="strainerConfigurationProvider"/> is <see langword="null"/>.
+        /// </exception>
         public ConfigurationCustomMethodsProvider(IStrainerConfigurationProvider strainerConfigurationProvider)
         {
             _strainerConfigurationProvider = strainerConfigurationProvider

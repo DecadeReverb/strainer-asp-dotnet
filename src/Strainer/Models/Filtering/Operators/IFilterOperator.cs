@@ -15,13 +15,13 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         Func<IFilterExpressionContext, Expression> Expression { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether current
+        /// Gets a value indicating whether current
         /// operator is case insensitive.
         /// </summary>
         bool IsCaseInsensitive { get; }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value indictating whether associated
+        /// Gets a value indicating whether associated
         /// <see cref="System.Linq.Expressions.Expression"/> uses method
         /// based on a <see cref="string"/> instance like
         /// <see cref="string.Contains(string)"/> or <see cref="string.StartsWith(string)"/>.

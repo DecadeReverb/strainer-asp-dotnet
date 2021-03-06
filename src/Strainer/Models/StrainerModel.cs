@@ -7,7 +7,7 @@
     public class StrainerModel : IStrainerModel
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerModel"/> class.
+        /// Initializes a new instance of the <see cref="StrainerModel"/> class.
         /// </summary>
         public StrainerModel()
         {

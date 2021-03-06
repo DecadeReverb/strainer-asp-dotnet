@@ -9,7 +9,7 @@ namespace Fluorite.Strainer.Models.Metadata
     public class ObjectMetadata : IObjectMetadata
     {
         /// <summary>
-        /// Initializes new instance of <see cref="ObjectMetadata"/> class.
+        /// Initializes a new instance of the <see cref="ObjectMetadata"/> class.
         /// </summary>
         public ObjectMetadata()
         {
@@ -23,19 +23,19 @@ namespace Fluorite.Strainer.Models.Metadata
         public string DefaultSortingPropertyName { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether default
+        /// Gets or sets a value indicating whether default
         /// sorting way for marked object is descending.
         /// </summary>
         public bool IsDefaultSortingDescending { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets a value indicating whether related
         /// object is marked as filterable.
         /// </summary>
         public bool IsFilterable { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indicating whether related
+        /// Gets or sets a value indicating whether related
         /// object is marked as filterable.
         /// </summary>
         public bool IsSortable { get; set; }
