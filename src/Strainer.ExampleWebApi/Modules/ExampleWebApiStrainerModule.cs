@@ -1,6 +1,7 @@
 ﻿using Fluorite.Strainer.ExampleWebApi.Entities;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,9 +10,11 @@ namespace Fluorite.Strainer.ExampleWebApi.Modules
 {
     public class ExampleWebApiStrainerModule : StrainerModule
     {
-        public ExampleWebApiStrainerModule()
-        {
+        private readonly ILogger<ExampleWebApiStrainerModule> logger;
 
+        public ExampleWebApiStrainerModule(ILogger<ExampleWebApiStrainerModule> logger)
+        {
+            this.logger = logger;
         }
 
         public override void Load(IStrainerModuleBuilder builder)

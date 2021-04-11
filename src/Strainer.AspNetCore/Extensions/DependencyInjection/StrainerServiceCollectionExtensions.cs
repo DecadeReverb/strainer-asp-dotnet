@@ -205,14 +205,19 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
             services.Add<IStrainerProcessor, StrainerProcessor>(serviceLifetime);
 
-            try
+            services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(serviceProvider =>
             {
-                AddModulesConfiguration(services, moduleTypes);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Unable to add configuration from modules. " + ex.Message, ex);
-            }
+                try
+                {
+                    var strainerConfiguration = BuildStrainerConfiguration(moduleTypes, serviceProvider);
+
+                    return new StrainerConfigurationProvider(strainerConfiguration);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Unable to add configuration from Strainer modules.", ex);
+                }
+            });
 
             return new StrainerBuilder(services, serviceLifetime);
         }
@@ -552,96 +557,104 @@ namespace Fluorite.Extensions.DependencyInjection
                 .ToList();
         }
 
-        private static void AddModulesConfiguration(
-            IServiceCollection services,
-            IReadOnlyCollection<Type> moduleTypes)
+        private static StrainerConfiguration BuildStrainerConfiguration(IReadOnlyCollection<Type> moduleTypes, IServiceProvider serviceProvider)
         {
-            using (var serviceProvider = services.BuildServiceProvider())
+            var validModuleTypes = moduleTypes
+                .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)));
+
+            var invalidModuleTypes = moduleTypes.Except(validModuleTypes);
+            if (invalidModuleTypes.Any())
             {
-                var validModuleTypes = moduleTypes
-                    .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)));
+                throw new InvalidOperationException(
+                    string.Format(
+                        "Valid Strainer module must be a non-abstract class deriving from `{0}`. " +
+                        "Invalid types:\n{1}",
+                        typeof(StrainerModule).FullName,
+                        string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
+            }
 
-                var invalidModuleTypes = moduleTypes.Except(validModuleTypes);
+            var modules = validModuleTypes
+                .Select(type => CreateModuleInstance(type))
+                .Where(instance => instance != null)
+                .ToList();
 
-                if (invalidModuleTypes.Any())
-                {
-                    throw new InvalidOperationException(
-                        string.Format(
-                            "Valid Strainer module cannot be an abstract class and must be deriving from {0}. " +
-                            "Invalid types:\n{1}",
-                            typeof(StrainerModule).FullName,
-                            string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
-                }
+            var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
+            var options = optionsProvider.GetStrainerOptions();
+            var propertyInfoProvider = new PropertyInfoProvider();
 
-                var modules = validModuleTypes
-                    .Select(type => Activator.CreateInstance(type) as StrainerModule)
-                    .Where(instance => instance != null)
-                    .ToList();
+            modules.ForEach(strainerModule =>
+            {
+                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
 
-                var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
-                var options = optionsProvider.GetStrainerOptions();
-                var propertyInfoProvider = new PropertyInfoProvider();
+                strainerModule.Load(moduleBuilder);
+            });
 
-                modules.ForEach(strainerModule =>
-                {
-                    var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
-
-                    strainerModule.Load(moduleBuilder);
-                });
-
-                var customFilerMethods = modules
+            var customFilerMethods = modules
+                .SelectMany(module => module
+                    .CustomFilterMethods
+                    .Select(pair =>
+                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
+                            pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
+            var customSortMethods = modules
                     .SelectMany(module => module
-                        .CustomFilterMethods
-                        .Select(pair =>
-                            new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
-                                pair.Key, pair.Value.ToReadOnly())))
-                    .Merge()
-                    .ToReadOnly();
-                var customSortMethods = modules
-                     .SelectMany(module => module
-                        .CustomSortMethods
-                        .Select(pair =>
-                            new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
-                                pair.Key, pair.Value.ToReadOnly())))
-                    .Merge()
-                    .ToReadOnly();
-                var defaultMetadata = modules
-                    .SelectMany(module => module.DefaultMetadata)
-                    .Merge()
-                    .ToReadOnly();
-                var filterOperators = modules
-                    .SelectMany(module => module.FilterOperators)
-                    .Union(FilterOperatorMapper.DefaultOperators)
-                    .Merge()
-                    .ToReadOnly();
-                var objectMetadata = modules
-                    .SelectMany(module => module.ObjectMetadata.ToReadOnly())
-                    .Merge()
-                    .ToReadOnly();
-                var propertyMetadata = modules
-                     .SelectMany(module => module
-                        .PropertyMetadata
-                        .Select(pair =>
-                            new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                                pair.Key, pair.Value.ToReadOnly())))
-                    .Merge()
-                    .ToReadOnly();
+                    .CustomSortMethods
+                    .Select(pair =>
+                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
+                            pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
+            var defaultMetadata = modules
+                .SelectMany(module => module.DefaultMetadata)
+                .Merge()
+                .ToReadOnly();
+            var filterOperators = modules
+                .SelectMany(module => module.FilterOperators)
+                .Union(FilterOperatorMapper.DefaultOperators)
+                .Merge()
+                .ToReadOnly();
+            var objectMetadata = modules
+                .SelectMany(module => module.ObjectMetadata.ToReadOnly())
+                .Merge()
+                .ToReadOnly();
+            var propertyMetadata = modules
+                    .SelectMany(module => module
+                    .PropertyMetadata
+                    .Select(pair =>
+                        new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                            pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
 
-                var compiledConfiguration = new StrainerConfiguration(
-                    customFilerMethods,
-                    customSortMethods,
-                    defaultMetadata,
-                    filterOperators,
-                    objectMetadata,
-                    propertyMetadata);
+            var compiledConfiguration = new StrainerConfiguration(
+                customFilerMethods,
+                customSortMethods,
+                defaultMetadata,
+                filterOperators,
+                objectMetadata,
+                propertyMetadata);
 
-                // TODO:
-                // Make validation optional?
-                var filterOperatorValidator = serviceProvider.GetRequiredService<IFilterOperatorValidator>();
-                filterOperatorValidator.Validate(filterOperators.Values);
+            // TODO:
+            // Make validation optional?
+            var filterOperatorValidator = serviceProvider.GetRequiredService<IFilterOperatorValidator>();
+            filterOperatorValidator.Validate(filterOperators.Values);
 
-                services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(sp =>
-                    new StrainerConfigurationProvider(compiledConfiguration));
+            return compiledConfiguration;
+        }
+
+        private static StrainerModule CreateModuleInstance(Type type)
+        {
+            try
+            {
+                return Activator.CreateInstance(type) as StrainerModule;
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException(
+                    $"Unable to create instance of {type}. " +
+                    $"Ensure that type provides parameterless constructor.",
+                    exception);
             }
         }
     }

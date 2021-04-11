@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
@@ -119,23 +120,27 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         }
 
         [Fact]
-        public void ExtensionMethod_Throws_When_Passed_Not_A_Strainer_Module_Type()
+        public void ResolvingStrainer_Throws_When_Passed_Not_A_Strainer_Module_Type()
         {
             // Arrange
             var services = new ServiceCollection();
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => services.AddStrainer(new[] { typeof(Exception) }));
+            services.AddStrainer(new[] { typeof(Exception) });
+            using var serviceProvider = services.BuildServiceProvider();
+            Assert.Throws<InvalidOperationException>(() => serviceProvider.GetRequiredService<IStrainerConfigurationProvider>());
         }
 
         [Fact]
-        public void ExtensionMethod_Throws_When_Passed_Abstract_Module_Type()
+        public void ResolvingStrainer_Throws_When_Passed_Abstract_Module_Type()
         {
             // Arrange
             var services = new ServiceCollection();
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => services.AddStrainer(new[] { typeof(BaseModule) }));
+            services.AddStrainer(new[] { typeof(BaseModule) });
+            using var serviceProvider = services.BuildServiceProvider();
+            Assert.Throws<InvalidOperationException>(() => serviceProvider.GetRequiredService<IStrainerConfigurationProvider>());
         }
 
         [Fact]
