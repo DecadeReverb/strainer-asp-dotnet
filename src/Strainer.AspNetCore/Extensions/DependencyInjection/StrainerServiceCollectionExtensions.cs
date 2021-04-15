@@ -549,8 +549,6 @@ namespace Fluorite.Extensions.DependencyInjection
         {
             return assemblies
                 .Distinct()
-                .Where(a => a.GetReferencedAssemblies()
-                    .All(name => !name.FullName.StartsWith("Microsoft.IntelliTrace.Core")))
                 .SelectMany(a => a.GetTypes())
                 .SelectMany(type => new[] { type }.Union(type.GetNestedTypes()))
                 .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)))
