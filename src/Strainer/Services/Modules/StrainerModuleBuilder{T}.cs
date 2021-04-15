@@ -1,12 +1,9 @@
 ﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -44,7 +41,7 @@ namespace Fluorite.Strainer.Services.Modules
         /// </exception>
         public StrainerModuleBuilder(
             IPropertyInfoProvider propertyInfoProvider,
-            IStrainerModule<T> strainerModule,
+            IStrainerModule strainerModule,
             StrainerOptions strainerOptions)
         {
             PropertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
@@ -60,7 +57,7 @@ namespace Fluorite.Strainer.Services.Modules
         /// <summary>
         /// Gets the Strainer module on which this builder operates on.
         /// </summary>
-        protected IStrainerModule<T> Module { get; }
+        protected IStrainerModule Module { get; }
 
         /// <summary>
         /// Gets the property info provider.
@@ -91,7 +88,7 @@ namespace Fluorite.Strainer.Services.Modules
             }
 
             return new CustomFilterMethodBuilder<T>(
-                new Dictionary<Type, IDictionary<string, ICustomFilterMethod>> { [typeof(T)] = Module.CustomFilterMethods, },
+                Module.CustomFilterMethods,
                 name);
         }
 
@@ -119,7 +116,7 @@ namespace Fluorite.Strainer.Services.Modules
             }
 
             return new CustomSortMethodBuilder<T>(
-                new Dictionary<Type, IDictionary<string, ICustomSortMethod>> { [typeof(T)] = Module.CustomSortMethods, },
+                Module.CustomSortMethods,
                 name);
         }
 
@@ -195,7 +192,7 @@ namespace Fluorite.Strainer.Services.Modules
             }
 
             return new ObjectMetadataBuilder<T>(
-                new Dictionary<Type, IObjectMetadata> { [typeof(T)] = Module.ObjectMetadata, },
+                Module.ObjectMetadata,
                 defaultSortingPropertyExpression);
         }
 
@@ -234,8 +231,8 @@ namespace Fluorite.Strainer.Services.Modules
             var (propertyInfo, fullName) = PropertyInfoProvider.GetPropertyInfoAndFullName(propertyExpression);
 
             return new PropertyMetadataBuilder<T>(
-                new Dictionary<Type, IDictionary<string, IPropertyMetadata>> { [typeof(T)] = Module.PropertyMetadata, },
-                new Dictionary<Type, IPropertyMetadata> { [typeof(T)] = Module.DefaultMetadata, },
+                Module.PropertyMetadata,
+                Module.DefaultMetadata,
                 propertyInfo,
                 fullName);
         }

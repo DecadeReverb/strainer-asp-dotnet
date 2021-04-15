@@ -24,7 +24,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
         }
 
         public IStrainerProcessor CreateDefaultProcessor<TModule>()
-            where TModule : StrainerModule
+            where TModule : IStrainerModule
         {
             return CreateDefaultProcessor(typeof(TModule));
         }
@@ -37,7 +37,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
         }
 
         public IStrainerProcessor CreateDefaultProcessor<TModule>(Action<StrainerOptions> configureOptions)
-            where TModule : StrainerModule
+            where TModule : IStrainerModule
         {
             return CreateDefaultProcessor(configureOptions, typeof(TModule));
         }
@@ -56,7 +56,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
         }
 
         public IStrainerProcessor CreateProcessor<TModule>(Func<IStrainerContext, IStrainerProcessor> function)
-            where TModule : StrainerModule
+            where TModule : IStrainerModule
         {
             return CreateProcessor(function, typeof(TModule));
         }
@@ -89,17 +89,11 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var propertyInfoProvider = new PropertyInfoProvider();
 
             var modules = strainerModuleTypes
-                .Select(type => Activator.CreateInstance(type) as StrainerModule)
+                .Select(type => Activator.CreateInstance(type) as IStrainerModule)
                 .Where(instance => instance != null)
                 .ToList();
 
-            modules.ForEach(strainerModule =>
-            {
-                var options = optionsProvider.GetStrainerOptions();
-                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
-
-                strainerModule.Load(moduleBuilder);
-            });
+            modules.ForEach(strainerModule => LoadModule(strainerModule, optionsProvider, propertyInfoProvider));
 
             var customFilerMethods = modules
                 .SelectMany(module => module
@@ -191,6 +185,35 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                 filteringContext,
                 sortingContext,
                 metadataFacade);
+        }
+
+        private void LoadModule(
+            IStrainerModule strainerModule,
+            IntegrationTestsStrainerOptionsProvider optionsProvider,
+            PropertyInfoProvider propertyInfoProvider)
+        {
+            var options = optionsProvider.GetStrainerOptions();
+            var genericStrainerModuleInterfaceType = strainerModule
+                .GetType()
+                .GetInterfaces()
+                .FirstOrDefault(i =>
+                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
+
+            if (genericStrainerModuleInterfaceType is not null)
+            {
+                var moduleGenericType = genericStrainerModuleInterfaceType.GetGenericArguments().First();
+                var builderType = typeof(StrainerModuleBuilder<>).MakeGenericType(moduleGenericType);
+                var builder = Activator.CreateInstance(builderType, propertyInfoProvider, strainerModule, options);
+                var method = genericStrainerModuleInterfaceType.GetMethod(nameof(IStrainerModule<object>.Load));
+
+                method.Invoke(strainerModule, new[] { builder });
+            }
+            else
+            {
+                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
+
+                strainerModule.Load(moduleBuilder);
+            }
         }
     }
 }

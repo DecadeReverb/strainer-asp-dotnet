@@ -580,14 +580,9 @@ namespace Fluorite.Extensions.DependencyInjection
 
             var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
             var options = optionsProvider.GetStrainerOptions();
-            var propertyInfoProvider = new PropertyInfoProvider();
+            var propertyInfoProvider = serviceProvider.GetRequiredService<IPropertyInfoProvider>();
 
-            modules.ForEach(strainerModule =>
-            {
-                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
-
-                strainerModule.Load(moduleBuilder);
-            });
+            modules.ForEach(strainerModule => LoadModule(strainerModule, optionsProvider, propertyInfoProvider));
 
             var customFilerMethods = modules
                 .SelectMany(module => module
@@ -643,11 +638,11 @@ namespace Fluorite.Extensions.DependencyInjection
             return compiledConfiguration;
         }
 
-        private static StrainerModule CreateModuleInstance(Type type)
+        private static IStrainerModule CreateModuleInstance(Type type)
         {
             try
             {
-                return Activator.CreateInstance(type) as StrainerModule;
+                return Activator.CreateInstance(type) as IStrainerModule;
             }
             catch (Exception exception)
             {
@@ -655,6 +650,35 @@ namespace Fluorite.Extensions.DependencyInjection
                     $"Unable to create instance of {type}. " +
                     $"Ensure that type provides parameterless constructor.",
                     exception);
+            }
+        }
+
+        private static void LoadModule(
+            IStrainerModule strainerModule,
+            IStrainerOptionsProvider optionsProvider,
+            IPropertyInfoProvider propertyInfoProvider)
+        {
+            var options = optionsProvider.GetStrainerOptions();
+            var genericStrainerModuleInterfaceType = strainerModule
+                .GetType()
+                .GetInterfaces()
+                .FirstOrDefault(i =>
+                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
+
+            if (genericStrainerModuleInterfaceType is not null)
+            {
+                var moduleGenericType = genericStrainerModuleInterfaceType.GetGenericArguments().First();
+                var builderType = typeof(StrainerModuleBuilder<>).MakeGenericType(moduleGenericType);
+                var builder = Activator.CreateInstance(builderType, propertyInfoProvider, strainerModule, options);
+                var method = genericStrainerModuleInterfaceType.GetMethod(nameof(IStrainerModule<object>.Load));
+
+                method.Invoke(strainerModule, new[] { builder });
+            }
+            else
+            {
+                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
+
+                strainerModule.Load(moduleBuilder);
             }
         }
     }

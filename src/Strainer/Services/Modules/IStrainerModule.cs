@@ -41,5 +41,13 @@ namespace Fluorite.Strainer.Services.Modules
         /// Gets the object property dictionary.
         /// </summary>
         IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
+
+        /// <summary>
+        /// Loads configuration in module.
+        /// </summary>
+        /// <param name="builder">
+        /// The Strainer Module builder.
+        /// </param>
+        public abstract void Load(IStrainerModuleBuilder builder);
     }
 }
