@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Configuration;
 using System;
@@ -17,8 +18,8 @@ namespace Fluorite.Strainer.Services.Metadata
             IStrainerOptionsProvider strainerOptionsProvider,
             IConfigurationMetadataProvider metadataProvider)
         {
-            _options = (strainerOptionsProvider?.GetStrainerOptions()
-                ?? throw new ArgumentNullException(nameof(strainerOptionsProvider)));
+            _options = strainerOptionsProvider?.GetStrainerOptions()
+                ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
         }
 
@@ -43,15 +44,14 @@ namespace Fluorite.Strainer.Services.Metadata
                     {
                         return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
                             type,
-                            new ReadOnlyDictionary<string, IPropertyMetadata>(
-                                metadatas.ToDictionary(pair => pair.Key, pair => pair.Value)));
+                            metadatas.ToReadOnlyDictionary());
                     }
 
                     var objectMetadata = _metadataProvider.GetObjectMetadata()[type];
 
                     return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
                         type,
-                        new ReadOnlyDictionary<string, IPropertyMetadata>(type
+                        type
                             .GetProperties()
                             .Select(propertyInfo =>
                             {
@@ -69,8 +69,10 @@ namespace Fluorite.Strainer.Services.Metadata
                                     PropertyInfo = propertyInfo,
                                 };
                             })
-                            .ToDictionary(propertyMetadata =>
-                                propertyMetadata.Name, propertyMetadata => (IPropertyMetadata)propertyMetadata)));
+                            .ToDictionary(
+                                propertyMetadata => propertyMetadata.Name,
+                                propertyMetadata => (IPropertyMetadata)propertyMetadata)
+                            .ToReadOnlyDictionary());
                 }).ToDictionary(pair => pair.Key, pair => pair.Value));
         }
 

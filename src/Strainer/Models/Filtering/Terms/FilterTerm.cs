@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.Models.Filtering.Terms
     public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     {
         /// <summary>
-        /// Initializes new instance of <see cref="FilterTerm"/> class.
+        /// Initializes a new instance of the <see cref="FilterTerm"/> class.
         /// </summary>
         /// <param name="input">
         /// The filter input from Strainer model.
@@ -42,6 +42,16 @@ namespace Fluorite.Strainer.Models.Filtering.Terms
         /// Gets or sets the list of values.
         /// </summary>
         public IList<string> Values { get; set; }
+
+        public static bool operator ==(FilterTerm term1, FilterTerm term2)
+        {
+            return EqualityComparer<FilterTerm>.Default.Equals(term1, term2);
+        }
+
+        public static bool operator !=(FilterTerm term1, FilterTerm term2)
+        {
+            return !(term1 == term2);
+        }
 
         /// <summary>
         /// Checks if current instance of <see cref="FilterTerm"/>
@@ -89,21 +99,11 @@ namespace Fluorite.Strainer.Models.Filtering.Terms
         public override int GetHashCode()
         {
             var hashCode = 215681951;
-            hashCode = hashCode * -1521134295 + EqualityComparer<IList<string>>.Default.GetHashCode(Names);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IFilterOperator>.Default.GetHashCode(Operator);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IList<string>>.Default.GetHashCode(Values);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<IList<string>>.Default.GetHashCode(Names);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<IFilterOperator>.Default.GetHashCode(Operator);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<IList<string>>.Default.GetHashCode(Values);
 
             return hashCode;
-        }
-
-        public static bool operator ==(FilterTerm term1, FilterTerm term2)
-        {
-            return EqualityComparer<FilterTerm>.Default.Equals(term1, term2);
-        }
-
-        public static bool operator !=(FilterTerm term1, FilterTerm term2)
-        {
-            return !(term1 == term2);
         }
     }
 }

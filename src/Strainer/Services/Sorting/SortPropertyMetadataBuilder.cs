@@ -2,50 +2,38 @@
 using Fluorite.Strainer.Services.Metadata;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortPropertyMetadataBuilder<TEntity> : PropertyMetadataBuilder<TEntity>, ISortPropertyMetadataBuilder<TEntity>
     {
-        private readonly IDictionary<Type, IDictionary<string, IPropertyMetadata>> _propertyMetadata;
-        private readonly IDictionary<Type, IPropertyMetadata> _defaultMetadata;
-
         public SortPropertyMetadataBuilder(
             IDictionary<Type, IDictionary<string, IPropertyMetadata>> propertyMetadata,
             IDictionary<Type, IPropertyMetadata> defaultMetadata,
-            Expression<Func<TEntity, object>> expression,
+            PropertyInfo propertyInfo,
+            string fullName,
             IPropertyMetadata basePropertyMetadata)
-            : base(propertyMetadata, defaultMetadata, expression)
+            : base(propertyMetadata, defaultMetadata, propertyInfo, fullName)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            if (basePropertyMetadata == null)
+            if (basePropertyMetadata is null)
             {
                 throw new ArgumentNullException(nameof(basePropertyMetadata));
             }
 
-            displayName = basePropertyMetadata.DisplayName;
-            isDefaultSorting = basePropertyMetadata.IsDefaultSorting;
-            isDefaultSortingDescending = basePropertyMetadata.IsDefaultSortingDescending;
-            isFilterable = basePropertyMetadata.IsFilterable;
-            isSortable = basePropertyMetadata.IsSortable;
-            name = basePropertyMetadata.Name;
-            propertyInfo = basePropertyMetadata.PropertyInfo;
-
-            _propertyMetadata = propertyMetadata ?? throw new ArgumentNullException(nameof(propertyMetadata));
-            _defaultMetadata = defaultMetadata ?? throw new ArgumentNullException(nameof(defaultMetadata));
+            DisplayName = basePropertyMetadata.DisplayName;
+            IsDefaultSorting = basePropertyMetadata.IsDefaultSorting;
+            IsDefaultSortingDescending = basePropertyMetadata.IsDefaultSortingDescending;
+            IsFilterableValue = basePropertyMetadata.IsFilterable;
+            IsSortableValue = basePropertyMetadata.IsSortable;
 
             Save(Build());
         }
 
         public ISortPropertyMetadataBuilder<TEntity> IsDefaultSort(bool isDescending = false)
         {
-            isDefaultSorting = true;
-            isDefaultSortingDescending = isDescending;
+            IsDefaultSorting = true;
+            IsDefaultSortingDescending = isDescending;
             Save(Build());
 
             return this;

@@ -11,10 +11,13 @@ namespace Fluorite.Strainer.Services.Modules
     /// Provides configuration information about metadata, filter operators
     /// and custom methods for Strainer.
     /// </summary>
-    public abstract class StrainerModule : IStrainerModule
+    /// <typeparam name="T">
+    /// The type of model for which this module is for.
+    /// </typeparam>
+    public abstract class StrainerModule<T> : IStrainerModule<T>, IStrainerModule
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StrainerModule"/> class.
+        /// Initializes a new instance of the <see cref="StrainerModule{T}"/> class.
         /// </summary>
         protected StrainerModule()
         {
@@ -64,6 +67,29 @@ namespace Fluorite.Strainer.Services.Modules
         /// <param name="builder">
         /// The Strainer Module builder.
         /// </param>
-        public abstract void Load(IStrainerModuleBuilder builder);
+        public abstract void Load(IStrainerModuleBuilder<T> builder);
+
+        /// <summary>
+        /// Loads configuration in module.
+        /// <para/>
+        /// Override this method to specify configuration for this module.
+        /// </summary>
+        /// <param name="builder">
+        /// The Strainer Module builder.
+        /// </param>
+        public void Load(IStrainerModuleBuilder builder)
+        {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (builder is not IStrainerModuleBuilder<T> typedBuilder)
+            {
+                throw new NotSupportedException("Only strongly typed module builder is supported.");
+            }
+
+            Load(typedBuilder);
+        }
     }
 }

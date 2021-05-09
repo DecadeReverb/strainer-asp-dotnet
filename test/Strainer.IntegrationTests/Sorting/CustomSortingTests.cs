@@ -68,12 +68,12 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
             public int LikeCount { get; set; }
         }
 
-        private class TestStrainerModule : StrainerModule
+        private class TestStrainerModule : StrainerModule<Post>
         {
-            public override void Load(IStrainerModuleBuilder builder)
+            public override void Load(IStrainerModuleBuilder<Post> builder)
             {
                 builder
-                    .AddCustomSortMethod<Post>(nameof(Popularity))
+                    .AddCustomSortMethod(nameof(Popularity))
                     .HasFunction(Popularity);
             }
 

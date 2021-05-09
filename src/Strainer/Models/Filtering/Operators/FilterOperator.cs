@@ -8,11 +8,11 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
     /// <summary>
     /// Provides information about filtering operator.
     /// </summary>
-    [DebuggerDisplay("{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}")]
+    [DebuggerDisplay("{{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}}")]
     public class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
     {
         /// <summary>
-        /// Initializes new instance of <see cref="FilterOperator"/> class.
+        /// Initializes a new instance of the <see cref="FilterOperator"/> class.
         /// </summary>
         public FilterOperator()
         {
@@ -26,13 +26,13 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         public Func<IFilterExpressionContext, Expression> Expression { get; set;  }
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> value indictating whether current
+        /// Gets or sets a value indicating whether current
         /// operator is case insensitive.
         /// </summary>
         public bool IsCaseInsensitive { get; set; }
 
         /// <summary>
-        /// Gets or sets <see cref="bool"/> value indictating whether associated
+        /// Gets or sets a value indicating whether associated
         /// <see cref="System.Linq.Expressions.Expression"/> uses method
         /// based on a <see cref="string"/> instance like
         /// <see cref="string.Contains(string)"/> or <see cref="string.StartsWith(string)"/>.
@@ -48,6 +48,16 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         /// Gets or sets a <see cref="string"/> representation of the operator.
         /// </summary>
         public string Symbol { get; set; }
+
+        public static bool operator ==(FilterOperator operator1, FilterOperator operator2)
+        {
+            return EqualityComparer<FilterOperator>.Default.Equals(operator1, operator2);
+        }
+
+        public static bool operator !=(FilterOperator operator1, FilterOperator operator2)
+        {
+            return !(operator1 == operator2);
+        }
 
         /// <summary>
         /// Checks if current instance of <see cref="FilterOperator"/>
@@ -103,16 +113,6 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         public override string ToString()
         {
             return $"{Symbol} {Name}";
-        }
-
-        public static bool operator ==(FilterOperator operator1, FilterOperator operator2)
-        {
-            return EqualityComparer<FilterOperator>.Default.Equals(operator1, operator2);
-        }
-
-        public static bool operator !=(FilterOperator operator1, FilterOperator operator2)
-        {
-            return !(operator1 == operator2);
         }
     }
 }

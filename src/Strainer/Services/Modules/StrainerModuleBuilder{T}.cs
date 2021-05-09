@@ -1,12 +1,9 @@
 ﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -15,10 +12,13 @@ namespace Fluorite.Strainer.Services.Modules
     /// <summary>
     /// Default implementation of Strainer Module builder service.
     /// </summary>
-    public class StrainerModuleBuilder : IStrainerModuleBuilder
+    /// <typeparam name="T">
+    /// The type of model for which this module builder is for.
+    /// </typeparam>
+    public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StrainerModuleBuilder"/>
+        /// Initializes a new instance of the <see cref="StrainerModuleBuilder{T}"/>
         /// class.
         /// </summary>
         /// <param name="strainerModule">
@@ -67,9 +67,6 @@ namespace Fluorite.Strainer.Services.Modules
         /// <summary>
         /// Adds custom filtering method.
         /// </summary>
-        /// <typeparam name="TEntity">
-        /// The type of entity on which custom filter method will operate.
-        /// </typeparam>
         /// <param name="name">
         /// The name for custom filtering method.
         /// </param>
@@ -80,7 +77,7 @@ namespace Fluorite.Strainer.Services.Modules
         /// <paramref name="name"/> is <see langword="null"/>, empty or
         /// contains only whitespace characters.
         /// </exception>
-        public ICustomFilterMethodBuilder<TEntity> AddCustomFilterMethod<TEntity>(string name)
+        public ICustomFilterMethodBuilder<T> AddCustomFilterMethod(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -90,20 +87,14 @@ namespace Fluorite.Strainer.Services.Modules
                     nameof(name));
             }
 
-            if (!Module.CustomFilterMethods.ContainsKey(typeof(TEntity)))
-            {
-                Module.CustomFilterMethods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
-            }
-
-            return new CustomFilterMethodBuilder<TEntity>(Module.CustomFilterMethods, name);
+            return new CustomFilterMethodBuilder<T>(
+                Module.CustomFilterMethods,
+                name);
         }
 
         /// <summary>
         /// Adds custom sorting method.
         /// </summary>
-        /// <typeparam name="TEntity">
-        /// The type of entity on which custom sorting method will operate.
-        /// </typeparam>
         /// <param name="name">
         /// The name for custom sorting method.
         /// </param>
@@ -114,7 +105,7 @@ namespace Fluorite.Strainer.Services.Modules
         /// <paramref name="name"/> is <see langword="null"/>, empty or
         /// contains only whitespace characters.
         /// </exception>
-        public ICustomSortMethodBuilder<TEntity> AddCustomSortMethod<TEntity>(string name)
+        public ICustomSortMethodBuilder<T> AddCustomSortMethod(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -124,12 +115,9 @@ namespace Fluorite.Strainer.Services.Modules
                     nameof(name));
             }
 
-            if (!Module.CustomSortMethods.ContainsKey(typeof(TEntity)))
-            {
-                Module.CustomSortMethods[typeof(TEntity)] = new Dictionary<string, ICustomSortMethod>();
-            }
-
-            return new CustomSortMethodBuilder<TEntity>(Module.CustomSortMethods, name);
+            return new CustomSortMethodBuilder<T>(
+                Module.CustomSortMethods,
+                name);
         }
 
         /// <summary>
@@ -171,9 +159,6 @@ namespace Fluorite.Strainer.Services.Modules
         /// <summary>
         /// Registers object metadata.
         /// </summary>
-        /// <typeparam name="TEntity">
-        /// The type of object.
-        /// </typeparam>
         /// <param name="defaultSortingPropertyExpression">
         /// An expression leading to a property marking default sorting.
         /// <para/>
@@ -189,8 +174,8 @@ namespace Fluorite.Strainer.Services.Modules
         /// <exception cref="NotSupportedException">
         /// Fluent API is not supported.
         /// </exception>
-        public IObjectMetadataBuilder<TEntity> AddObject<TEntity>(
-            Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
+        public IObjectMetadataBuilder<T> AddObject(
+            Expression<Func<T, object>> defaultSortingPropertyExpression)
         {
             if (defaultSortingPropertyExpression == null)
             {
@@ -206,16 +191,14 @@ namespace Fluorite.Strainer.Services.Modules
                     $"be able to use it.");
             }
 
-            return new ObjectMetadataBuilder<TEntity>(Module.ObjectMetadata, defaultSortingPropertyExpression);
+            return new ObjectMetadataBuilder<T>(
+                Module.ObjectMetadata,
+                defaultSortingPropertyExpression);
         }
 
         /// <summary>
         /// Registers property metadata.
         /// </summary>
-        /// <typeparam name="TEntity">
-        /// The type of property owner, in other words type of object where
-        /// property is defined.
-        /// </typeparam>
         /// <param name="propertyExpression">
         /// An expression leading to a property.
         /// </param>
@@ -228,8 +211,8 @@ namespace Fluorite.Strainer.Services.Modules
         /// <exception cref="NotSupportedException">
         /// Fluent API is not supported.
         /// </exception>
-        public IPropertyMetadataBuilder<TEntity> AddProperty<TEntity>(
-            Expression<Func<TEntity, object>> propertyExpression)
+        public IPropertyMetadataBuilder<T> AddProperty(
+            Expression<Func<T, object>> propertyExpression)
         {
             if (propertyExpression == null)
             {
@@ -245,14 +228,13 @@ namespace Fluorite.Strainer.Services.Modules
                     $"be able to use it.");
             }
 
-            if (!Module.PropertyMetadata.ContainsKey(typeof(TEntity)))
-            {
-                Module.PropertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
-            }
-
             var (propertyInfo, fullName) = PropertyInfoProvider.GetPropertyInfoAndFullName(propertyExpression);
 
-            return new PropertyMetadataBuilder<TEntity>(Module.PropertyMetadata, Module.DefaultMetadata, propertyInfo, fullName);
+            return new PropertyMetadataBuilder<T>(
+                Module.PropertyMetadata,
+                Module.DefaultMetadata,
+                propertyInfo,
+                fullName);
         }
     }
 }

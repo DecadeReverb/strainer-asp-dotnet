@@ -91,8 +91,8 @@ namespace Fluorite.Strainer.Services.Filtering
                         catch (Exception ex)
                         {
                             throw new StrainerConversionException(
-                                    $"Failed to convert filter value '{filterTermValue}' " +
-                                    $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
+                                $"Failed to convert filter value '{filterTermValue}' " +
+                                $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
                                 ex,
                                 filterTermValue,
                                 metadata.PropertyInfo.PropertyType);
@@ -107,8 +107,8 @@ namespace Fluorite.Strainer.Services.Filtering
                         catch (Exception ex)
                         {
                             throw new StrainerConversionException(
-                                    $"Failed to change type of filter value '{filterTermValue}' " +
-                                    $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
+                                $"Failed to change type of filter value '{filterTermValue}' " +
+                                $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
                                 ex,
                                 filterTermValue,
                                 metadata.PropertyInfo.PropertyType);
@@ -116,10 +116,12 @@ namespace Fluorite.Strainer.Services.Filtering
                     }
                 }
 
-                var filterValue = GetClosureOverConstant(constantVal,
-                    filterTerm.Operator.IsStringBased
-                        ? typeof(string)
-                        : metadata.PropertyInfo.PropertyType);
+                var constantClosureType = filterTerm.Operator.IsStringBased
+                    ? typeof(string)
+                    : metadata.PropertyInfo.PropertyType;
+                var filterValue = GetClosureOverConstant(
+                    constantVal,
+                    constantClosureType);
 
                 if ((filterTerm.Operator.IsCaseInsensitive
                     || (!filterTerm.Operator.IsCaseInsensitive && _options.IsCaseInsensitiveForValues))
@@ -147,12 +149,12 @@ namespace Fluorite.Strainer.Services.Filtering
                 catch (Exception ex)
                 {
                     throw new StrainerUnsupportedOperatorException(
-                            $"Failed to use operator '{filterTerm.Operator}' " +
-                            $"for filter value '{filterTermValue}' on property " +
-                            $"'{metadata.PropertyInfo.DeclaringType.FullName}.{metadata.PropertyInfo.Name}' " +
-                            $"of type '{metadata.PropertyInfo.PropertyType.FullName}'\n." +
-                            $"Please ensure that this operator is supported by type " +
-                            $"'{metadata.PropertyInfo.PropertyType.FullName}'.",
+                        $"Failed to use operator '{filterTerm.Operator}' " +
+                        $"for filter value '{filterTermValue}' on property " +
+                        $"'{metadata.PropertyInfo.DeclaringType.FullName}.{metadata.PropertyInfo.Name}' " +
+                        $"of type '{metadata.PropertyInfo.PropertyType.FullName}'\n." +
+                        "Please ensure that this operator is supported by type " +
+                        $"'{metadata.PropertyInfo.PropertyType.FullName}'.",
                         ex,
                         filterTerm.Operator,
                         metadata.PropertyInfo,
@@ -186,7 +188,7 @@ namespace Fluorite.Strainer.Services.Filtering
             return Expression.Constant(constant, targetType);
         }
 
-        private static TypeConverter GetTypeConverter(IPropertyMetadata metadata)
+        private TypeConverter GetTypeConverter(IPropertyMetadata metadata)
         {
             return TypeDescriptor.GetConverter(metadata.PropertyInfo.PropertyType);
         }

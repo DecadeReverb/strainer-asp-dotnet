@@ -9,14 +9,18 @@ namespace Fluorite.Strainer.Services.Metadata
     public class MetadataMapper : IMetadataMapper
     {
         private readonly StrainerOptions _options;
+        private readonly IPropertyInfoProvider _propertyInfoProvider;
 
-        public MetadataMapper(IStrainerOptionsProvider optionsProvider)
+        public MetadataMapper(
+            IStrainerOptionsProvider optionsProvider,
+            IPropertyInfoProvider propertyInfoProvider)
         {
             DefaultMetadata = new Dictionary<Type, IPropertyMetadata>();
             PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
             ObjectMetadata = new Dictionary<Type, IObjectMetadata>();
             _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
+            _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
         }
 
         public IDictionary<Type, IPropertyMetadata> DefaultMetadata { get; }
@@ -115,7 +119,9 @@ namespace Fluorite.Strainer.Services.Metadata
                 PropertyMetadata[typeof(TEntity)] = new Dictionary<string, IPropertyMetadata>();
             }
 
-            return new PropertyMetadataBuilder<TEntity>(PropertyMetadata, DefaultMetadata, propertyExpression);
+            var (propertyInfo, fullName) = _propertyInfoProvider.GetPropertyInfoAndFullName(propertyExpression);
+
+            return new PropertyMetadataBuilder<TEntity>(PropertyMetadata, DefaultMetadata, propertyInfo, fullName);
         }
     }
 }

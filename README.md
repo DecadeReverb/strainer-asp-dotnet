@@ -210,9 +210,11 @@ services.AddStrainer(options => options.DefaultPageSize = 20);
 
 ## Strainer Modules
 
-Strainer builds its configuration from Modules (except for attribute-based metadata which is retrieved at runtime). Once created, the configuration cannot be changed and is read-only. Modules provide a way to split the configuration sources into different assemblies. They also make it possible to use the configuration aside from Strainer services like Strainer processor.
+Strainer builds its configuration from modules (except for attribute-based metadata which is retrieved at runtime). Once created, the configuration cannot be changed and is read-only. Modules provide a way to split the configuration sources into different assemblies. They also make it possible to use the configuration aside from Strainer services like Strainer processor.
 
-Strainer module comes with builder allowing to add a property, object, additional filter operator and custom methods:
+Strainer module loads via a builder allowing to add a property, object, additional filter operator and custom methods. Strainer modules has two built-in abstract implementations of `IStrainerModule`, that are ready for use:
+ - `StrainerModule`
+ - `StrainerModule<T>` - narrowed down module for adding rules only for `T`.
 
 ```cs
 public class AppStrainerModule : StrainerModule
@@ -226,13 +228,13 @@ public class AppStrainerModule : StrainerModule
 }
 ```
 
-`Load()` will be called once on application startup (ASP.NET Core) per every Strainer Module discovered based on types or assemblies provided.
+`Load()` will be called once on application startup (ASP.NET Core) per every Strainer module discovered based on types or assemblies provided.
 
 ### Attributes vs Fluent API
 
-Marking properties with fluent API needs to be explicit. Calling just `AddProperty<T>()` *is not equivalent** with applying `[StrainerProperty]` on a property. `[StrainerProperty]` attribute will mark the property as filterable and sortable by default (unless explicitly configured otherwise) while fluent API requires calling `IsFilterable()` and `IsSortable()` right after `AddProperty<T>()`.
+Marking properties with fluent API needs to be explicit. Calling just `AddProperty<T>()` **is not equivalent** with applying `[StrainerProperty]` on a property. `[StrainerProperty]` attribute will mark the property as filterable and sortable **by default** (unless explicitly configured otherwise) while fluent API requires calling `IsFilterable()` and `IsSortable()` right after `AddProperty<T>()`. Same rule applies with object-level attributes and fluent API method.
 
-Equivalent configurations:
+Equivalent configuration for marking `Title` property as filterable and sortable:
 
 ```cs
 public class Post
@@ -243,12 +245,35 @@ public class Post
 ```
 
 ```cs
-public SampleStrainerModule : StrainerModule
+public SampleStrainerModule : StrainerModule<Post>
 {
-    public override void Load(IStrainerModuleBuilder builder)
+    public override void Load(IStrainerModuleBuilder<Post> builder)
     {
         builder
-            .AddProperty<Post>(p => p.Title)
+            .AddProperty(p => p.Title)
+            .IsFilterable()
+            .IsSortable();
+    }
+}
+```
+
+Equivalent configuration for marking all `Post` properties as filterable and sortable:
+
+```C#
+[StrainerObject(nameof(Title))]
+public class Post
+{
+    public string Title { get; set; }
+}
+```
+
+```C#
+public class PostStrainerModule : StrainerModule<Post>
+{
+    public override void Load(IStrainerModuleBuilder<Post> builder)
+    {
+        builder
+            .AddObject(p => p.Title)
             .IsFilterable()
             .IsSortable();
     }

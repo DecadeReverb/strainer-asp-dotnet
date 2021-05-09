@@ -6,13 +6,13 @@ namespace Fluorite.Strainer.Models.Sorting
     /// <summary>
     /// Provides information about strongly typed expression used for sorting.
     /// </summary>
-    /// <typeparam name="TEntity">
+    /// <typeparam name="T">
     /// The type of entity for which the expression is for.
     /// </typeparam>
-    public class SortExpression<TEntity> : SortExpression, ISortExpression<TEntity>, ISortExpression
+    public class SortExpression<T> : SortExpression, ISortExpression<T>, ISortExpression
     {
         /// <summary>
-        /// Initializes new instance of <see cref="SortExpression{TEntity}"/> class.
+        /// Initializes a new instance of the <see cref="SortExpression{TEntity}"/> class.
         /// </summary>
         public SortExpression()
         {
@@ -23,6 +23,6 @@ namespace Fluorite.Strainer.Models.Sorting
         /// Gets or sets an expression which can be used as a functor argument
         /// for ordering functions.
         /// </summary>
-        public Expression<Func<TEntity, object>> Expression { get; set; }
+        public Expression<Func<T, object>> Expression { get; set; }
     }
 }

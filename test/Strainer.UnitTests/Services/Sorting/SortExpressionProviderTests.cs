@@ -11,7 +11,6 @@ using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Metadata;
-using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using Moq;
 using System;
@@ -43,7 +42,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProvider = new PropertyInfoProvider();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
             var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var propertyMetadataProviders = new IMetadataProvider[]
@@ -78,11 +78,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 { propertyInfo, sortTerm },
             };
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            var optionsProviderMock = new Mock<IStrainerOptionsProvider>();
+            optionsProviderMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var optionsProvider = optionsProviderMock.Object;
+            var propertyInfoProvider = new PropertyInfoProvider();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
             var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
@@ -117,7 +118,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProvider = new PropertyInfoProvider();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
             mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
             var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var propertyMetadataProviders = new IMetadataProvider[]
@@ -167,7 +169,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProvider = new PropertyInfoProvider();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
             mapper.Property<Comment>(c => c.Text).IsSortable();
             mapper.Property<Comment>(c => c.Id).IsSortable();
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();

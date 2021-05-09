@@ -9,7 +9,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
     public class FilterExpressionContext : IFilterExpressionContext
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="FilterExpressionContext"/>
+        /// Initializes a new instance of the <see cref="FilterExpressionContext"/>
         /// class.
         /// </summary>
         /// <param name="filterValue">
@@ -36,7 +36,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
         public Expression FilterValue { get; }
 
         /// <summary>
-        /// Get the expression for property value access.
+        /// Gets the expression for property value access.
         /// </summary>
         public Expression PropertyValue { get; }
     }

@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Models.Configuration
     public class StrainerConfiguration : IStrainerConfiguration
     {
         /// <summary>
-        /// Initializes new instance of <see cref="StrainerConfiguration"/> class.
+        /// Initializes a new instance of the <see cref="StrainerConfiguration"/> class.
         /// </summary>
         public StrainerConfiguration(
             IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> customFilterMethods,

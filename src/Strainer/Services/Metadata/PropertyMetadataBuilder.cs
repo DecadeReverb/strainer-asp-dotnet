@@ -2,7 +2,6 @@
 using Fluorite.Strainer.Services.Sorting;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata
@@ -11,46 +10,57 @@ namespace Fluorite.Strainer.Services.Metadata
     {
         private readonly IDictionary<Type, IDictionary<string, IPropertyMetadata>> _propertyMetadata;
         private readonly IDictionary<Type, IPropertyMetadata> _defaultMetadata;
-        private readonly Expression<Func<TEntity, object>> _expression;
-
-        protected string displayName;
-        protected bool isDefaultSorting;
-        protected bool isDefaultSortingDescending;
-        protected bool isFilterable;
-        protected bool isSortable;
-        protected string name;
-        protected PropertyInfo propertyInfo;
 
         public PropertyMetadataBuilder(
             IDictionary<Type, IDictionary<string, IPropertyMetadata>> propertyMetadata,
             IDictionary<Type, IPropertyMetadata> defaultMetadata,
-            Expression<Func<TEntity, object>> expression)
+            PropertyInfo propertyInfo,
+            string fullName)
         {
+            if (string.IsNullOrEmpty(fullName))
+            {
+                throw new ArgumentException($"'{nameof(fullName)}' cannot be null or empty", nameof(fullName));
+            }
+
             _propertyMetadata = propertyMetadata ?? throw new ArgumentNullException(nameof(propertyMetadata));
             _defaultMetadata = defaultMetadata ?? throw new ArgumentNullException(nameof(defaultMetadata));
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
-            (name, propertyInfo) = GetPropertyInfo(expression);
+            PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+            FullName = fullName;
 
             Save(Build());
         }
+
+        protected string DisplayName { get; set; }
+
+        protected string FullName { get; }
+
+        protected bool IsDefaultSorting { get; set; }
+
+        protected bool IsDefaultSortingDescending { get; set; }
+
+        protected bool IsFilterableValue { get; set; }
+
+        protected bool IsSortableValue { get; set; }
+
+        protected PropertyInfo PropertyInfo { get; }
 
         public virtual IPropertyMetadata Build()
         {
             return new PropertyMetadata
             {
-                DisplayName = displayName,
-                IsDefaultSorting = isDefaultSorting,
-                IsDefaultSortingDescending = isDefaultSortingDescending,
-                IsFilterable = isFilterable,
-                IsSortable = isSortable,
-                Name = name,
-                PropertyInfo = propertyInfo,
+                DisplayName = DisplayName,
+                IsDefaultSorting = IsDefaultSorting,
+                IsDefaultSortingDescending = IsDefaultSortingDescending,
+                IsFilterable = IsSortableValue,
+                IsSortable = IsSortableValue,
+                Name = FullName,
+                PropertyInfo = PropertyInfo,
             };
         }
 
         public virtual IPropertyMetadataBuilder<TEntity> IsFilterable()
         {
-            isFilterable = true;
+            IsSortableValue = true;
             Save(Build());
 
             return this;
@@ -58,10 +68,10 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public virtual ISortPropertyMetadataBuilder<TEntity> IsSortable()
         {
-            isSortable = true;
+            IsSortableValue = true;
             Save(Build());
 
-            return new SortPropertyMetadataBuilder<TEntity>(_propertyMetadata, _defaultMetadata, _expression, Build());
+            return new SortPropertyMetadataBuilder<TEntity>(_propertyMetadata, _defaultMetadata, PropertyInfo, FullName, Build());
         }
 
         public virtual IPropertyMetadataBuilder<TEntity> HasDisplayName(string displayName)
@@ -70,11 +80,11 @@ namespace Fluorite.Strainer.Services.Metadata
             {
                 throw new ArgumentException(
                     $"{nameof(displayName)} cannot be null, empty " +
-                    $"or contain only whitespace characaters.",
+                    $"or contain only whitespace characters.",
                     nameof(displayName));
             }
 
-            this.displayName = displayName;
+            DisplayName = displayName;
             Save(Build());
 
             return this;
@@ -105,30 +115,6 @@ namespace Fluorite.Strainer.Services.Metadata
             var metadataKey = propertyMetadata.DisplayName ?? propertyMetadata.Name;
 
             _propertyMetadata[typeof(TEntity)][metadataKey] = propertyMetadata;
-        }
-
-        private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            if (!(expression.Body is MemberExpression body))
-            {
-                var ubody = expression.Body as UnaryExpression;
-                body = ubody.Operand as MemberExpression;
-            }
-
-            var propertyInfo = body?.Member as PropertyInfo;
-            var stack = new Stack<string>();
-            while (body != null)
-            {
-                stack.Push(body.Member.Name);
-                body = body.Expression as MemberExpression;
-            }
-
-            return (string.Join(".", stack.ToArray()), propertyInfo);
         }
     }
 }

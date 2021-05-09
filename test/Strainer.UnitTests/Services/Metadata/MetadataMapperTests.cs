@@ -20,7 +20,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
             var metadata = new PropertyMetadata()
             {
                 Name = nameof(Post.Id),
@@ -45,7 +46,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
             var firstMetadata = new PropertyMetadata()
             {
                 Name = "first",
@@ -79,7 +81,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
             var metadata = new PropertyMetadata()
             {
                 Name = nameof(Post.Id),
@@ -105,7 +108,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => mapper.Property<Post>(p => p.Id));
@@ -119,7 +123,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             optionsMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
             var optionsProvider = optionsMock.Object;
-            var mapper = new MetadataMapper(optionsProvider);
+            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
             var metadata = new PropertyMetadata()
             {
                 Name = nameof(Post.Id),

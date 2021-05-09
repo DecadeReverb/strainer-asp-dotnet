@@ -24,7 +24,7 @@ namespace Fluorite.Strainer.Services.Sorting
         public static readonly string DescendingSuffix = "_desc";
 
         /// <summary>
-        /// Initializes new instance of <see cref="SuffixSortingWayFormatter"/>
+        /// Initializes a new instance of the <see cref="SuffixSortingWayFormatter"/>
         /// class.
         /// </summary>
         public SuffixSortingWayFormatter()
@@ -156,18 +156,11 @@ namespace Fluorite.Strainer.Services.Sorting
             return input;
         }
 
-        private string GetSuffix(SortingWay sortingWay)
+        private string GetSuffix(SortingWay sortingWay) => sortingWay switch
         {
-            switch (sortingWay)
-            {
-                case SortingWay.Descending:
-                    return DescendingSuffix;
-                case SortingWay.Ascending:
-                    return AscendingSuffix;
-                default:
-                    throw new NotSupportedException(
-                        $"{nameof(sortingWay)} with value '{sortingWay}' is not supported.");
-            }
-        }
+            SortingWay.Descending => DescendingSuffix,
+            SortingWay.Ascending => AscendingSuffix,
+            _ => throw new NotSupportedException($"{nameof(sortingWay)} with value '{sortingWay}' is not supported."),
+        };
     }
 }

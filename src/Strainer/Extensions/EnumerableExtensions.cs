@@ -7,6 +7,23 @@ namespace Fluorite.Extensions
 {
     public static class EnumerableExtensions
     {
+        public static IEnumerable<T> Concat<T>(
+            this IEnumerable<T> source,
+            params IEnumerable<T>[] sequences)
+        {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (sequences is null)
+            {
+                throw new ArgumentNullException(nameof(sequences));
+            }
+
+            return Enumerable.Concat(source, sequences.SelectMany(x => x));
+        }
+
         public static IDictionary<TKey, TValue> Merge<TKey, TValue>(
             this IEnumerable<KeyValuePair<TKey, TValue>> keyValuePairs)
         {
@@ -35,7 +52,6 @@ namespace Fluorite.Extensions
 
             return source.ToDictionary(pair => pair.Key, pair => pair.Value);
         }
-
 
         public static IReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
             this IEnumerable<KeyValuePair<TKey, TValue>> source)

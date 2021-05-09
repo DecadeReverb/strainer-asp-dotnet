@@ -27,24 +27,31 @@ namespace Fluorite.Strainer.Services.Sorting
 
             if (!sortExpressions.Any(s => s.IsDefault))
             {
-                throw new StrainerSortExpressionValidatorException(
-                    typeof(TEntity),
+                var exceptionMessage =
                     $"No default sort expression found for type {typeof(TEntity)}.\n" +
                     $"Mark a property as default sorting to enable fallbacking " +
-                    $"to it when no sorting information is provided.");
+                    $"to it when no sorting information is provided.";
+
+                throw new StrainerSortExpressionValidatorException(
+                    typeof(TEntity),
+                    exceptionMessage);
             }
 
-            if (sortExpressions.Count(s => s.IsDefault) > 1){
+            if (sortExpressions.Count(s => s.IsDefault) > 1)
+            {
                 var defaultProperties = string.Join(
                     Environment.NewLine,
                     sortExpressions.Where(s => s.IsDefault)
                         .Select(s => s.Expression.ToString()));
-                throw new StrainerSortExpressionValidatorException(
-                    typeof(TEntity),
+                var exceptionMessage =
                     $"Too many default sort expression found for type {typeof(TEntity)}.\n" +
                     $"Only one property can be marked as default.\n" +
                     $"Default properties:\n" +
-                    $"{defaultProperties}");
+                    $"{defaultProperties}";
+
+                throw new StrainerSortExpressionValidatorException(
+                    typeof(TEntity),
+                    exceptionMessage);
             }
         }
     }

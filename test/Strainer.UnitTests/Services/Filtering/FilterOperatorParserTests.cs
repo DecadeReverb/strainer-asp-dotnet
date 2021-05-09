@@ -15,8 +15,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             string symbol = null;
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -36,8 +35,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var symbol = string.Empty;
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -57,8 +55,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var symbol = " ";
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -77,8 +74,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         public void Parser_ReturnsOperators_For_AllFilterOperator_InMapper()
         {
             // Arrange
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);

@@ -18,8 +18,8 @@ namespace Fluorite.Strainer.Services.Sorting
         public SortTermParser(ISortingWayFormatter formatter, IStrainerOptionsProvider strainerOptionsProvider)
         {
             _formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
-            _options = (strainerOptionsProvider?.GetStrainerOptions()
-                ?? throw new ArgumentNullException(nameof(strainerOptionsProvider)));
+            _options = strainerOptionsProvider?.GetStrainerOptions()
+                ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
         }
 
         public IList<ISortTerm> GetParsedTerms(string input)

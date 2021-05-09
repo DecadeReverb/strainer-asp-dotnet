@@ -3,7 +3,6 @@ using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Moq;
-using System.Linq;
 using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
@@ -15,8 +14,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             string input = null;
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -37,8 +35,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = string.Empty;
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -59,8 +56,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = " ";
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -81,8 +77,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = "==SomeValue";
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -103,8 +98,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = "==";
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -125,8 +119,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = "CustomFilterName";
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);
@@ -147,8 +140,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var input = "CustomFilterName==";
-            var filterOperators = FilterOperatorMapper.DefaultOperators
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var filterOperators = FilterOperatorMapper.DefaultOperators;
             var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
             strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
                 .Returns(filterOperators);

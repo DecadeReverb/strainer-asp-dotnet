@@ -9,11 +9,6 @@ namespace Fluorite.Strainer.ExampleWebApi.Modules
 {
     public class ExampleWebApiStrainerModule : StrainerModule
     {
-        public ExampleWebApiStrainerModule()
-        {
-
-        }
-
         public override void Load(IStrainerModuleBuilder builder)
         {
             builder.AddCustomFilterMethod<Post>(nameof(IsNew))

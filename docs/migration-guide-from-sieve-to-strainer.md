@@ -76,7 +76,7 @@ public class AppStrainerModule : StrainerModule
 }
 ```
 
-`Load()` will be called once on application startup (ASP.NET Core) for all Strainer Modules dicovered.
+`Load()` will be called only once on first request of resolving Strainer services for all Strainer Modules dicovered.
 
 ### Validation attributes removed from sieve model
 
@@ -176,6 +176,28 @@ public class Post
 }
 ```
 
-Configuration above will tell Strainer that all properties of `Post` class are filterable and sortable, with exception for `Title` property which is not sortable.
+Configuration above will tell Strainer that all properties of `Post` class are filterable and sortable, with exception for `Title` property which should not be sortable.
+
+### Object level fluent API
+
+Instead of applying an attribute, you can also mark the whole object in Fluent API in your custom module:
+
+```C#
+public class CommentStrainerModule : StrainerModule<Comment>
+{
+    public override void Load(IStrainerModuleBuilder<Comment> builder)
+    {
+        builder
+            .AddObject(p => p.Id)
+            .IsFilterable()
+            .IsSortable();
+    }
+}
+
+```
+
+When doing so, it is required to explicitly specify whether all object properties should be filterable and sortable, same as when adding a property via `AddProperty()`. 
+
+Notice that strongly typed `StrainerModule<T>` has been used in the example aboe, so there is no need for specifing model type with `AddObject()`.
 
 ### ...more will come.

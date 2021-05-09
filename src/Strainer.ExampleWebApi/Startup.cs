@@ -37,7 +37,7 @@ namespace Fluorite.Strainer.ExampleWebApi
             services.AddSwaggerGenWithDefaultOptions();
             services.AddStrainer(
                 Configuration.GetSection("Strainer"),
-                new[] { typeof(ExampleWebApiStrainerModule) },
+                new[] { typeof(Startup).Assembly },
                 ServiceLifetime.Singleton);
         }
 
