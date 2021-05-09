@@ -551,23 +551,23 @@ namespace Fluorite.Extensions.DependencyInjection
                 .Distinct()
                 .SelectMany(a => a.GetTypes())
                 .SelectMany(type => new[] { type }.Union(type.GetNestedTypes()))
-                .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)))
+                .Where(type => !type.IsAbstract && typeof(IStrainerModule).IsAssignableFrom(type))
                 .ToList();
         }
 
         private static StrainerConfiguration BuildStrainerConfiguration(IReadOnlyCollection<Type> moduleTypes, IServiceProvider serviceProvider)
         {
             var validModuleTypes = moduleTypes
-                .Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(StrainerModule)));
+                .Where(type => !type.IsAbstract && typeof(IStrainerModule).IsAssignableFrom(type));
 
             var invalidModuleTypes = moduleTypes.Except(validModuleTypes);
             if (invalidModuleTypes.Any())
             {
                 throw new InvalidOperationException(
                     string.Format(
-                        "Valid Strainer module must be a non-abstract class deriving from `{0}`. " +
+                        "Valid Strainer module must be a non-abstract class implementing `{0}`. " +
                         "Invalid types:\n{1}",
-                        typeof(StrainerModule).FullName,
+                        typeof(IStrainerModule).FullName,
                         string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
             }
 

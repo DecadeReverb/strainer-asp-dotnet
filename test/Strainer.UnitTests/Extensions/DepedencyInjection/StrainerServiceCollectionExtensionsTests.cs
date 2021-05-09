@@ -102,6 +102,24 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         }
 
         [Fact]
+        public void ExtensionMethod_AddsStrainer_WithStronglyTypedModule()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddStrainer(new[] { typeof(StronglyTypedStrainerModule) });
+            using var serviceProvider = services.BuildServiceProvider();
+
+            // Assert
+            serviceProvider
+                .GetService<IMetadataFacade>()
+                .GetDefaultMetadata<Post>()
+                .Should()
+                .NotBeNull();
+        }
+
+        [Fact]
         public void ExtensionMethod_AddsStrainerConfiguration_From_Modules_Even_Not_Directly_Deriving_From_StrainerModule_Class()
         {
             // Arrange
@@ -204,6 +222,17 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             public override void Load(IStrainerModuleBuilder builder)
             {
                 builder.AddObject<Post>(p => p.Title);
+            }
+        }
+
+        private class StronglyTypedStrainerModule : StrainerModule<Post>
+        {
+            public override void Load(IStrainerModuleBuilder<Post> builder)
+            {
+                builder
+                    .AddObject(post => post.Title)
+                    .IsFilterable()
+                    .IsSortable();
             }
         }
 
