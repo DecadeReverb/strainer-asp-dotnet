@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.AspNetCore.Services
     /// </summary>
     public class AspNetCoreSingletonStrainerOptionsProvider : IStrainerOptionsProvider
     {
-        private readonly IOptions<StrainerOptions> _options;
+        private readonly IOptionsMonitor<StrainerOptions> _options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AspNetCoreSingletonStrainerOptionsProvider"/>
@@ -23,7 +23,7 @@ namespace Fluorite.Strainer.AspNetCore.Services
         /// <exception cref="ArgumentNullException">
         /// <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public AspNetCoreSingletonStrainerOptionsProvider(IOptions<StrainerOptions> options)
+        public AspNetCoreSingletonStrainerOptionsProvider(IOptionsMonitor<StrainerOptions> options)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
         }
@@ -34,6 +34,6 @@ namespace Fluorite.Strainer.AspNetCore.Services
         /// <returns>
         /// An instance of <see cref="StrainerOptions"/>.
         /// </returns>
-        public StrainerOptions GetStrainerOptions() => _options.Value;
+        public StrainerOptions GetStrainerOptions() => _options.CurrentValue;
     }
 }
