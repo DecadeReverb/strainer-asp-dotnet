@@ -576,11 +576,14 @@ namespace Fluorite.Extensions.DependencyInjection
                 .Where(instance => instance != null)
                 .ToList();
 
-            var optionsProvider = serviceProvider.GetRequiredService<IStrainerOptionsProvider>();
-            var options = optionsProvider.GetStrainerOptions();
-            var propertyInfoProvider = serviceProvider.GetRequiredService<IPropertyInfoProvider>();
+            using var scope = serviceProvider.CreateScope();
+            var optionsProvider = scope.ServiceProvider.GetRequiredService<IStrainerOptionsProvider>();
+            var filterOperatorValidator = scope.ServiceProvider.GetRequiredService<IFilterOperatorValidator>();
+            var propertyInfoProvider = scope.ServiceProvider.GetRequiredService<IPropertyInfoProvider>();
 
-            modules.ForEach(strainerModule => LoadModule(strainerModule, optionsProvider, propertyInfoProvider));
+            var options = optionsProvider.GetStrainerOptions();
+
+            modules.ForEach(strainerModule => LoadModule(strainerModule, options, propertyInfoProvider));
 
             var customFilerMethods = modules
                 .SelectMany(module => module
@@ -630,7 +633,6 @@ namespace Fluorite.Extensions.DependencyInjection
 
             // TODO:
             // Make validation optional?
-            var filterOperatorValidator = serviceProvider.GetRequiredService<IFilterOperatorValidator>();
             filterOperatorValidator.Validate(filterOperators.Values);
 
             return compiledConfiguration;
@@ -653,10 +655,9 @@ namespace Fluorite.Extensions.DependencyInjection
 
         private static void LoadModule(
             IStrainerModule strainerModule,
-            IStrainerOptionsProvider optionsProvider,
+            StrainerOptions options,
             IPropertyInfoProvider propertyInfoProvider)
         {
-            var options = optionsProvider.GetStrainerOptions();
             var genericStrainerModuleInterfaceType = strainerModule
                 .GetType()
                 .GetInterfaces()
