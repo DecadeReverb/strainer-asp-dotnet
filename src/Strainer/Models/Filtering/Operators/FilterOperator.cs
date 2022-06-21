@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators
     /// <summary>
     /// Provides information about filtering operator.
     /// </summary>
-    [DebuggerDisplay("{{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}}")]
+    [DebuggerDisplay("\\{{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}\\}")]
     public class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
     {
         /// <summary>
