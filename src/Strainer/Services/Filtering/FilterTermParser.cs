@@ -53,10 +53,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     continue;
                 }
 
-                if (!list.Any(f => f.Names.Any(n => filterTerm.Names.Any(n2 => n2 == n))))
-                {
-                    list.Add(filterTerm);
-                }
+                list.Add(filterTerm);
             }
 
             return list;
