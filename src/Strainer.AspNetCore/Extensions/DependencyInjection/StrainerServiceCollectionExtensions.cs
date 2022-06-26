@@ -181,6 +181,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
             services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
             services.Add<IFilterTermNamesParser, FilterTermNamesParser>(serviceLifetime);
+            services.Add<IFilterTermValuesParser, FilterTermValuesParser>(serviceLifetime);
             services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
             services.Add<IFilterContext, FilterContext>(serviceLifetime);
 

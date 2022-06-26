@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
-    public class FilterTermNamesParser : IFilterTermNamesParser
+    public class FilterTermValuesParser : IFilterTermValuesParser
     {
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
@@ -16,8 +16,7 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             return Regex.Split(input, EscapedPipePattern)
-                .Select(filterName => filterName.Trim())
-                .Where(filterName => !string.IsNullOrWhiteSpace(filterName))
+                .Select(t => t.Trim())
                 .ToList();
         }
     }

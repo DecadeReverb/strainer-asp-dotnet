@@ -22,7 +22,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
             var namesParser = new FilterTermNamesParser();
-            var termParser = new FilterTermParser(operatorParser, namesParser, filterOperatorsProvider);
+            var valuesParser = new FilterTermValuesParser();
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, filterOperatorsProvider);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -44,7 +45,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
             var namesParser = new FilterTermNamesParser();
-            var termParser = new FilterTermParser(operatorParser, namesParser, filterOperatorsProvider);
+            var valuesParser = new FilterTermValuesParser();
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, filterOperatorsProvider);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -66,7 +68,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
             var namesParser = new FilterTermNamesParser();
-            var termParser = new FilterTermParser(operatorParser, namesParser, filterOperatorsProvider);
+            var valuesParser = new FilterTermValuesParser();
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, filterOperatorsProvider);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -88,7 +91,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
             var namesParser = new FilterTermNamesParser();
-            var termParser = new FilterTermParser(operatorParser, namesParser, filterOperatorsProvider);
+            var valuesParser = new FilterTermValuesParser();
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, filterOperatorsProvider);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -110,7 +114,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
             var namesParser = new FilterTermNamesParser();
-            var termParser = new FilterTermParser(operatorParser, namesParser, filterOperatorsProvider);
+            var valuesParser = new FilterTermValuesParser();
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, filterOperatorsProvider);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -132,7 +137,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
             var namesParser = new FilterTermNamesParser();
-            var termParser = new FilterTermParser(operatorParser, namesParser, filterOperatorsProvider);
+            var valuesParser = new FilterTermValuesParser();
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, filterOperatorsProvider);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -154,7 +160,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
             var namesParser = new FilterTermNamesParser();
-            var termParser = new FilterTermParser(operatorParser, namesParser, filterOperatorsProvider);
+            var valuesParser = new FilterTermValuesParser();
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, filterOperatorsProvider);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);

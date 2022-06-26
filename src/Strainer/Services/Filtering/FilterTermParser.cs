@@ -13,15 +13,18 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private readonly IFilterOperatorParser _operatorParser;
         private readonly IFilterTermNamesParser _namesParser;
+        private readonly IFilterTermValuesParser _valuesParser;
         private readonly IConfigurationFilterOperatorsProvider _filterOperatorsConfigurationProvider;
 
         public FilterTermParser(
             IFilterOperatorParser operatorParser,
             IFilterTermNamesParser namesParser,
+            IFilterTermValuesParser valuesParser,
             IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
         {
             _operatorParser = operatorParser ?? throw new ArgumentNullException(nameof(_operatorParser));
             _namesParser = namesParser ?? throw new ArgumentNullException(nameof(namesParser));
+            _valuesParser = valuesParser ?? throw new ArgumentNullException(nameof(valuesParser));
             _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider
                 ?? throw new ArgumentNullException(nameof(filterOperatorsConfigurationProvider));
         }
@@ -72,7 +75,7 @@ namespace Fluorite.Strainer.Services.Filtering
                 return null;
             }
 
-            var values = GetFilterValues(filterValues);
+            var values = _valuesParser.Parse(filterValues);
             var operatorParsed = _operatorParser.GetParsedOperator(filterOpertatorSymbol);
 
             return new FilterTerm(input)
@@ -104,18 +107,6 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             return (string.Empty, string.Empty, string.Empty);
-        }
-
-        private List<string> GetFilterValues(string values)
-        {
-            if (values.Equals(string.Empty))
-            {
-                return new List<string>();
-            }
-
-            return Regex.Split(values, EscapedPipePattern)
-                .Select(t => t.Trim())
-                .ToList();
         }
 
         private string ParseFilterOperatorAndValue(string filter)
