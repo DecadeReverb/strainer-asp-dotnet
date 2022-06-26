@@ -14,19 +14,18 @@ namespace Fluorite.Strainer.Services.Filtering
         private readonly IFilterOperatorParser _operatorParser;
         private readonly IFilterTermNamesParser _namesParser;
         private readonly IFilterTermValuesParser _valuesParser;
-        private readonly IConfigurationFilterOperatorsProvider _filterOperatorsConfigurationProvider;
+        private readonly IFilterTermSectionsParser _termSectionsParser;
 
         public FilterTermParser(
             IFilterOperatorParser operatorParser,
             IFilterTermNamesParser namesParser,
             IFilterTermValuesParser valuesParser,
-            IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
+            IFilterTermSectionsParser termSectionsParser)
         {
             _operatorParser = operatorParser ?? throw new ArgumentNullException(nameof(_operatorParser));
             _namesParser = namesParser ?? throw new ArgumentNullException(nameof(namesParser));
             _valuesParser = valuesParser ?? throw new ArgumentNullException(nameof(valuesParser));
-            _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider
-                ?? throw new ArgumentNullException(nameof(filterOperatorsConfigurationProvider));
+            _termSectionsParser = termSectionsParser ?? throw new ArgumentNullException(nameof(termSectionsParser));
         }
 
         public IList<IFilterTerm> GetParsedTerms(string input)
@@ -67,16 +66,16 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private IFilterTerm ParseFilterTerm(string input)
         {
-            var (filterName, filterOpertatorSymbol, filterValues) = GetFilterSplits(input);
-            var names = _namesParser.Parse(filterName);
+            var sections = _termSectionsParser.Parse(input);
+            var names = _namesParser.Parse(sections.Names);
 
             if (!names.Any())
             {
                 return null;
             }
 
-            var values = _valuesParser.Parse(filterValues);
-            var operatorParsed = _operatorParser.GetParsedOperator(filterOpertatorSymbol);
+            var values = _valuesParser.Parse(sections.Values);
+            var operatorParsed = _operatorParser.GetParsedOperator(sections.OperatorSymbol);
 
             return new FilterTerm(input)
             {
@@ -84,29 +83,6 @@ namespace Fluorite.Strainer.Services.Filtering
                 Values = values,
                 Operator = operatorParsed,
             };
-        }
-
-        private (string FilterName, string FilterOperatorSymbol, string FilterValues) GetFilterSplits(string input)
-        {
-            var symbols = _filterOperatorsConfigurationProvider
-                .GetFilterOperators()
-                .Keys
-                .OrderByDescending(s => s.Length)
-                .ToArray();
-            var splitPattern = string.Join("|", symbols.Select(s => $"({Regex.Escape(s)})"));
-            var substrings = Regex.Split(input, splitPattern);
-
-            if (substrings.Length <= 1)
-            {
-                return (substrings.FirstOrDefault(), string.Empty, string.Empty);
-            }
-
-            if (substrings.Length >= 3)
-            {
-                return (substrings[0], substrings[1], substrings[2]);
-            }
-
-            return (string.Empty, string.Empty, string.Empty);
         }
 
         private string ParseFilterOperatorAndValue(string filter)
