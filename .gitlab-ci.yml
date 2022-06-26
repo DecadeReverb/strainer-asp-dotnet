@@ -47,7 +47,9 @@ unit tests:
  stage: test
  script:
   - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION} /p:CollectCoverage=true /p:CoverletOutputFormat=${TEST_COLLECTOR_NAME}'
-  - './${NUGET_PACKAGES_DIRECTORY}/codecovuploader/${CODECOV_VERSION}/tools/codecov.exe -f "${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME}/coverage.opencover.xml" -t ${CODECOV_TOKEN}'
+  - 'curl -Os https://uploader.codecov.io/latest/linux/codecov'
+  - 'chmod +x codecov'
+  - './codecov -f "${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME}/coverage.opencover.xml" -t ${CODECOV_TOKEN}'
  dependencies:
   - build
 
@@ -55,7 +57,9 @@ integration tests:
  stage: test
  script:
   - 'dotnet test ${TEST_DIRECTORY}/${INTEGRATION_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION} /p:CollectCoverage=true /p:CoverletOutputFormat=${TEST_COLLECTOR_NAME}'
-  - './${NUGET_PACKAGES_DIRECTORY}/codecovuploader/${CODECOV_VERSION}/tools/codecov.exe -f "${TEST_DIRECTORY}/${INTEGRATION_TESTS_PROJECT_NAME}/coverage.opencover.xml" -t ${CODECOV_TOKEN}'
+  - 'curl -Os https://uploader.codecov.io/latest/linux/codecov'
+  - 'chmod +x codecov'
+  - './codecov -f "${TEST_DIRECTORY}/${INTEGRATION_TESTS_PROJECT_NAME}/coverage.opencover.xml" -t ${CODECOV_TOKEN}'
  dependencies:
   - build
 
