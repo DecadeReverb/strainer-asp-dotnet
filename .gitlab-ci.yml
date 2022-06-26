@@ -5,6 +5,9 @@ variables:
  UNIT_TESTS_PROJECT_NAME: 'Strainer.UnitTests'
  SOURCE_CODE_DIRECTORY: 'src'
  TEST_DIRECTORY: 'test'
+ TEST_COLLECTOR_NAME: 'XPlat Code Coverage'
+ COVERLET_RESULT_DIRECTORY_NAME: '.coverletResults'
+ CODECOV_VERSION: '11.13.0'
  BINARIES_DIRECTORY: 'bin'
  OBJECTS_DIRECTORY: 'obj'
  BUILD_CONFIGURATION: 'Release'
@@ -45,7 +48,7 @@ build:
 unit tests:
  stage: test
  script:
-  - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
+  - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION} --collect ${TEST_COLLECTOR_NAME}'
  dependencies:
   - build
 
@@ -105,3 +108,14 @@ deploy Strainer.AspNetCore:
   - 'dotnet nuget push ${NUGET_PACKAGE_PATH} --api-key ${NUGET_API_KEY} --source ${NUGET_SERVER_URL}'
  dependencies:
   - pack Strainer.AspNetCore
+
+deploy code coverage for unit tests:
+ stage: deploy
+ only:
+  - master
+  - tags
+ script:
+  - 'COVERLET_RESULT_PATH=$(find ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME}/${COVERLET_RESULT_DIRECTORY_NAME} -maxdepth 2 -type f -name "coverage.opencover.xml" -printf "%h/%f\n")'
+  - '${NUGET_PACKAGE_PATH}\packages\codecov\${CODECOV_VERSION}\tools\codecov.exe -f "${COVERLET_RESULT_PATH}" -t ${CODECOV_TOKEN}'
+ dependencies:
+  - unit tests
