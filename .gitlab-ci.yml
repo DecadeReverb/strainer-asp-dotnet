@@ -49,7 +49,7 @@ unit tests:
   - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION} /p:CollectCoverage=true /p:CoverletOutputFormat=${TEST_COLLECTOR_NAME}'
   - 'curl -Os https://uploader.codecov.io/latest/linux/codecov'
   - 'chmod +x codecov'
-  - './codecov -f "${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME}/coverage.opencover.xml" -t ${CODECOV_TOKEN}'
+  - './codecov'
  dependencies:
   - build
 
@@ -59,7 +59,7 @@ integration tests:
   - 'dotnet test ${TEST_DIRECTORY}/${INTEGRATION_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION} /p:CollectCoverage=true /p:CoverletOutputFormat=${TEST_COLLECTOR_NAME}'
   - 'curl -Os https://uploader.codecov.io/latest/linux/codecov'
   - 'chmod +x codecov'
-  - './codecov -f "${TEST_DIRECTORY}/${INTEGRATION_TESTS_PROJECT_NAME}/coverage.opencover.xml" -t ${CODECOV_TOKEN}'
+  - './codecov'
  dependencies:
   - build
 
