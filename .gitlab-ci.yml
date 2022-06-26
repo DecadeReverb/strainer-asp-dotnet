@@ -12,7 +12,7 @@ variables:
  BUILD_CONFIGURATION: 'Release'
  NUGET_PACKAGES_DIRECTORY: '.nuget'
  NUGET_SERVER_URL: 'https://api.nuget.org/v3/index.json'
- CODECOV_TOKEN: 'dd9f4cc6-3149-4d03-a057-0c50bffccf3f'
+ CODECOV_TOKEN: '${SECRET_CODECOV_TOKEN}'
 
 stages:
   - build
