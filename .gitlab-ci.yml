@@ -20,6 +20,7 @@ stages:
   - test
   - pack
   - deploy
+  - deploy tests results
 
 
 cache:
@@ -110,7 +111,7 @@ deploy Strainer.AspNetCore:
   - pack Strainer.AspNetCore
 
 deploy code coverage for unit tests:
- stage: deploy
+ stage: deploy tests results
  only:
   - master
   - tags
