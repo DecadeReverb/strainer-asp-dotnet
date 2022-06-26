@@ -160,8 +160,10 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
             var filterOperatorValidator = new FilterOperatorValidator();
             var filterOperatorParser = new FilterOperatorParser(configurationFilterOperatorsProvider);
+            var filterTermNamesParser = new FilterTermNamesParser();
             var filterTermParser = new FilterTermParser(
                 filterOperatorParser,
+                filterTermNamesParser,
                 configurationFilterOperatorsProvider);
             var filteringContext = new FilterContext(
                 filterExpressionProvider,

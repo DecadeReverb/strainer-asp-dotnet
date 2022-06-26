@@ -11,14 +11,17 @@ namespace Fluorite.Strainer.Services.Filtering
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
-        private readonly IFilterOperatorParser _parser;
+        private readonly IFilterOperatorParser _operatorParser;
+        private readonly IFilterTermNamesParser _namesParser;
         private readonly IConfigurationFilterOperatorsProvider _filterOperatorsConfigurationProvider;
 
         public FilterTermParser(
-            IFilterOperatorParser parser,
+            IFilterOperatorParser operatorParser,
+            IFilterTermNamesParser namesParser,
             IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
         {
-            _parser = parser ?? throw new ArgumentNullException(nameof(parser));
+            _operatorParser = operatorParser ?? throw new ArgumentNullException(nameof(_operatorParser));
+            _namesParser = namesParser ?? throw new ArgumentNullException(nameof(namesParser));
             _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider
                 ?? throw new ArgumentNullException(nameof(filterOperatorsConfigurationProvider));
         }
@@ -62,7 +65,7 @@ namespace Fluorite.Strainer.Services.Filtering
         private IFilterTerm ParseFilterTerm(string input)
         {
             var (filterName, filterOpertatorSymbol, filterValues) = GetFilterSplits(input);
-            var names = GetFilterNames(filterName);
+            var names = _namesParser.Parse(filterName);
 
             if (!names.Any())
             {
@@ -70,7 +73,7 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             var values = GetFilterValues(filterValues);
-            var operatorParsed = _parser.GetParsedOperator(filterOpertatorSymbol);
+            var operatorParsed = _operatorParser.GetParsedOperator(filterOpertatorSymbol);
 
             return new FilterTerm(input)
             {
@@ -101,19 +104,6 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             return (string.Empty, string.Empty, string.Empty);
-        }
-
-        private List<string> GetFilterNames(string names)
-        {
-            if (names.Equals(string.Empty))
-            {
-                return new List<string>();
-            }
-
-            return Regex.Split(names, EscapedPipePattern)
-                .Select(filterName => filterName.Trim())
-                .Where(filterName => !string.IsNullOrWhiteSpace(filterName))
-                .ToList();
         }
 
         private List<string> GetFilterValues(string values)
