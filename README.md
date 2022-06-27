@@ -2,6 +2,8 @@
 
 # Strainer
 
+[![CodeCov](https://codecov.io/gl/fluorite/strainer/branch/feature/code-coverage/graph/badge.svg)](https://app.codecov.io/gl/fluorite/strainer/)
+
 Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting**, **filtering** and **pagination** trivial.
 
 **Note:** This project is a port of [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
