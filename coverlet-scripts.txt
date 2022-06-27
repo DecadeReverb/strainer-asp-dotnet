@@ -1,0 +1,5 @@
+coverlet .\test\Strainer.UnitTests\bin\Debug\netcoreapp3.1\Fluorite.Strainer.UnitTests.dll --target "dotnet" --targetargs "test ./test/Strainer.UnitTests --no-build --no-restore" --format "opencover" 
+
+dotnet test --collect "XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
+
+.nuget\packages\codecov\$(codecovVersion)\tools\codecov.exe -f "./test/$(testProject)/coverage.opencover.xml" -t $(CODECOV_TOKEN)
