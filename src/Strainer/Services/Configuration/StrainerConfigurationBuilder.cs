@@ -44,7 +44,7 @@ namespace Fluorite.Strainer.Services.Configuration
             }
 
             var modules = validModuleTypes
-            .Select(type => CreateModuleInstance(type))
+                .Select(type => CreateModuleInstance(type))
                 .Where(instance => instance != null)
                 .ToList();
 
@@ -61,11 +61,11 @@ namespace Fluorite.Strainer.Services.Configuration
                 .Merge()
                 .ToReadOnly();
             var customSortMethods = modules
-                    .SelectMany(module => module
-                    .CustomSortMethods
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
-                            pair.Key, pair.Value.ToReadOnly())))
+                .SelectMany(module => module
+                .CustomSortMethods
+                .Select(pair =>
+                    new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
+                        pair.Key, pair.Value.ToReadOnly())))
                 .Merge()
                 .ToReadOnly();
             var defaultMetadata = modules
@@ -82,11 +82,11 @@ namespace Fluorite.Strainer.Services.Configuration
                 .Merge()
                 .ToReadOnly();
             var propertyMetadata = modules
-                    .SelectMany(module => module
-                    .PropertyMetadata
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                            pair.Key, pair.Value.ToReadOnly())))
+                .SelectMany(module => module
+                .PropertyMetadata
+                .Select(pair =>
+                    new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
+                        pair.Key, pair.Value.ToReadOnly())))
                 .Merge()
                 .ToReadOnly();
 
