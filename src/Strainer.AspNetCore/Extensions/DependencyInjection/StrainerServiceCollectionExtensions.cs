@@ -201,6 +201,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
 
             services.Add<IStrainerConfigurationBuilder, StrainerConfigurationBuilder>(serviceLifetime);
+            services.Add<IStrainerModuleLoader, StrainerModuleLoader>(serviceLifetime);
             services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
             services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
             services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);

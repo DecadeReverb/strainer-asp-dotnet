@@ -1,11 +1,9 @@
 ﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 using System;
 using System.Collections.Generic;
@@ -17,16 +15,16 @@ namespace Fluorite.Strainer.Services.Configuration
     {
         private readonly IStrainerOptionsProvider _optionsProvider;
         private readonly IFilterOperatorValidator _filterOperatorValidator;
-        private readonly IPropertyInfoProvider _propertyInfoProvider;
+        private readonly IStrainerModuleLoader _strainerModuleLoader;
 
         public StrainerConfigurationBuilder(
             IStrainerOptionsProvider optionsProvider,
             IFilterOperatorValidator filterOperatorValidator,
-            IPropertyInfoProvider propertyInfoProvider)
+            IStrainerModuleLoader strainerModuleLoader)
         {
             _optionsProvider = optionsProvider;
             _filterOperatorValidator = filterOperatorValidator;
-            _propertyInfoProvider = propertyInfoProvider;
+            _strainerModuleLoader = strainerModuleLoader;
         }
 
         public IStrainerConfiguration Build(IReadOnlyCollection<Type> moduleTypes)
@@ -52,7 +50,7 @@ namespace Fluorite.Strainer.Services.Configuration
 
             var options = _optionsProvider.GetStrainerOptions();
 
-            modules.ForEach(strainerModule => LoadModule(strainerModule, options, _propertyInfoProvider));
+            modules.ForEach(strainerModule => _strainerModuleLoader.Load(strainerModule, options));
 
             var customFilerMethods = modules
                 .SelectMany(module => module
@@ -119,34 +117,6 @@ namespace Fluorite.Strainer.Services.Configuration
                     $"Unable to create instance of {type}. " +
                     $"Ensure that type provides parameterless constructor.",
                     exception);
-            }
-        }
-
-        private void LoadModule(
-            IStrainerModule strainerModule,
-            StrainerOptions options,
-            IPropertyInfoProvider propertyInfoProvider)
-        {
-            var genericStrainerModuleInterfaceType = strainerModule
-                .GetType()
-                .GetInterfaces()
-                .FirstOrDefault(i =>
-                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
-
-            if (genericStrainerModuleInterfaceType is not null)
-            {
-                var moduleGenericType = genericStrainerModuleInterfaceType.GetGenericArguments().First();
-                var builderType = typeof(StrainerModuleBuilder<>).MakeGenericType(moduleGenericType);
-                var builder = Activator.CreateInstance(builderType, propertyInfoProvider, strainerModule, options);
-                var method = genericStrainerModuleInterfaceType.GetMethod(nameof(IStrainerModule<object>.Load));
-
-                method.Invoke(strainerModule, new[] { builder });
-            }
-            else
-            {
-                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
-
-                strainerModule.Load(moduleBuilder);
             }
         }
     }
