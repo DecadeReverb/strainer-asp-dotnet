@@ -1,11 +1,9 @@
-﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Exceptions;
+﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Sorting;
+using Fluorite.Strainer.Services.Pipelines;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {
@@ -105,27 +103,29 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
+            var builder = new StrainerPipelineBuilder();
+
             try
             {
                 // Filter
                 if (applyFiltering)
                 {
-                    source = ApplyFiltering(model, source);
+                    builder.Filter();
                 }
 
                 // Sort
                 if (applySorting)
                 {
-                    source = ApplySorting(model, source);
+                    builder.Sort();
                 }
 
                 // Paginate
                 if (applyPagination)
                 {
-                    source = ApplyPagination(model, source);
+                    builder.Paginate();
                 }
 
-                return source;
+                return builder.Build().Run(model, source, Context);
             }
             catch (StrainerException) when (!Context.Options.ThrowExceptions)
             {
@@ -172,71 +172,10 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var parsedTerms = Context.Filter.TermParser.GetParsedTerms(model.Filters);
-            if (parsedTerms.Count == 0)
-            {
-                return source;
-            }
-
-            Expression outerExpression = null;
-            var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
-            foreach (var filterTerm in parsedTerms)
-            {
-                Expression innerExpression = null;
-                foreach (var filterTermName in filterTerm.Names)
-                {
-                    var metadata = Context.Metadata.GetMetadata<TEntity>(
-                        isSortableRequired: false,
-                        isFilterableRequired: true,
-                        name: filterTermName);
-
-                    try
-                    {
-                        if (metadata != null)
-                        {
-                            innerExpression = Context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
-                        }
-                        else
-                        {
-                            if (Context.CustomMethods.GetCustomFilterMethods().TryGetValue(typeof(TEntity), out var customFilterMethods)
-                                && customFilterMethods.TryGetValue(filterTermName, out var customMethod))
-                            {
-                                source = (customMethod as ICustomFilterMethod<TEntity>).Function(source, filterTerm.Operator?.Symbol);
-                            }
-                            else
-                            {
-                                throw new StrainerMethodNotFoundException(
-                                    filterTermName,
-                                    $"Property or custom filter method '{filterTermName}' was not found.");
-                            }
-                        }
-                    }
-                    catch (StrainerException) when (!Context.Options.ThrowExceptions)
-                    {
-                        return source;
-                    }
-                }
-
-                if (outerExpression == null)
-                {
-                    outerExpression = innerExpression;
-                    continue;
-                }
-
-                if (innerExpression == null)
-                {
-                    continue;
-                }
-
-                outerExpression = Expression.And(outerExpression, innerExpression);
-            }
-
-            if (outerExpression == null)
-            {
-                return source;
-            }
-
-            return source.Where(Expression.Lambda<Func<TEntity, bool>>(outerExpression, parameterExpression));
+            return new StrainerPipelineBuilder()
+                .Filter()
+                .Build()
+                .Run(model, source, Context);
         }
 
         /// <summary>
@@ -275,23 +214,10 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var page = model.Page ?? Context.Options.DefaultPageNumber;
-            var pageSize = model.PageSize ?? Context.Options.DefaultPageSize;
-            var maxPageSize = Context.Options.MaxPageSize > 0
-                ? Context.Options.MaxPageSize
-                : pageSize;
-
-            if (page > 1)
-            {
-                source = source.Skip((page - 1) * pageSize);
-            }
-
-            if (pageSize > 0)
-            {
-                source = source.Take(Math.Min(pageSize, maxPageSize));
-            }
-
-            return source;
+            return new StrainerPipelineBuilder()
+                .Paginate()
+                .Build()
+                .Run(model, source, Context);
         }
 
         /// <summary>
@@ -333,62 +259,10 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var parsedTerms = Context.Sorting.TermParser.GetParsedTerms(model.Sorts);
-            var isSubsequent = false;
-            var sortingPerformed = false;
-
-            foreach (var sortTerm in parsedTerms)
-            {
-                var metadata = Context.Metadata.GetMetadata<TEntity>(
-                    isSortableRequired: true,
-                    isFilterableRequired: false,
-                    name: sortTerm.Name);
-
-                if (metadata != null)
-                {
-                    var sortExpression = Context.Sorting.ExpressionProvider.GetExpression<TEntity>(metadata.PropertyInfo, sortTerm, isSubsequent);
-                    if (sortExpression != null)
-                    {
-                        source = source.OrderWithSortExpression(sortExpression);
-                        sortingPerformed = true;
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        if (Context.CustomMethods.GetCustomSortMethods().TryGetValue(typeof(TEntity), out var customSortMethods)
-                            && customSortMethods.TryGetValue(sortTerm.Name, out var customMethod))
-                        {
-                            source = (customMethod as ICustomSortMethod<TEntity>).Function(source, sortTerm.IsDescending, isSubsequent);
-                            sortingPerformed = true;
-                        }
-                        else
-                        {
-                            throw new StrainerMethodNotFoundException(
-                                sortTerm.Name,
-                                $"Property or custom sorting method '{sortTerm.Name}' was not found.");
-                        }
-                    }
-                    catch (StrainerException) when (!Context.Options.ThrowExceptions)
-                    {
-                        return source;
-                    }
-                }
-
-                isSubsequent = true;
-            }
-
-            if (!sortingPerformed)
-            {
-                var defaultSortExpression = Context.Sorting.ExpressionProvider.GetDefaultExpression<TEntity>();
-                if (defaultSortExpression != null)
-                {
-                    source = source.OrderWithSortExpression(defaultSortExpression);
-                }
-            }
-
-            return source;
+            return new StrainerPipelineBuilder()
+                .Sort()
+                .Build()
+                .Run(model, source, Context);
         }
     }
 }
