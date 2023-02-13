@@ -1,10 +1,6 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Attributes;
+﻿using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
-using System;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
 {

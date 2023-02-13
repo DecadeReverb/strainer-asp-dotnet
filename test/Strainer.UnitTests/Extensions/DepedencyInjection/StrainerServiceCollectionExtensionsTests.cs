@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Fluorite.Extensions.DependencyInjection;
+﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Sorting;
@@ -12,10 +11,6 @@ using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 {

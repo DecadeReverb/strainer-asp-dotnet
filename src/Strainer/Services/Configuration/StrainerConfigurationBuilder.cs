@@ -5,9 +5,6 @@ using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Modules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Configuration
 {

@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
-using System;
 using System.Reflection;
 
 namespace Fluorite.Strainer.Attributes

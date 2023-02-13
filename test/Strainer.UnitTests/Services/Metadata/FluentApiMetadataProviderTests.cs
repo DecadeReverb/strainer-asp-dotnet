@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Fluorite.Extensions;
+﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Models.Filtering;
@@ -10,10 +9,6 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Metadata;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {

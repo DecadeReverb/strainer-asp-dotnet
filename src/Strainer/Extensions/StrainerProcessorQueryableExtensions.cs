@@ -1,7 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using System;
-using System.Linq;
 
 namespace Fluorite.Extensions
 {

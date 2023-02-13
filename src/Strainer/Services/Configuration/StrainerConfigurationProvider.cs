@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Configuration;
-using System;
 
 namespace Fluorite.Strainer.Services.Configuration
 {

@@ -1,8 +1,5 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models.Sorting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Sorting
 {

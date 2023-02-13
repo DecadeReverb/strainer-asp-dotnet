@@ -1,14 +1,10 @@
-﻿using FluentAssertions;
-using Fluorite.Extensions.DependencyInjection;
+﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.DependencyInjection
 {

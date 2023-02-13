@@ -2,8 +2,6 @@
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting;
-using System;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Pipelines
 {

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Fluorite.Extensions.DependencyInjection;
+﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
@@ -7,8 +6,6 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {

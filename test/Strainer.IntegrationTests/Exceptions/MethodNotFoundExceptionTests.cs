@@ -2,8 +2,6 @@
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Exceptions
 {

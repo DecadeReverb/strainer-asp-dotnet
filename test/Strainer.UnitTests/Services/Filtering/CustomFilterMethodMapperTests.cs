@@ -1,9 +1,5 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Models.Filtering;
+﻿using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Services.Filtering;
-using System;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
 {

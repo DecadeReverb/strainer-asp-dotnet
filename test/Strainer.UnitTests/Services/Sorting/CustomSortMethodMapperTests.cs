@@ -1,9 +1,5 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Sorting;
-using System;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {

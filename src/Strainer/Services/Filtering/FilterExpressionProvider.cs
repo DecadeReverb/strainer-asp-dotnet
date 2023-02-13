@@ -3,9 +3,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Metadata;
-using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Filtering

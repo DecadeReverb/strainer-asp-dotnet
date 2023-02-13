@@ -1,12 +1,8 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
 using Moq;
-using System;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {

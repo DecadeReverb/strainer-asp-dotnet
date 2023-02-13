@@ -1,6 +1,5 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models.Sorting;
-using System;
 
 namespace Fluorite.Strainer.Services.Sorting
 {

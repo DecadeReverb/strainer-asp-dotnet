@@ -3,7 +3,6 @@ using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
-using System;
 
 namespace Fluorite.Strainer.Services
 {

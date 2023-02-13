@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Fluorite.Strainer.Services.Filtering
+﻿namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterContext : IFilterContext
     {

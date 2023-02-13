@@ -1,8 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
-using System;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Configuration
 {

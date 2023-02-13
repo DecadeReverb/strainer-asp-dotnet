@@ -1,7 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace Fluorite.Strainer.AspNetCore.Services
 {

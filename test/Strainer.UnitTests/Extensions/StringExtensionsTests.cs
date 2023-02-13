@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Fluorite.Extensions;
-using System;
-using Xunit;
+﻿using Fluorite.Extensions;
 
 namespace Fluorite.Strainer.UnitTests.Extensions
 {

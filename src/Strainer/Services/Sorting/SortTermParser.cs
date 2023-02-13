@@ -1,9 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Fluorite.Strainer.Services.Sorting

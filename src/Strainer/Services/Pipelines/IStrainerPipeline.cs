@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Models;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Pipelines
 {

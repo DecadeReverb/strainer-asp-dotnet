@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Fluorite.Strainer.Services.Filtering
+﻿namespace Fluorite.Strainer.Services.Filtering
 {
     public interface IFilterTermValuesParser
     {

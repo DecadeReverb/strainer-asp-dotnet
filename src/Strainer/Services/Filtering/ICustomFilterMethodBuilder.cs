@@ -1,6 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
-using System;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Filtering
 {

@@ -10,9 +10,6 @@ using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Fluorite.Strainer.IntegrationTests.Fixtures
 {

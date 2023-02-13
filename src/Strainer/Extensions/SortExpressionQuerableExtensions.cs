@@ -1,6 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
-using System;
-using System.Linq;
 
 namespace Fluorite.Extensions
 {

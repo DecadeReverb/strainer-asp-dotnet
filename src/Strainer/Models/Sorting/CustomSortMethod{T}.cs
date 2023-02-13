@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Fluorite.Strainer.Models.Sorting
+﻿namespace Fluorite.Strainer.Models.Sorting
 {
     /// <summary>
     /// Represents custom sort method.

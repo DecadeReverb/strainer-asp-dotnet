@@ -2,10 +2,7 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace Fluorite.Strainer.Services.Metadata
 {

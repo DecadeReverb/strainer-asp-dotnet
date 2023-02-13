@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Fluorite.Strainer.Models.Filtering
+﻿namespace Fluorite.Strainer.Models.Filtering
 {
     /// <summary>
     /// Represents custom filter method.

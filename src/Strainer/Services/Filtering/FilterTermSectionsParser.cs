@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Terms;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Fluorite.Strainer.Services.Filtering

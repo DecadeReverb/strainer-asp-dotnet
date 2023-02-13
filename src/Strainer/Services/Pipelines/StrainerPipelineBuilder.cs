@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Fluorite.Strainer.Services.Pipelines
+﻿namespace Fluorite.Strainer.Services.Pipelines
 {
     public class StrainerPipelineBuilder : IStrainerPipelineBuilder
     {
