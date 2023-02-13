@@ -18,8 +18,7 @@ namespace Fluorite.Strainer.Services.Configuration
             var genericStrainerModuleInterfaceType = strainerModule
                 .GetType()
                 .GetInterfaces()
-                .FirstOrDefault(i =>
-                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
+                .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
 
             if (genericStrainerModuleInterfaceType is not null)
             {

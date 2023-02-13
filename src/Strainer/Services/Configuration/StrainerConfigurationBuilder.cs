@@ -1,6 +1,7 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
@@ -10,78 +11,37 @@ namespace Fluorite.Strainer.Services.Configuration
 {
     public class StrainerConfigurationBuilder : IStrainerConfigurationBuilder
     {
-        private readonly IStrainerOptionsProvider _optionsProvider;
-        private readonly IFilterOperatorValidator _filterOperatorValidator;
-        private readonly IStrainerModuleLoader _strainerModuleLoader;
-        private readonly IStrainerModuleFactory _strainerModuleFactory;
+        private IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadata;
+        private IReadOnlyDictionary<Type, IObjectMetadata> objectMetadata;
+        private IReadOnlyDictionary<string, IFilterOperator> filterOperators;
+        private IReadOnlyDictionary<Type, IPropertyMetadata> defaultMetadata;
+        private IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> customSortMethods;
+        private IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> customFilterMethods;
 
-        public StrainerConfigurationBuilder(
-            IStrainerOptionsProvider optionsProvider,
-            IFilterOperatorValidator filterOperatorValidator,
-            IStrainerModuleLoader strainerModuleLoader,
-            IStrainerModuleFactory strainerModuleFactory)
+        public StrainerConfigurationBuilder()
         {
-            _optionsProvider = optionsProvider;
-            _filterOperatorValidator = filterOperatorValidator;
-            _strainerModuleLoader = strainerModuleLoader;
-            _strainerModuleFactory = strainerModuleFactory;
+            propertyMetadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>().ToReadOnly();
+            objectMetadata = new Dictionary<Type, IObjectMetadata>().ToReadOnly();
+            filterOperators = new Dictionary<string, IFilterOperator>().ToReadOnly();
+            defaultMetadata = new Dictionary<Type, IPropertyMetadata>().ToReadOnly();
+            customSortMethods = new Dictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>().ToReadOnly();
+            customFilterMethods = new Dictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>().ToReadOnly();
         }
 
-        public IStrainerConfiguration Build(IReadOnlyCollection<Type> moduleTypes)
+        public IStrainerConfiguration Build()
         {
-            var validModuleTypes = moduleTypes
-                .Where(type => !type.IsAbstract && typeof(IStrainerModule).IsAssignableFrom(type));
+            return new StrainerConfiguration(
+                customFilterMethods,
+                customSortMethods,
+                defaultMetadata,
+                filterOperators,
+                objectMetadata,
+                propertyMetadata);
+        }
 
-            var invalidModuleTypes = moduleTypes.Except(validModuleTypes);
-            if (invalidModuleTypes.Any())
-            {
-                throw new InvalidOperationException(
-                    string.Format(
-                        "Valid Strainer module must be a non-abstract class implementing `{0}`. " +
-                        "Invalid types:\n{1}",
-                        typeof(IStrainerModule).FullName,
-                        string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
-            }
-
-            var modules = validModuleTypes
-                .Select(type => _strainerModuleFactory.CreateModule(type))
-                .Where(instance => instance != null)
-                .ToList();
-
-            var options = _optionsProvider.GetStrainerOptions();
-
-            modules.ForEach(strainerModule => _strainerModuleLoader.Load(strainerModule, options));
-
-            var customFilerMethods = modules
-                .SelectMany(module => module
-                    .CustomFilterMethods
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
-                            pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-            var customSortMethods = modules
-                .SelectMany(module => module
-                .CustomSortMethods
-                .Select(pair =>
-                    new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
-                        pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-            var defaultMetadata = modules
-                .SelectMany(module => module.DefaultMetadata)
-                .Merge()
-                .ToReadOnly();
-            var filterOperators = modules
-                .SelectMany(module => module.FilterOperators)
-                .Union(FilterOperatorMapper.DefaultOperators)
-                .Merge()
-                .ToReadOnly();
-            var objectMetadata = modules
-                .SelectMany(module => module.ObjectMetadata.ToReadOnly())
-                .Merge()
-                .ToReadOnly();
-            var propertyMetadata = modules
+        public IStrainerConfigurationBuilder WithPropertyMetadata(ICollection<IStrainerModule> modules)
+        {
+            propertyMetadata = modules
                 .SelectMany(module => module
                 .PropertyMetadata
                 .Select(pair =>
@@ -90,19 +50,66 @@ namespace Fluorite.Strainer.Services.Configuration
                 .Merge()
                 .ToReadOnly();
 
-            var compiledConfiguration = new StrainerConfiguration(
-                customFilerMethods,
-                customSortMethods,
-                defaultMetadata,
-                filterOperators,
-                objectMetadata,
-                propertyMetadata);
+            return this;
+        }
 
-            // TODO:
-            // Make validation optional?
-            _filterOperatorValidator.Validate(filterOperators.Values);
+        public IStrainerConfigurationBuilder WithObjectMetadata(ICollection<IStrainerModule> modules)
+        {
+            objectMetadata = modules
+                .SelectMany(module => module.ObjectMetadata.ToReadOnly())
+                .Merge()
+                .ToReadOnly();
 
-            return compiledConfiguration;
+            return this;
+        }
+
+        public IStrainerConfigurationBuilder WithFilterOperators(ICollection<IStrainerModule> modules)
+        {
+            filterOperators = modules
+                .SelectMany(module => module.FilterOperators)
+                .Union(FilterOperatorMapper.DefaultOperators)
+                .Merge()
+                .ToReadOnly();
+
+            return this;
+        }
+
+        public IStrainerConfigurationBuilder WithDefaultMetadata(ICollection<IStrainerModule> modules)
+        {
+            defaultMetadata = modules
+                .SelectMany(module => module.DefaultMetadata)
+                .Merge()
+                .ToReadOnly();
+
+            return this;
+        }
+
+        public IStrainerConfigurationBuilder WithCustomSortMethods(ICollection<IStrainerModule> modules)
+        {
+            customSortMethods = modules
+                .SelectMany(module => module
+                .CustomSortMethods
+                .Select(pair =>
+                    new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
+                        pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
+
+            return this;
+        }
+
+        public IStrainerConfigurationBuilder WithCustomFilterMethods(ICollection<IStrainerModule> modules)
+        {
+            customFilterMethods = modules
+                .SelectMany(module => module
+                    .CustomFilterMethods
+                    .Select(pair =>
+                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
+                            pair.Key, pair.Value.ToReadOnly())))
+                .Merge()
+                .ToReadOnly();
+
+            return this;
         }
     }
 }

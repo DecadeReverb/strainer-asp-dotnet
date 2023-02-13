@@ -193,9 +193,10 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
             services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
 
-            services.Add<IStrainerConfigurationBuilder, StrainerConfigurationBuilder>(serviceLifetime);
+            services.Add<IStrainerConfigurationFactory, StrainerConfigurationFactory>(serviceLifetime);
             services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
             services.Add<IStrainerModuleLoader, StrainerModuleLoader>(serviceLifetime);
+            services.Add<IStrainerModuleTypeValidator, StrainerModuleTypeValidator>(serviceLifetime);
             services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
             services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
             services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);
@@ -207,11 +208,11 @@ namespace Fluorite.Extensions.DependencyInjection
             services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(serviceProvider =>
             {
                 using var scope = serviceProvider.CreateScope();
-                var configurationBuilder = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationBuilder>();
+                var configurationFactory = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationFactory>();
 
                 try
                 {
-                    var strainerConfiguration = configurationBuilder.Build(moduleTypes);
+                    var strainerConfiguration = configurationFactory.Create(moduleTypes);
 
                     return new StrainerConfigurationProvider(strainerConfiguration);
                 }
