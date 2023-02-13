@@ -1,9 +1,5 @@
 ﻿using Fluorite.Strainer.AspNetCore.Services;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Configuration;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;

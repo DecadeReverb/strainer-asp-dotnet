@@ -3,7 +3,6 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Pipelines;
 using System;
 using System.Linq;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Services
 {

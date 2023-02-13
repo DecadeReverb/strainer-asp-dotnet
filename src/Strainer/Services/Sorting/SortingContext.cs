@@ -1,5 +1,4 @@
-﻿using Fluorite.Strainer.Services.Modules;
-using System;
+﻿using System;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
