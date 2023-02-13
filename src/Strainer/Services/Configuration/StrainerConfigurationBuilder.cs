@@ -13,15 +13,18 @@ namespace Fluorite.Strainer.Services.Configuration
         private readonly IStrainerOptionsProvider _optionsProvider;
         private readonly IFilterOperatorValidator _filterOperatorValidator;
         private readonly IStrainerModuleLoader _strainerModuleLoader;
+        private readonly IStrainerModuleFactory _strainerModuleFactory;
 
         public StrainerConfigurationBuilder(
             IStrainerOptionsProvider optionsProvider,
             IFilterOperatorValidator filterOperatorValidator,
-            IStrainerModuleLoader strainerModuleLoader)
+            IStrainerModuleLoader strainerModuleLoader,
+            IStrainerModuleFactory strainerModuleFactory)
         {
             _optionsProvider = optionsProvider;
             _filterOperatorValidator = filterOperatorValidator;
             _strainerModuleLoader = strainerModuleLoader;
+            _strainerModuleFactory = strainerModuleFactory;
         }
 
         public IStrainerConfiguration Build(IReadOnlyCollection<Type> moduleTypes)
@@ -41,7 +44,7 @@ namespace Fluorite.Strainer.Services.Configuration
             }
 
             var modules = validModuleTypes
-                .Select(type => CreateModuleInstance(type))
+                .Select(type => _strainerModuleFactory.CreateModule(type))
                 .Where(instance => instance != null)
                 .ToList();
 
@@ -100,21 +103,6 @@ namespace Fluorite.Strainer.Services.Configuration
             _filterOperatorValidator.Validate(filterOperators.Values);
 
             return compiledConfiguration;
-        }
-
-        private IStrainerModule CreateModuleInstance(Type type)
-        {
-            try
-            {
-                return Activator.CreateInstance(type) as IStrainerModule;
-            }
-            catch (Exception exception)
-            {
-                throw new InvalidOperationException(
-                    $"Unable to create instance of {type}. " +
-                    $"Ensure that type provides parameterless constructor.",
-                    exception);
-            }
         }
     }
 }
