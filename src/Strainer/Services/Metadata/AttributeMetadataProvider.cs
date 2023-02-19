@@ -10,22 +10,24 @@ namespace Fluorite.Strainer.Services.Metadata
     public class AttributeMetadataProvider : IMetadataProvider
     {
         private readonly StrainerOptions _options;
+        private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
+        private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
 
-        public AttributeMetadataProvider(IStrainerOptionsProvider optionsProvider)
+        public AttributeMetadataProvider(
+            IStrainerOptionsProvider optionsProvider,
+            IMetadataSourceTypeProvider metadataSourceTypeProvider,
+            IMetadataAssemblySourceProvider metadataAssemblySourceProvider)
         {
             _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
+            _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
+            _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
         {
-            // TODO:
-            // Check if TraceDataCollector is still causing an issue.
-            var types = AppDomain.CurrentDomain
-                .GetAssemblies()
-                .Where(assembly => !assembly.FullName.StartsWith("Microsoft.VisualStudio.TraceDataCollector"))
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => type.IsClass || type.IsValueType);
+            var assemblies = _metadataAssemblySourceProvider.GetAssemblies();
+            var types = _metadataSourceTypeProvider.GetSourceTypes(assemblies);
 
             // TODO:
             // Refactor this monster below:
@@ -39,20 +41,7 @@ namespace Fluorite.Strainer.Services.Metadata
                         pair.Type,
                         Metadatas = (IReadOnlyDictionary<string, IPropertyMetadata>)new ReadOnlyDictionary<string, IPropertyMetadata>(pair.Type
                             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                            .Select(propertyInfo =>
-                            {
-                                var isDefaultSorting = pair.Attribute.DefaultSortingPropertyName == propertyInfo.Name;
-
-                                return new PropertyMetadata
-                                {
-                                    IsDefaultSorting = isDefaultSorting,
-                                    IsDefaultSortingDescending = isDefaultSorting && pair.Attribute.IsDefaultSortingDescending,
-                                    IsFilterable = pair.Attribute.IsFilterable,
-                                    IsSortable = pair.Attribute.IsSortable,
-                                    Name = propertyInfo.Name,
-                                    PropertyInfo = propertyInfo,
-                                };
-                            })
+                            .Select(propertyInfo => BuildPropertyMetadata(propertyInfo, pair.Attribute))
                             .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata)),
                     };
                 })
@@ -66,17 +55,7 @@ namespace Fluorite.Strainer.Services.Metadata
                     Type = type,
                     Attributes = (IReadOnlyDictionary<string, IPropertyMetadata>)new ReadOnlyDictionary<string, IPropertyMetadata>(type
                         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Select(propertyInfo =>
-                        {
-                            var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: false);
-
-                            if (attribute != null)
-                            {
-                                attribute.PropertyInfo = propertyInfo;
-                            }
-
-                            return attribute;
-                        })
+                        .Select(propertyInfo => GetAttributeWithPropertyInfo(propertyInfo))
                         .Where(attribute => attribute != null)
                         .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)),
                 })
@@ -101,11 +80,7 @@ namespace Fluorite.Strainer.Services.Metadata
             }
 
             var propertyMetadata = GetDefaultMetadataFromPropertyAttribute(modelType);
-
-            if (propertyMetadata == null)
-            {
-                propertyMetadata = GetDefaultMetadataFromObjectAttribute(modelType);
-            }
+            propertyMetadata ??= GetDefaultMetadataFromObjectAttribute(modelType);
 
             return propertyMetadata;
         }
@@ -130,11 +105,7 @@ namespace Fluorite.Strainer.Services.Metadata
             }
 
             var propertyMetadata = GetMetadataFromPropertyAttribute(modelType, isSortableRequired, isFilterableRequired, name);
-
-            if (propertyMetadata == null)
-            {
-                propertyMetadata = GetMetadataFromObjectAttribute(modelType, isSortableRequired, isFilterableRequired, name);
-            }
+            propertyMetadata ??= GetMetadataFromObjectAttribute(modelType, isSortableRequired, isFilterableRequired, name);
 
             return propertyMetadata;
         }
@@ -152,11 +123,7 @@ namespace Fluorite.Strainer.Services.Metadata
             }
 
             var propertyMetadatas = GetMetadatasFromPropertyAttribute(modelType);
-
-            if (propertyMetadatas == null)
-            {
-                propertyMetadatas = GetMetadatasFromObjectAttribute(modelType);
-            }
+            propertyMetadatas ??= GetMetadatasFromObjectAttribute(modelType);
 
             return propertyMetadatas;
         }
@@ -405,6 +372,33 @@ namespace Fluorite.Strainer.Services.Metadata
 
                 return metadataPair.Value;
             });
+        }
+
+        private PropertyMetadata BuildPropertyMetadata(PropertyInfo propertyInfo, StrainerObjectAttribute attribute)
+        {
+            var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
+
+            return new PropertyMetadata
+            {
+                IsDefaultSorting = isDefaultSorting,
+                IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
+                IsFilterable = attribute.IsFilterable,
+                IsSortable = attribute.IsSortable,
+                Name = propertyInfo.Name,
+                PropertyInfo = propertyInfo,
+            };
+        }
+
+        private StrainerPropertyAttribute GetAttributeWithPropertyInfo(PropertyInfo propertyInfo)
+        {
+            var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: false);
+
+            if (attribute != null)
+            {
+                attribute.PropertyInfo = propertyInfo;
+            }
+
+            return attribute;
         }
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)

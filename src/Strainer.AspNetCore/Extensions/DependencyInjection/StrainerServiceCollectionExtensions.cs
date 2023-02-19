@@ -188,6 +188,8 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
 
+            services.Add<IMetadataAssemblySourceProvider, AppDomainaAssemblySourceProvider>(serviceLifetime);
+            services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
             services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
             services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);

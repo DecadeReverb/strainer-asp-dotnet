@@ -143,10 +143,15 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var configurationFilterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var configurationCustomFilterMethodsProvider = new ConfigurationCustomMethodsProvider(strainerConfigurationProvider);
 
+            var metadataSourceTypeProvider = new MetadataSourceTypeProvider();
+            var metadataAssemblySourceProvider = new AppDomainaAssemblySourceProvider();
             var fluentApiMetadataProvider = new FluentApiMetadataProvider(
                 optionsProvider,
                 configurationMetadataProvider);
-            var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
+            var attributeMetadataProvider = new AttributeMetadataProvider(
+                optionsProvider,
+                metadataSourceTypeProvider,
+                metadataAssemblySourceProvider);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
                 fluentApiMetadataProvider,
