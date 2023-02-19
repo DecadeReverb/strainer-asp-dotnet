@@ -1,6 +1,5 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Attributes;
-using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -9,17 +8,16 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public class AttributeMetadataProvider : IMetadataProvider
     {
-        private readonly StrainerOptions _options;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
 
         public AttributeMetadataProvider(
-            IStrainerOptionsProvider optionsProvider,
+            IStrainerOptionsProvider strainerOptionsProvider,
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
             IMetadataAssemblySourceProvider metadataAssemblySourceProvider)
         {
-            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
-                .GetStrainerOptions();
+            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
             _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
         }
@@ -402,6 +400,11 @@ namespace Fluorite.Strainer.Services.Metadata
         }
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
-            => _options.MetadataSourceType.HasFlag(metadataSourceType);
+        {
+            return _strainerOptionsProvider
+                .GetStrainerOptions()
+                .MetadataSourceType
+                .HasFlag(metadataSourceType);
+        }
     }
 }

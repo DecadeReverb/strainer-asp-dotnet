@@ -1,5 +1,4 @@
 ﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Configuration;
 using System.Collections.ObjectModel;
@@ -8,15 +7,14 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public class FluentApiMetadataProvider : IMetadataProvider
     {
-        private readonly StrainerOptions _options;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly IConfigurationMetadataProvider _metadataProvider;
 
         public FluentApiMetadataProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
             IConfigurationMetadataProvider metadataProvider)
         {
-            _options = strainerOptionsProvider?.GetStrainerOptions()
-                ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
         }
 
@@ -171,6 +169,11 @@ namespace Fluorite.Strainer.Services.Metadata
         }
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
-            => _options.MetadataSourceType.HasFlag(metadataSourceType);
+        {
+            return _strainerOptionsProvider
+                .GetStrainerOptions()
+                .MetadataSourceType
+                .HasFlag(metadataSourceType);
+        }
     }
 }

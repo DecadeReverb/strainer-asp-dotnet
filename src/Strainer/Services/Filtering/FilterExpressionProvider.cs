@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Exceptions;
-using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Metadata;
@@ -10,12 +9,11 @@ namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionProvider : IFilterExpressionProvider
     {
-        private readonly StrainerOptions _options;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
 
-        public FilterExpressionProvider(IStrainerOptionsProvider optionsProvider)
+        public FilterExpressionProvider(IStrainerOptionsProvider strainerOptionsProvider)
         {
-            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
-                .GetStrainerOptions();
+            _strainerOptionsProvider = strainerOptionsProvider;
         }
 
         public Expression GetExpression(
@@ -121,8 +119,10 @@ namespace Fluorite.Strainer.Services.Filtering
                     constantVal,
                     constantClosureType);
 
+                var options = _strainerOptionsProvider.GetStrainerOptions();
+
                 if ((filterTerm.Operator.IsCaseInsensitive
-                    || (!filterTerm.Operator.IsCaseInsensitive && _options.IsCaseInsensitiveForValues))
+                    || (!filterTerm.Operator.IsCaseInsensitive && options.IsCaseInsensitiveForValues))
                     && metadata.PropertyInfo.PropertyType == typeof(string))
                 {
                     propertyValue = Expression.Call(
