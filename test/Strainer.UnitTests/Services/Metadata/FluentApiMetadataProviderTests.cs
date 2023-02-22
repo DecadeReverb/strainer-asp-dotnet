@@ -1,10 +1,5 @@
-﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Configuration;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Filtering.Operators;
+﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Metadata;
@@ -14,115 +9,111 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {
     public class FluentApiMetadataProviderTests
     {
+        private readonly Mock<IStrainerOptionsProvider> _optionsProviderMock = new ();
+        private readonly Mock<IConfigurationMetadataProvider> _configurationMetadataProviderMock = new ();
+
         [Fact]
-        public void GetDefaultMetadata_ReturnsMetadata_When_JustObjectIsCalled()
+        public void GetDefaultMetadata_ReturnsNull_When_NoMetadataAvailable()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetDefaultMetadata())
+                .Returns(new Dictionary<Type, IPropertyMetadata>());
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetObjectMetadata())
+                .Returns(new Dictionary<Type, IObjectMetadata>());
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            mapper.Object<Post>(p => p.Id);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
+            var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
+
+            // Assert
+            metadata.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetDefaultMetadata_ReturnsMetadata_When_FromObject()
+        {
+            // Arrange
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetDefaultMetadata())
+                .Returns(new Dictionary<Type, IPropertyMetadata>());
+            var objectMetadata = new ObjectMetadata
+            {
+            };
+            var objectMetadataDictionary = new Dictionary<Type, IObjectMetadata>
+            {
+                { typeof(Post), objectMetadata }
+            };
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetObjectMetadata())
+                .Returns(objectMetadataDictionary);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
+
+            // Act
             var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
 
             // Assert
             metadata.Should().NotBeNull();
-            metadata.IsFilterable.Should().BeFalse();
-            metadata.IsSortable.Should().BeFalse();
             metadata.IsDefaultSorting.Should().BeTrue();
+            metadata.IsDefaultSortingDescending.Should().Be(objectMetadata.IsDefaultSortingDescending);
+            metadata.IsFilterable.Should().Be(objectMetadata.IsFilterable);
+            metadata.IsSortable.Should().Be(objectMetadata.IsSortable);
+            metadata.Name.Should().Be(objectMetadata.DefaultSortingPropertyName);
+            metadata.PropertyInfo.Should().BeSameAs(objectMetadata.DefaultSortingPropertyInfo);
         }
 
         [Fact]
-        public void GetDefaultMetadata_Returns_PropertyMetadata_Added_Via_ObjectBuilder_When_MarkedAsFilterable()
+        public void GetDefaultMetadata_Returns_PropertyMetadata_FromDefaultMetadata()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            var propertyMetadata = new PropertyMetadata
+            {
+                IsDefaultSorting = true,
+                IsFilterable = true,
+                Name = nameof(Post.Id),
+                PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
+            };
+            var defaultMetadataDictionary = new Dictionary<Type, IPropertyMetadata>
+            {
+                { typeof(Post), propertyMetadata }
+            };
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetDefaultMetadata())
+                .Returns(defaultMetadataDictionary);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            mapper.Object<Post>(p => p.Id).IsFilterable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
 
             // Assert
             metadata.Should().NotBeNull();
-            metadata.Name.Should().Be(nameof(Post.Id));
-            metadata.IsFilterable.Should().BeTrue();
-            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
+            metadata.Should().Be(propertyMetadata);
         }
 
         [Fact]
-        public void GetDefaultMetadata_Returns_ObjectMetadata_Added_Via_ObjectBuilder_When_MarkedAsSortable()
+        public void GetPropertyMetadata_ReturnsNull_When_NoMetadataAvailable()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            var propertyMetadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetPropertyMetadata())
+                .Returns(propertyMetadata);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            mapper.Object<Post>(p => p.Id).IsSortable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
-
-            // Assert
-            metadata.Should().NotBeNull();
-            metadata.Name.Should().Be(nameof(Post.Id));
-            metadata.IsSortable.Should().BeTrue();
-            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-        }
-
-        [Fact]
-        public void GetPropertyMetadata_ReturnsMetdata_When_JustPropertyIsCalled()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProvider = new PropertyInfoProvider();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
-
-            // Act
-            mapper.Property<Post>(p => p.Id);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
-                isSortableRequired: false,
-                isFilterableRequired: false,
-                name: nameof(Post.Id));
-
-            // Assert
-            metadata.Should().NotBeNull();
-            metadata.IsFilterable.Should().BeFalse();
-            metadata.IsSortable.Should().BeFalse();
-            metadata.IsDefaultSorting.Should().BeFalse();
-        }
-
-        [Fact]
-        public void GetPropertyMetadata_ReturnsNull_When_JustObjectIsCalled()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
-
-            // Act
-            mapper.Object<Post>(p => p.Id);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
@@ -133,138 +124,85 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         }
 
         [Fact]
-        public void GetPropertyMetadata_Returns_PropertyMetadata_Added_Via_PropertyBuilder_When_MarkedAsFilterable()
+        public void GetPropertyMetadata_Returns_PropertyMetadata()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProvider = new PropertyInfoProvider();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
+            var propertyMetadata = new PropertyMetadata
+            {
+                Name = nameof(Post.Id),
+            };
+            var postMetadataDictionary = new Dictionary<string, IPropertyMetadata>
+            {
+                { nameof(Post.Id), propertyMetadata }
+            };
+            var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
+            {
+                { typeof(Post), postMetadataDictionary },
+            };
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetPropertyMetadata())
+                .Returns(propertyMetadataDictionary);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            mapper.Property<Post>(p => p.Id).IsFilterable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
+                isFilterableRequired: false,
+                name: nameof(Post.Id));
+
+            // Assert
+            metadata.Should().NotBeNull();
+            metadata.Should().BeSameAs(propertyMetadata);
+        }
+
+        [Fact]
+        public void GetPropertyMetadata_Returns_PropertyMetadata_When_MarkedAsSortable()
+        {
+            // Arrange
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var propertyMetadata = new PropertyMetadata
+            {
+                Name = nameof(Post.Id),
+                IsFilterable = true,
+                IsSortable = true,
+            };
+            var postMetadataDictionary = new Dictionary<string, IPropertyMetadata>
+            {
+                { nameof(Post.Id), propertyMetadata }
+            };
+            var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
+            {
+                { typeof(Post), postMetadataDictionary },
+            };
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetPropertyMetadata())
+                .Returns(propertyMetadataDictionary);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
+
+            // Act
+            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
+                isSortableRequired: true,
                 isFilterableRequired: true,
                 name: nameof(Post.Id));
 
             // Assert
             metadata.Should().NotBeNull();
-            metadata.Name.Should().Be(nameof(Post.Id));
-            metadata.IsFilterable.Should().BeTrue();
-            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-        }
-
-        [Fact]
-        public void GetPropertyMetadata_Returns_PropertyMetadata_Added_Via_PropertyBuilder_When_MarkedAsSortable()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProvider = new PropertyInfoProvider();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
-
-            // Act
-            mapper.Property<Post>(p => p.Id).IsSortable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
-                isSortableRequired: true,
-                isFilterableRequired: false,
-                name: nameof(Post.Id));
-
-            // Assert
-            metadata.Should().NotBeNull();
-            metadata.Name.Should().Be(nameof(Post.Id));
-            metadata.IsSortable.Should().BeTrue();
-            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
-        }
-
-        [Fact]
-        public void GetPropertyMetadata_Returns_Null_Added_Via_ObjectBuilder_When_MarkedAsFilterable()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
-
-            // Act
-            mapper.Object<Post>(p => p.Id).IsFilterable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
-                isSortableRequired: false,
-                isFilterableRequired: true,
-                name: nameof(Post.Id));
-
-            // Assert
-            metadata.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetPropertyMetadata_Returns_Null_Added_Via_ObjectBuilder_When_MarkedAsSortable()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
-
-            // Act
-            mapper.Object<Post>(p => p.Id).IsSortable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
-                isSortableRequired: true,
-                isFilterableRequired: false,
-                name: nameof(Post.Id));
-
-            // Assert
-            metadata.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetPropertyMetadata_Returns_DefaultPropertyMetadata_Added_Via_ObjectBuilder()
-        {
-            // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
-
-            // Act
-            mapper.Object<Post>(p => p.Id);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
-
-            // Assert
-            metadata.Should().NotBeNull();
-            metadata.Name.Should().Be(nameof(Post.Id));
-            metadata.IsSortable.Should().BeFalse();
-            metadata.IsDefaultSorting.Should().BeTrue();
-            metadata.PropertyInfo.Should().BeSameAs(typeof(Post).GetProperty(metadata.Name));
+            metadata.Should().BeSameAs(propertyMetadata);
         }
 
         [Fact]
         public void GetPropertyMetadata_Returns_Null_With_FluentApiMetadataSourceType_Disabled()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
             var metadatas = fluentApiMetadataProvider.GetAllPropertyMetadata();
@@ -273,32 +211,35 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             metadatas.Should().BeNull();
         }
 
-        private FluentApiMetadataProvider CreateFluentApiMetadataProvider(
-            IStrainerOptionsProvider optionsProvider,
-            MetadataMapper mapper)
+        [Fact]
+        public void GetPropertyMetadata_Returns_EmptyMetadata_When_NoMetadataIsAvailable()
         {
-            var defaultMetadata = mapper.DefaultMetadata.ToReadOnly();
-            var objectMetadata = mapper.ObjectMetadata.ToReadOnly();
-            var propertyMetadata = mapper
-                .PropertyMetadata
-                .Select(pair =>
-                    new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                        pair.Key, pair.Value.ToReadOnly()))
-                .ToReadOnlyDictionary();
-            var strainerConfiguration = new StrainerConfiguration(
-                new Dictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(),
-                new Dictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(),
-                defaultMetadata,
-                new Dictionary<string, IFilterOperator>(),
-                objectMetadata,
-                propertyMetadata);
-            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfiguration);
-            var configurationMetadataProvider = new ConfigurationMetadataProvider(strainerConfigurationProvider);
-            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
-                optionsProvider,
-                configurationMetadataProvider);
+            // Arrange
+            _optionsProviderMock
+                .Setup(provider => provider.GetStrainerOptions())
+                .Returns(new StrainerOptions());
+            var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetPropertyMetadata())
+                .Returns(propertyMetadataDictionary);
+            var objectMetadataDictionary = new Dictionary<Type, IObjectMetadata>();
+            _configurationMetadataProviderMock
+                .Setup(x => x.GetObjectMetadata())
+                .Returns(objectMetadataDictionary);
+            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
-            return fluentApiMetadataProvider;
+            // Act
+            var metadatas = fluentApiMetadataProvider.GetAllPropertyMetadata();
+
+            // Assert
+            metadatas.Should().BeEmpty();
+        }
+
+        private FluentApiMetadataProvider CreateFluentApiMetadataProvider()
+        {
+            return new FluentApiMetadataProvider(
+                _optionsProviderMock.Object,
+                _configurationMetadataProviderMock.Object);
         }
 
         private class Post
