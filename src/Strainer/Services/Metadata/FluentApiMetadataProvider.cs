@@ -1,7 +1,7 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Configuration;
-using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
@@ -20,55 +20,20 @@ namespace Fluorite.Strainer.Services.Metadata
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
         {
-            if (!IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
+            if (!IsFluentApiEnabled())
             {
                 return null;
             }
 
-            var joinedTypes = _metadataProvider
+            var objectMetadata = _metadataProvider.GetObjectMetadata();
+
+            return _metadataProvider
                 .GetPropertyMetadata()
                 .Keys
-                .Union(_metadataProvider.GetObjectMetadata().Keys);
-
-            // TODO:
-            // Refactor this monster below:
-            return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                joinedTypes.Select(type =>
-                {
-                    if (_metadataProvider.GetPropertyMetadata().TryGetValue(type, out var metadatas))
-                    {
-                        return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                            type,
-                            metadatas.ToReadOnlyDictionary());
-                    }
-
-                    var objectMetadata = _metadataProvider.GetObjectMetadata()[type];
-
-                    return new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                        type,
-                        type
-                            .GetProperties()
-                            .Select(propertyInfo =>
-                            {
-                                var isDefaultSorting = objectMetadata.DefaultSortingPropertyInfo == propertyInfo;
-
-                                return new PropertyMetadata
-                                {
-                                    IsFilterable = objectMetadata.IsFilterable,
-                                    IsSortable = objectMetadata.IsSortable,
-                                    Name = propertyInfo.Name,
-                                    IsDefaultSorting = isDefaultSorting,
-                                    IsDefaultSortingDescending = isDefaultSorting
-                                        ? objectMetadata.IsDefaultSortingDescending
-                                        : false,
-                                    PropertyInfo = propertyInfo,
-                                };
-                            })
-                            .ToDictionary(
-                                propertyMetadata => propertyMetadata.Name,
-                                propertyMetadata => (IPropertyMetadata)propertyMetadata)
-                            .ToReadOnlyDictionary());
-                }).ToDictionary(pair => pair.Key, pair => pair.Value));
+                .Union(objectMetadata.Keys)
+                .Select(type => (type, BuildMetadataKeyValuePair(type)))
+                .ToDictionary(tuple => tuple.type, tuple => tuple.Item2)
+                .ToReadOnly();
         }
 
         public IPropertyMetadata GetDefaultMetadata<TEntity>()
@@ -83,7 +48,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            if (!IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
+            if (!IsFluentApiEnabled())
             {
                 return null;
             }
@@ -94,15 +59,7 @@ namespace Fluorite.Strainer.Services.Metadata
             {
                 if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
                 {
-                    propertyMetadata = new PropertyMetadata
-                    {
-                        IsDefaultSorting = true,
-                        IsDefaultSortingDescending = objectMetadata.IsDefaultSortingDescending,
-                        IsFilterable = objectMetadata.IsFilterable,
-                        IsSortable = objectMetadata.IsSortable,
-                        Name = objectMetadata.DefaultSortingPropertyName,
-                        PropertyInfo = objectMetadata.DefaultSortingPropertyInfo,
-                    };
+                    propertyMetadata = BuildPropertyMetadata(objectMetadata);
                 }
             }
 
@@ -128,19 +85,21 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            if (!IsMetadataSourceEnabled(MetadataSourceType.FluentApi))
+            if (!IsFluentApiEnabled())
             {
                 return null;
             }
 
             if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var propertyMetadatas))
             {
-                var propertyMetadata = propertyMetadatas.FirstOrDefault(pair =>
-                {
-                    return pair.Key.Equals(name)
-                        && (!isSortableRequired || pair.Value.IsSortable)
-                        && (!isFilterableRequired || pair.Value.IsFilterable);
-                }).Value;
+                var propertyMetadata = propertyMetadatas
+                    .Where(pair =>
+                    {
+                        return pair.Key.Equals(name)
+                            && (!isSortableRequired || pair.Value.IsSortable)
+                            && (!isFilterableRequired || pair.Value.IsFilterable);
+                    })
+                    .FirstOrDefault().Value;
 
                 return propertyMetadata;
             }
@@ -167,6 +126,62 @@ namespace Fluorite.Strainer.Services.Metadata
 
             return null;
         }
+
+        private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadataKeyValuePair(Type type)
+        {
+            // TODO:
+            // Shouldn't property metadata override object metadata, but still be returned?
+            // So type-wide config is set with object call, but property call overrides that for some special case?
+            var propertyMetadataDictionary = _metadataProvider.GetPropertyMetadata();
+            if (propertyMetadataDictionary.TryGetValue(type, out var metadatas))
+            {
+                return metadatas;
+            }
+
+            var objectMetadata = _metadataProvider.GetObjectMetadata()[type];
+
+            return GetPropertyMetadatasFromObjectMetadata(type, objectMetadata);
+        }
+
+        private IPropertyMetadata BuildPropertyMetadata(IObjectMetadata objectMetadata)
+        {
+            return new PropertyMetadata
+            {
+                IsDefaultSorting = true,
+                IsDefaultSortingDescending = objectMetadata.IsDefaultSortingDescending,
+                IsFilterable = objectMetadata.IsFilterable,
+                IsSortable = objectMetadata.IsSortable,
+                Name = objectMetadata.DefaultSortingPropertyName,
+                PropertyInfo = objectMetadata.DefaultSortingPropertyInfo,
+            };
+        }
+
+        private IPropertyMetadata BuildPropertyMetadataUsingPropertyInfo(PropertyInfo propertyInfo, IObjectMetadata objectMetadata)
+        {
+            var isDefaultSorting = objectMetadata.DefaultSortingPropertyInfo == propertyInfo;
+            var isDefaultSortingAscending = isDefaultSorting && objectMetadata.IsDefaultSortingDescending;
+
+            return new PropertyMetadata
+            {
+                IsFilterable = objectMetadata.IsFilterable,
+                IsSortable = objectMetadata.IsSortable,
+                Name = propertyInfo.Name,
+                IsDefaultSorting = isDefaultSorting,
+                IsDefaultSortingDescending = isDefaultSortingAscending,
+                PropertyInfo = propertyInfo,
+            };
+        }
+
+        private IReadOnlyDictionary<string, IPropertyMetadata> GetPropertyMetadatasFromObjectMetadata(Type type, IObjectMetadata objectMetadata)
+        {
+            return type
+                .GetProperties()
+                .Select(propertyInfo => BuildPropertyMetadataUsingPropertyInfo(propertyInfo, objectMetadata))
+                .ToDictionary(p => p.Name, p => p)
+                .ToReadOnlyDictionary();
+        }
+
+        private bool IsFluentApiEnabled() => IsMetadataSourceEnabled(MetadataSourceType.FluentApi);
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
         {
