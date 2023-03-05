@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Pipelines
 {
-    public class FilterPipelineOperation : IStrainerPipelineOperation
+    public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipelineOperation
     {
         public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
         {

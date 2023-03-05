@@ -25,7 +25,8 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                     factory.CreateOptionsProvider(),
                     context.Filter,
                     newSortingContext,
-                    context.Metadata);
+                    context.Metadata,
+                    context.Pipeline);
 
                 return new StrainerProcessor(newContext);
             });

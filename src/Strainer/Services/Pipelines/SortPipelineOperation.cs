@@ -5,7 +5,7 @@ using Fluorite.Strainer.Models.Sorting;
 
 namespace Fluorite.Strainer.Services.Pipelines
 {
-    public class SortPipelineOperation : IStrainerPipelineOperation
+    public class SortPipelineOperation : ISortPipelineOperation, IStrainerPipelineOperation
     {
         public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
         {

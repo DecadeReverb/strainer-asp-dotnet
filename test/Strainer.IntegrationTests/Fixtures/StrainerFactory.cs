@@ -9,6 +9,8 @@ using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
+using Fluorite.Strainer.Services.Pagination;
+using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.IntegrationTests.Fixtures
@@ -186,12 +188,23 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                 sortingWayFormatter,
                 sortTermParser);
 
+            var pageNumberEvaluator = new PageNumberEvaluator(optionsProvider);
+            var filterPipelineOperation = new FilterPipelineOperation();
+            var sortPipelineOperation = new SortPipelineOperation();
+            var paginatePipelineOperation = new PaginatePipelineOperation(pageNumberEvaluator);
+            var pipelineBuilderFactory = new StrainerPipelineBuilderFactory(
+                filterPipelineOperation,
+                sortPipelineOperation,
+                paginatePipelineOperation);
+            var pipelineContext = new PipelineContext(pipelineBuilderFactory);
+
             return new StrainerContext(
                 configurationCustomFilterMethodsProvider,
                 optionsProvider,
                 filteringContext,
                 sortingContext,
-                metadataFacade);
+                metadataFacade,
+                pipelineContext);
         }
 
         private void LoadModule(

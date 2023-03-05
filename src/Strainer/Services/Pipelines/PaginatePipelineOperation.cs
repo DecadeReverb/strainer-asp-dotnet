@@ -1,9 +1,17 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Pagination;
 
 namespace Fluorite.Strainer.Services.Pipelines
 {
-    public class PaginatePipelineOperation : IStrainerPipelineOperation
+    public class PaginatePipelineOperation : IPaginatePipelineOperation, IStrainerPipelineOperation
     {
+        private readonly IPageNumberEvaluator _pageNumberEvaluator;
+
+        public PaginatePipelineOperation(
+            IPageNumberEvaluator pageNumberEvaluator)
+        {
+            _pageNumberEvaluator = pageNumberEvaluator;
+        }
 
         public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
         {
@@ -17,11 +25,12 @@ namespace Fluorite.Strainer.Services.Pipelines
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var page = model.Page ?? context.Options.DefaultPageNumber;
+            var page = _pageNumberEvaluator.Evaluate(model);
             var pageSize = model.PageSize ?? context.Options.DefaultPageSize;
             var maxPageSize = context.Options.MaxPageSize > 0
                 ? context.Options.MaxPageSize
                 : pageSize;
+            var finalPageSize = Math.Min(pageSize, maxPageSize);
 
             if (page > 1)
             {
@@ -30,7 +39,7 @@ namespace Fluorite.Strainer.Services.Pipelines
 
             if (pageSize > 0)
             {
-                source = source.Take(Math.Min(pageSize, maxPageSize));
+                source = source.Take(finalPageSize);
             }
 
             return source;

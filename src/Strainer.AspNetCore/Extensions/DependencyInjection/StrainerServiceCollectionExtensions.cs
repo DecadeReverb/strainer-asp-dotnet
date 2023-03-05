@@ -5,6 +5,8 @@ using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
+using Fluorite.Strainer.Services.Pagination;
+using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -184,9 +186,17 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ISortingWayFormatter, DescendingPrefixSortingWayFormatter>(serviceLifetime);
             services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
             services.Add<ISortingContext, SortingContext>(serviceLifetime);
+            services.Add<IPipelineContext, PipelineContext>(serviceLifetime);
+
+            services.Add<IPageNumberEvaluator, PageNumberEvaluator>(serviceLifetime);
 
             services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
+
+            services.Add<IStrainerPipelineBuilderFactory, StrainerPipelineBuilderFactory>(serviceLifetime);
+            services.Add<IFilterPipelineOperation, FilterPipelineOperation>(serviceLifetime);
+            services.Add<ISortPipelineOperation, SortPipelineOperation>(serviceLifetime);
+            services.Add<IPaginatePipelineOperation, PaginatePipelineOperation>(serviceLifetime);
 
             services.Add<IMetadataAssemblySourceProvider, AppDomainaAssemblySourceProvider>(serviceLifetime);
             services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);

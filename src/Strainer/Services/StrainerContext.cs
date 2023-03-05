@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.Services
@@ -19,13 +20,15 @@ namespace Fluorite.Strainer.Services
             IStrainerOptionsProvider optionsProvider,
             IFilterContext filteringContext,
             ISortingContext sortingContext,
-            IMetadataFacade metadataProvidersFacade)
+            IMetadataFacade metadataProvidersFacade,
+            IPipelineContext pipelineContext)
         {
             CustomMethods = customMethodsConfigurationProvider
                 ?? throw new ArgumentNullException(nameof(customMethodsConfigurationProvider));
             Filter = filteringContext ?? throw new ArgumentNullException(nameof(filteringContext));
             Sorting = sortingContext ?? throw new ArgumentNullException(nameof(sortingContext));
             Metadata = metadataProvidersFacade ?? throw new ArgumentNullException(nameof(metadataProvidersFacade));
+            Pipeline = pipelineContext ?? throw new ArgumentNullException(nameof(pipelineContext));
             Options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
                 .GetStrainerOptions();
         }
@@ -54,5 +57,10 @@ namespace Fluorite.Strainer.Services
         /// Gets the sorting context.
         /// </summary>
         public ISortingContext Sorting { get; }
+
+        /// <summary>
+        /// Gets the pipeline context.
+        /// </summary>
+        public IPipelineContext Pipeline { get; }
     }
 }

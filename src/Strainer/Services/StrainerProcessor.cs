@@ -100,7 +100,7 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var builder = new StrainerPipelineBuilder();
+            var builder = Context.Pipeline.BuilderFactory.CreateBuilder();
 
             try
             {
@@ -169,7 +169,10 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return new StrainerPipelineBuilder()
+            return Context
+                .Pipeline
+                .BuilderFactory
+                .CreateBuilder()
                 .Filter()
                 .Build()
                 .Run(model, source, Context);
@@ -211,7 +214,10 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return new StrainerPipelineBuilder()
+            return Context
+                .Pipeline
+                .BuilderFactory
+                .CreateBuilder()
                 .Paginate()
                 .Build()
                 .Run(model, source, Context);
@@ -256,7 +262,10 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return new StrainerPipelineBuilder()
+            return Context
+                .Pipeline
+                .BuilderFactory
+                .CreateBuilder()
                 .Sort()
                 .Build()
                 .Run(model, source, Context);
