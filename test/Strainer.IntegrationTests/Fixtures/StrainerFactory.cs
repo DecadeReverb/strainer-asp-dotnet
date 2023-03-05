@@ -182,6 +182,8 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var sortExpressionValidator = new SortExpressionValidator();
             var sortingWayFormatter = new DescendingPrefixSortingWayFormatter();
             var sortTermParser = new SortTermParser(sortingWayFormatter, optionsProvider);
+            var customSortingApplier = new CustomSortingApplier(configurationCustomFilterMethodsProvider);
+            var sortingApplier = new SortingApplier(customSortingApplier);
             var sortingContext = new SortingContext(
                 sortExpressionProvider,
                 sortExpressionValidator,
@@ -190,7 +192,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
 
             var pageNumberEvaluator = new PageNumberEvaluator(optionsProvider);
             var filterPipelineOperation = new FilterPipelineOperation();
-            var sortPipelineOperation = new SortPipelineOperation();
+            var sortPipelineOperation = new SortPipelineOperation(sortingApplier);
             var paginatePipelineOperation = new PaginatePipelineOperation(pageNumberEvaluator);
             var pipelineBuilderFactory = new StrainerPipelineBuilderFactory(
                 filterPipelineOperation,

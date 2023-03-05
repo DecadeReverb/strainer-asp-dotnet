@@ -185,6 +185,8 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
             services.Add<ISortingWayFormatter, DescendingPrefixSortingWayFormatter>(serviceLifetime);
             services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
+            services.Add<ISortingApplier, SortingApplier>(serviceLifetime);
+            services.Add<ICustomSortingApplier, CustomSortingApplier>(serviceLifetime);
             services.Add<ISortingContext, SortingContext>(serviceLifetime);
             services.Add<IPipelineContext, PipelineContext>(serviceLifetime);
 
