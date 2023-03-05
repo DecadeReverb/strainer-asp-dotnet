@@ -193,7 +193,8 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var pageNumberEvaluator = new PageNumberEvaluator(optionsProvider);
             var filterPipelineOperation = new FilterPipelineOperation();
             var sortPipelineOperation = new SortPipelineOperation(sortingApplier);
-            var paginatePipelineOperation = new PaginatePipelineOperation(pageNumberEvaluator);
+            var pageSizeEvaluator = new PageSizeEvaluator(optionsProvider);
+            var paginatePipelineOperation = new PaginatePipelineOperation(pageNumberEvaluator, pageSizeEvaluator);
             var pipelineBuilderFactory = new StrainerPipelineBuilderFactory(
                 filterPipelineOperation,
                 sortPipelineOperation,

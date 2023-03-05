@@ -191,6 +191,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IPipelineContext, PipelineContext>(serviceLifetime);
 
             services.Add<IPageNumberEvaluator, PageNumberEvaluator>(serviceLifetime);
+            services.Add<IPageSizeEvaluator, PageSizeEvaluator>(serviceLifetime);
 
             services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
             services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
