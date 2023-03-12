@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Pipelines
 {
@@ -10,11 +11,31 @@ namespace Fluorite.Strainer.Services.Pipelines
         public StrainerPipeline(
             IEnumerable<IStrainerPipelineOperation> operations)
         {
+            if (operations is null)
+            {
+                throw new ArgumentNullException(nameof(operations));
+            }
+
             _operations = operations;
         }
 
         public IQueryable<T> Run<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
         {
+            if (model is null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var result = source;
 
             try
