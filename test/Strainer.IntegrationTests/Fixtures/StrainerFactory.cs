@@ -12,6 +12,7 @@ using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Pagination;
 using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
+using Fluorite.Strainer.Services.Validation;
 
 namespace Fluorite.Strainer.IntegrationTests.Fixtures
 {

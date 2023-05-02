@@ -8,6 +8,7 @@ using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Pagination;
 using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
+using Fluorite.Strainer.Services.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -212,6 +213,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
             services.Add<IStrainerModuleLoader, StrainerModuleLoader>(serviceLifetime);
             services.Add<IStrainerModuleTypeValidator, StrainerModuleTypeValidator>(serviceLifetime);
+            services.Add<IStrainerConfigurationValidator, StrainerConfigurationValidator>(serviceLifetime);
             services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
             services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
             services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);
@@ -224,10 +226,12 @@ namespace Fluorite.Extensions.DependencyInjection
             {
                 using var scope = serviceProvider.CreateScope();
                 var configurationFactory = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationFactory>();
+                var configurationValidator = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationValidator>();
 
                 try
                 {
                     var strainerConfiguration = configurationFactory.Create(moduleTypes);
+                    configurationValidator.Validate(strainerConfiguration);
 
                     return new StrainerConfigurationProvider(strainerConfiguration);
                 }

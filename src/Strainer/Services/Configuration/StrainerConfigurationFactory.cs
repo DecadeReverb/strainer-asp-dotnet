@@ -1,5 +1,5 @@
 ﻿using Fluorite.Strainer.Models.Configuration;
-using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Validation;
 
 namespace Fluorite.Strainer.Services.Configuration
 {

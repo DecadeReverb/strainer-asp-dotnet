@@ -1,5 +1,5 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Validation;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering

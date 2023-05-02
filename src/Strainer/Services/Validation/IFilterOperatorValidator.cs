@@ -1,6 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Validation
 {
     public interface IFilterOperatorValidator
     {
