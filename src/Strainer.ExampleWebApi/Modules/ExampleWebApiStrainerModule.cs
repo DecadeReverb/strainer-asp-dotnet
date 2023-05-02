@@ -28,6 +28,11 @@ namespace Fluorite.Strainer.ExampleWebApi.Modules
             builder.AddProperty<Post>(p => p.Comments.Count)
                 .IsFilterable()
                 .IsSortable();
+
+            builder.AddProperty<Post>(p => p.LikeCount)
+                .IsFilterable()
+                .IsSortable()
+                .IsDefaultSort(isDescending: true);
         }
 
         private IQueryable<Post> HasInTitleFilterOperator(IQueryable<Post> source, string filterOperator)
