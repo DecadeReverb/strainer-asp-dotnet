@@ -11,6 +11,7 @@ using Fluorite.Strainer.Services.Sorting;
 using Fluorite.Strainer.Services.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
 
 namespace Fluorite.Extensions.DependencyInjection
@@ -90,7 +91,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// </exception>
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
-            IReadOnlyCollection<Assembly> assembliesToScan,
+            Assembly[] assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -104,6 +105,8 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             var moduleTypes = GetModuleTypesFromAssemblies(assembliesToScan);
+
+            services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
 
             return services.AddStrainer(moduleTypes, serviceLifetime);
         }
@@ -202,7 +205,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ISortPipelineOperation, SortPipelineOperation>(serviceLifetime);
             services.Add<IPaginatePipelineOperation, PaginatePipelineOperation>(serviceLifetime);
 
-            services.Add<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>(serviceLifetime);
+            services.TryAddSingleton<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>();
             services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
             services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
@@ -362,7 +365,7 @@ namespace Fluorite.Extensions.DependencyInjection
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
-            IReadOnlyCollection<Assembly> assembliesToScan,
+            Assembly[] assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -381,6 +384,7 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             services.Configure<StrainerOptions>(configuration);
+            services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
 
             return services.AddStrainer(assembliesToScan, serviceLifetime);
         }
@@ -530,7 +534,7 @@ namespace Fluorite.Extensions.DependencyInjection
         public static IStrainerBuilder AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
-            IReadOnlyCollection<Assembly> assembliesToScan,
+            Assembly[] assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -549,6 +553,7 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             services.AddOptions<StrainerOptions>().Configure(configure);
+            services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
 
             return services.AddStrainer(assembliesToScan, serviceLifetime);
         }
