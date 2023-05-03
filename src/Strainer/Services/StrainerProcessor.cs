@@ -22,16 +22,6 @@ namespace Fluorite.Strainer.Services
         public StrainerProcessor(IStrainerContext context)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-
-            // TODO:
-            // Move sort expression validation to service injection.
-            //var properties = Context.Mapper.GetAllMetadata();
-
-            //foreach (var type in properties.Keys)
-            //{
-            //    dynamic sortingExpressions = properties.Select(pair => pair.Key == type);
-            //    //Context.Sorting.ExpressionValidator.Validate(sortingExpressions);
-            //}
         }
 
         /// <summary>
@@ -103,19 +93,16 @@ namespace Fluorite.Strainer.Services
 
             try
             {
-                // Filter
                 if (applyFiltering)
                 {
                     builder.Filter();
                 }
 
-                // Sort
                 if (applySorting)
                 {
                     builder.Sort();
                 }
 
-                // Paginate
                 if (applyPagination)
                 {
                     builder.Paginate();
