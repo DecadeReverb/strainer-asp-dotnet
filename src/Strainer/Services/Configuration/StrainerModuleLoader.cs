@@ -7,27 +7,26 @@ namespace Fluorite.Strainer.Services.Configuration
     public class StrainerModuleLoader : IStrainerModuleLoader
     {
         private readonly IPropertyInfoProvider _propertyInfoProvider;
+        private readonly IGenericModuleLoader _genericModuleLoader;
 
-        public StrainerModuleLoader(IPropertyInfoProvider propertyInfoProvider)
+        public StrainerModuleLoader(
+            IPropertyInfoProvider propertyInfoProvider,
+            IGenericModuleLoader genericModuleLoader)
         {
             _propertyInfoProvider = propertyInfoProvider;
+            _genericModuleLoader = genericModuleLoader;
         }
 
         public void Load(IStrainerModule strainerModule, StrainerOptions options)
         {
-            var genericStrainerModuleInterfaceType = strainerModule
+            var isGeneric = strainerModule
                 .GetType()
                 .GetInterfaces()
-                .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
 
-            if (genericStrainerModuleInterfaceType is not null)
+            if (isGeneric)
             {
-                var moduleGenericType = genericStrainerModuleInterfaceType.GetGenericArguments().First();
-                var builderType = typeof(StrainerModuleBuilder<>).MakeGenericType(moduleGenericType);
-                var builder = Activator.CreateInstance(builderType, _propertyInfoProvider, strainerModule, options);
-                var method = genericStrainerModuleInterfaceType.GetMethod(nameof(IStrainerModule<object>.Load));
-
-                method.Invoke(strainerModule, new[] { builder });
+                _genericModuleLoader.Load(strainerModule, options);
             }
             else
             {
