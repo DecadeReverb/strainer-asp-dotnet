@@ -202,7 +202,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ISortPipelineOperation, SortPipelineOperation>(serviceLifetime);
             services.Add<IPaginatePipelineOperation, PaginatePipelineOperation>(serviceLifetime);
 
-            services.Add<IMetadataAssemblySourceProvider, AppDomainaAssemblySourceProvider>(serviceLifetime);
+            services.Add<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>(serviceLifetime);
             services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
             services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);

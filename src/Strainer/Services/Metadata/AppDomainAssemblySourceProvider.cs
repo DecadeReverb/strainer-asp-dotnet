@@ -2,7 +2,7 @@
 
 namespace Fluorite.Strainer.Services.Metadata
 {
-    public class AppDomainaAssemblySourceProvider : IMetadataAssemblySourceProvider
+    public class AppDomainAssemblySourceProvider : IMetadataAssemblySourceProvider
     {
         public Assembly[] GetAssemblies()
         {

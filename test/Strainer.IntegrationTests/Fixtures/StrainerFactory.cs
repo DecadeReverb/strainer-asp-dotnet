@@ -147,7 +147,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var configurationCustomFilterMethodsProvider = new ConfigurationCustomMethodsProvider(strainerConfigurationProvider);
 
             var metadataSourceTypeProvider = new MetadataSourceTypeProvider();
-            var metadataAssemblySourceProvider = new AppDomainaAssemblySourceProvider();
+            var metadataAssemblySourceProvider = new AppDomainAssemblySourceProvider();
             var fluentApiMetadataProvider = new FluentApiMetadataProvider(
                 optionsProvider,
                 configurationMetadataProvider);
