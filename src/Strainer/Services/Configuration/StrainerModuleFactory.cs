@@ -14,7 +14,7 @@ namespace Fluorite.Strainer.Services.Configuration
             if (!typeof(IStrainerModule).IsAssignableFrom(moduleType))
             {
                 throw new ArgumentException(
-                    $"Provider module type {moduleType.FullName} is not implementing {typeof(IStrainerModule).Name}.",
+                    $"Provider module type {moduleType.FullName} is not implementing {nameof(IStrainerModule)}.",
                     nameof(moduleType));
             }
 
@@ -25,7 +25,7 @@ namespace Fluorite.Strainer.Services.Configuration
             catch (Exception exception)
             {
                 throw new InvalidOperationException(
-                    $"Unable to create instance of {moduleType}. " +
+                    $"Unable to create instance of {moduleType.FullName}. " +
                     $"Ensure that type provides parameterless constructor.",
                     exception);
             }
