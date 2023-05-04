@@ -171,11 +171,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();
             var metadataSourceTypeProviderMock = new Mock<IMetadataSourceTypeProvider>();
             var metadataAssemblySourceProviderMock = new Mock<IMetadataAssemblySourceProvider>();
+            var objectMetadataProviderMock = new Mock<IObjectMetadataProvider>();
             var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var attributeMetadataProvider = new AttributeMetadataProvider(
                 optionsProvider,
                 metadataSourceTypeProviderMock.Object,
-                metadataAssemblySourceProviderMock.Object);
+                metadataAssemblySourceProviderMock.Object,
+                objectMetadataProviderMock.Object);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
                 attributeMetadataProvider,

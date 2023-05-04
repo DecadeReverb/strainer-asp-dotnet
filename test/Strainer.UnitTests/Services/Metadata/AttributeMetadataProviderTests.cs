@@ -15,6 +15,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         private readonly Mock<IMetadataSourceTypeProvider> _metadataSourceTypeProviderMock = new();
         private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
         private readonly Mock<IMetadataAssemblySourceProvider> _metadataAssemblySourceProviderMock = new();
+        private readonly Mock<IObjectMetadataProvider> _objectMetadataProviderMock = new();
 
         [Fact]
         public void Provider_Returns_AllMetadata()
@@ -46,6 +47,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             _strainerOptionsProviderMock
                 .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
+            _objectMetadataProviderMock
+                .Setup(x => x.GetDefaultMetadataFromObjectAttribute(typeof(Comment)))
+                .Returns(Mock.Of<IPropertyMetadata>());
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -203,7 +207,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             return new AttributeMetadataProvider(
                 _strainerOptionsProviderMock.Object,
                 _metadataSourceTypeProviderMock.Object,
-                _metadataAssemblySourceProviderMock.Object);
+                _metadataAssemblySourceProviderMock.Object,
+                _objectMetadataProviderMock.Object);
         }
 
         private class Post

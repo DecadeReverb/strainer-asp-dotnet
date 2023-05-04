@@ -148,13 +148,16 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
 
             var metadataSourceTypeProvider = new MetadataSourceTypeProvider();
             var metadataAssemblySourceProvider = new AppDomainAssemblySourceProvider();
+            var attributePropertyMetadataBuilder = new AttributePropertyMetadataBuilder();
+            var objectMetadataProvider = new ObjectMetadataProvider(optionsProvider, attributePropertyMetadataBuilder);
             var fluentApiMetadataProvider = new FluentApiMetadataProvider(
                 optionsProvider,
                 configurationMetadataProvider);
             var attributeMetadataProvider = new AttributeMetadataProvider(
                 optionsProvider,
                 metadataSourceTypeProvider,
-                metadataAssemblySourceProvider);
+                metadataAssemblySourceProvider,
+                objectMetadataProvider);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
                 fluentApiMetadataProvider,

@@ -10,15 +10,18 @@ namespace Fluorite.Strainer.Services.Metadata
         private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
+        private readonly IObjectMetadataProvider _objectMetadataProvider;
 
         public AttributeMetadataProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
-            IMetadataAssemblySourceProvider metadataAssemblySourceProvider)
+            IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
+            IObjectMetadataProvider objectMetadataProvider)
         {
             _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
             _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
+            _objectMetadataProvider = objectMetadataProvider ?? throw new ArgumentNullException(nameof(objectMetadataProvider));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -42,7 +45,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 .ToDictionary(pair => pair.Type, pair => pair.Metadatas);
 
             // TODO:
-            // Refactor this monster below:
+            // Move it someplace else? Some provider?
             var propertyMetadatas = types
                 .Select(type => new
                 {
@@ -70,7 +73,7 @@ namespace Fluorite.Strainer.Services.Metadata
             }
 
             var propertyMetadata = GetDefaultMetadataFromPropertyAttribute(modelType);
-            propertyMetadata ??= GetDefaultMetadataFromObjectAttribute(modelType);
+            propertyMetadata ??= _objectMetadataProvider.GetDefaultMetadataFromObjectAttribute(modelType);
 
             return propertyMetadata;
         }
@@ -116,53 +119,6 @@ namespace Fluorite.Strainer.Services.Metadata
             propertyMetadatas ??= GetMetadatasFromObjectAttribute(modelType);
 
             return propertyMetadatas;
-        }
-
-        private IPropertyMetadata GetDefaultMetadataFromObjectAttribute(Type modelType)
-        {
-            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
-            {
-                return null;
-            }
-
-            var currentType = modelType;
-
-            do
-            {
-                var attribute = currentType.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
-
-                if (attribute != null && attribute.DefaultSortingPropertyName != null)
-                {
-                    var propertyInfo = modelType.GetProperty(
-                        attribute.DefaultSortingPropertyName,
-                        BindingFlags.Public | BindingFlags.Instance);
-
-                    if (propertyInfo == null)
-                    {
-                        throw new InvalidOperationException(
-                            $"Could not find property {attribute.DefaultSortingPropertyName} " +
-                            $"in type {modelType.FullName} marked as its default " +
-                            $"sorting property. Ensure that such property exists in " +
-                            $"{modelType.Name} and it's accessible.");
-                    }
-
-                    return new PropertyMetadata
-                    {
-                        IsDefaultSorting = true,
-                        IsDefaultSortingDescending = attribute.IsDefaultSortingDescending,
-                        IsFilterable = attribute.IsFilterable,
-                        IsSortable = attribute.IsSortable,
-                        Name = propertyInfo.Name,
-                        PropertyInfo = propertyInfo,
-                    };
-                }
-
-                currentType = currentType.BaseType;
-
-            }
-            while (currentType != typeof(object) && currentType != typeof(ValueType));
-
-            return null;
         }
 
         private IPropertyMetadata GetDefaultMetadataFromPropertyAttribute(Type modelType)
