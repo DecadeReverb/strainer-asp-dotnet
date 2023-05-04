@@ -1,7 +1,6 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models.Metadata;
-using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata
@@ -28,7 +27,7 @@ namespace Fluorite.Strainer.Services.Metadata
             var types = _metadataSourceTypeProvider.GetSourceTypes(assemblies);
 
             // TODO:
-            // Refactor this monster below:
+            // Move it someplace else? Some provider?
             var objectMetadatas = types
                 .Select(type => new { Type = type, Attribute = type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false) })
                 .Where(pair => pair.Attribute != null)
@@ -37,10 +36,7 @@ namespace Fluorite.Strainer.Services.Metadata
                     return new
                     {
                         pair.Type,
-                        Metadatas = (IReadOnlyDictionary<string, IPropertyMetadata>)new ReadOnlyDictionary<string, IPropertyMetadata>(pair.Type
-                            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                            .Select(propertyInfo => BuildPropertyMetadata(propertyInfo, pair.Attribute))
-                            .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata)),
+                        Metadatas = BuildMetadata(pair.Type, pair.Attribute),
                     };
                 })
                 .ToDictionary(pair => pair.Type, pair => pair.Metadatas);
@@ -51,18 +47,14 @@ namespace Fluorite.Strainer.Services.Metadata
                 .Select(type => new
                 {
                     Type = type,
-                    Attributes = (IReadOnlyDictionary<string, IPropertyMetadata>)new ReadOnlyDictionary<string, IPropertyMetadata>(type
-                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Select(propertyInfo => GetAttributeWithPropertyInfo(propertyInfo))
-                        .Where(attribute => attribute != null)
-                        .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)),
+                    Attributes = BuildMetadata(type),
                 })
                 .Where(pair => pair.Attributes.Any())
                 .ToDictionary(pair => pair.Type, pair => pair.Attributes);
 
-            var mergeResult = objectMetadatas.MergeLeft(propertyMetadatas);
-
-            return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(mergeResult);
+            return objectMetadatas
+                .MergeLeft(propertyMetadatas)
+                .ToReadOnly();
         }
 
         public IPropertyMetadata GetDefaultMetadata<TEntity>()
@@ -370,6 +362,25 @@ namespace Fluorite.Strainer.Services.Metadata
 
                 return metadataPair.Value;
             });
+        }
+
+        private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadata(Type type)
+        {
+            return type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(propertyInfo => GetAttributeWithPropertyInfo(propertyInfo))
+                .Where(attribute => attribute != null)
+                .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)
+                .ToReadOnly();
+        }
+
+        private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadata(Type type, StrainerObjectAttribute strainerObjectAttribute)
+        {
+            return type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(propertyInfo => BuildPropertyMetadata(propertyInfo, strainerObjectAttribute))
+                .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata)
+                .ToReadOnly();
         }
 
         private PropertyMetadata BuildPropertyMetadata(PropertyInfo propertyInfo, StrainerObjectAttribute attribute)
