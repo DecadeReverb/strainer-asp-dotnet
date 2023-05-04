@@ -34,13 +34,10 @@ namespace Fluorite.Strainer.Services.Metadata
             var objectMetadatas = types
                 .Select(type => new { Type = type, Attribute = type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false) })
                 .Where(pair => pair.Attribute != null)
-                .Select(pair =>
+                .Select(pair => new
                 {
-                    return new
-                    {
-                        pair.Type,
-                        Metadatas = BuildMetadata(pair.Type, pair.Attribute),
-                    };
+                    pair.Type,
+                    Metadatas = BuildMetadata(pair.Type, pair.Attribute),
                 })
                 .ToDictionary(pair => pair.Type, pair => pair.Metadatas);
 
