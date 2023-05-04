@@ -157,7 +157,8 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                 optionsProvider,
                 metadataSourceTypeProvider,
                 metadataAssemblySourceProvider,
-                objectMetadataProvider);
+                objectMetadataProvider,
+                propertyInfoProvider);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
                 fluentApiMetadataProvider,

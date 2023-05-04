@@ -16,6 +16,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
         private readonly Mock<IMetadataAssemblySourceProvider> _metadataAssemblySourceProviderMock = new();
         private readonly Mock<IObjectMetadataProvider> _objectMetadataProviderMock = new();
+        private readonly Mock<IPropertyInfoProvider> _propertyInfoProviderMock = new();
 
         [Fact]
         public void Provider_Returns_AllMetadata()
@@ -29,6 +30,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             _metadataSourceTypeProviderMock
                 .Setup(x => x.GetSourceTypes(It.Is<Assembly[]>(x => x.SequenceEqual(assemblies))))
                 .Returns(types);
+            _propertyInfoProviderMock
+                .Setup(x => x.GetPropertyInfos(typeof(Post)))
+                .Returns(typeof(Post).GetProperties());
+            _propertyInfoProviderMock
+                .Setup(x => x.GetPropertyInfos(typeof(Comment)))
+                .Returns(typeof(Comment).GetProperties());
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -149,6 +156,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             _strainerOptionsProviderMock
                 .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
+            _propertyInfoProviderMock
+                .Setup(x => x.GetPropertyInfo(typeof(Comment), nameof(Comment.Id)))
+                .Returns(Mock.Of<PropertyInfo>());
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -208,7 +218,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 _strainerOptionsProviderMock.Object,
                 _metadataSourceTypeProviderMock.Object,
                 _metadataAssemblySourceProviderMock.Object,
-                _objectMetadataProviderMock.Object);
+                _objectMetadataProviderMock.Object,
+                _propertyInfoProviderMock.Object);
         }
 
         private class Post

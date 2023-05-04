@@ -11,17 +11,20 @@ namespace Fluorite.Strainer.Services.Metadata
         private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
         private readonly IObjectMetadataProvider _objectMetadataProvider;
+        private readonly IPropertyInfoProvider _propertyInfoProvider;
 
         public AttributeMetadataProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
             IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
-            IObjectMetadataProvider objectMetadataProvider)
+            IObjectMetadataProvider objectMetadataProvider,
+            IPropertyInfoProvider propertyInfoProvider)
         {
             _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
             _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
             _objectMetadataProvider = objectMetadataProvider ?? throw new ArgumentNullException(nameof(objectMetadataProvider));
+            _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -172,9 +175,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
             do
             {
-                var propertyInfo = modelType
-                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .FirstOrDefault(p => p.Name == name);
+                var propertyInfo = _propertyInfoProvider.GetPropertyInfo(currentType, name);
                 var attribute = currentType.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
 
                 if (attribute != null
@@ -218,22 +219,8 @@ namespace Fluorite.Strainer.Services.Metadata
 
                 if (attribute != null)
                 {
-                    return currentType
-                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Select(propertyInfo =>
-                        {
-                            var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
-
-                            return new PropertyMetadata
-                            {
-                                IsDefaultSorting = isDefaultSorting,
-                                IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
-                                IsFilterable = attribute.IsFilterable,
-                                IsSortable = attribute.IsSortable,
-                                Name = propertyInfo.Name,
-                                PropertyInfo = propertyInfo,
-                            };
-                        });
+                    return _propertyInfoProvider.GetPropertyInfos(currentType)
+                        .Select(propertyInfo => BuildPropertyMetadata(propertyInfo, attribute));
                 }
 
                 currentType = currentType.BaseType;
@@ -319,8 +306,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
         private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadata(Type type)
         {
-            return type
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            return _propertyInfoProvider.GetPropertyInfos(type)
                 .Select(propertyInfo => GetAttributeWithPropertyInfo(propertyInfo))
                 .Where(attribute => attribute != null)
                 .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)
@@ -329,8 +315,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
         private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadata(Type type, StrainerObjectAttribute strainerObjectAttribute)
         {
-            return type
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            return _propertyInfoProvider.GetPropertyInfos(type)
                 .Select(propertyInfo => BuildPropertyMetadata(propertyInfo, strainerObjectAttribute))
                 .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata)
                 .ToReadOnly();
