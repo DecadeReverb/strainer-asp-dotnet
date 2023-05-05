@@ -6,7 +6,7 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public class AttributePropertyMetadataBuilder : IAttributePropertyMetadataBuilder
     {
-        public IPropertyMetadata BuildDefaultMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
+        public IPropertyMetadata BuildDefaultPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
         {
             if (attribute is null)
             {
@@ -22,6 +22,31 @@ namespace Fluorite.Strainer.Services.Metadata
             {
                 IsDefaultSorting = true,
                 IsDefaultSortingDescending = attribute.IsDefaultSortingDescending,
+                IsFilterable = attribute.IsFilterable,
+                IsSortable = attribute.IsSortable,
+                Name = propertyInfo.Name,
+                PropertyInfo = propertyInfo,
+            };
+        }
+
+        public IPropertyMetadata BuildPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
+        {
+            if (attribute is null)
+            {
+                throw new ArgumentNullException(nameof(attribute));
+            }
+
+            if (propertyInfo is null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
+            var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
+
+            return new PropertyMetadata
+            {
+                IsDefaultSorting = isDefaultSorting,
+                IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
                 IsFilterable = attribute.IsFilterable,
                 IsSortable = attribute.IsSortable,
                 Name = propertyInfo.Name,

@@ -17,6 +17,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         private readonly Mock<IMetadataAssemblySourceProvider> _metadataAssemblySourceProviderMock = new();
         private readonly Mock<IObjectMetadataProvider> _objectMetadataProviderMock = new();
         private readonly Mock<IPropertyInfoProvider> _propertyInfoProviderMock = new();
+        private readonly Mock<IAttributeMetadataRetriever> _attributeMetadataRetrieverMock = new();
+        private readonly Mock<IStrainerObjectAttributeProvider> _strainerObjectAttributeProviderMock = new();
+        private readonly Mock<IPropertyMetadataDictionaryProvider> _propertyMetadataDictionaryProviderMock = new();
 
         [Fact]
         public void Provider_Returns_AllMetadata()
@@ -51,9 +54,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void Provider_Returns_DefaultMetadata()
         {
             // Arrange
-            _strainerOptionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
             _objectMetadataProviderMock
                 .Setup(x => x.GetDefaultMetadataFromObjectAttribute(typeof(Comment)))
                 .Returns(Mock.Of<IPropertyMetadata>());
@@ -70,9 +70,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void Provider_Returns_NoPropertyMetadata_WhenNoneAreMatchingConditions()
         {
             // Arrange
-            _strainerOptionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -89,12 +86,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void Provider_Returns_NoPropertyMetadata_WhenAttributeMetadataSource_Is_Disabled()
         {
             // Arrange
-            _strainerOptionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions
-                {
-                    MetadataSourceType = MetadataSourceType.FluentApi,
-                });
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -215,11 +206,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         private AttributeMetadataProvider BuildMetadataProvider()
         {
             return new AttributeMetadataProvider(
-                _strainerOptionsProviderMock.Object,
                 _metadataSourceTypeProviderMock.Object,
                 _metadataAssemblySourceProviderMock.Object,
                 _objectMetadataProviderMock.Object,
-                _propertyInfoProviderMock.Object);
+                _attributeMetadataRetrieverMock.Object,
+                _strainerObjectAttributeProviderMock.Object,
+                _propertyMetadataDictionaryProviderMock.Object);
         }
 
         private class Post

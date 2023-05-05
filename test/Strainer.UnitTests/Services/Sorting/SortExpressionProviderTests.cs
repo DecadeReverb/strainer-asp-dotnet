@@ -172,14 +172,17 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var metadataSourceTypeProviderMock = new Mock<IMetadataSourceTypeProvider>();
             var metadataAssemblySourceProviderMock = new Mock<IMetadataAssemblySourceProvider>();
             var objectMetadataProviderMock = new Mock<IObjectMetadataProvider>();
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
+            var attributeMetadataRetrieverMock = new Mock<IAttributeMetadataRetriever>();
+            var strainerObjectAttributeProviderMock = new Mock<IStrainerObjectAttributeProvider>();
+            var propertyMetadataDictionaryProviderMock = new Mock<IPropertyMetadataDictionaryProvider>();
             var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
             var attributeMetadataProvider = new AttributeMetadataProvider(
-                optionsProvider,
                 metadataSourceTypeProviderMock.Object,
                 metadataAssemblySourceProviderMock.Object,
                 objectMetadataProviderMock.Object,
-                propertyInfoProviderMock.Object);
+                attributeMetadataRetrieverMock.Object,
+                strainerObjectAttributeProviderMock.Object,
+                propertyMetadataDictionaryProviderMock.Object);
             var propertyMetadataProviders = new IMetadataProvider[]
             {
                 attributeMetadataProvider,

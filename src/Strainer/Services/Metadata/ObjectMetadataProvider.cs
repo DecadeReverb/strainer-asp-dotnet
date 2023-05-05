@@ -35,10 +35,12 @@ namespace Fluorite.Strainer.Services.Metadata
 
             do
             {
+                // TODO: Use Stariner object attribute provider.
                 var attribute = currentType.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
 
                 if (attribute != null && attribute.DefaultSortingPropertyName != null)
                 {
+                    // TODO: User Property provider.
                     var propertyInfo = modelType.GetProperty(
                         attribute.DefaultSortingPropertyName,
                         BindingFlags.Public | BindingFlags.Instance);
@@ -52,7 +54,7 @@ namespace Fluorite.Strainer.Services.Metadata
                             $"{modelType.FullName} and it's accessible.");
                     }
 
-                    return _attributePropertyMetadataBuilder.BuildDefaultMetadata(attribute, propertyInfo);
+                    return _attributePropertyMetadataBuilder.BuildDefaultPropertyMetadata(attribute, propertyInfo);
                 }
 
                 currentType = currentType.BaseType;
@@ -65,6 +67,7 @@ namespace Fluorite.Strainer.Services.Metadata
 
         private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
         {
+            // TODO: User metadata source type checker.
             return _strainerOptionsProvider
                 .GetStrainerOptions()
                 .MetadataSourceType

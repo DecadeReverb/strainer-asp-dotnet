@@ -1,30 +1,31 @@
 ﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models.Metadata;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
     public class AttributeMetadataProvider : IMetadataProvider
     {
-        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
         private readonly IObjectMetadataProvider _objectMetadataProvider;
-        private readonly IPropertyInfoProvider _propertyInfoProvider;
+        private readonly IAttributeMetadataRetriever _attributeMetadataRetriever;
+        private readonly IStrainerObjectAttributeProvider _strainerObjectAttributeProvider;
+        private readonly IPropertyMetadataDictionaryProvider _propertyMetadataDictionaryProvider;
 
         public AttributeMetadataProvider(
-            IStrainerOptionsProvider strainerOptionsProvider,
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
             IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
             IObjectMetadataProvider objectMetadataProvider,
-            IPropertyInfoProvider propertyInfoProvider)
+            IAttributeMetadataRetriever attributeMetadataRetriever,
+            IStrainerObjectAttributeProvider strainerObjectAttributeProvider,
+            IPropertyMetadataDictionaryProvider propertyMetadataDictionaryProvider)
         {
-            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
             _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
             _objectMetadataProvider = objectMetadataProvider ?? throw new ArgumentNullException(nameof(objectMetadataProvider));
-            _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
+            _attributeMetadataRetriever = attributeMetadataRetriever ?? throw new ArgumentNullException(nameof(attributeMetadataRetriever));
+            _strainerObjectAttributeProvider = strainerObjectAttributeProvider ?? throw new ArgumentNullException(nameof(strainerObjectAttributeProvider));
+            _propertyMetadataDictionaryProvider = propertyMetadataDictionaryProvider ?? throw new ArgumentNullException(nameof(propertyMetadataDictionaryProvider));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -38,15 +39,15 @@ namespace Fluorite.Strainer.Services.Metadata
                 .Select(type => new
                 {
                     Type = type,
-                    Attribute = type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false),
+                    Attribute = _strainerObjectAttributeProvider.GetAttribute(type),
                 })
-                .Where(pair => pair.Attribute != null)
-                .Select(pair => new
+                .Where(x => x.Attribute != null)
+                .Select(x => new
                 {
-                    pair.Type,
-                    Metadatas = BuildMetadata(pair.Type, pair.Attribute),
+                    x.Type,
+                    Metadatas = _propertyMetadataDictionaryProvider.GetMetadata(x.Type, x.Attribute),
                 })
-                .ToDictionary(pair => pair.Type, pair => pair.Metadatas);
+                .ToDictionary(x => x.Type, x => x.Metadatas);
 
             // TODO:
             // Move it someplace else? Some provider?
@@ -54,10 +55,10 @@ namespace Fluorite.Strainer.Services.Metadata
                 .Select(type => new
                 {
                     Type = type,
-                    Attributes = BuildMetadata(type),
+                    Attributes = _propertyMetadataDictionaryProvider.GetMetadata(type),
                 })
-                .Where(pair => pair.Attributes.Any())
-                .ToDictionary(pair => pair.Type, pair => pair.Attributes);
+                .Where(x => x.Attributes.Any())
+                .ToDictionary(x => x.Type, x => x.Attributes);
 
             return objectMetadatas
                 .MergeLeft(propertyMetadatas)
@@ -76,7 +77,7 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            var propertyMetadata = GetDefaultMetadataFromPropertyAttribute(modelType);
+            var propertyMetadata = _attributeMetadataRetriever.GetDefaultMetadataFromPropertyAttribute(modelType);
             propertyMetadata ??= _objectMetadataProvider.GetDefaultMetadataFromObjectAttribute(modelType);
 
             return propertyMetadata;
@@ -101,8 +102,8 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            var propertyMetadata = GetMetadataFromPropertyAttribute(modelType, isSortableRequired, isFilterableRequired, name);
-            propertyMetadata ??= GetMetadataFromObjectAttribute(modelType, isSortableRequired, isFilterableRequired, name);
+            var propertyMetadata = _attributeMetadataRetriever.GetMetadataFromPropertyAttribute(modelType, isSortableRequired, isFilterableRequired, name);
+            propertyMetadata ??= _attributeMetadataRetriever.GetMetadataFromObjectAttribute(modelType, isSortableRequired, isFilterableRequired, name);
 
             return propertyMetadata;
         }
@@ -119,209 +120,10 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            var propertyMetadatas = GetMetadatasFromPropertyAttribute(modelType);
-            propertyMetadatas ??= GetMetadatasFromObjectAttribute(modelType);
+            var propertyMetadatas = _attributeMetadataRetriever.GetMetadatasFromPropertyAttribute(modelType);
+            propertyMetadatas ??= _attributeMetadataRetriever.GetMetadatasFromObjectAttribute(modelType);
 
             return propertyMetadatas;
-        }
-
-        private IPropertyMetadata GetDefaultMetadataFromPropertyAttribute(Type modelType)
-        {
-            if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
-            {
-                return null;
-            }
-
-            var attribute = modelType
-                .GetProperties()
-                .Select(propertyInfo => GetStrainerPropertyAttributeWithPropertyInfo(propertyInfo))
-                .Where(attribute => attribute != null)
-                .FirstOrDefault(attribute => attribute.IsDefaultSorting);
-
-            if (attribute != null)
-            {
-                if (!attribute.IsSortable)
-                {
-                    throw new InvalidOperationException(
-                        $"Property {attribute.PropertyInfo.Name} on {attribute.PropertyInfo.DeclaringType.FullName} " +
-                        $"is declared as {nameof(IPropertyMetadata.IsDefaultSorting)} " +
-                        $"but not as {nameof(IPropertyMetadata.IsSortable)}. " +
-                        $"Set the {nameof(IPropertyMetadata.IsSortable)} to true " +
-                        $"in order to use the property as a default sortable property.");
-                }
-            }
-
-            return attribute;
-        }
-
-        private IPropertyMetadata GetMetadataFromObjectAttribute(
-            Type modelType,
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
-        {
-            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
-            {
-                return null;
-            }
-
-            var currentType = modelType;
-
-            do
-            {
-                var attribute = GetStrainerObjectAttribute(currentType);
-                var propertyInfo = _propertyInfoProvider.GetPropertyInfo(currentType, name);
-
-                if (attribute != null
-                    && propertyInfo != null
-                    && (!isSortableRequired || attribute.IsSortable)
-                    && (!isFilterableRequired || attribute.IsFilterable))
-                {
-                    return BuildPropertyMetadata(propertyInfo, attribute);
-                }
-
-                currentType = currentType.BaseType;
-
-            }
-            while (currentType != typeof(object) && currentType != typeof(ValueType));
-
-            return null;
-        }
-
-        private IEnumerable<IPropertyMetadata> GetMetadatasFromObjectAttribute(Type modelType)
-        {
-            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
-            {
-                return null;
-            }
-
-            var currentType = modelType;
-
-            do
-            {
-                var attribute = GetStrainerObjectAttribute(currentType);
-                if (attribute != null)
-                {
-                    return _propertyInfoProvider.GetPropertyInfos(currentType)
-                        .Select(propertyInfo => BuildPropertyMetadata(propertyInfo, attribute));
-                }
-
-                currentType = currentType.BaseType;
-            }
-            while (currentType != typeof(object) && currentType != typeof(ValueType));
-
-            return null;
-        }
-
-        private IPropertyMetadata GetMetadataFromPropertyAttribute(
-            Type modelType,
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
-        {
-            if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
-            {
-                return null;
-            }
-
-            var keyValue = modelType
-                .GetProperties()
-                .Select(propertyInfo =>
-                {
-                    var attribute = GetStrainerPropertyAttributeWithPropertyInfo(propertyInfo);
-
-                    return new
-                    {
-                        propertyInfo,
-                        attribute,
-                    };
-                })
-                .Where(x => x.attribute != null)
-                .FirstOrDefault(x =>
-                {
-                    var propertyInfo = x.propertyInfo;
-                    var attribute = x.attribute;
-
-                    return (!isSortableRequired || attribute.IsSortable)
-                        && (!isFilterableRequired || attribute.IsFilterable)
-                        && (attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name);
-                });
-
-            return keyValue?.attribute;
-        }
-
-        private IEnumerable<IPropertyMetadata> GetMetadatasFromPropertyAttribute(Type modelType)
-        {
-            if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
-            {
-                return null;
-            }
-
-            var metadata = modelType
-                .GetProperties()
-                .Select(propertyInfo => GetStrainerPropertyAttributeWithPropertyInfo(propertyInfo))
-                .Where(attribute => attribute != null)
-                .Select(attribute => (IPropertyMetadata)attribute);
-
-            return metadata.Any()
-                ? metadata
-                : null;
-        }
-
-        private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadata(Type type)
-        {
-            return _propertyInfoProvider.GetPropertyInfos(type)
-                .Select(propertyInfo => GetStrainerPropertyAttributeWithPropertyInfo(propertyInfo))
-                .Where(attribute => attribute != null)
-                .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)
-                .ToReadOnly();
-        }
-
-        private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadata(Type type, StrainerObjectAttribute strainerObjectAttribute)
-        {
-            return _propertyInfoProvider.GetPropertyInfos(type)
-                .Select(propertyInfo => BuildPropertyMetadata(propertyInfo, strainerObjectAttribute))
-                .ToDictionary(metadata => metadata.Name, metadata => (IPropertyMetadata)metadata)
-                .ToReadOnly();
-        }
-
-        private PropertyMetadata BuildPropertyMetadata(PropertyInfo propertyInfo, StrainerObjectAttribute attribute)
-        {
-            var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
-
-            return new PropertyMetadata
-            {
-                IsDefaultSorting = isDefaultSorting,
-                IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
-                IsFilterable = attribute.IsFilterable,
-                IsSortable = attribute.IsSortable,
-                Name = propertyInfo.Name,
-                PropertyInfo = propertyInfo,
-            };
-        }
-
-        private StrainerPropertyAttribute GetStrainerPropertyAttributeWithPropertyInfo(PropertyInfo propertyInfo)
-        {
-            var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: false);
-            if (attribute != null && attribute.PropertyInfo == null)
-            {
-                attribute.PropertyInfo = propertyInfo;
-            }
-
-            return attribute;
-        }
-
-        private StrainerObjectAttribute GetStrainerObjectAttribute(Type currentType)
-        {
-            return currentType.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
-        }
-
-        private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
-        {
-            return _strainerOptionsProvider
-                .GetStrainerOptions()
-                .MetadataSourceType
-                .HasFlag(metadataSourceType);
         }
     }
 }

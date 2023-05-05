@@ -6,6 +6,8 @@ namespace Fluorite.Strainer.Services.Metadata
 {
     public interface IAttributePropertyMetadataBuilder
     {
-        IPropertyMetadata BuildDefaultMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo);
+        IPropertyMetadata BuildDefaultPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo);
+
+        IPropertyMetadata BuildPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo);
     }
 }
