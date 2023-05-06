@@ -2,7 +2,7 @@
 using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models.Metadata;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata.Attributes
 {
     public class PropertyMetadataDictionaryProvider : IPropertyMetadataDictionaryProvider
     {

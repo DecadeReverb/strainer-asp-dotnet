@@ -4,6 +4,7 @@ using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Metadata.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System.Reflection;

@@ -2,7 +2,7 @@
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
-using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata

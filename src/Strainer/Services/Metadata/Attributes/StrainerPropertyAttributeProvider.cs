@@ -1,7 +1,7 @@
 ﻿using Fluorite.Strainer.Attributes;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata.Attributes
 {
     public class StrainerPropertyAttributeProvider : IStrainerPropertyAttributeProvider
     {

@@ -3,7 +3,7 @@ using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Configuration;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata.FluentApi
 {
     public class FluentApiMetadataProvider : IMetadataProvider
     {

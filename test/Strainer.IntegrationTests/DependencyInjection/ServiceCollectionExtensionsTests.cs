@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;

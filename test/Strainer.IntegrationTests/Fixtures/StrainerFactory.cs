@@ -8,6 +8,8 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Metadata.Attributes;
+using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Pagination;
 using Fluorite.Strainer.Services.Pipelines;
@@ -152,6 +154,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var strainerObjectAttributeProvider = new StrainerObjectAttributeProvider();
             var strainerPropertyAttributeProvider = new StrainerPropertyAttributeProvider();
             var attributePropertyMetadataBuilder = new AttributePropertyMetadataBuilder();
+            var objectMetadataProvider = new ObjectMetadataProvider(optionsProvider, attributePropertyMetadataBuilder);
             var propertyMetadataDictionaryProvider = new PropertyMetadataDictionaryProvider(
                 propertyInfoProvider,
                 strainerPropertyAttributeProvider,
@@ -162,10 +165,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                 strainerObjectAttributeProvider,
                 strainerPropertyAttributeProvider,
                 propertyInfoProvider);
-            var objectMetadataProvider = new ObjectMetadataProvider(optionsProvider, attributePropertyMetadataBuilder);
-            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
-                optionsProvider,
-                configurationMetadataProvider);
+
             var attributeMetadataProvider = new AttributeMetadataProvider(
                 metadataSourceTypeProvider,
                 metadataAssemblySourceProvider,
@@ -173,6 +173,11 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                 attributeMetadataRetriever,
                 strainerObjectAttributeProvider,
                 propertyMetadataDictionaryProvider);
+
+            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
+                optionsProvider,
+                configurationMetadataProvider);
+
             var propertyMetadataProviders = new IMetadataProvider[]
             {
                 fluentApiMetadataProvider,

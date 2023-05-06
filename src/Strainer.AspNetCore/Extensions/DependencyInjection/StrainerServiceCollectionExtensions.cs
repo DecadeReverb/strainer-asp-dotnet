@@ -4,6 +4,8 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Metadata.Attributes;
+using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Pagination;
 using Fluorite.Strainer.Services.Pipelines;
