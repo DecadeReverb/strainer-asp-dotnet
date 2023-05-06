@@ -1,11 +1,7 @@
-﻿using Fluorite.Extensions.DependencyInjection;
-using Fluorite.Strainer.Attributes;
-using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Metadata.Attributes;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System.Reflection;
 
@@ -14,7 +10,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
     public class AttributeMetadataProviderTests
     {
         private readonly Mock<IMetadataSourceTypeProvider> _metadataSourceTypeProviderMock = new();
-        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
         private readonly Mock<IMetadataAssemblySourceProvider> _metadataAssemblySourceProviderMock = new();
         private readonly Mock<IPropertyInfoProvider> _propertyInfoProviderMock = new();
         private readonly Mock<IAttributeMetadataRetriever> _attributeMetadataRetrieverMock = new();
@@ -33,12 +28,18 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             _metadataSourceTypeProviderMock
                 .Setup(x => x.GetSourceTypes(It.Is<Assembly[]>(x => x.SequenceEqual(assemblies))))
                 .Returns(types);
-            _propertyInfoProviderMock
-                .Setup(x => x.GetPropertyInfos(typeof(Post)))
-                .Returns(typeof(Post).GetProperties());
-            _propertyInfoProviderMock
-                .Setup(x => x.GetPropertyInfos(typeof(Comment)))
-                .Returns(typeof(Comment).GetProperties());
+            _propertyMetadataDictionaryProviderMock
+                .Setup(x => x.GetMetadata(typeof(Post)))
+                .Returns(new Dictionary<string, IPropertyMetadata>
+                {
+                    { nameof(Post.Title), Mock.Of<IPropertyMetadata>() }
+                });
+            _propertyMetadataDictionaryProviderMock
+                .Setup(x => x.GetMetadata(typeof(Comment)))
+                .Returns(new Dictionary<string, IPropertyMetadata>
+                {
+                    { nameof(Comment.Id), Mock.Of<IPropertyMetadata>() }
+                });
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -48,6 +49,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             result.Should().NotBeNullOrEmpty();
             result.Should().HaveCount(2);
             result.Keys.Should().BeEquivalentTo(types);
+            result.Values.Should().OnlyContain(x => x.Any());
         }
 
         [Fact]
@@ -102,9 +104,17 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void Provider_Returns_PropertyMetadata_FromStrainerAttribute()
         {
             // Arrange
-            _strainerOptionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
+            var propertyMetadata = new PropertyMetadata
+            {
+                Name = nameof(Post.Title),
+                IsFilterable = true,
+                IsSortable = true,
+            };
+
+            _attributeMetadataRetrieverMock
+                .Setup(x => x.GetMetadataFromPropertyAttribute(typeof(Post), true, true, nameof(Post.Title)))
+                .Returns(propertyMetadata);
+
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -117,39 +127,22 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             result.Should().NotBeNull();
             result.IsFilterable.Should().BeTrue();
             result.IsSortable.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Provider_Returns_PropertyMetadata_FromStrainerPropertyAttribute()
-        {
-            // Arrange
-            _strainerOptionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var attributeMetadataProvider = BuildMetadataProvider();
-
-            // Act
-            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
-                isSortableRequired: true,
-                isFilterableRequired: true,
-                name: nameof(Post.Title));
-
-            // Assert
-            result.Should().NotBeNull();
-            result.IsFilterable.Should().BeTrue();
-            result.IsSortable.Should().BeTrue();
+            result.Name.Should().Be(nameof(Post.Title));
         }
 
         [Fact]
         public void Provider_Returns_PropertyMetadata_FromStrainerObjectAttribute()
         {
             // Arrange
-            _strainerOptionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            _propertyInfoProviderMock
-                .Setup(x => x.GetPropertyInfo(typeof(Comment), nameof(Comment.Id)))
-                .Returns(Mock.Of<PropertyInfo>());
+            var propertyMetadata = new PropertyMetadata
+            {
+                IsFilterable = true,
+                IsSortable = true,
+                Name = nameof(Comment.Id),
+            };
+            _attributeMetadataRetrieverMock
+                .Setup(x => x.GetMetadataFromObjectAttribute(typeof(Comment), true, true, nameof(Comment.Id)))
+                .Returns(propertyMetadata);
             var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
@@ -162,45 +155,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             result.Should().NotBeNull();
             result.IsFilterable.Should().BeTrue();
             result.IsSortable.Should().BeTrue();
-        }
-
-        [Fact]
-        public void AttributeMetadataProvider_Works_For_Object_Attribute()
-        {
-            // Arrange
-            var services = new ServiceCollection();
-            services.AddStrainer();
-            services.AddScoped<AttributeMetadataProvider>();
-            var serviceProvider = services.BuildServiceProvider();
-
-            // Act
-            var attributeMetadataProvider = serviceProvider.GetRequiredService<AttributeMetadataProvider>();
-            var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Comment>();
-
-            // Assert
-            metadatas.Should().NotBeNullOrEmpty();
-            metadatas.Should().HaveCount(1);
-            metadatas.First().Name.Should().Be(nameof(Comment.Id));
-        }
-
-        [Fact]
-        public void AttributeMetadataProvider_Works_For_Property_Attribute()
-        {
-            // Arrange
-            var services = new ServiceCollection();
-            services.AddStrainer();
-            services.AddScoped<AttributeMetadataProvider>();
-            var serviceProvider = services.BuildServiceProvider();
-
-            // Act
-            var attributeMetadataProvider = serviceProvider.GetRequiredService<AttributeMetadataProvider>();
-            var metadatas = attributeMetadataProvider.GetPropertyMetadatas<Post>();
-
-            // Assert
-            metadatas.Should().NotBeNullOrEmpty();
-            metadatas.Should().HaveCount(1);
-            metadatas.First().Should().BeAssignableTo<StrainerPropertyAttribute>();
-            metadatas.First().Name.Should().Be(nameof(Post.Title));
+            result.Name.Should().Be(nameof(Comment.Id));
         }
 
         private AttributeMetadataProvider BuildMetadataProvider()

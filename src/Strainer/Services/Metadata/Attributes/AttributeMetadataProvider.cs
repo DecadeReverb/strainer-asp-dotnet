@@ -30,8 +30,6 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
             var assemblies = _metadataAssemblySourceProvider.GetAssemblies();
             var types = _metadataSourceTypeProvider.GetSourceTypes(assemblies);
 
-            // TODO:
-            // Move it someplace else? Some provider?
             var objectMetadatas = types
                 .Select(type => new
                 {
@@ -46,8 +44,6 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 })
                 .ToDictionary(x => x.Type, x => x.Metadatas);
 
-            // TODO:
-            // Move it someplace else? Some provider?
             var propertyMetadatas = types
                 .Select(type => new
                 {
