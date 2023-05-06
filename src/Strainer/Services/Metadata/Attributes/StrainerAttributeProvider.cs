@@ -3,9 +3,19 @@ using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata.Attributes
 {
-    public class StrainerPropertyAttributeProvider : IStrainerPropertyAttributeProvider
+    public class StrainerAttributeProvider : IStrainerAttributeProvider
     {
-        public StrainerPropertyAttribute GetAttribute(PropertyInfo propertyInfo)
+        public StrainerObjectAttribute GetObjectAttribute(Type type)
+        {
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            return type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
+        }
+
+        public StrainerPropertyAttribute GetPropertyAttribute(PropertyInfo propertyInfo)
         {
             if (propertyInfo is null)
             {

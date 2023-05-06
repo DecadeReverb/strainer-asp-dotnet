@@ -7,23 +7,23 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
     public class PropertyMetadataDictionaryProvider : IPropertyMetadataDictionaryProvider
     {
         private readonly IPropertyInfoProvider _propertyInfoProvider;
-        private readonly IStrainerPropertyAttributeProvider _strainerPropertyAttributeProvider;
+        private readonly IStrainerAttributeProvider _strainerAttributeProvider;
         private readonly IAttributePropertyMetadataBuilder _attributePropertyMetadataBuilder;
 
         public PropertyMetadataDictionaryProvider(
             IPropertyInfoProvider propertyInfoProvider,
-            IStrainerPropertyAttributeProvider strainerPropertyAttributeProvider,
+            IStrainerAttributeProvider strainerAttributeProvider,
             IAttributePropertyMetadataBuilder attributePropertyMetadataBuilder)
         {
             _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-            _strainerPropertyAttributeProvider = strainerPropertyAttributeProvider ?? throw new ArgumentNullException(nameof(strainerPropertyAttributeProvider));
+            _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
             _attributePropertyMetadataBuilder = attributePropertyMetadataBuilder ?? throw new ArgumentNullException(nameof(attributePropertyMetadataBuilder));
         }
 
         public IReadOnlyDictionary<string, IPropertyMetadata> GetMetadata(Type type)
         {
             return _propertyInfoProvider.GetPropertyInfos(type)
-                .Select(propertyInfo => _strainerPropertyAttributeProvider.GetAttribute(propertyInfo))
+                .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
                 .Where(attribute => attribute != null)
                 .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)
                 .ToReadOnly();

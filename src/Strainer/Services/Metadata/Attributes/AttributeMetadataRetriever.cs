@@ -6,21 +6,18 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
     {
         private readonly IMetadataSourceChecker _metadataSourceChecker;
         private readonly IAttributePropertyMetadataBuilder _attributePropertyMetadataBuilder;
-        private readonly IStrainerObjectAttributeProvider _strainerObjectAttributeProvider;
-        private readonly IStrainerPropertyAttributeProvider _strainerPropertyAttributeProvider;
+        private readonly IStrainerAttributeProvider _strainerAttributeProvider;
         private readonly IPropertyInfoProvider _propertyInfoProvider;
 
         public AttributeMetadataRetriever(
             IMetadataSourceChecker metadataSourceChecker,
             IAttributePropertyMetadataBuilder attributePropertyMetadataBuilder,
-            IStrainerObjectAttributeProvider strainerObjectAttributeProvider,
-            IStrainerPropertyAttributeProvider strainerPropertyAttributeProvider,
+            IStrainerAttributeProvider strainerAttributeProvider,
             IPropertyInfoProvider propertyInfoProvider)
         {
             _metadataSourceChecker = metadataSourceChecker ?? throw new ArgumentNullException(nameof(metadataSourceChecker));
             _attributePropertyMetadataBuilder = attributePropertyMetadataBuilder ?? throw new ArgumentNullException(nameof(attributePropertyMetadataBuilder));
-            _strainerObjectAttributeProvider = strainerObjectAttributeProvider ?? throw new ArgumentNullException(nameof(strainerObjectAttributeProvider));
-            _strainerPropertyAttributeProvider = strainerPropertyAttributeProvider ?? throw new ArgumentNullException(nameof(strainerPropertyAttributeProvider));
+            _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
             _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
         }
 
@@ -40,7 +37,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
 
             do
             {
-                var attribute = _strainerObjectAttributeProvider.GetAttribute(currentType);
+                var attribute = _strainerAttributeProvider.GetObjectAttribute(currentType);
 
                 if (attribute != null && attribute.DefaultSortingPropertyName != null)
                 {
@@ -74,7 +71,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
 
             var attribute = modelType
                 .GetProperties()
-                .Select(propertyInfo => _strainerPropertyAttributeProvider.GetAttribute(propertyInfo))
+                .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
                 .Where(attribute => attribute != null)
                 .FirstOrDefault(attribute => attribute.IsDefaultSorting);
 
@@ -114,7 +111,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
 
             do
             {
-                var attribute = _strainerObjectAttributeProvider.GetAttribute(currentType);
+                var attribute = _strainerAttributeProvider.GetObjectAttribute(currentType);
                 var propertyInfo = _propertyInfoProvider.GetPropertyInfo(currentType, name);
 
                 if (attribute != null
@@ -149,7 +146,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
 
             do
             {
-                var attribute = _strainerObjectAttributeProvider.GetAttribute(currentType);
+                var attribute = _strainerAttributeProvider.GetObjectAttribute(currentType);
                 if (attribute != null)
                 {
                     return _propertyInfoProvider.GetPropertyInfos(currentType)
@@ -183,7 +180,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 .GetProperties()
                 .Select(propertyInfo =>
                 {
-                    var attribute = _strainerPropertyAttributeProvider.GetAttribute(propertyInfo);
+                    var attribute = _strainerAttributeProvider.GetPropertyAttribute(propertyInfo);
 
                     return new
                     {
@@ -219,7 +216,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
 
             var metadata = modelType
                 .GetProperties()
-                .Select(propertyInfo => _strainerPropertyAttributeProvider.GetAttribute(propertyInfo))
+                .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
                 .Where(attribute => attribute != null)
                 .Select(attribute => (IPropertyMetadata)attribute);
 

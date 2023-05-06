@@ -18,7 +18,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         private readonly Mock<IMetadataAssemblySourceProvider> _metadataAssemblySourceProviderMock = new();
         private readonly Mock<IPropertyInfoProvider> _propertyInfoProviderMock = new();
         private readonly Mock<IAttributeMetadataRetriever> _attributeMetadataRetrieverMock = new();
-        private readonly Mock<IStrainerObjectAttributeProvider> _strainerObjectAttributeProviderMock = new();
+        private readonly Mock<IStrainerAttributeProvider> _strainerObjectAttributeProviderMock = new();
         private readonly Mock<IPropertyMetadataDictionaryProvider> _propertyMetadataDictionaryProviderMock = new();
 
         [Fact]

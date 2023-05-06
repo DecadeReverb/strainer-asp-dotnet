@@ -8,14 +8,14 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
         private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
         private readonly IAttributeMetadataRetriever _attributeMetadataRetriever;
-        private readonly IStrainerObjectAttributeProvider _strainerObjectAttributeProvider;
+        private readonly IStrainerAttributeProvider _strainerObjectAttributeProvider;
         private readonly IPropertyMetadataDictionaryProvider _propertyMetadataDictionaryProvider;
 
         public AttributeMetadataProvider(
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
             IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
             IAttributeMetadataRetriever attributeMetadataRetriever,
-            IStrainerObjectAttributeProvider strainerObjectAttributeProvider,
+            IStrainerAttributeProvider strainerObjectAttributeProvider,
             IPropertyMetadataDictionaryProvider propertyMetadataDictionaryProvider)
         {
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
@@ -36,7 +36,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 .Select(type => new
                 {
                     Type = type,
-                    Attribute = _strainerObjectAttributeProvider.GetAttribute(type),
+                    Attribute = _strainerObjectAttributeProvider.GetObjectAttribute(type),
                 })
                 .Where(x => x.Attribute != null)
                 .Select(x => new
