@@ -173,7 +173,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             mapper.Property<Comment>(c => c.DateCreated).IsSortable();
             var metadataSourceTypeProviderMock = new Mock<IMetadataSourceTypeProvider>();
             var metadataAssemblySourceProviderMock = new Mock<IMetadataAssemblySourceProvider>();
-            var objectMetadataProviderMock = new Mock<IObjectMetadataProvider>();
             var attributeMetadataRetrieverMock = new Mock<IAttributeMetadataRetriever>();
             var strainerObjectAttributeProviderMock = new Mock<IStrainerObjectAttributeProvider>();
             var propertyMetadataDictionaryProviderMock = new Mock<IPropertyMetadataDictionaryProvider>();
@@ -181,7 +180,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var attributeMetadataProvider = new AttributeMetadataProvider(
                 metadataSourceTypeProviderMock.Object,
                 metadataAssemblySourceProviderMock.Object,
-                objectMetadataProviderMock.Object,
                 attributeMetadataRetrieverMock.Object,
                 strainerObjectAttributeProviderMock.Object,
                 propertyMetadataDictionaryProviderMock.Object);

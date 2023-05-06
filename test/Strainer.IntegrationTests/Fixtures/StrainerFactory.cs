@@ -154,7 +154,6 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var strainerObjectAttributeProvider = new StrainerObjectAttributeProvider();
             var strainerPropertyAttributeProvider = new StrainerPropertyAttributeProvider();
             var attributePropertyMetadataBuilder = new AttributePropertyMetadataBuilder();
-            var objectMetadataProvider = new ObjectMetadataProvider(optionsProvider, attributePropertyMetadataBuilder);
             var propertyMetadataDictionaryProvider = new PropertyMetadataDictionaryProvider(
                 propertyInfoProvider,
                 strainerPropertyAttributeProvider,
@@ -169,7 +168,6 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var attributeMetadataProvider = new AttributeMetadataProvider(
                 metadataSourceTypeProvider,
                 metadataAssemblySourceProvider,
-                objectMetadataProvider,
                 attributeMetadataRetriever,
                 strainerObjectAttributeProvider,
                 propertyMetadataDictionaryProvider);

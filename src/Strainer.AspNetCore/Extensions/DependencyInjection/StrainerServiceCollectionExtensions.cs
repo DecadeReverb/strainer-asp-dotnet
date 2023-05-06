@@ -214,7 +214,6 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IPropertyMetadataDictionaryProvider, PropertyMetadataDictionaryProvider>(serviceLifetime);
             services.Add<IStrainerObjectAttributeProvider, StrainerObjectAttributeProvider>(serviceLifetime);
             services.Add<IStrainerPropertyAttributeProvider, StrainerPropertyAttributeProvider>(serviceLifetime);
-            services.Add<IObjectMetadataProvider, ObjectMetadataProvider>(serviceLifetime);
             services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
             services.Add<IMetadataSourceChecker, MetadataSourceChecker>(serviceLifetime);
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);

@@ -4,6 +4,8 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
 {
     public interface IAttributeMetadataRetriever
     {
+        IPropertyMetadata GetDefaultMetadataFromObjectAttribute(Type modelType);
+
         IPropertyMetadata GetDefaultMetadataFromPropertyAttribute(Type modelType);
 
         IPropertyMetadata GetMetadataFromObjectAttribute(Type modelType, bool isSortableRequired, bool isFilterableRequired, string name);

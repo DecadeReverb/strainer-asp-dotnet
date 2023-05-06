@@ -7,7 +7,6 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
     {
         private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
-        private readonly IObjectMetadataProvider _objectMetadataProvider;
         private readonly IAttributeMetadataRetriever _attributeMetadataRetriever;
         private readonly IStrainerObjectAttributeProvider _strainerObjectAttributeProvider;
         private readonly IPropertyMetadataDictionaryProvider _propertyMetadataDictionaryProvider;
@@ -15,14 +14,12 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
         public AttributeMetadataProvider(
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
             IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
-            IObjectMetadataProvider objectMetadataProvider,
             IAttributeMetadataRetriever attributeMetadataRetriever,
             IStrainerObjectAttributeProvider strainerObjectAttributeProvider,
             IPropertyMetadataDictionaryProvider propertyMetadataDictionaryProvider)
         {
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
             _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
-            _objectMetadataProvider = objectMetadataProvider ?? throw new ArgumentNullException(nameof(objectMetadataProvider));
             _attributeMetadataRetriever = attributeMetadataRetriever ?? throw new ArgumentNullException(nameof(attributeMetadataRetriever));
             _strainerObjectAttributeProvider = strainerObjectAttributeProvider ?? throw new ArgumentNullException(nameof(strainerObjectAttributeProvider));
             _propertyMetadataDictionaryProvider = propertyMetadataDictionaryProvider ?? throw new ArgumentNullException(nameof(propertyMetadataDictionaryProvider));
@@ -78,7 +75,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
             }
 
             var propertyMetadata = _attributeMetadataRetriever.GetDefaultMetadataFromPropertyAttribute(modelType);
-            propertyMetadata ??= _objectMetadataProvider.GetDefaultMetadataFromObjectAttribute(modelType);
+            propertyMetadata ??= _attributeMetadataRetriever.GetDefaultMetadataFromObjectAttribute(modelType);
 
             return propertyMetadata;
         }
