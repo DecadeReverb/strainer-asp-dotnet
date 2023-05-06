@@ -117,8 +117,8 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            var propertyMetadatas = _attributeMetadataRetriever.GetMetadatasFromPropertyAttribute(modelType);
-            propertyMetadatas ??= _attributeMetadataRetriever.GetMetadatasFromObjectAttribute(modelType);
+            var propertyMetadatas = _attributeMetadataRetriever.GetMetadataFromPropertyAttribute(modelType);
+            propertyMetadatas ??= _attributeMetadataRetriever.GetMetadataFromObjectAttribute(modelType);
 
             return propertyMetadatas;
         }

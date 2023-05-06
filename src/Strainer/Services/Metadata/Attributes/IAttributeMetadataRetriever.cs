@@ -12,8 +12,8 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
 
         IPropertyMetadata GetMetadataFromPropertyAttribute(Type modelType, bool isSortableRequired, bool isFilterableRequired, string name);
 
-        IEnumerable<IPropertyMetadata> GetMetadatasFromObjectAttribute(Type modelType);
+        IEnumerable<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType);
 
-        IEnumerable<IPropertyMetadata> GetMetadatasFromPropertyAttribute(Type modelType);
+        IEnumerable<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType);
     }
 }

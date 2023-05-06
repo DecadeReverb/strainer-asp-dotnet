@@ -130,36 +130,6 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
             return null;
         }
 
-        public IEnumerable<IPropertyMetadata> GetMetadatasFromObjectAttribute(Type modelType)
-        {
-            if (modelType is null)
-            {
-                throw new ArgumentNullException(nameof(modelType));
-            }
-
-            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
-            {
-                return null;
-            }
-
-            var currentType = modelType;
-
-            do
-            {
-                var attribute = _strainerAttributeProvider.GetObjectAttribute(currentType);
-                if (attribute != null)
-                {
-                    return _propertyInfoProvider.GetPropertyInfos(currentType)
-                        .Select(propertyInfo => _attributePropertyMetadataBuilder.BuildPropertyMetadata(attribute, propertyInfo));
-                }
-
-                currentType = currentType.BaseType;
-            }
-            while (currentType != typeof(object) && currentType != typeof(ValueType));
-
-            return null;
-        }
-
         public IPropertyMetadata GetMetadataFromPropertyAttribute(
             Type modelType,
             bool isSortableRequired,
@@ -202,7 +172,37 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
             return keyValue?.attribute;
         }
 
-        public IEnumerable<IPropertyMetadata> GetMetadatasFromPropertyAttribute(Type modelType)
+        public IEnumerable<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType)
+        {
+            if (modelType is null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
+            if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
+            {
+                return null;
+            }
+
+            var currentType = modelType;
+
+            do
+            {
+                var attribute = _strainerAttributeProvider.GetObjectAttribute(currentType);
+                if (attribute != null)
+                {
+                    return _propertyInfoProvider.GetPropertyInfos(currentType)
+                        .Select(propertyInfo => _attributePropertyMetadataBuilder.BuildPropertyMetadata(attribute, propertyInfo));
+                }
+
+                currentType = currentType.BaseType;
+            }
+            while (currentType != typeof(object) && currentType != typeof(ValueType));
+
+            return null;
+        }
+
+        public IEnumerable<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType)
         {
             if (modelType is null)
             {
