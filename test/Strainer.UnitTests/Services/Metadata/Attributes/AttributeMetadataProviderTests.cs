@@ -13,6 +13,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
         private readonly Mock<IMetadataAssemblySourceProvider> _metadataAssemblySourceProviderMock = new();
         private readonly Mock<IAttributeMetadataRetriever> _attributeMetadataRetrieverMock = new();
         private readonly Mock<IStrainerAttributeProvider> _strainerObjectAttributeProviderMock = new();
+        private readonly AttributeMetadataProvider _provider;
+
+        public AttributeMetadataProviderTests()
+        {
+            _provider = new AttributeMetadataProvider(
+                _metadataSourceTypeProviderMock.Object,
+                _metadataAssemblySourceProviderMock.Object,
+                _attributeMetadataRetrieverMock.Object,
+                _strainerObjectAttributeProviderMock.Object);
+        }
 
         [Fact]
         public void Provider_Returns_AllMetadata()
@@ -50,10 +60,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
                         }
                     },
                 });
-            var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
-            var result = attributeMetadataProvider.GetAllPropertyMetadata();
+            var result = _provider.GetAllPropertyMetadata();
 
             // Assert
             result.Should().NotBeNullOrEmpty();
@@ -69,10 +78,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
             _attributeMetadataRetrieverMock
                 .Setup(x => x.GetDefaultMetadataFromObjectAttribute(typeof(Comment)))
                 .Returns(Mock.Of<IPropertyMetadata>());
-            var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
-            var result = attributeMetadataProvider.GetDefaultMetadata<Comment>();
+            var result = _provider.GetDefaultMetadata<Comment>();
 
             // Assert
             result.Should().NotBeNull();
@@ -81,11 +89,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
         [Fact]
         public void Provider_Returns_NoPropertyMetadata_WhenNoneAreMatchingConditions()
         {
-            // Arrange
-            var attributeMetadataProvider = BuildMetadataProvider();
-
             // Act
-            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
+            var result = _provider.GetPropertyMetadata<Post>(
                 isSortableRequired: true,
                 isFilterableRequired: true,
                 name: nameof(Post.Id));
@@ -97,11 +102,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
         [Fact]
         public void Provider_Returns_NoPropertyMetadata_WhenAttributeMetadataSource_Is_Disabled()
         {
-            // Arrange
-            var attributeMetadataProvider = BuildMetadataProvider();
-
             // Act
-            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
+            var result = _provider.GetPropertyMetadata<Post>(
                 isSortableRequired: true,
                 isFilterableRequired: true,
                 name: nameof(Post.Id));
@@ -125,10 +127,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
                 .Setup(x => x.GetMetadataFromPropertyAttribute(typeof(Post), true, true, nameof(Post.Title)))
                 .Returns(propertyMetadata);
 
-            var attributeMetadataProvider = BuildMetadataProvider();
-
             // Act
-            var result = attributeMetadataProvider.GetPropertyMetadata<Post>(
+            var result = _provider.GetPropertyMetadata<Post>(
                 isSortableRequired: true,
                 isFilterableRequired: true,
                 name: nameof(Post.Title));
@@ -153,10 +153,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
             _attributeMetadataRetrieverMock
                 .Setup(x => x.GetMetadataFromObjectAttribute(typeof(Comment), true, true, nameof(Comment.Id)))
                 .Returns(propertyMetadata);
-            var attributeMetadataProvider = BuildMetadataProvider();
 
             // Act
-            var result = attributeMetadataProvider.GetPropertyMetadata<Comment>(
+            var result = _provider.GetPropertyMetadata<Comment>(
                 isSortableRequired: true,
                 isFilterableRequired: true,
                 name: nameof(Comment.Id));
@@ -168,13 +167,49 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
             result.Name.Should().Be(nameof(Comment.Id));
         }
 
-        private AttributeMetadataProvider BuildMetadataProvider()
+        [Fact]
+        public void Provider_Returns_PropertyMetadatas_FromStrainerPropertyAttribute()
         {
-            return new AttributeMetadataProvider(
-                _metadataSourceTypeProviderMock.Object,
-                _metadataAssemblySourceProviderMock.Object,
-                _attributeMetadataRetrieverMock.Object,
-                _strainerObjectAttributeProviderMock.Object);
+            // Arrange
+            var type = typeof(Post);
+            var propertyMetadatas = new List<IPropertyMetadata>
+            {
+                Mock.Of<IPropertyMetadata>(),
+            };
+            _attributeMetadataRetrieverMock
+                .Setup(x => x.GetMetadataFromPropertyAttribute(type))
+                .Returns(propertyMetadatas);
+
+            // Act
+            var result = _provider.GetPropertyMetadatas(type);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeSameAs(propertyMetadatas);
+        }
+
+        [Fact]
+        public void Provider_Returns_PropertyMetadatas_FromStrainerObjectAttribute()
+        {
+            // Arrange
+            var type = typeof(Post);
+            var propertyMetadatas = new List<IPropertyMetadata>
+            {
+                Mock.Of<IPropertyMetadata>(),
+            };
+            _attributeMetadataRetrieverMock
+                .Setup(x => x.GetMetadataFromPropertyAttribute(type))
+                .Returns<IEnumerable<IPropertyMetadata>>(null);
+            _attributeMetadataRetrieverMock
+                .Setup(x => x.GetMetadataFromObjectAttribute(type))
+                .Returns(propertyMetadatas);
+
+            // Act
+            var result = _provider.GetPropertyMetadatas(type);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeSameAs(propertyMetadatas);
         }
 
         private class Post
