@@ -5,7 +5,7 @@ using Fluorite.Strainer.Services.Metadata.Attributes;
 using Moq;
 using System.Reflection;
 
-namespace Fluorite.Strainer.UnitTests.Services.Metadata
+namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
 {
     public class AttributeMetadataProviderTests
     {

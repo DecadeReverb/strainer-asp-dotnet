@@ -5,12 +5,12 @@ using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Moq;
 
-namespace Fluorite.Strainer.UnitTests.Services.Metadata
+namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
 {
     public class FluentApiMetadataProviderTests
     {
-        private readonly Mock<IStrainerOptionsProvider> _optionsProviderMock = new ();
-        private readonly Mock<IConfigurationMetadataProvider> _configurationMetadataProviderMock = new ();
+        private readonly Mock<IStrainerOptionsProvider> _optionsProviderMock = new();
+        private readonly Mock<IConfigurationMetadataProvider> _configurationMetadataProviderMock = new();
 
         [Fact]
         public void GetDefaultMetadata_ReturnsNull_When_NoMetadataAvailable()
