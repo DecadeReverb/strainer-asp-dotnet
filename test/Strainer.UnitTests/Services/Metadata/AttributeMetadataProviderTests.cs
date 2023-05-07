@@ -11,10 +11,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
     {
         private readonly Mock<IMetadataSourceTypeProvider> _metadataSourceTypeProviderMock = new();
         private readonly Mock<IMetadataAssemblySourceProvider> _metadataAssemblySourceProviderMock = new();
-        private readonly Mock<IPropertyInfoProvider> _propertyInfoProviderMock = new();
         private readonly Mock<IAttributeMetadataRetriever> _attributeMetadataRetrieverMock = new();
         private readonly Mock<IStrainerAttributeProvider> _strainerObjectAttributeProviderMock = new();
-        private readonly Mock<IPropertyMetadataDictionaryProvider> _propertyMetadataDictionaryProviderMock = new();
 
         [Fact]
         public void Provider_Returns_AllMetadata()
@@ -28,17 +26,29 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             _metadataSourceTypeProviderMock
                 .Setup(x => x.GetSourceTypes(It.Is<Assembly[]>(x => x.SequenceEqual(assemblies))))
                 .Returns(types);
-            _propertyMetadataDictionaryProviderMock
-                .Setup(x => x.GetMetadata(typeof(Post)))
-                .Returns(new Dictionary<string, IPropertyMetadata>
+            _attributeMetadataRetrieverMock
+                .Setup(x => x.GetMetadataDictionaryFromObjectAttributes(types))
+                .Returns(new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
                 {
-                    { nameof(Post.Title), Mock.Of<IPropertyMetadata>() }
+                    {
+                        typeof(Post),
+                        new Dictionary<string, IPropertyMetadata>
+                        {
+                            { nameof(Post.Title), Mock.Of<IPropertyMetadata>() },
+                        }
+                    },
                 });
-            _propertyMetadataDictionaryProviderMock
-                .Setup(x => x.GetMetadata(typeof(Comment)))
-                .Returns(new Dictionary<string, IPropertyMetadata>
+            _attributeMetadataRetrieverMock
+                .Setup(x => x.GetMetadataDictionaryFromPropertyAttributes(types))
+                .Returns(new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
                 {
-                    { nameof(Comment.Id), Mock.Of<IPropertyMetadata>() }
+                    {
+                        typeof(Comment),
+                        new Dictionary<string, IPropertyMetadata>
+                        {
+                            { nameof(Comment.Id), Mock.Of<IPropertyMetadata>() },
+                        }
+                    },
                 });
             var attributeMetadataProvider = BuildMetadataProvider();
 
@@ -164,8 +174,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 _metadataSourceTypeProviderMock.Object,
                 _metadataAssemblySourceProviderMock.Object,
                 _attributeMetadataRetrieverMock.Object,
-                _strainerObjectAttributeProviderMock.Object,
-                _propertyMetadataDictionaryProviderMock.Object);
+                _strainerObjectAttributeProviderMock.Object);
         }
 
         private class Post

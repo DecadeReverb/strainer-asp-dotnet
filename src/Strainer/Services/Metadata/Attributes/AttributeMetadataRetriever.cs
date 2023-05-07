@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models.Metadata;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Models.Metadata;
 
 namespace Fluorite.Strainer.Services.Metadata.Attributes
 {
@@ -6,12 +7,14 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
     {
         private readonly IMetadataSourceChecker _metadataSourceChecker;
         private readonly IAttributePropertyMetadataBuilder _attributePropertyMetadataBuilder;
+        private readonly IPropertyMetadataDictionaryProvider _propertyMetadataDictionaryProvider;
         private readonly IStrainerAttributeProvider _strainerAttributeProvider;
         private readonly IPropertyInfoProvider _propertyInfoProvider;
 
         public AttributeMetadataRetriever(
             IMetadataSourceChecker metadataSourceChecker,
             IAttributePropertyMetadataBuilder attributePropertyMetadataBuilder,
+            IPropertyMetadataDictionaryProvider propertyMetadataDictionaryProvider,
             IStrainerAttributeProvider strainerAttributeProvider,
             IPropertyInfoProvider propertyInfoProvider)
         {
@@ -19,6 +22,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
             _attributePropertyMetadataBuilder = attributePropertyMetadataBuilder ?? throw new ArgumentNullException(nameof(attributePropertyMetadataBuilder));
             _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
             _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
+            _propertyMetadataDictionaryProvider = propertyMetadataDictionaryProvider ?? throw new ArgumentNullException(nameof(propertyMetadataDictionaryProvider));
         }
 
         public IPropertyMetadata GetDefaultMetadataFromObjectAttribute(Type modelType)
@@ -89,6 +93,47 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
             }
 
             return attribute;
+        }
+
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromObjectAttributes(ICollection<Type> types)
+        {
+            if (types is null)
+            {
+                throw new ArgumentNullException(nameof(types));
+            }
+
+            return types
+                .Select(type => new
+                {
+                    Type = type,
+                    Attribute = _strainerAttributeProvider.GetObjectAttribute(type),
+                })
+                .Where(x => x.Attribute != null)
+                .Select(x => new
+                {
+                    x.Type,
+                    Metadatas = _propertyMetadataDictionaryProvider.GetMetadata(x.Type, x.Attribute),
+                })
+                .ToDictionary(x => x.Type, x => x.Metadatas)
+                .ToReadOnly();
+        }
+
+        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromPropertyAttributes(ICollection<Type> types)
+        {
+            if (types is null)
+            {
+                throw new ArgumentNullException(nameof(types));
+            }
+
+            return types
+                .Select(type => new
+                {
+                    Type = type,
+                    Attributes = _propertyMetadataDictionaryProvider.GetMetadata(type),
+                })
+                .Where(x => x.Attributes.Any())
+                .ToDictionary(x => x.Type, x => x.Attributes)
+                .ToReadOnly();
         }
 
         public IPropertyMetadata GetMetadataFromObjectAttribute(

@@ -160,6 +160,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var attributeMetadataRetriever = new AttributeMetadataRetriever(
                 metadataSourceChecker,
                 attributePropertyMetadataBuilder,
+                propertyMetadataDictionaryProvider,
                 strainerAttributeProvider,
                 propertyInfoProvider);
 
@@ -167,8 +168,7 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                 metadataSourceTypeProvider,
                 metadataAssemblySourceProvider,
                 attributeMetadataRetriever,
-                strainerAttributeProvider,
-                propertyMetadataDictionaryProvider);
+                strainerAttributeProvider);
 
             var fluentApiMetadataProvider = new FluentApiMetadataProvider(
                 optionsProvider,

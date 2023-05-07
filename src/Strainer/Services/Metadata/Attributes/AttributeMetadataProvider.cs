@@ -9,49 +9,25 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
         private readonly IAttributeMetadataRetriever _attributeMetadataRetriever;
         private readonly IStrainerAttributeProvider _strainerAttributeProvider;
-        private readonly IPropertyMetadataDictionaryProvider _propertyMetadataDictionaryProvider;
 
         public AttributeMetadataProvider(
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
             IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
             IAttributeMetadataRetriever attributeMetadataRetriever,
-            IStrainerAttributeProvider strainerAttributeProvider,
-            IPropertyMetadataDictionaryProvider propertyMetadataDictionaryProvider)
+            IStrainerAttributeProvider strainerAttributeProvider)
         {
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
             _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
             _attributeMetadataRetriever = attributeMetadataRetriever ?? throw new ArgumentNullException(nameof(attributeMetadataRetriever));
             _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
-            _propertyMetadataDictionaryProvider = propertyMetadataDictionaryProvider ?? throw new ArgumentNullException(nameof(propertyMetadataDictionaryProvider));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
         {
             var assemblies = _metadataAssemblySourceProvider.GetAssemblies();
             var types = _metadataSourceTypeProvider.GetSourceTypes(assemblies);
-
-            var objectMetadatas = types
-                .Select(type => new
-                {
-                    Type = type,
-                    Attribute = _strainerAttributeProvider.GetObjectAttribute(type),
-                })
-                .Where(x => x.Attribute != null)
-                .Select(x => new
-                {
-                    x.Type,
-                    Metadatas = _propertyMetadataDictionaryProvider.GetMetadata(x.Type, x.Attribute),
-                })
-                .ToDictionary(x => x.Type, x => x.Metadatas);
-
-            var propertyMetadatas = types
-                .Select(type => new
-                {
-                    Type = type,
-                    Attributes = _propertyMetadataDictionaryProvider.GetMetadata(type),
-                })
-                .Where(x => x.Attributes.Any())
-                .ToDictionary(x => x.Type, x => x.Attributes);
+            var objectMetadatas = _attributeMetadataRetriever.GetMetadataDictionaryFromObjectAttributes(types);
+            var propertyMetadatas = _attributeMetadataRetriever.GetMetadataDictionaryFromPropertyAttributes(types);
 
             return objectMetadatas
                 .MergeLeft(propertyMetadatas)
