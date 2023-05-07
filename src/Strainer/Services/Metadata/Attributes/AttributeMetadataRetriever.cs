@@ -73,6 +73,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 return null;
             }
 
+            // TODO: Get properties from property provider.
             var attribute = modelType
                 .GetProperties()
                 .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
@@ -191,6 +192,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 return null;
             }
 
+            // TODO: Get properties from property provider.
             var keyValue = modelType
                 .GetProperties()
                 .Select(propertyInfo =>
@@ -259,6 +261,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 return null;
             }
 
+            // TODO: Get properties from property provider.
             var metadata = modelType
                 .GetProperties()
                 .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))

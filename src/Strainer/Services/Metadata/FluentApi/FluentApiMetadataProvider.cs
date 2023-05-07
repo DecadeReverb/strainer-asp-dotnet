@@ -174,6 +174,7 @@ namespace Fluorite.Strainer.Services.Metadata.FluentApi
 
         private IReadOnlyDictionary<string, IPropertyMetadata> GetPropertyMetadatasFromObjectMetadata(Type type, IObjectMetadata objectMetadata)
         {
+            // TODO: Get properties from property provider.
             return type
                 .GetProperties()
                 .Select(propertyInfo => BuildPropertyMetadataUsingPropertyInfo(propertyInfo, objectMetadata))
