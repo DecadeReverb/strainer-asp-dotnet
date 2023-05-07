@@ -2,8 +2,6 @@
 
 # Strainer
 
-[![CodeCov](https://codecov.io/gl/fluorite/strainer/branch/feature/code-coverage/graph/badge.svg)](https://app.codecov.io/gl/fluorite/strainer/)
-
 Strainer is a simple, clean and extensible framework based on .NET Standard that makes **sorting**, **filtering** and **pagination** trivial.
 
 **Note:** This project is a port of [Sieve](https://github.com/Biarity/Sieve) with its original author [Biarity](https://github.com/Biarity).
@@ -147,11 +145,11 @@ result = _strainerProcessor.ApplyPagination(strainerModel, result);
 You can use Fluent API instead of attributes to mark properties, objects and even more. Start with adding your own configuration module deriving from `StrainerModule`:
 
 ```cs
-public class ApplicationStrainerModule : StrainerModule
+public class ApplicationStrainerModule : StrainerModule<Post>
 {
-    public override void Load(IStrainerModuleBuilder builder)
+    public override void Load(IStrainerModuleBuilder<Post> builder)
     {
-        builder.AddProperty<Post>(p => p.Title)
+        builder.AddProperty(p => p.Title)
             .IsFilterable()
             .IsSortable();
     }
@@ -219,11 +217,11 @@ Strainer module loads via a builder allowing to add a property, object, addition
  - `StrainerModule<T>` - narrowed down module for adding rules only for `T`.
 
 ```cs
-public class AppStrainerModule : StrainerModule
+public class AppStrainerModule : StrainerModule<Post>
 {
-    public override void Load(IStrainerModuleBuilder builder)
+    public override void Load(IStrainerModuleBuilder<Post> builder)
     {
-        builder.AddProperty<Post>(p => p.Title)
+        builder.AddProperty(p => p.Title)
             .IsFilterable()
             .IsSortable();
     }
@@ -368,9 +366,9 @@ public class User {
 In order to filter by post author name, override `Load()` in your custom Strainer Module and provide expression leading to nested property:
 
 ```cs
-public override void Load(IStrainerModuleBuilder builder)
+public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddProperty<Post>(p => p.Author.Name)
+    builder.AddProperty(p => p.Author.Name)
         .IsFilterable();
 }
 ```
@@ -386,9 +384,9 @@ In order to add custom sort or filter methods, override appropriate mapping meth
 #### Custom filter methods
 
 ```cs
-public override void Load(IStrainerModuleBuilder builder)
+public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddCustomFilterMethod<Post>(nameof(IsPopular))
+    builder.AddCustomFilterMethod(nameof(IsPopular))
         .HasFunction(IsPopular);
 }
 
@@ -399,9 +397,9 @@ private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperato
 #### Custom sort methods
 
 ```cs
-public override void Load(IStrainerModuleBuilder builder)
+public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddCustomSortMethod<Post>(nameof(Popularity))
+    builder.AddCustomSortMethod(nameof(Popularity))
         .HasFunction(Popularity);
 }
 
@@ -452,7 +450,7 @@ Case-insensitive operators will force case insensitivity when comparing values e
 Same manner as marking properties you can add new filter operators:
 
 ```cs
-public override void Load(IStrainerModuleBuilder builder)
+public override void Load(IStrainerModuleBuilder<Post> builder)
 {
     builder.AddFilterOperator(symbol: "%")
         .HasName("modulo equal zero")
