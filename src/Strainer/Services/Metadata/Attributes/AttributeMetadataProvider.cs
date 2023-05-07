@@ -8,20 +8,20 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
         private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
         private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
         private readonly IAttributeMetadataRetriever _attributeMetadataRetriever;
-        private readonly IStrainerAttributeProvider _strainerObjectAttributeProvider;
+        private readonly IStrainerAttributeProvider _strainerAttributeProvider;
         private readonly IPropertyMetadataDictionaryProvider _propertyMetadataDictionaryProvider;
 
         public AttributeMetadataProvider(
             IMetadataSourceTypeProvider metadataSourceTypeProvider,
             IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
             IAttributeMetadataRetriever attributeMetadataRetriever,
-            IStrainerAttributeProvider strainerObjectAttributeProvider,
+            IStrainerAttributeProvider strainerAttributeProvider,
             IPropertyMetadataDictionaryProvider propertyMetadataDictionaryProvider)
         {
             _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
             _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
             _attributeMetadataRetriever = attributeMetadataRetriever ?? throw new ArgumentNullException(nameof(attributeMetadataRetriever));
-            _strainerObjectAttributeProvider = strainerObjectAttributeProvider ?? throw new ArgumentNullException(nameof(strainerObjectAttributeProvider));
+            _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
             _propertyMetadataDictionaryProvider = propertyMetadataDictionaryProvider ?? throw new ArgumentNullException(nameof(propertyMetadataDictionaryProvider));
         }
 
@@ -34,7 +34,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 .Select(type => new
                 {
                     Type = type,
-                    Attribute = _strainerObjectAttributeProvider.GetObjectAttribute(type),
+                    Attribute = _strainerAttributeProvider.GetObjectAttribute(type),
                 })
                 .Where(x => x.Attribute != null)
                 .Select(x => new
