@@ -7,16 +7,16 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.ExampleWebApi.Modules
 {
-    public class ExampleWebApiStrainerModule : StrainerModule
+    public class ExampleWebApiStrainerModule : StrainerModule<Post>
     {
-        public override void Load(IStrainerModuleBuilder builder)
+        public override void Load(IStrainerModuleBuilder<Post> builder)
         {
-            builder.AddCustomFilterMethod<Post>(nameof(IsNew))
+            builder.AddCustomFilterMethod(nameof(IsNew))
                 .HasFunction(IsNew);
-            builder.AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
+            builder.AddCustomFilterMethod(nameof(HasInTitleFilterOperator))
                 .HasFunction(HasInTitleFilterOperator);
 
-            builder.AddCustomSortMethod<Post>(nameof(Popularity))
+            builder.AddCustomSortMethod(nameof(Popularity))
                 .HasFunction(Popularity);
 
             builder.AddFilterOperator(symbol: "%")
@@ -25,11 +25,11 @@ namespace Fluorite.Strainer.ExampleWebApi.Modules
                     Expression.Modulo(context.PropertyValue, context.FilterValue),
                     Expression.Constant(0)));
 
-            builder.AddProperty<Post>(p => p.Comments.Count)
+            builder.AddProperty(p => p.Comments.Count)
                 .IsFilterable()
                 .IsSortable();
 
-            builder.AddProperty<Post>(p => p.LikeCount)
+            builder.AddProperty(p => p.LikeCount)
                 .IsFilterable()
                 .IsSortable()
                 .IsDefaultSort(isDescending: true);
