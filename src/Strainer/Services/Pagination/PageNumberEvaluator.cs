@@ -8,7 +8,7 @@ namespace Fluorite.Strainer.Services.Pagination
 
         public PageNumberEvaluator(IStrainerOptionsProvider strainerOptionsProvider)
         {
-            _strainerOptionsProvider = strainerOptionsProvider;
+            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
         }
 
         public int Evaluate(IStrainerModel model)
