@@ -15,7 +15,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             Action action = () => _ = new StrainerPipeline(operations: null);
 
             // Assert
-            action.Should().Throw<ArgumentNullException>();
+            action.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             Action action = () => pipeline.Run(model: null, source, context);
 
             // Assert
-            action.Should().Throw<ArgumentNullException>();
+            action.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             Action action = () => pipeline.Run<Uri>(model, source: null, context);
 
             // Assert
-            action.Should().Throw<ArgumentNullException>();
+            action.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             Action action = () => pipeline.Run(model, source, context: null);
 
             // Assert
-            action.Should().Throw<ArgumentNullException>();
+            action.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
@@ -171,7 +171,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             Action act = () => pipeline.Run(model, source, contextMock.Object);
 
             // Assert
-            act.Should().Throw<StrainerException>();
+            act.Should().ThrowExactly<StrainerException>();
         }
     }
 }

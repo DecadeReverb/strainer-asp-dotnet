@@ -37,7 +37,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
 
@@ -56,7 +56,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
 
@@ -75,7 +75,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
 
@@ -94,7 +94,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*expression*");
         }
 
@@ -121,7 +121,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperators);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
     }
