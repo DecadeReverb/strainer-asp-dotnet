@@ -1,4 +1,5 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
 using Moq;
@@ -7,58 +8,82 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortTermParserTests
     {
-        [Fact]
-        public void Parser_Returns_NoSortTerm_When_Input_Is_Null()
-        {
-            // Arrange
-            string input = null;
-            var optionsProviderMock = new Mock<IStrainerOptionsProvider>();
-            optionsProviderMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var formatter = new DescendingPrefixSortingWayFormatter();
-            var parser = new SortTermParser(formatter, optionsProviderMock.Object);
+        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
+        private readonly Mock<ISortingWayFormatter> _sortingWayFormatterMock = new();
+        private readonly Mock<ISortTermValueParser> _sortTermValueParserMock = new();
 
+        private readonly SortTermParser _parser;
+
+        public SortTermParserTests()
+        {
+            _parser = new SortTermParser(
+                _sortingWayFormatterMock.Object,
+                _strainerOptionsProviderMock.Object,
+                _sortTermValueParserMock.Object);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void Parser_Returns_NoSortTerm_When_InputIsNullOrEmpty(string input)
+        {
             // Act
-            var sortTermList = parser.GetParsedTerms(input);
+            var sortTermList = _parser.GetParsedTerms(input);
 
             // Assert
+            sortTermList.Should().NotBeNull();
             sortTermList.Should().BeEmpty();
         }
 
         [Fact]
-        public void Parser_Returns_No_SortTerm_When_Input_Is_Empty()
+        public void Parser_Returns_NoSortTerms_WhenValueParserReturnsNoValues()
         {
             // Arrange
-            var input = string.Empty;
-            var optionsProviderMock = new Mock<IStrainerOptionsProvider>();
-            optionsProviderMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var formatter = new DescendingPrefixSortingWayFormatter();
-            var parser = new SortTermParser(formatter, optionsProviderMock.Object);
+            var input = " ";
+
+            _sortTermValueParserMock
+                .Setup(x => x.GetParsedValues(input))
+                .Returns(Array.Empty<string>());
 
             // Act
-            var sortTermList = parser.GetParsedTerms(input);
+            var sortTermList = _parser.GetParsedTerms(input);
 
             // Assert
+            sortTermList.Should().NotBeNull();
             sortTermList.Should().BeEmpty();
         }
 
         [Fact]
-        public void Parser_Returns_NoSortTerm_When_Input_Is_OnlyWhitespace()
+        public void Parser_Returns_SortTerms()
         {
             // Arrange
-            var input = string.Empty;
-            var optionsProviderMock = new Mock<IStrainerOptionsProvider>();
-            optionsProviderMock.Setup(provider => provider.GetStrainerOptions())
+            var input = "foo";
+            var parsedInput = "parsed";
+            var formattedValue = "bar";
+            var sortingWay = SortingWay.Descending;
+
+            _sortTermValueParserMock
+                .Setup(x => x.GetParsedValues(input))
+                .Returns(new[] { parsedInput });
+            _sortingWayFormatterMock
+                .Setup(x => x.GetSortingWay(parsedInput))
+                .Returns(sortingWay);
+            _sortingWayFormatterMock
+                .Setup(x => x.Unformat(parsedInput, sortingWay))
+                .Returns(formattedValue);
+            _strainerOptionsProviderMock.Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions());
-            var formatter = new DescendingPrefixSortingWayFormatter();
-            var parser = new SortTermParser(formatter, optionsProviderMock.Object);
 
             // Act
-            var sortTermList = parser.GetParsedTerms(input);
+            var sortTermList = _parser.GetParsedTerms(input);
 
             // Assert
-            sortTermList.Should().BeEmpty();
+            sortTermList.Should().NotBeNullOrEmpty();
+            sortTermList.Should().HaveCount(1);
+            sortTermList.First().Should().NotBeNull();
+            sortTermList.First().Input.Should().Be(parsedInput);
+            sortTermList.First().IsDescending.Should().Be(sortingWay == SortingWay.Descending);
+            sortTermList.First().Name.Should().Be(formattedValue);
         }
     }
 }

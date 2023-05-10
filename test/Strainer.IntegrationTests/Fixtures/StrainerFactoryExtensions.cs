@@ -19,7 +19,9 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
                     customSortingWayFormatter,
                     new SortTermParser(
                         customSortingWayFormatter,
-                        factory.CreateOptionsProvider()));
+                        factory.CreateOptionsProvider(),
+                        context.Sorting.TermValueParser),
+                    context.Sorting.TermValueParser);
                 var newContext = new StrainerContext(
                     context.CustomMethods,
                     factory.CreateOptionsProvider(),

@@ -11,5 +11,7 @@ namespace Fluorite.Strainer.Services.Sorting
         ISortingWayFormatter Formatter { get; }
 
         ISortTermParser TermParser { get; }
+
+        ISortTermValueParser TermValueParser { get; }
     }
 }

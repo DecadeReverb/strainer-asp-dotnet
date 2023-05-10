@@ -201,14 +201,16 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
             var sortExpressionProvider = new SortExpressionProvider(metadataFacade);
             var sortExpressionValidator = new SortExpressionValidator();
             var sortingWayFormatter = new DescendingPrefixSortingWayFormatter();
-            var sortTermParser = new SortTermParser(sortingWayFormatter, optionsProvider);
+            var sortTermValueParser = new SortTermValueParser();
+            var sortTermParser = new SortTermParser(sortingWayFormatter, optionsProvider, sortTermValueParser);
             var customSortingApplier = new CustomSortingApplier(configurationCustomFilterMethodsProvider);
             var sortingApplier = new SortingApplier(customSortingApplier);
             var sortingContext = new SortingContext(
                 sortExpressionProvider,
                 sortExpressionValidator,
                 sortingWayFormatter,
-                sortTermParser);
+                sortTermParser,
+                sortTermValueParser);
 
             var pageNumberEvaluator = new PageNumberEvaluator(optionsProvider);
             var filterPipelineOperation = new FilterPipelineOperation();
