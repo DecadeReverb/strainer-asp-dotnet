@@ -85,7 +85,8 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
             {
                 strainerModuleBuilder
                     .AddProperty<Post>(p => p.Comment.Id)
-                    .IsSortable();
+                    .IsSortable()
+                    .IsDefaultSort();
                 strainerModuleBuilder
                     .AddProperty<Post>(p => p.Comment.Text)
                     .IsSortable();

@@ -194,7 +194,9 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
 
                 builder
                     .AddProperty<Post>(p => p.LikeCount)
-                    .IsFilterable();
+                    .IsFilterable()
+                    .IsSortable()
+                    .IsDefaultSort();
 
                 builder
                     .AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
