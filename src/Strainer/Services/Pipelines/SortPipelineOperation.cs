@@ -7,10 +7,17 @@ namespace Fluorite.Strainer.Services.Pipelines
     public class SortPipelineOperation : ISortPipelineOperation, IStrainerPipelineOperation
     {
         private readonly ISortingApplier _sortingApplier;
+        private readonly ISortTermParser _sortTermParser;
+        private readonly ISortExpressionProvider _sortExpressionProvider;
 
-        public SortPipelineOperation(ISortingApplier sortingApplier)
+        public SortPipelineOperation(
+            ISortingApplier sortingApplier,
+            ISortTermParser sortTermParser,
+            ISortExpressionProvider sortExpressionProvider)
         {
             _sortingApplier = sortingApplier;
+            _sortTermParser = sortTermParser;
+            _sortExpressionProvider = sortExpressionProvider;
         }
 
         public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
@@ -25,14 +32,19 @@ namespace Fluorite.Strainer.Services.Pipelines
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var parsedTerms = context.Sorting.TermParser.GetParsedTerms(model.Sorts);
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var parsedTerms = _sortTermParser.GetParsedTerms(model.Sorts);
             var isSortingApplied = _sortingApplier.TryApplySorting(context, parsedTerms, source, out var sortedSource);
             if (isSortingApplied)
             {
                 return sortedSource;
             }
 
-            var defaultSortExpression = context.Sorting.ExpressionProvider.GetDefaultExpression<T>();
+            var defaultSortExpression = _sortExpressionProvider.GetDefaultExpression<T>();
             if (defaultSortExpression != null)
             {
                 return source.OrderWithSortExpression(defaultSortExpression);
