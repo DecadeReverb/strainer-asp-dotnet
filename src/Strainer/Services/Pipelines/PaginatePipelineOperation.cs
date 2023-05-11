@@ -28,6 +28,11 @@ namespace Fluorite.Strainer.Services.Pipelines
                 throw new ArgumentNullException(nameof(source));
             }
 
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var page = _pageNumberEvaluator.Evaluate(model);
             var pageSize = _pageSizeEvaluator.Evaluate(model);
 
