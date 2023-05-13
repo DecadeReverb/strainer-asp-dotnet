@@ -7,11 +7,11 @@ namespace Fluorite.Strainer.Services.Pipelines
 {
     public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipelineOperation
     {
-        private readonly ICustomFilteringApplier _customFilteringApplier;
+        private readonly ICustomFilteringExpressionProvider _customFilteringExpressionProvider;
 
-        public FilterPipelineOperation(ICustomFilteringApplier customFilteringApplier)
+        public FilterPipelineOperation(ICustomFilteringExpressionProvider customFilteringExpressionProvider)
         {
-            _customFilteringApplier = customFilteringApplier;
+            _customFilteringExpressionProvider = customFilteringExpressionProvider;
         }
 
         public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
@@ -52,10 +52,15 @@ namespace Fluorite.Strainer.Services.Pipelines
                         }
                         else
                         {
-                            var isCustomFilteringApplied = _customFilteringApplier.TryApplyCustomFiltering(source, filterTerm, filterTermName, out var filteredSource);
-                            if (isCustomFilteringApplied)
+                            if (_customFilteringExpressionProvider.TryGetCustomExpression<T>(filterTerm, filterTermName, out var customExpression))
                             {
-                                source = filteredSource;
+                                source = source.Where(customExpression);
+                            }
+                            else
+                            {
+                                throw new StrainerMethodNotFoundException(
+                                    filterTermName,
+                                    $"Property or custom filter method '{filterTermName}' was not found.");
                             }
                         }
                     }

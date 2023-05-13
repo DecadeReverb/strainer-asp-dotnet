@@ -1,5 +1,4 @@
-﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Exceptions;
+﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Configuration;
@@ -7,37 +6,34 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
-    public class CustomSortingApplier : ICustomSortingApplier
+    public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
     {
         private readonly IConfigurationCustomMethodsProvider _configurationCustomMethodsProvider;
 
-        public CustomSortingApplier(IConfigurationCustomMethodsProvider configurationCustomMethodsProvider)
+        public CustomSortingExpressionProvider(IConfigurationCustomMethodsProvider configurationCustomMethodsProvider)
         {
             _configurationCustomMethodsProvider = configurationCustomMethodsProvider;
         }
 
-        public bool TryApplyCustomSorting<T>(
+        public bool TryGetCustomExpression<T>(
             ISortTerm sortTerm,
             bool isSubsequent,
-            IQueryable<T> source,
-            out IQueryable<T> sortedSource)
+            out ISortExpression<T> sortExpression)
         {
             if (!TryGetCustomSortingMethod<T>(sortTerm, out var customMethod))
             {
-                throw new StrainerMethodNotFoundException(
-                    sortTerm.Name,
-                    $"Property or custom sorting method '{sortTerm.Name}' was not found.");
+                sortExpression = null;
+
+                return false;
             }
 
             var expression = GetExpression(sortTerm, customMethod as ICustomSortMethod<T>);
-            var sortExpression = new SortExpression<T>
+            sortExpression = new SortExpression<T>
             {
                 Expression = expression,
                 IsDescending = sortTerm.IsDescending,
                 IsSubsequent = isSubsequent,
             };
-
-            sortedSource = source.OrderWithSortExpression(sortExpression);
 
             return true;
         }

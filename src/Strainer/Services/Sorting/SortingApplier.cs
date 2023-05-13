@@ -6,11 +6,11 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortingApplier : ISortingApplier
     {
-        private readonly ICustomSortingApplier _customSortingApplier;
+        private readonly ICustomSortingExpressionProvider _customSortingExpressionProvider;
 
-        public SortingApplier(ICustomSortingApplier customSortingApplier)
+        public SortingApplier(ICustomSortingExpressionProvider customSortingExpressionProvider)
         {
-            _customSortingApplier = customSortingApplier;
+            _customSortingExpressionProvider = customSortingExpressionProvider;
         }
 
         public bool TryApplySorting<T>(IStrainerContext context, IList<ISortTerm> sortTerms, IQueryable<T> source, out IQueryable<T> sortedSource)
@@ -39,7 +39,17 @@ namespace Fluorite.Strainer.Services.Sorting
                 {
                     try
                     {
-                        isSortingApplied = _customSortingApplier.TryApplyCustomSorting(sortTerm, isSubsequent, sortedSource, out sortedSource);
+                        if (!_customSortingExpressionProvider.TryGetCustomExpression<T>(sortTerm, isSubsequent, out var sortExpression))
+                        {
+                            throw new StrainerMethodNotFoundException(
+                                sortTerm.Name,
+                                $"Property or custom sorting method '{sortTerm.Name}' was not found.");
+                        }
+                        else
+                        {
+                            sortedSource = sortedSource.OrderWithSortExpression(sortExpression);
+                            isSortingApplied = true;
+                        }
                     }
                     catch (StrainerException) when (!context.Options.ThrowExceptions)
                     {
