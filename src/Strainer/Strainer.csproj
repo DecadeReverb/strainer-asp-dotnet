@@ -11,7 +11,7 @@
     </Description>
     <Copyright>Copyright 2022</Copyright>
     <PackageTags>strainer,sorting,filtering,pagination,fluorite</PackageTags>
-	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://gitlab.com/fluorite/strainer</PackageProjectUrl>
     <PackageIconUrl>https://gitlab.com/fluorite/assets/raw/master/img/logo/png/fluorite-logo-transparent-bg-64.png</PackageIconUrl>
     <RepositoryUrl>https://gitlab.com/fluorite/strainer</RepositoryUrl>
