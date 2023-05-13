@@ -1,13 +1,19 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Filtering.Terms;
+using Fluorite.Strainer.Services.Filtering;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Pipelines
 {
     public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipelineOperation
     {
+        private readonly ICustomFilteringApplier _customFilteringApplier;
+
+        public FilterPipelineOperation(ICustomFilteringApplier customFilteringApplier)
+        {
+            _customFilteringApplier = customFilteringApplier;
+        }
+
         public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
         {
             if (model == null)
@@ -30,7 +36,7 @@ namespace Fluorite.Strainer.Services.Pipelines
             var parameterExpression = Expression.Parameter(typeof(T), "e");
             foreach (var filterTerm in parsedTerms)
             {
-                Expression innerExpression = null;
+                Expression termExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
                     var metadata = context.Metadata.GetMetadata<T>(
@@ -42,22 +48,14 @@ namespace Fluorite.Strainer.Services.Pipelines
                     {
                         if (metadata != null)
                         {
-                            innerExpression = context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression);
+                            termExpression = context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, termExpression);
                         }
                         else
                         {
-                            if (context.CustomMethods.GetCustomFilterMethods().TryGetValue(typeof(T), out var customFilterMethods)
-                                && customFilterMethods.TryGetValue(filterTermName, out var customMethod))
+                            var isCustomFilteringApplied = _customFilteringApplier.TryApplyCustomFiltering(source, filterTerm, filterTermName, out var filteredSource);
+                            if (isCustomFilteringApplied)
                             {
-                                var filterExpression = GetExpression(filterTerm, customMethod as ICustomFilterMethod<T>);
-
-                                source = source.Where(filterExpression);
-                            }
-                            else
-                            {
-                                throw new StrainerMethodNotFoundException(
-                                    filterTermName,
-                                    $"Property or custom filter method '{filterTermName}' was not found.");
+                                source = filteredSource;
                             }
                         }
                     }
@@ -67,18 +65,18 @@ namespace Fluorite.Strainer.Services.Pipelines
                     }
                 }
 
+                if (termExpression == null)
+                {
+                    continue;
+                }
+
                 if (outerExpression == null)
                 {
-                    outerExpression = innerExpression;
+                    outerExpression = termExpression;
                     continue;
                 }
 
-                if (innerExpression == null)
-                {
-                    continue;
-                }
-
-                outerExpression = Expression.And(outerExpression, innerExpression);
+                outerExpression = Expression.And(outerExpression, termExpression);
             }
 
             if (outerExpression == null)
@@ -86,14 +84,9 @@ namespace Fluorite.Strainer.Services.Pipelines
                 return source;
             }
 
-            return source.Where(Expression.Lambda<Func<T, bool>>(outerExpression, parameterExpression));
-        }
+            var lambdaExpression = Expression.Lambda<Func<T, bool>>(outerExpression, parameterExpression);
 
-        private Expression<Func<T, bool>> GetExpression<T>(IFilterTerm filterTerm, ICustomFilterMethod<T> customFilterMethod)
-        {
-            return customFilterMethod.FilterTermExpression is not null
-                ? customFilterMethod.FilterTermExpression(filterTerm)
-                : customFilterMethod.Expression;
+            return source.Where(lambdaExpression);
         }
     }
 }

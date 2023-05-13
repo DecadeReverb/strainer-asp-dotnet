@@ -185,6 +185,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IFilterTermValuesParser, FilterTermValuesParser>(serviceLifetime);
             services.Add<IFilterTermSectionsParser, FilterTermSectionsParser>(serviceLifetime);
             services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
+            services.Add<ICustomFilteringApplier, CustomFilteringApplier>(serviceLifetime);
             services.Add<IFilterContext, FilterContext>(serviceLifetime);
 
             services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
