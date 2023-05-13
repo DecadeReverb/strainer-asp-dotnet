@@ -1,4 +1,7 @@
-﻿namespace Fluorite.Strainer.Models.Filtering
+﻿using Fluorite.Strainer.Models.Filtering.Terms;
+using System.Linq.Expressions;
+
+namespace Fluorite.Strainer.Models.Filtering
 {
     /// <summary>
     /// Represents custom filter method.
@@ -9,8 +12,13 @@
     public interface ICustomFilterMethod<T> : ICustomFilterMethod
     {
         /// <summary>
-        /// Gets the function used for custom filtering.
+        /// Gets the expression used for custom filtering.
         /// </summary>
-        Func<IQueryable<T>, string, IQueryable<T>> Function { get; }
+        Expression<Func<T, bool>> Expression { get; }
+
+        /// <summary>
+        /// Gets the expression used for custom filtering.
+        /// </summary>
+        Func<IFilterTerm, Expression<Func<T, bool>>> FilterTermExpression { get; }
     }
 }

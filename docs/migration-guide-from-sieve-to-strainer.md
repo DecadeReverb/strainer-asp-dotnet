@@ -128,24 +128,13 @@ public class ApplicationStrainerModule : StrainerModule<Post>
 {
     public override void Load(IStrainerModuleBuilder<Post> builder)
     {
-            builder.AddCustomSortMethod(nameof(Popularity))
-                .HasFunction(Popularity);
-    }
-
-    private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-    {
-        var result = isSubsequent
-                ? ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount)
-                : source.OrderBy(p => p.LikeCount)
-            .ThenBy(p => p.CommentCount)
-            .ThenBy(p => p.DateCreated);
-
-        return result;
+            builder.AddCustomSortMethod("Popularity")
+                .HasFunction(p => p.LikeCount);
     }
 }
 ```
 
-In the code snippet above, a custom sorting method for `Post` entity is added with a name _"Popularity"_ and a sorting function. Although `HasFunction()` method requires an argument of `Func<T>`, you can easily provide a whole method which returns an `IQueryable` and has fitting parameters. In that way you can seperete your sorting logic in a dedicated method which can be made private.
+In the code snippet above, a custom sorting method for `Post` entity is added with a name _"Popularity"_ and a sorting function.
 
 ### Object-level attribute
 

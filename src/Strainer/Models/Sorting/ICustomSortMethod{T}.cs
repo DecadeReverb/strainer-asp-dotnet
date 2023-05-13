@@ -1,4 +1,7 @@
-﻿namespace Fluorite.Strainer.Models.Sorting
+﻿using Fluorite.Strainer.Models.Sorting.Terms;
+using System.Linq.Expressions;
+
+namespace Fluorite.Strainer.Models.Sorting
 {
     /// <summary>
     /// Represents custom sort method.
@@ -11,6 +14,11 @@
         /// <summary>
         /// Gets the function used for custom sorting.
         /// </summary>
-        Func<IQueryable<T>, bool, bool, IQueryable<T>> Function { get; }
+        Expression<Func<T, object>> Expression { get; }
+
+        /// <summary>
+        /// Gets the function used for custom sorting.
+        /// </summary>
+        Func<ISortTerm, Expression<Func<T, object>>> SortTermExpression { get; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Terms;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
@@ -23,20 +25,33 @@ namespace Fluorite.Strainer.Services.Filtering
             Name = name;
         }
 
-        protected Func<IQueryable<TEntity>, string, IQueryable<TEntity>> Function { get; set; }
+        protected Expression<Func<TEntity, bool>> Expression { get; set; }
+
+        protected Func<IFilterTerm, Expression<Func<TEntity, bool>>> FilterTermExpression { get; set; }
 
         protected string Name { get; set; }
 
         public ICustomFilterMethod<TEntity> Build() => new CustomFilterMethod<TEntity>
         {
-            Function = Function,
+            Expression = Expression,
+            FilterTermExpression = FilterTermExpression,
             Name = Name,
         };
 
         public ICustomFilterMethodBuilder<TEntity> HasFunction(
-            Func<IQueryable<TEntity>, string, IQueryable<TEntity>> function)
+            Expression<Func<TEntity, bool>> expression)
         {
-            Function = function ?? throw new ArgumentNullException(nameof(function));
+            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+
+            Save(Build());
+
+            return this;
+        }
+
+        public ICustomFilterMethodBuilder<TEntity> HasFunction(
+            Func<IFilterTerm, Expression<Func<TEntity, bool>>> filterTermExpression)
+        {
+            FilterTermExpression = filterTermExpression ?? throw new ArgumentNullException(nameof(filterTermExpression));
 
             Save(Build());
 

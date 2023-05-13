@@ -1,6 +1,7 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Terms;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Pipelines
@@ -48,7 +49,9 @@ namespace Fluorite.Strainer.Services.Pipelines
                             if (context.CustomMethods.GetCustomFilterMethods().TryGetValue(typeof(T), out var customFilterMethods)
                                 && customFilterMethods.TryGetValue(filterTermName, out var customMethod))
                             {
-                                source = (customMethod as ICustomFilterMethod<T>).Function(source, filterTerm.Operator?.Symbol);
+                                var filterExpression = GetExpression(filterTerm, customMethod as ICustomFilterMethod<T>);
+
+                                source = source.Where(filterExpression);
                             }
                             else
                             {
@@ -84,6 +87,13 @@ namespace Fluorite.Strainer.Services.Pipelines
             }
 
             return source.Where(Expression.Lambda<Func<T, bool>>(outerExpression, parameterExpression));
+        }
+
+        private Expression<Func<T, bool>> GetExpression<T>(IFilterTerm filterTerm, ICustomFilterMethod<T> customFilterMethod)
+        {
+            return customFilterMethod.FilterTermExpression is not null
+                ? customFilterMethod.FilterTermExpression(filterTerm)
+                : customFilterMethod.Expression;
         }
     }
 }

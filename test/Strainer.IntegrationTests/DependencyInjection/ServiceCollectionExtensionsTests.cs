@@ -130,21 +130,11 @@ namespace Fluorite.Strainer.IntegrationTests.DependencyInjection
                     .HasName("hash")
                     .HasExpression(context => Expression.Constant(true));
 
-                builder.AddCustomFilterMethod<Post>(nameof(TestCustomFilterMethod))
-                    .HasFunction(TestCustomFilterMethod);
+                builder.AddCustomFilterMethod<Post>("TestCustomFilterMethod")
+                    .HasFunction(post => post.Id == 1);
 
-                builder.AddCustomSortMethod<Post>(nameof(TestCustomSortMethod))
-                    .HasFunction(TestCustomSortMethod);
-            }
-
-            public IQueryable<Post> TestCustomSortMethod(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-            {
-                return source.OrderBy(post => post.Id);
-            }
-
-            public IQueryable<Post> TestCustomFilterMethod(IQueryable<Post> source, string filterOperator)
-            {
-                return source.Where(post => post.Id == 1);
+                builder.AddCustomSortMethod<Post>("TestCustomSortMethod")
+                    .HasFunction(post => post.Id);
             }
         }
     }

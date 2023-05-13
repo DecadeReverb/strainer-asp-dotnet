@@ -1,4 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
+using Fluorite.Strainer.Models.Sorting.Terms;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
@@ -6,7 +8,8 @@ namespace Fluorite.Strainer.Services.Sorting
     {
         ICustomSortMethod<TEntity> Build();
 
-        ICustomSortMethodBuilder<TEntity> HasFunction(
-            Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> function);
+        ICustomSortMethodBuilder<TEntity> HasFunction(Expression<Func<TEntity, object>> expression);
+
+        ICustomSortMethodBuilder<TEntity> HasFunction(Func<ISortTerm, Expression<Func<TEntity, object>>> sortTermExpression);
     }
 }

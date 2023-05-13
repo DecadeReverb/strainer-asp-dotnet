@@ -386,12 +386,9 @@ In order to add custom sort or filter methods, override appropriate mapping meth
 ```cs
 public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddCustomFilterMethod(nameof(IsPopular))
-        .HasFunction(IsPopular);
+    builder.AddCustomFilterMethod("IsPopular")
+        .HasFunction(p => p.LikeCount < 10);
 }
-
-private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperator)
-    => source.Where(p => p.LikeCount < 10);
 ```
 
 #### Custom sort methods
@@ -399,16 +396,8 @@ private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperato
 ```cs
 public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddCustomSortMethod(nameof(Popularity))
-        .HasFunction(Popularity);
-}
-
-private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-{
-    return isSubsequent
-        ? (source as IOrderedQueryable<Post>).ThenByDescending(p => p.LikeCount)
-        : source.OrderByDescending(p => p.LikeCount)
-            .ThenByDescending(p => p.DateCreated);
+    builder.AddCustomSortMethod("Popularity")
+        .HasFunction(p => p.LikeCount);
 }
 ```
 

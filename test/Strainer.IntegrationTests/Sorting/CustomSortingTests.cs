@@ -38,16 +38,13 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
             }.AsQueryable();
             var model = new StrainerModel()
             {
-                Sorts = "Popularity",
+                Sorts = "-Popularity",
             };
             var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
             // Act
             var result = processor.Apply(model, queryable);
-            var customSortResult = queryable
-                .OrderByDescending(p => p.LikeCount)
-                .ThenByDescending(p => p.CommentCount)
-                .ThenByDescending(p => p.DateCreated);
+            var customSortResult = queryable.OrderByDescending(p => p.LikeCount);
 
             // Assert
             result.Should().HaveSameCount(queryable);
@@ -68,21 +65,13 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
             public override void Load(IStrainerModuleBuilder<Post> builder)
             {
                 builder
-                    .AddCustomSortMethod(nameof(Popularity))
-                    .HasFunction(Popularity);
-            }
-
-            private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-            {
-                return isSubsequent
-                    ? (source as IOrderedQueryable<Post>)
-                        .ThenByDescending(p => p.LikeCount)
-                        .ThenByDescending(p => p.CommentCount)
-                        .ThenByDescending(p => p.DateCreated)
-                    : source
-                        .OrderByDescending(p => p.LikeCount)
-                        .ThenByDescending(p => p.CommentCount)
-                        .ThenByDescending(p => p.DateCreated);
+                    .AddCustomSortMethod("Popularity")
+                    .HasFunction(term =>
+                    {
+                        return term.IsDescending
+                            ? (p => p.LikeCount)
+                            : (p => p.CommentCount);
+                    });
             }
         }
     }

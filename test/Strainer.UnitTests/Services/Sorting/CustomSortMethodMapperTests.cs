@@ -11,9 +11,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             // Arrange
             var customSortMethod = new CustomSortMethod<Uri>
             {
-                Function = (source, isDescending, isSubsequent) => source
-                    .OrderBy(uri => uri.Port)
-                    .ThenBy(uri => uri.Host),
+                Expression = uri => uri.Port,
                 Name = "PortThenHost",
             };
             var mapper = new CustomSortMethodMapper();

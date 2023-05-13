@@ -1,4 +1,7 @@
-﻿namespace Fluorite.Strainer.Models.Filtering
+﻿using Fluorite.Strainer.Models.Filtering.Terms;
+using System.Linq.Expressions;
+
+namespace Fluorite.Strainer.Models.Filtering
 {
     /// <summary>
     /// Represents custom filter method.
@@ -18,8 +21,13 @@
         }
 
         /// <summary>
-        /// Gets or sets the function used for custom filtering.
+        /// Gets or sets the expression used for custom filtering.
         /// </summary>
-        public Func<IQueryable<T>, string, IQueryable<T>> Function { get; set; }
+        public Expression<Func<T, bool>> Expression { get; set; }
+
+        /// <summary>
+        /// Gets or sets the expression used for custom filtering.
+        /// </summary>
+        public Func<IFilterTerm, Expression<Func<T, bool>>> FilterTermExpression { get; set; }
     }
 }

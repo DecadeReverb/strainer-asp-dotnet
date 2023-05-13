@@ -11,7 +11,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             // Arrange
             var customFilterMethod = new CustomFilterMethod<Uri>
             {
-                Function = (source, filterOperator) => source.Where(uri => uri.Port == 443),
+                Expression = (uri) => uri.Port == 443,
                 Name = "HTTPS",
             };
             var mapper = new CustomFilterMethodMapper();
