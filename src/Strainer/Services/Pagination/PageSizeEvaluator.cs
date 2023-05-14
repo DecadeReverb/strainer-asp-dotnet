@@ -8,18 +8,22 @@ namespace Fluorite.Strainer.Services.Pagination
 
         public PageSizeEvaluator(IStrainerOptionsProvider strainerOptionsProvider)
         {
-            _strainerOptionsProvider = strainerOptionsProvider;
+            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
         }
 
         public int Evaluate(IStrainerModel model)
         {
+            if (model is null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
             var options = _strainerOptionsProvider.GetStrainerOptions();
             var pageSize = model.PageSize ?? options.DefaultPageSize;
-            var maxPageSize = options.MaxPageSize > 0
-                ? options.MaxPageSize
-                : pageSize;
 
-            return Math.Min(pageSize, maxPageSize);
+            return options.MaxPageSize > 0
+                ? Math.Min(pageSize, options.MaxPageSize)
+                : pageSize;
         }
     }
 }
