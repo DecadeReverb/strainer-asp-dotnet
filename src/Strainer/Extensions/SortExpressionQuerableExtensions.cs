@@ -40,22 +40,23 @@ namespace Fluorite.Extensions
                 throw new ArgumentNullException(nameof(sortExpression));
             }
 
-            if (sortExpression.IsDescending)
+            if (sortExpression.IsSubsequent)
             {
-                if (sortExpression.IsSubsequent)
+                var orderedSource = source as IOrderedQueryable<TEntity>;
+                if (sortExpression.IsDescending)
                 {
-                    return (source as IOrderedQueryable<TEntity>).ThenByDescending(sortExpression.Expression);
+                    return orderedSource.ThenByDescending(sortExpression.Expression);
                 }
                 else
                 {
-                    return source.OrderByDescending(sortExpression.Expression);
+                    return orderedSource.ThenBy(sortExpression.Expression);
                 }
             }
             else
             {
-                if (sortExpression.IsSubsequent)
+                if (sortExpression.IsDescending)
                 {
-                    return (source as IOrderedQueryable<TEntity>).ThenBy(sortExpression.Expression);
+                    return source.OrderByDescending(sortExpression.Expression);
                 }
                 else
                 {
