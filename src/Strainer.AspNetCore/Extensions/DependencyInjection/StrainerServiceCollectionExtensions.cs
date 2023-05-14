@@ -48,7 +48,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
@@ -91,7 +91,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             Assembly[] assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -140,7 +140,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IReadOnlyCollection<Type> moduleTypes,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -254,10 +254,10 @@ namespace Fluorite.Extensions.DependencyInjection
                 }
             });
 
-            return new StrainerBuilder(services, serviceLifetime);
+            return services;
         }
 
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -308,7 +308,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
             IReadOnlyCollection<Type> moduleTypes,
@@ -372,7 +372,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
             Assembly[] assembliesToScan,
@@ -426,7 +426,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -477,7 +477,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
             IReadOnlyCollection<Type> moduleTypes,
@@ -541,7 +541,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
             Assembly[] assembliesToScan,
