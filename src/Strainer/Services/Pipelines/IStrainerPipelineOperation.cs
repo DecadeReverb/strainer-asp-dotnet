@@ -4,6 +4,6 @@ namespace Fluorite.Strainer.Services.Pipelines
 {
     public interface IStrainerPipelineOperation
     {
-        IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context);
+        IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source);
     }
 }

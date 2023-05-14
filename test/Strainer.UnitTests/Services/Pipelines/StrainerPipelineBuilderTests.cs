@@ -10,6 +10,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         private readonly Mock<IFilterPipelineOperation> _filterPipelineOperationMock = new();
         private readonly Mock<ISortPipelineOperation> _sortPipelineOperationMock = new();
         private readonly Mock<IPaginatePipelineOperation> _paginatePipelineOperationMock = new();
+        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
 
         private readonly StrainerPipelineBuilder _builder;
 
@@ -18,7 +19,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             _builder = new StrainerPipelineBuilder(
                 _filterPipelineOperationMock.Object,
                 _sortPipelineOperationMock.Object,
-                _paginatePipelineOperationMock.Object);
+                _paginatePipelineOperationMock.Object,
+                _strainerOptionsProviderMock.Object);
         }
 
         [Fact]
@@ -37,16 +39,15 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             // Arrange
             var query = new List<string> { "foo" }.AsQueryable();
             var model = Mock.Of<IStrainerModel>();
-            var context = Mock.Of<IStrainerContext>();
 
             _filterPipelineOperationMock
-                .Setup(x => x.Execute(model, query, context))
+                .Setup(x => x.Execute(model, query))
                 .Returns(query);
             _sortPipelineOperationMock
-                .Setup(x => x.Execute(model, query, context))
+                .Setup(x => x.Execute(model, query))
                 .Returns(query);
             _paginatePipelineOperationMock
-                .Setup(x => x.Execute(model, query, context))
+                .Setup(x => x.Execute(model, query))
                 .Returns(query);
 
             // Act
@@ -60,14 +61,14 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             pipeline.Should().NotBeNull();
 
             // Act
-            var resultQuery = pipeline.Run(model, query, context);
+            var resultQuery = pipeline.Run(model, query);
 
             // Assert
             resultQuery.Should().NotBeNull();
             resultQuery.Should().BeSameAs(query);
-            _filterPipelineOperationMock.Verify(x => x.Execute(model, query, context), Times.Once);
-            _sortPipelineOperationMock.Verify(x => x.Execute(model, query, context), Times.Once);
-            _paginatePipelineOperationMock.Verify(x => x.Execute(model, query, context), Times.Once);
+            _filterPipelineOperationMock.Verify(x => x.Execute(model, query), Times.Once);
+            _sortPipelineOperationMock.Verify(x => x.Execute(model, query), Times.Once);
+            _paginatePipelineOperationMock.Verify(x => x.Execute(model, query), Times.Once);
         }
     }
 }

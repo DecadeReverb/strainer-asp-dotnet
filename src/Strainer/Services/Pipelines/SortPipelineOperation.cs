@@ -20,7 +20,7 @@ namespace Fluorite.Strainer.Services.Pipelines
             _sortExpressionProvider = sortExpressionProvider;
         }
 
-        public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
+        public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source)
         {
             if (model == null)
             {
@@ -32,13 +32,8 @@ namespace Fluorite.Strainer.Services.Pipelines
                 throw new ArgumentNullException(nameof(source));
             }
 
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             var parsedTerms = _sortTermParser.GetParsedTerms(model.Sorts);
-            var isSortingApplied = _sortingApplier.TryApplySorting(context, parsedTerms, source, out var sortedSource);
+            var isSortingApplied = _sortingApplier.TryApplySorting(parsedTerms, source, out var sortedSource);
             if (isSortingApplied)
             {
                 return sortedSource;

@@ -1,7 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
-using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
 using Moq;
@@ -29,10 +28,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         {
             // Arrange
             var source = Enumerable.Empty<object>().AsQueryable();
-            var context = Mock.Of<IStrainerContext>();
 
             // Act
-            Action act = () => _operation.Execute(model: null, source, context);
+            Action act = () => _operation.Execute(model: null, source);
 
             // Assert
             act.Should().ThrowExactly<ArgumentNullException>();
@@ -43,24 +41,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         {
             // Arrange
             var model = Mock.Of<IStrainerModel>();
-            var context = Mock.Of<IStrainerContext>();
 
             // Act
-            Action act = () => _operation.Execute<object>(model, source: null, context);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void Should_Throw_ForNullContext()
-        {
-            // Arrange
-            var model = Mock.Of<IStrainerModel>();
-            var source = Enumerable.Empty<object>().AsQueryable();
-
-            // Act
-            Action act = () => _operation.Execute(model, source, context: null);
+            Action act = () => _operation.Execute<object>(model, source: null);
 
             // Assert
             act.Should().ThrowExactly<ArgumentNullException>();
@@ -72,7 +55,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             // Arrange
             var source = Enumerable.Range(1, 10).AsQueryable();
             var sortedSource = source.OrderByDescending(x => x).AsQueryable();
-            var context = Mock.Of<IStrainerContext>();
             var model = new StrainerModel
             {
                 Sorts = "foo",
@@ -83,11 +65,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
                 .Setup(x => x.GetParsedTerms(model.Sorts))
                 .Returns(sortTerms);
             _sortingApplierMock
-                .Setup(x => x.TryApplySorting(context, sortTerms, source, out sortedSource))
+                .Setup(x => x.TryApplySorting(sortTerms, source, out sortedSource))
                 .Returns(true);
 
             // Act
-            var result = _operation.Execute(model, source, context);
+            var result = _operation.Execute(model, source);
 
             // Assert
             result.Should().NotBeNull();
@@ -102,7 +84,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             // Arrange
             var source = Enumerable.Range(1, 10).AsQueryable();
             IQueryable<int> sortedSource = null;
-            var context = Mock.Of<IStrainerContext>();
             var model = new StrainerModel
             {
                 Sorts = "foo",
@@ -121,14 +102,14 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
                 .Setup(x => x.GetParsedTerms(model.Sorts))
                 .Returns(sortTerms);
             _sortingApplierMock
-                .Setup(x => x.TryApplySorting(context, sortTerms, source, out sortedSource))
+                .Setup(x => x.TryApplySorting(sortTerms, source, out sortedSource))
                 .Returns(false);
             _sortExpressionProviderMock
                 .Setup(x => x.GetDefaultExpression<int>())
                 .Returns(sortExpressionMock.Object);
 
             // Act
-            var result = _operation.Execute(model, source, context);
+            var result = _operation.Execute(model, source);
 
             // Assert
             result.Should().NotBeNull();
@@ -143,7 +124,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             // Arrange
             var source = Enumerable.Range(1, 10).AsQueryable();
             IQueryable<int> sortedSource = null;
-            var context = Mock.Of<IStrainerContext>();
             var model = new StrainerModel
             {
                 Sorts = "foo",
@@ -154,11 +134,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
                 .Setup(x => x.GetParsedTerms(model.Sorts))
                 .Returns(sortTerms);
             _sortingApplierMock
-                .Setup(x => x.TryApplySorting(context, sortTerms, source, out sortedSource))
+                .Setup(x => x.TryApplySorting(sortTerms, source, out sortedSource))
                 .Returns(false);
 
             // Act
-            var result = _operation.Execute(model, source, context);
+            var result = _operation.Execute(model, source);
 
             // Assert
             result.Should().NotBeNull();

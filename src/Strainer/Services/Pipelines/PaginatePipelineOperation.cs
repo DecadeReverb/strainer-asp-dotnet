@@ -16,7 +16,7 @@ namespace Fluorite.Strainer.Services.Pipelines
             _pageSizeEvaluator = pageSizeEvaluator;
         }
 
-        public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
+        public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source)
         {
             if (model == null)
             {
@@ -26,11 +26,6 @@ namespace Fluorite.Strainer.Services.Pipelines
             if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
-            }
-
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
             }
 
             var page = _pageNumberEvaluator.Evaluate(model);

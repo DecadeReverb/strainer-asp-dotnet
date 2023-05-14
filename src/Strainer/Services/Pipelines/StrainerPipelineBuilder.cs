@@ -6,21 +6,24 @@
         private readonly IFilterPipelineOperation _filterPipelineOperation;
         private readonly ISortPipelineOperation _sortPipelineOperation;
         private readonly IPaginatePipelineOperation _paginatePipelineOperation;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
 
         public StrainerPipelineBuilder(
             IFilterPipelineOperation filterPipelineOperation,
             ISortPipelineOperation sortPipelineOperation,
-            IPaginatePipelineOperation paginatePipelineOperation)
+            IPaginatePipelineOperation paginatePipelineOperation,
+            IStrainerOptionsProvider strainerOptionsProvider)
         {
             _operations = new ();
             _filterPipelineOperation = filterPipelineOperation;
             _sortPipelineOperation = sortPipelineOperation;
             _paginatePipelineOperation = paginatePipelineOperation;
+            _strainerOptionsProvider = strainerOptionsProvider;
         }
 
         public IStrainerPipeline Build()
         {
-            return new StrainerPipeline(_operations);
+            return new StrainerPipeline(_operations, _strainerOptionsProvider);
         }
 
         public IStrainerPipelineBuilder Filter()

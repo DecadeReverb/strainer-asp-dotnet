@@ -108,7 +108,7 @@ namespace Fluorite.Strainer.Services
                     builder.Paginate();
                 }
 
-                return builder.Build().Run(model, source, Context);
+                return builder.Build().Run(model, source);
             }
             catch (StrainerException) when (!Context.Options.ThrowExceptions)
             {
@@ -161,7 +161,7 @@ namespace Fluorite.Strainer.Services
                 .CreateBuilder()
                 .Filter()
                 .Build()
-                .Run(model, source, Context);
+                .Run(model, source);
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Fluorite.Strainer.Services
                 .CreateBuilder()
                 .Paginate()
                 .Build()
-                .Run(model, source, Context);
+                .Run(model, source);
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace Fluorite.Strainer.Services
                 .CreateBuilder()
                 .Sort()
                 .Build()
-                .Run(model, source, Context);
+                .Run(model, source);
         }
     }
 }

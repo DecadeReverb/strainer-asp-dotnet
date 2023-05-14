@@ -1,34 +1,46 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models.Sorting.Terms;
+using Fluorite.Strainer.Services.Metadata;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortingApplier : ISortingApplier
     {
         private readonly ICustomSortingExpressionProvider _customSortingExpressionProvider;
+        private readonly ISortExpressionProvider _sortExpressionProvider;
+        private readonly IMetadataFacade _metadataFacade;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
 
-        public SortingApplier(ICustomSortingExpressionProvider customSortingExpressionProvider)
+        public SortingApplier(
+            ICustomSortingExpressionProvider customSortingExpressionProvider,
+            ISortExpressionProvider sortExpressionProvider,
+            IMetadataFacade metadataFacade,
+            IStrainerOptionsProvider strainerOptionsProvider)
         {
             _customSortingExpressionProvider = customSortingExpressionProvider;
+            _sortExpressionProvider = sortExpressionProvider;
+            _metadataFacade = metadataFacade;
+            _strainerOptionsProvider = strainerOptionsProvider;
         }
 
-        public bool TryApplySorting<T>(IStrainerContext context, IList<ISortTerm> sortTerms, IQueryable<T> source, out IQueryable<T> sortedSource)
+        public bool TryApplySorting<T>(IList<ISortTerm> sortTerms, IQueryable<T> source, out IQueryable<T> sortedSource)
         {
+            var options = _strainerOptionsProvider.GetStrainerOptions();
             var isSubsequent = false;
             var isSortingApplied = false;
             sortedSource = source;
 
             foreach (var sortTerm in sortTerms)
             {
-                var metadata = context.Metadata.GetMetadata<T>(
+                var metadata = _metadataFacade.GetMetadata<T>(
                     isSortableRequired: true,
                     isFilterableRequired: false,
                     name: sortTerm.Name);
 
                 if (metadata != null)
                 {
-                    var sortExpression = context.Sorting.ExpressionProvider.GetExpression<T>(metadata.PropertyInfo, sortTerm, isSubsequent);
+                    var sortExpression = _sortExpressionProvider.GetExpression<T>(metadata.PropertyInfo, sortTerm, isSubsequent);
                     if (sortExpression != null)
                     {
                         sortedSource = sortedSource.OrderWithSortExpression(sortExpression);
@@ -51,7 +63,7 @@ namespace Fluorite.Strainer.Services.Sorting
                             isSortingApplied = true;
                         }
                     }
-                    catch (StrainerException) when (!context.Options.ThrowExceptions)
+                    catch (StrainerException) when (!options.ThrowExceptions)
                     {
                         return false;
                     }

@@ -1,5 +1,4 @@
-﻿using Fluorite.Strainer.Exceptions;
-using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Configuration;
 using System.Linq.Expressions;

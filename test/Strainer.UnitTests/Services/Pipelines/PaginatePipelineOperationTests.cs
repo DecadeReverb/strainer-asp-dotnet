@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Pagination;
 using Fluorite.Strainer.Services.Pipelines;
 using Moq;
@@ -25,10 +24,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         {
             // Arrange
             var source = Enumerable.Empty<object>().AsQueryable();
-            var context = Mock.Of<IStrainerContext>();
 
             // Act
-            Action act = () => _operation.Execute(model: null, source, context);
+            Action act = () => _operation.Execute(model: null, source);
 
             // Assert
             act.Should().ThrowExactly<ArgumentNullException>();
@@ -39,24 +37,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         {
             // Arrange
             var model = Mock.Of<IStrainerModel>();
-            var context = Mock.Of<IStrainerContext>();
 
             // Act
-            Action act = () => _operation.Execute<object>(model, source: null, context);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void Should_Throw_ForNullContext()
-        {
-            // Arrange
-            var model = Mock.Of<IStrainerModel>();
-            var source = Enumerable.Empty<object>().AsQueryable();
-
-            // Act
-            Action act = () => _operation.Execute(model, source, context: null);
+            Action act = () => _operation.Execute<object>(model, source: null);
 
             // Assert
             act.Should().ThrowExactly<ArgumentNullException>();
@@ -68,10 +51,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             // Arrange
             var source = Enumerable.Range(1, 10).AsQueryable();
             var model = Mock.Of<IStrainerModel>();
-            var context = Mock.Of<IStrainerContext>();
 
             // Act
-            var result = _operation.Execute(model, source, context);
+            var result = _operation.Execute(model, source);
 
             // Assert
             result.Should().NotBeNull();
@@ -87,7 +69,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             var pageSize = 4;
             var source = Enumerable.Range(1, 10).AsQueryable();
             var model = Mock.Of<IStrainerModel>();
-            var context = Mock.Of<IStrainerContext>();
 
             _pageNumberEvaluatorMock
                 .Setup(x => x.Evaluate(model))
@@ -97,7 +78,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
                 .Returns(pageSize);
 
             // Act
-            var result = _operation.Execute(model, source, context);
+            var result = _operation.Execute(model, source);
 
             // Assert
             result.Should().NotBeNull();

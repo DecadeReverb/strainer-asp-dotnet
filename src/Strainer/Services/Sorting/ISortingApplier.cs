@@ -4,6 +4,6 @@ namespace Fluorite.Strainer.Services.Sorting
 {
     public interface ISortingApplier
     {
-        bool TryApplySorting<T>(IStrainerContext context, IList<ISortTerm> sortTerms, IQueryable<T> source, out IQueryable<T> sortedSource);
+        bool TryApplySorting<T>(IList<ISortTerm> sortTerms, IQueryable<T> source, out IQueryable<T> sortedSource);
     }
 }

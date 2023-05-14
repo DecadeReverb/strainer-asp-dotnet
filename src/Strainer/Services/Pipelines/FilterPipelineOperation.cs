@@ -1,6 +1,7 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Metadata;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Pipelines
@@ -8,13 +9,26 @@ namespace Fluorite.Strainer.Services.Pipelines
     public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipelineOperation
     {
         private readonly ICustomFilteringExpressionProvider _customFilteringExpressionProvider;
+        private readonly IFilterExpressionProvider _filterExpressionProvider;
+        private readonly IFilterTermParser _filterTermParser;
+        private readonly IMetadataFacade _metadataFacade;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
 
-        public FilterPipelineOperation(ICustomFilteringExpressionProvider customFilteringExpressionProvider)
+        public FilterPipelineOperation(
+            ICustomFilteringExpressionProvider customFilteringExpressionProvider,
+            IFilterExpressionProvider filterExpressionProvider,
+            IFilterTermParser filterTermParser,
+            IMetadataFacade metadataFacade,
+            IStrainerOptionsProvider strainerOptionsProvider)
         {
             _customFilteringExpressionProvider = customFilteringExpressionProvider;
+            _filterExpressionProvider = filterExpressionProvider;
+            _filterTermParser = filterTermParser;
+            _metadataFacade = metadataFacade;
+            _strainerOptionsProvider = strainerOptionsProvider;
         }
 
-        public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source, IStrainerContext context)
+        public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source)
         {
             if (model == null)
             {
@@ -26,7 +40,8 @@ namespace Fluorite.Strainer.Services.Pipelines
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var parsedTerms = context.Filter.TermParser.GetParsedTerms(model.Filters);
+            var options = _strainerOptionsProvider.GetStrainerOptions();
+            var parsedTerms = _filterTermParser.GetParsedTerms(model.Filters);
             if (parsedTerms.Count == 0)
             {
                 return source;
@@ -39,7 +54,7 @@ namespace Fluorite.Strainer.Services.Pipelines
                 Expression termExpression = null;
                 foreach (var filterTermName in filterTerm.Names)
                 {
-                    var metadata = context.Metadata.GetMetadata<T>(
+                    var metadata = _metadataFacade.GetMetadata<T>(
                         isSortableRequired: false,
                         isFilterableRequired: true,
                         name: filterTermName);
@@ -48,7 +63,7 @@ namespace Fluorite.Strainer.Services.Pipelines
                     {
                         if (metadata != null)
                         {
-                            termExpression = context.Filter.ExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, termExpression);
+                            termExpression = _filterExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, termExpression);
                         }
                         else
                         {
@@ -64,7 +79,7 @@ namespace Fluorite.Strainer.Services.Pipelines
                             }
                         }
                     }
-                    catch (StrainerException) when (!context.Options.ThrowExceptions)
+                    catch (StrainerException) when (!options.ThrowExceptions)
                     {
                         return source;
                     }

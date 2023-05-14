@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services.Modules;
 
 namespace Fluorite.Strainer.IntegrationTests.Filtering
