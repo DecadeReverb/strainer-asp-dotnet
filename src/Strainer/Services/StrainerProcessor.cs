@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Services.Pipelines;
 
 namespace Fluorite.Strainer.Services
 {
@@ -9,25 +10,28 @@ namespace Fluorite.Strainer.Services
     /// </summary>
     public class StrainerProcessor : IStrainerProcessor
     {
+        private readonly IStrainerPipelineBuilderFactory _strainerPipelineBuilderFactory;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StrainerProcessor"/> class
         /// with specified context.
         /// </summary>
-        /// <param name="context">
-        /// The Strainer context.
-        /// </param>
+        /// <param name="strainerPipelineBuilderFactory"></param>
+        /// <param name="strainerOptionsProvider"></param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="context"/> is <see langword="null"/>.
+        /// <paramref name="strainerPipelineBuilderFactory"/> is <see langword="null"/>.
         /// </exception>
-        public StrainerProcessor(IStrainerContext context)
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="strainerOptionsProvider"/> is <see langword="null"/>.
+        /// </exception>
+        public StrainerProcessor(
+            IStrainerPipelineBuilderFactory strainerPipelineBuilderFactory,
+            IStrainerOptionsProvider strainerOptionsProvider)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
+            _strainerPipelineBuilderFactory = strainerPipelineBuilderFactory ?? throw new ArgumentNullException(nameof(strainerPipelineBuilderFactory));
+            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
         }
-
-        /// <summary>
-        /// Gets the <see cref="IStrainerContext"/>.
-        /// </summary>
-        protected IStrainerContext Context { get; }
 
         /// <summary>
         /// Applies filtering, sorting and pagination (in that order)
@@ -89,31 +93,26 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            var builder = Context.Pipeline.BuilderFactory.CreateBuilder();
+            var builder = _strainerPipelineBuilderFactory.CreateBuilder();
 
-            try
+            if (applyFiltering)
             {
-                if (applyFiltering)
-                {
-                    builder.Filter();
-                }
-
-                if (applySorting)
-                {
-                    builder.Sort();
-                }
-
-                if (applyPagination)
-                {
-                    builder.Paginate();
-                }
-
-                return builder.Build().Run(model, source);
+                builder.Filter();
             }
-            catch (StrainerException) when (!Context.Options.ThrowExceptions)
+
+            if (applySorting)
             {
-                return source;
+                builder.Sort();
             }
+
+            if (applyPagination)
+            {
+                builder.Paginate();
+            }
+
+            var pipeline = builder.Build();
+
+            return RunPipeline(model, source, pipeline);
         }
 
         /// <summary>
@@ -155,13 +154,12 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return Context
-                .Pipeline
-                .BuilderFactory
+            var pipeline = _strainerPipelineBuilderFactory
                 .CreateBuilder()
                 .Filter()
-                .Build()
-                .Run(model, source);
+                .Build();
+
+            return RunPipeline(model, source, pipeline);
         }
 
         /// <summary>
@@ -200,13 +198,12 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return Context
-                .Pipeline
-                .BuilderFactory
+            var pipeline = _strainerPipelineBuilderFactory
                 .CreateBuilder()
                 .Paginate()
-                .Build()
-                .Run(model, source);
+                .Build();
+
+            return RunPipeline(model, source, pipeline);
         }
 
         /// <summary>
@@ -248,13 +245,29 @@ namespace Fluorite.Strainer.Services
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return Context
-                .Pipeline
-                .BuilderFactory
+            var pipeline = _strainerPipelineBuilderFactory
                 .CreateBuilder()
                 .Sort()
-                .Build()
-                .Run(model, source);
+                .Build();
+
+            return RunPipeline(model, source, pipeline);
+        }
+
+        private IQueryable<TEntity> RunPipeline<TEntity>(
+            IStrainerModel model,
+            IQueryable<TEntity> source,
+            IStrainerPipeline pipeline)
+        {
+            var options = _strainerOptionsProvider.GetStrainerOptions();
+
+            try
+            {
+                return pipeline.Run(model, source);
+            }
+            catch (StrainerException) when (!options.ThrowExceptions)
+            {
+                return source;
+            }
         }
     }
 }

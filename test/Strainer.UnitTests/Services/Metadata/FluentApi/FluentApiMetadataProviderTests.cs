@@ -251,13 +251,5 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             public int Id { get; set; }
         }
-
-        private class TestStrainerProcessor : StrainerProcessor
-        {
-            public TestStrainerProcessor(IStrainerContext context) : base(context)
-            {
-
-            }
-        }
     }
 }
