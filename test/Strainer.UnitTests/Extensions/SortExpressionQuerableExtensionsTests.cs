@@ -73,6 +73,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions
             {
                 Expression = x => x.Count(y => y == 'b'),
                 IsDescending = descending,
+                IsSubsequent = true,
             };
 
             // Act
