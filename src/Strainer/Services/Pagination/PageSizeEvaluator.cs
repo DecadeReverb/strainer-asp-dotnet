@@ -1,6 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.Services.Pipelines
+namespace Fluorite.Strainer.Services.Pagination
 {
     public class PageSizeEvaluator : IPageSizeEvaluator
     {
