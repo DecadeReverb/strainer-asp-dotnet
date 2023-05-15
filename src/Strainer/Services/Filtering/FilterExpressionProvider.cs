@@ -5,6 +5,7 @@ using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Conversion;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
@@ -13,15 +14,18 @@ namespace Fluorite.Strainer.Services.Filtering
         private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly ITypeConverterProvider _typeConverterProvider;
         private readonly IStringValueConverter _stringValueConverter;
+        private readonly ITypeChanger _typeChanger;
 
         public FilterExpressionProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
             ITypeConverterProvider typeConverterProvider,
-            IStringValueConverter stringValueConverter)
+            IStringValueConverter stringValueConverter,
+            ITypeChanger typeChanger)
         {
             _strainerOptionsProvider = strainerOptionsProvider;
             _typeConverterProvider = typeConverterProvider;
             _stringValueConverter = stringValueConverter;
+            _typeChanger = typeChanger;
         }
 
         public Expression GetExpression(
@@ -95,19 +99,7 @@ namespace Fluorite.Strainer.Services.Filtering
                     }
                     else
                     {
-                        try
-                        {
-                            constantVal = Convert.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new StrainerConversionException(
-                                $"Failed to change type of filter value '{filterTermValue}' " +
-                                $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
-                                ex,
-                                filterTermValue,
-                                metadata.PropertyInfo.PropertyType);
-                        }
+                        constantVal = _typeChanger.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
                     }
                 }
 

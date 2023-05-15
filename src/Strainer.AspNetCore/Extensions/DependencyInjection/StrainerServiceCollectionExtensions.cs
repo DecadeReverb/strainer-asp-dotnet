@@ -568,6 +568,7 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<ITypeConverter, ComponentModelTypeConverter>(serviceLifetime);
             services.Add<ITypeConverterProvider, TypeConverterProvider>(serviceLifetime);
             services.Add<IStringValueConverter, StringValueConverter>(serviceLifetime);
+            services.Add<ITypeChanger, TypeChanger>(serviceLifetime);
 
             services.Add<IStrainerConfigurationFactory, StrainerConfigurationFactory>(serviceLifetime);
             services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
