@@ -1,4 +1,4 @@
-﻿namespace Fluorite.Strainer.Services.Metadata
+﻿namespace Fluorite.Strainer.Services.Conversion
 {
     public interface ITypeConverterProvider
     {

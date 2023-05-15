@@ -2,7 +2,7 @@
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Conversion;
 using System.ComponentModel;
 using System.Linq.Expressions;
 

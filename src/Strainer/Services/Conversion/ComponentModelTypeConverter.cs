@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Conversion
 {
     public class ComponentModelTypeConverter : ITypeConverter
     {
