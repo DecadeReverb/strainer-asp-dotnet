@@ -605,12 +605,6 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add(new ServiceDescriptor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime));
         }
 
-        private static bool ContainsServiceOfType<TImplementationType>(
-            this IServiceCollection services)
-        {
-            return services.Any(d => d.ServiceType == typeof(TImplementationType));
-        }
-
         private static List<Type> GetModuleTypesFromAssemblies(IReadOnlyCollection<Assembly> assemblies)
         {
             return assemblies
