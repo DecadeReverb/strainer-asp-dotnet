@@ -1,20 +1,19 @@
 ﻿using Fluorite.Strainer.Exceptions;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Conversion
 {
     public class StringValueConverter : IStringValueConverter
     {
-        public object Convert(string value, PropertyInfo propertyInfo, ITypeConverter typeConverter)
+        public object Convert(string value, Type targetType, ITypeConverter typeConverter)
         {
             if (value is null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
 
-            if (propertyInfo is null)
+            if (targetType is null)
             {
-                throw new ArgumentNullException(nameof(propertyInfo));
+                throw new ArgumentNullException(nameof(targetType));
             }
 
             if (typeConverter is null)
@@ -30,10 +29,10 @@ namespace Fluorite.Strainer.Services.Conversion
             {
                 throw new StrainerConversionException(
                     $"Failed to convert value '{value}' " +
-                    $"to type '{propertyInfo.PropertyType.FullName}'.",
+                    $"to type '{targetType.FullName}'.",
                     ex,
                     value,
-                    propertyInfo.PropertyType);
+                    targetType);
             }
         }
     }

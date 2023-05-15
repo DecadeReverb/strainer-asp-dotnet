@@ -95,7 +95,7 @@ namespace Fluorite.Strainer.Services.Filtering
 
                     if (canConvertFromString)
                     {
-                        constantVal = _stringValueConverter.Convert(filterTermValue, metadata.PropertyInfo, typeConverter);
+                        constantVal = _stringValueConverter.Convert(filterTermValue, metadata.PropertyInfo.PropertyType, typeConverter);
                     }
                     else
                     {
