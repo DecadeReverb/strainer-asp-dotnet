@@ -155,108 +155,38 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(moduleTypes));
             }
 
-            if (services.Any(d => d.ServiceType == typeof(IStrainerProcessor)))
-            {
-                throw new InvalidOperationException(
-                    $"Unable to registrer {nameof(IStrainerProcessor)} " +
-                    $"because there is already registered one.");
-            }
-
-            // Add Strainer options only if they weren't configured yet.
-            if (!services.ContainsServiceOfType<StrainerOptions>())
-            {
-                services.AddOptions<StrainerOptions>();
-            }
-
-            if (serviceLifetime == ServiceLifetime.Singleton)
-            {
-                services.Add<IStrainerOptionsProvider, AspNetCoreSingletonStrainerOptionsProvider>(serviceLifetime);
-            }
-            else
-            {
-                services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
-            }
-
-            services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
-            services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
-            services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
-            services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
-            services.Add<IFilterTermNamesParser, FilterTermNamesParser>(serviceLifetime);
-            services.Add<IFilterTermValuesParser, FilterTermValuesParser>(serviceLifetime);
-            services.Add<IFilterTermSectionsParser, FilterTermSectionsParser>(serviceLifetime);
-            services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
-            services.Add<ICustomFilteringExpressionProvider, CustomFilteringExpressionProvider>(serviceLifetime);
-            services.Add<IFilterContext, FilterContext>(serviceLifetime);
-
-            services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
-            services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
-            services.Add<ISortingWayFormatter, DescendingPrefixSortingWayFormatter>(serviceLifetime);
-            services.Add<ISortTermValueParser, SortTermValueParser>(serviceLifetime);
-            services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
-            services.Add<ISortingApplier, SortingApplier>(serviceLifetime);
-            services.Add<ICustomSortingExpressionProvider, CustomSortingExpressionProvider>(serviceLifetime);
-            services.Add<ISortingContext, SortingContext>(serviceLifetime);
-            services.Add<IPipelineContext, PipelineContext>(serviceLifetime);
-
-            services.Add<IPageNumberEvaluator, PageNumberEvaluator>(serviceLifetime);
-            services.Add<IPageSizeEvaluator, PageSizeEvaluator>(serviceLifetime);
-
-            services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
-            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
-
-            services.Add<IStrainerPipelineBuilderFactory, StrainerPipelineBuilderFactory>(serviceLifetime);
-            services.Add<IFilterPipelineOperation, FilterPipelineOperation>(serviceLifetime);
-            services.Add<ISortPipelineOperation, SortPipelineOperation>(serviceLifetime);
-            services.Add<IPaginatePipelineOperation, PaginatePipelineOperation>(serviceLifetime);
-
-            services.TryAddSingleton<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>();
-            services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
-            services.Add<IAttributePropertyMetadataBuilder, AttributePropertyMetadataBuilder>(serviceLifetime);
-            services.Add<IAttributeMetadataRetriever, AttributeMetadataRetriever>(serviceLifetime);
-            services.Add<IStrainerAttributeProvider, StrainerAttributeProvider>(serviceLifetime);
-            services.Add<IPropertyMetadataDictionaryProvider, PropertyMetadataDictionaryProvider>(serviceLifetime);
-            services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
-            services.Add<IMetadataSourceChecker, MetadataSourceChecker>(serviceLifetime);
-            services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
-            services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
-            services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
-
-            services.Add<IStrainerConfigurationFactory, StrainerConfigurationFactory>(serviceLifetime);
-            services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
-            services.Add<IStrainerModuleLoader, StrainerModuleLoader>(serviceLifetime);
-            services.Add<IGenericModuleLoader, GenericModuleLoader>(serviceLifetime);
-            services.Add<IStrainerModuleTypeValidator, StrainerModuleTypeValidator>(serviceLifetime);
-            services.Add<IStrainerConfigurationValidator, StrainerConfigurationValidator>(serviceLifetime);
-            services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
-            services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
-            services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);
-
-            services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
-            services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
-            services.Add<IStrainerProcessor, StrainerProcessor>(serviceLifetime);
-
-            services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(serviceProvider =>
-            {
-                using var scope = serviceProvider.CreateScope();
-                var configurationFactory = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationFactory>();
-                var configurationValidator = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationValidator>();
-
-                try
-                {
-                    var strainerConfiguration = configurationFactory.Create(moduleTypes);
-                    configurationValidator.Validate(strainerConfiguration);
-
-                    return new StrainerConfigurationProvider(strainerConfiguration);
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException("Unable to add configuration from Strainer modules.", ex);
-                }
-            });
+            RegisterStrainerServices(services, moduleTypes, serviceLifetime);
 
             return services;
         }
 
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>
+        /// with a collection of Strainer module types.
+        /// </summary>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="configuration">
+        /// A configuration used to bind against <see cref="StrainerOptions"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="configuration"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
         public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
@@ -566,6 +496,110 @@ namespace Fluorite.Extensions.DependencyInjection
             services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
 
             return services.AddStrainer(assembliesToScan, serviceLifetime);
+        }
+
+        private static void RegisterStrainerServices(
+            IServiceCollection services,
+            IReadOnlyCollection<Type> moduleTypes,
+            ServiceLifetime serviceLifetime)
+        {
+            if (services.Any(d => d.ServiceType == typeof(IStrainerProcessor)))
+            {
+                throw new InvalidOperationException(
+                    $"Unable to registrer {nameof(IStrainerProcessor)} " +
+                    $"because there is already registered one.");
+            }
+
+            var hasStrainerOptionsConfigured = services.ContainsServiceOfType<StrainerOptions>();
+            if (!hasStrainerOptionsConfigured)
+            {
+                services.AddOptions<StrainerOptions>();
+            }
+
+            if (serviceLifetime == ServiceLifetime.Singleton)
+            {
+                services.Add<IStrainerOptionsProvider, AspNetCoreSingletonStrainerOptionsProvider>(serviceLifetime);
+            }
+            else
+            {
+                services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
+            }
+
+            services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
+            services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
+            services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
+            services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
+            services.Add<IFilterTermNamesParser, FilterTermNamesParser>(serviceLifetime);
+            services.Add<IFilterTermValuesParser, FilterTermValuesParser>(serviceLifetime);
+            services.Add<IFilterTermSectionsParser, FilterTermSectionsParser>(serviceLifetime);
+            services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
+            services.Add<ICustomFilteringExpressionProvider, CustomFilteringExpressionProvider>(serviceLifetime);
+            services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
+            services.Add<IFilterContext, FilterContext>(serviceLifetime);
+
+            services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
+            services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
+            services.Add<ISortingWayFormatter, DescendingPrefixSortingWayFormatter>(serviceLifetime);
+            services.Add<ISortTermValueParser, SortTermValueParser>(serviceLifetime);
+            services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
+            services.Add<ISortingApplier, SortingApplier>(serviceLifetime);
+            services.Add<ICustomSortingExpressionProvider, CustomSortingExpressionProvider>(serviceLifetime);
+            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
+            services.Add<ISortingContext, SortingContext>(serviceLifetime);
+            services.Add<IPipelineContext, PipelineContext>(serviceLifetime);
+
+            services.Add<IPageNumberEvaluator, PageNumberEvaluator>(serviceLifetime);
+            services.Add<IPageSizeEvaluator, PageSizeEvaluator>(serviceLifetime);
+
+            services.Add<IStrainerPipelineBuilderFactory, StrainerPipelineBuilderFactory>(serviceLifetime);
+            services.Add<IFilterPipelineOperation, FilterPipelineOperation>(serviceLifetime);
+            services.Add<ISortPipelineOperation, SortPipelineOperation>(serviceLifetime);
+            services.Add<IPaginatePipelineOperation, PaginatePipelineOperation>(serviceLifetime);
+
+            services.TryAddSingleton<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>();
+            services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
+            services.Add<IAttributePropertyMetadataBuilder, AttributePropertyMetadataBuilder>(serviceLifetime);
+            services.Add<IAttributeMetadataRetriever, AttributeMetadataRetriever>(serviceLifetime);
+            services.Add<IStrainerAttributeProvider, StrainerAttributeProvider>(serviceLifetime);
+            services.Add<IPropertyMetadataDictionaryProvider, PropertyMetadataDictionaryProvider>(serviceLifetime);
+            services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
+            services.Add<IMetadataSourceChecker, MetadataSourceChecker>(serviceLifetime);
+            services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
+            services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
+            services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
+
+            services.Add<IStrainerConfigurationFactory, StrainerConfigurationFactory>(serviceLifetime);
+            services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
+            services.Add<IStrainerModuleLoader, StrainerModuleLoader>(serviceLifetime);
+            services.Add<IGenericModuleLoader, GenericModuleLoader>(serviceLifetime);
+            services.Add<IStrainerModuleTypeValidator, StrainerModuleTypeValidator>(serviceLifetime);
+            services.Add<IStrainerConfigurationValidator, StrainerConfigurationValidator>(serviceLifetime);
+            services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
+            services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
+            services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);
+
+            services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
+            services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
+            services.Add<IStrainerProcessor, StrainerProcessor>(serviceLifetime);
+
+            services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(serviceProvider =>
+            {
+                using var scope = serviceProvider.CreateScope();
+                var configurationFactory = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationFactory>();
+                var configurationValidator = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationValidator>();
+
+                try
+                {
+                    var strainerConfiguration = configurationFactory.Create(moduleTypes);
+                    configurationValidator.Validate(strainerConfiguration);
+
+                    return new StrainerConfigurationProvider(strainerConfiguration);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Unable to add configuration from Strainer modules.", ex);
+                }
+            });
         }
 
         private static void Add<TServiceType, TImplementationType>(
