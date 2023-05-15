@@ -12,13 +12,16 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly ITypeConverterProvider _typeConverterProvider;
+        private readonly IStringValueConverter _stringValueConverter;
 
         public FilterExpressionProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
-            ITypeConverterProvider typeConverterProvider)
+            ITypeConverterProvider typeConverterProvider,
+            IStringValueConverter stringValueConverter)
         {
             _strainerOptionsProvider = strainerOptionsProvider;
             _typeConverterProvider = typeConverterProvider;
+            _stringValueConverter = stringValueConverter;
         }
 
         public Expression GetExpression(
@@ -82,22 +85,13 @@ namespace Fluorite.Strainer.Services.Filtering
                 }
                 else
                 {
-                    if (typeConverter.CanConvertFrom(typeof(string))
-                        && typeof(string) != metadata.PropertyInfo.PropertyType)
+                    var canConvertFromString =
+                           metadata.PropertyInfo.PropertyType != typeof(string)
+                        && typeConverter.CanConvertFrom(typeof(string));
+
+                    if (canConvertFromString)
                     {
-                        try
-                        {
-                            constantVal = typeConverter.ConvertFrom(filterTermValue);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new StrainerConversionException(
-                                $"Failed to convert filter value '{filterTermValue}' " +
-                                $"to type '{metadata.PropertyInfo.PropertyType.FullName}'.",
-                                ex,
-                                filterTermValue,
-                                metadata.PropertyInfo.PropertyType);
-                        }
+                        constantVal = _stringValueConverter.Convert(filterTermValue, metadata.PropertyInfo, typeConverter);
                     }
                     else
                     {

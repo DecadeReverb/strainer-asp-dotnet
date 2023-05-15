@@ -554,8 +554,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.TryAddSingleton<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>();
             services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
-            services.Add<ITypeConverter, ComponentModelTypeConverter>(serviceLifetime);
-            services.Add<ITypeConverterProvider, TypeConverterProvider>(serviceLifetime);
+
             services.Add<IAttributePropertyMetadataBuilder, AttributePropertyMetadataBuilder>(serviceLifetime);
             services.Add<IAttributeMetadataRetriever, AttributeMetadataRetriever>(serviceLifetime);
             services.Add<IStrainerAttributeProvider, StrainerAttributeProvider>(serviceLifetime);
@@ -565,6 +564,10 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
             services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
             services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
+
+            services.Add<ITypeConverter, ComponentModelTypeConverter>(serviceLifetime);
+            services.Add<ITypeConverterProvider, TypeConverterProvider>(serviceLifetime);
+            services.Add<IStringValueConverter, StringValueConverter>(serviceLifetime);
 
             services.Add<IStrainerConfigurationFactory, StrainerConfigurationFactory>(serviceLifetime);
             services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
