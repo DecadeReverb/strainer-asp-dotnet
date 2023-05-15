@@ -506,8 +506,7 @@ namespace Fluorite.Extensions.DependencyInjection
             if (services.Any(d => d.ServiceType == typeof(IStrainerProcessor)))
             {
                 throw new InvalidOperationException(
-                    $"Unable to registrer {nameof(IStrainerProcessor)} " +
-                    $"because there is already registered one.");
+                    "Unable to registrer Strainer services because they have been registered already.");
             }
 
             services.AddOptions<StrainerOptions>();
