@@ -510,11 +510,7 @@ namespace Fluorite.Extensions.DependencyInjection
                     $"because there is already registered one.");
             }
 
-            var hasStrainerOptionsConfigured = services.ContainsServiceOfType<StrainerOptions>();
-            if (!hasStrainerOptionsConfigured)
-            {
-                services.AddOptions<StrainerOptions>();
-            }
+            services.AddOptions<StrainerOptions>();
 
             if (serviceLifetime == ServiceLifetime.Singleton)
             {
