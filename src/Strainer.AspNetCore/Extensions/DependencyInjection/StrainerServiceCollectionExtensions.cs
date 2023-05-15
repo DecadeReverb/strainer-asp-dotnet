@@ -162,7 +162,7 @@ namespace Fluorite.Extensions.DependencyInjection
 
         /// <summary>
         /// Adds Strainer services to the <see cref="IServiceCollection"/>
-        /// with a collection of Strainer module types.
+        /// with a configuration.
         /// </summary>
         /// <param name="services">
         /// Current instance of <see cref="IServiceCollection"/>.
