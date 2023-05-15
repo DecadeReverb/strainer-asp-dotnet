@@ -553,6 +553,8 @@ namespace Fluorite.Extensions.DependencyInjection
 
             services.TryAddSingleton<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>();
             services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
+            services.Add<ITypeConverter, ComponentModelTypeConverter>(serviceLifetime);
+            services.Add<ITypeConverterProvider, TypeConverterProvider>(serviceLifetime);
             services.Add<IAttributePropertyMetadataBuilder, AttributePropertyMetadataBuilder>(serviceLifetime);
             services.Add<IAttributeMetadataRetriever, AttributeMetadataRetriever>(serviceLifetime);
             services.Add<IStrainerAttributeProvider, StrainerAttributeProvider>(serviceLifetime);

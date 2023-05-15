@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Services.Metadata;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
@@ -10,10 +11,14 @@ namespace Fluorite.Strainer.Services.Filtering
     public class FilterExpressionProvider : IFilterExpressionProvider
     {
         private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+        private readonly ITypeConverterProvider _typeConverterProvider;
 
-        public FilterExpressionProvider(IStrainerOptionsProvider strainerOptionsProvider)
+        public FilterExpressionProvider(
+            IStrainerOptionsProvider strainerOptionsProvider,
+            ITypeConverterProvider typeConverterProvider)
         {
             _strainerOptionsProvider = strainerOptionsProvider;
+            _typeConverterProvider = typeConverterProvider;
         }
 
         public Expression GetExpression(
@@ -62,7 +67,7 @@ namespace Fluorite.Strainer.Services.Filtering
             Expression innerExpression,
             Expression propertyValue)
         {
-            var typeConverter = GetTypeConverter(metadata);
+            var typeConverter = _typeConverterProvider.GetTypeConverter(metadata.PropertyInfo.PropertyType);
 
             foreach (var filterTermValue in filterTerm.Values)
             {
@@ -184,11 +189,6 @@ namespace Fluorite.Strainer.Services.Filtering
         private Expression GetClosureOverConstant<T>(T constant, Type targetType)
         {
             return Expression.Constant(constant, targetType);
-        }
-
-        private TypeConverter GetTypeConverter(IPropertyMetadata metadata)
-        {
-            return TypeDescriptor.GetConverter(metadata.PropertyInfo.PropertyType);
         }
     }
 }
