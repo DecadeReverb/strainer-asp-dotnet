@@ -13,7 +13,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <para/>
         /// This field is readonly.
         /// </summary>
-        public static readonly string DescendingPrefix = "-";
+        public const string DescendingPrefix = "-";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DescendingPrefixSortingWayFormatter"/>
@@ -36,6 +36,9 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <returns>
         /// A formatted value.
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <see langword="null" />.
+        /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="sortingWay"/> is <see cref="SortingWay.Unknown"/>.
         /// </exception>
@@ -77,8 +80,16 @@ namespace Fluorite.Strainer.Services.Sorting
         /// if the sorting way cannot be established (e.g. the input was
         /// <see langword="null"/>).
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <see langword="null" />.
+        /// </exception>
         public SortingWay GetSortingWay(string input)
         {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             if (string.IsNullOrWhiteSpace(input))
             {
                 return SortingWay.Unknown;
@@ -129,12 +140,7 @@ namespace Fluorite.Strainer.Services.Sorting
                 return input;
             }
 
-            if (input.StartsWith(DescendingPrefix))
-            {
-                return input.TrimStartOnce(DescendingPrefix);
-            }
-
-            return input;
+            return input.TrimStartOnce(DescendingPrefix);
         }
     }
 }
