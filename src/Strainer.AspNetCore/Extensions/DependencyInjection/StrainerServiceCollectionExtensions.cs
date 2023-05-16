@@ -4,6 +4,7 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Conversion;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Filtering.Steps;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Metadata.Attributes;
 using Fluorite.Strainer.Services.Metadata.FluentApi;
@@ -531,6 +532,13 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
             services.Add<ICustomFilteringExpressionProvider, CustomFilteringExpressionProvider>(serviceLifetime);
             services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
+            services.Add<IFilterExpressionWorkflowBuilder, FilterExpressionWorkflowBuilder>(serviceLifetime);
+            services.Add<IConvertPropertyValueToStringStep, ConvertPropertyValueToStringStep>(serviceLifetime);
+            services.Add<IConvertFilterValueToStringStep, ConvertFilterValueToStringStep>(serviceLifetime);
+            services.Add<IChangeTypeOfFilterValueStep, ChangeTypeOfFilterValueStep>(serviceLifetime);
+            services.Add<IApplyConsantClosureToFilterValueStep, ApplyConsantClosureToFilterValueStep>(serviceLifetime);
+            services.Add<IMitigateCaseInsensitivityStep, MitigateCaseInsensitivityStep>(serviceLifetime);
+            services.Add<IApplyFilterOperatorStep, ApplyFilterOperatorStep>(serviceLifetime);
             services.Add<IFilterContext, FilterContext>(serviceLifetime);
 
             services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);

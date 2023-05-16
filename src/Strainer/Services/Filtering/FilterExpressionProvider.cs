@@ -1,31 +1,21 @@
-﻿using Fluorite.Strainer.Exceptions;
-using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Models.Filtering.Terms;
+﻿using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Conversion;
-using System.ComponentModel;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
     public class FilterExpressionProvider : IFilterExpressionProvider
     {
-        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly ITypeConverterProvider _typeConverterProvider;
-        private readonly IStringValueConverter _stringValueConverter;
-        private readonly ITypeChanger _typeChanger;
+        private readonly IFilterExpressionWorkflowBuilder _filterExpressionWorkflowBuilder;
 
         public FilterExpressionProvider(
-            IStrainerOptionsProvider strainerOptionsProvider,
             ITypeConverterProvider typeConverterProvider,
-            IStringValueConverter stringValueConverter,
-            ITypeChanger typeChanger)
+            IFilterExpressionWorkflowBuilder filterExpressionWorkflowBuilder)
         {
-            _strainerOptionsProvider = strainerOptionsProvider;
             _typeConverterProvider = typeConverterProvider;
-            _stringValueConverter = stringValueConverter;
-            _typeChanger = typeChanger;
+            _filterExpressionWorkflowBuilder = filterExpressionWorkflowBuilder;
         }
 
         public Expression GetExpression(
@@ -54,6 +44,9 @@ namespace Fluorite.Strainer.Services.Filtering
                 return null;
             }
 
+            var typeConverter = _typeConverterProvider.GetTypeConverter(metadata.PropertyInfo.PropertyType);
+            var workflow = _filterExpressionWorkflowBuilder.BuildDefaultWorkflow();
+
             Expression propertyValueExpresssion = parameterExpression;
 
             foreach (var part in metadata.Name.Split('.'))
@@ -65,90 +58,33 @@ namespace Fluorite.Strainer.Services.Filtering
                 metadata,
                 filterTerm,
                 innerExpression,
-                propertyValueExpresssion);
+                propertyValueExpresssion,
+                workflow,
+                typeConverter);
         }
 
         private Expression CreateInnerExpression(
             IPropertyMetadata metadata,
             IFilterTerm filterTerm,
             Expression innerExpression,
-            Expression propertyValue)
+            Expression propertyValue,
+            IFilterExpressionWorkflow workflow,
+            ITypeConverter typeConverter)
         {
-            var typeConverter = _typeConverterProvider.GetTypeConverter(metadata.PropertyInfo.PropertyType);
-
             foreach (var filterTermValue in filterTerm.Values)
             {
-                object constantVal = filterTermValue;
-
-                if (filterTerm.Operator.IsStringBased)
+                var context = new FilterExpressionWorkflowContext
                 {
-                    if (metadata.PropertyInfo.PropertyType != typeof(string))
-                    {
-                        propertyValue = ConvertToStringValue(propertyValue);
-                    }
-                }
-                else
-                {
-                    var canConvertFromString =
-                           metadata.PropertyInfo.PropertyType != typeof(string)
-                        && typeConverter.CanConvertFrom(typeof(string));
+                    FilterTermConstant = filterTermValue,
+                    FilterTermValue = filterTermValue,
+                    FinalExpression = null,
+                    PropertyMetadata = metadata,
+                    PropertyValue = propertyValue,
+                    Term = filterTerm,
+                    TypeConverter = typeConverter,
+                };
 
-                    if (canConvertFromString)
-                    {
-                        constantVal = _stringValueConverter.Convert(filterTermValue, metadata.PropertyInfo.PropertyType, typeConverter);
-                    }
-                    else
-                    {
-                        constantVal = _typeChanger.ChangeType(filterTermValue, metadata.PropertyInfo.PropertyType);
-                    }
-                }
-
-                var constantClosureType = filterTerm.Operator.IsStringBased
-                    ? typeof(string)
-                    : metadata.PropertyInfo.PropertyType;
-                var filterValue = GetClosureOverConstant(
-                    constantVal,
-                    constantClosureType);
-
-                var options = _strainerOptionsProvider.GetStrainerOptions();
-
-                if ((filterTerm.Operator.IsCaseInsensitive
-                    || (!filterTerm.Operator.IsCaseInsensitive && options.IsCaseInsensitiveForValues))
-                    && metadata.PropertyInfo.PropertyType == typeof(string))
-                {
-                    propertyValue = Expression.Call(
-                        propertyValue,
-                        typeof(string).GetMethods()
-                            .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
-
-                    filterValue = Expression.Call(
-                        filterValue,
-                        typeof(string).GetMethods()
-                            .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
-                }
-
-                var filterOperatorContext = new FilterExpressionContext(filterValue, propertyValue);
-
-                Expression expression = null;
-
-                try
-                {
-                    expression = filterTerm.Operator.Expression(filterOperatorContext);
-                }
-                catch (Exception ex)
-                {
-                    throw new StrainerUnsupportedOperatorException(
-                        $"Failed to use operator '{filterTerm.Operator}' " +
-                        $"for filter value '{filterTermValue}' on property " +
-                        $"'{metadata.PropertyInfo.DeclaringType.FullName}.{metadata.PropertyInfo.Name}' " +
-                        $"of type '{metadata.PropertyInfo.PropertyType.FullName}'\n." +
-                        "Please ensure that this operator is supported by type " +
-                        $"'{metadata.PropertyInfo.PropertyType.FullName}'.",
-                        ex,
-                        filterTerm.Operator,
-                        metadata.PropertyInfo,
-                        filterTermValue);
-                }
+                var expression = workflow.Run(context);
 
                 if (innerExpression == null)
                 {
@@ -161,20 +97,6 @@ namespace Fluorite.Strainer.Services.Filtering
             }
 
             return innerExpression;
-        }
-
-        private Expression ConvertToStringValue(Expression expressionToConvert)
-        {
-            return Expression.Call(expressionToConvert, typeof(object).GetMethod(nameof(object.ToString)));
-        }
-
-        // Workaround to ensure that the filter value gets passed as a parameter in generated SQL from EF Core
-        // See https://github.com/aspnet/EntityFrameworkCore/issues/3361
-        // Expression.Constant passed the target type to allow Nullable comparison
-        // See http://bradwilson.typepad.com/blog/2008/07/creating-nullab.html
-        private Expression GetClosureOverConstant<T>(T constant, Type targetType)
-        {
-            return Expression.Constant(constant, targetType);
         }
     }
 }
