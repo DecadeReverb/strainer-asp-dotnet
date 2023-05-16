@@ -13,14 +13,14 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <para/>
         /// This field is readonly.
         /// </summary>
-        public static readonly string AscendingSuffix = "_asc";
+        public const string AscendingSuffix = "_asc";
 
         /// <summary>
         /// The suffix used to mark by this formatter.
         /// <para/>
         /// This field is readonly.
         /// </summary>
-        public static readonly string DescendingSuffix = "_desc";
+        public const string DescendingSuffix = "_desc";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SuffixSortingWayFormatter"/>
@@ -51,16 +51,16 @@ namespace Fluorite.Strainer.Services.Sorting
         /// </exception>
         public string Format(string input, SortingWay sortingWay)
         {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             if (sortingWay == SortingWay.Unknown)
             {
                 throw new ArgumentException(
                     $"{nameof(sortingWay)} cannot be {nameof(SortingWay.Unknown)}.",
                     nameof(sortingWay));
-            }
-
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
             }
 
             if (string.IsNullOrWhiteSpace(input))
@@ -83,10 +83,18 @@ namespace Fluorite.Strainer.Services.Sorting
         /// ascending way; <see cref="SortingWay.Descending"/> if the input
         /// is formatted in descending way; <see cref="SortingWay.Unknown"/>
         /// if the sorting way cannot be established (e.g. the input was
-        /// <see langword="null"/>).
+        /// empty).
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <see langword="null"/>.
+        /// </exception>
         public SortingWay GetSortingWay(string input)
         {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             if (string.IsNullOrWhiteSpace(input))
             {
                 return SortingWay.Unknown;

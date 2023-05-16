@@ -77,8 +77,7 @@ namespace Fluorite.Strainer.Services.Sorting
         /// <see cref="SortingWay.Ascending"/> if the input is formatted in
         /// ascending way; <see cref="SortingWay.Descending"/> if the input
         /// is formatted in descending way; <see cref="SortingWay.Unknown"/>
-        /// if the sorting way cannot be established (e.g. the input was
-        /// <see langword="null"/>).
+        /// if the sorting way cannot be established (e.g. the input was empty).
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="input"/> is <see langword="null" />.

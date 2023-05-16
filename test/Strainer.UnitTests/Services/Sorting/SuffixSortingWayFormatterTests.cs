@@ -3,15 +3,16 @@ using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
-    public class DescendingPrefixSortingWayFormatterTests
+    public class SuffixSortingWayFormatterTests
     {
-        private const string DescendingPrefix = DescendingPrefixSortingWayFormatter.DescendingPrefix;
+        private const string AscendingSuffix = SuffixSortingWayFormatter.AscendingSuffix;
+        private const string DescendingSuffix = SuffixSortingWayFormatter.DescendingSuffix;
 
-        private readonly DescendingPrefixSortingWayFormatter _formatter;
+        private readonly SuffixSortingWayFormatter _formatter;
 
-        public DescendingPrefixSortingWayFormatterTests()
+        public SuffixSortingWayFormatterTests()
         {
-            _formatter = new DescendingPrefixSortingWayFormatter();
+            _formatter = new SuffixSortingWayFormatter();
         }
 
         [Fact]
@@ -46,10 +47,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         [Theory]
         [InlineData("", SortingWay.Ascending, "")]
         [InlineData(" ", SortingWay.Ascending, " ")]
-        [InlineData("foo", SortingWay.Ascending, "foo")]
+        [InlineData("foo", SortingWay.Ascending, "foo" + AscendingSuffix)]
         [InlineData("", SortingWay.Descending, "")]
         [InlineData(" ", SortingWay.Descending, " ")]
-        [InlineData("foo", SortingWay.Descending, DescendingPrefix + "foo")]
+        [InlineData("foo", SortingWay.Descending, "foo" + DescendingSuffix)]
         public void Formatter_AddsDescendingPrefix(string input, SortingWay sortingWay, string expectedResult)
         {
             // Act
@@ -62,8 +63,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         [Fact]
         public void Formatter_Throws_ForNullInput_WhenGettingSortingWay()
         {
+            // Arrange
+            string input = null;
+
             // Act
-            Action act = () => _formatter.GetSortingWay(input: null);
+            Action act = () => _formatter.GetSortingWay(input);
 
             // Assert
             act.Should().ThrowExactly<ArgumentNullException>();
@@ -72,8 +76,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         [Theory]
         [InlineData("", SortingWay.Unknown)]
         [InlineData(" ", SortingWay.Unknown)]
-        [InlineData("foo", SortingWay.Ascending)]
-        [InlineData(DescendingPrefix + "foo", SortingWay.Descending)]
+        [InlineData("foo", SortingWay.Unknown)]
+        [InlineData("foo" + AscendingSuffix, SortingWay.Ascending)]
+        [InlineData("foo" + DescendingSuffix, SortingWay.Descending)]
         public void Formatter_Returns_CorrectSortingWay(string input, SortingWay sortingWay)
         {
             // Act
@@ -113,16 +118,15 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         }
 
         [Theory]
-        [InlineData("", "")]
-        [InlineData(" ", " ")]
-        [InlineData(DescendingPrefix, "")]
-        [InlineData(DescendingPrefix + "foo", "foo")]
-        [InlineData("foo", "foo")]
-        public void Formatter_Returns_UnformatedInput(string input, string expectedResult)
+        [InlineData("", SortingWay.Ascending, "")]
+        [InlineData(" ", SortingWay.Ascending, " ")]
+        [InlineData(AscendingSuffix, SortingWay.Ascending, "")]
+        [InlineData(DescendingSuffix, SortingWay.Descending, "")]
+        [InlineData("foo" + AscendingSuffix, SortingWay.Ascending, "foo")]
+        [InlineData("foo" + DescendingSuffix, SortingWay.Descending, "foo")]
+        [InlineData("foo", SortingWay.Ascending, "foo")]
+        public void Formatter_Returns_UnformatedInput(string input, SortingWay sortingWay, string expectedResult)
         {
-            // Arrange
-            var sortingWay = SortingWay.Descending;
-
             // Act
             var result = _formatter.Unformat(input, sortingWay);
 
