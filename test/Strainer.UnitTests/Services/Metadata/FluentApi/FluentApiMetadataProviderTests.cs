@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
+using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Moq;
 
@@ -11,6 +12,19 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
     {
         private readonly Mock<IStrainerOptionsProvider> _optionsProviderMock = new();
         private readonly Mock<IConfigurationMetadataProvider> _configurationMetadataProviderMock = new();
+        private readonly Mock<IPropertyInfoProvider> _propertyInfoProviderMock = new();
+        private readonly Mock<IFluentApiPropertyMetadataBuilder> _propertyMetadataBuilderMock = new();
+
+        private readonly FluentApiMetadataProvider _provider;
+
+        public FluentApiMetadataProviderTests()
+        {
+            _provider = new FluentApiMetadataProvider(
+                _optionsProviderMock.Object,
+                _configurationMetadataProviderMock.Object,
+                _propertyInfoProviderMock.Object,
+                _propertyMetadataBuilderMock.Object);
+        }
 
         [Fact]
         public void GetDefaultMetadata_ReturnsNull_When_NoMetadataAvailable()
@@ -25,10 +39,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetObjectMetadata())
                 .Returns(new Dictionary<Type, IObjectMetadata>());
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
+            var metadata = _provider.GetDefaultMetadata<Post>();
 
             // Assert
             metadata.Should().BeNull();
@@ -44,9 +57,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetDefaultMetadata())
                 .Returns(new Dictionary<Type, IPropertyMetadata>());
-            var objectMetadata = new ObjectMetadata
-            {
-            };
+            var propertyMetadata = Mock.Of<IPropertyMetadata>();
+            var objectMetadata = Mock.Of<IObjectMetadata>();
             var objectMetadataDictionary = new Dictionary<Type, IObjectMetadata>
             {
                 { typeof(Post), objectMetadata }
@@ -54,19 +66,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetObjectMetadata())
                 .Returns(objectMetadataDictionary);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
+            _propertyMetadataBuilderMock
+                .Setup(x => x.BuildPropertyMetadata(objectMetadata))
+                .Returns(propertyMetadata);
 
             // Act
-            var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
+            var metadata = _provider.GetDefaultMetadata<Post>();
 
             // Assert
             metadata.Should().NotBeNull();
-            metadata.IsDefaultSorting.Should().BeTrue();
-            metadata.IsDefaultSortingDescending.Should().Be(objectMetadata.IsDefaultSortingDescending);
-            metadata.IsFilterable.Should().Be(objectMetadata.IsFilterable);
-            metadata.IsSortable.Should().Be(objectMetadata.IsSortable);
-            metadata.Name.Should().Be(objectMetadata.DefaultSortingPropertyName);
-            metadata.PropertyInfo.Should().BeSameAs(objectMetadata.DefaultSortingPropertyInfo);
+            metadata.Should().BeSameAs(propertyMetadata);
         }
 
         [Fact]
@@ -90,10 +99,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetDefaultMetadata())
                 .Returns(defaultMetadataDictionary);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Post>();
+            var metadata = _provider.GetDefaultMetadata<Post>();
 
             // Assert
             metadata.Should().NotBeNull();
@@ -111,10 +119,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetPropertyMetadata())
                 .Returns(propertyMetadata);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
+            var metadata = _provider.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
                 name: nameof(Post.Id));
@@ -145,10 +152,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetPropertyMetadata())
                 .Returns(propertyMetadataDictionary);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
+            var metadata = _provider.GetPropertyMetadata<Post>(
                 isSortableRequired: false,
                 isFilterableRequired: false,
                 name: nameof(Post.Id));
@@ -182,10 +188,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetPropertyMetadata())
                 .Returns(propertyMetadataDictionary);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            var metadata = fluentApiMetadataProvider.GetPropertyMetadata<Post>(
+            var metadata = _provider.GetPropertyMetadata<Post>(
                 isSortableRequired: true,
                 isFilterableRequired: true,
                 name: nameof(Post.Id));
@@ -202,10 +207,9 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _optionsProviderMock
                 .Setup(provider => provider.GetStrainerOptions())
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            var metadatas = fluentApiMetadataProvider.GetAllPropertyMetadata();
+            var metadatas = _provider.GetAllPropertyMetadata();
 
             // Assert
             metadatas.Should().BeNull();
@@ -226,20 +230,12 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
             _configurationMetadataProviderMock
                 .Setup(x => x.GetObjectMetadata())
                 .Returns(objectMetadataDictionary);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider();
 
             // Act
-            var metadatas = fluentApiMetadataProvider.GetAllPropertyMetadata();
+            var metadatas = _provider.GetAllPropertyMetadata();
 
             // Assert
             metadatas.Should().BeEmpty();
-        }
-
-        private FluentApiMetadataProvider CreateFluentApiMetadataProvider()
-        {
-            return new FluentApiMetadataProvider(
-                _optionsProviderMock.Object,
-                _configurationMetadataProviderMock.Object);
         }
 
         private class Post

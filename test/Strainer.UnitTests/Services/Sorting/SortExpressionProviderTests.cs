@@ -1,17 +1,9 @@
 ﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Configuration;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Metadata;
-using Fluorite.Strainer.Services.Metadata.Attributes;
-using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Fluorite.Strainer.Services.Sorting;
 using Moq;
 using System.Reflection;
@@ -20,80 +12,69 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortExpressionProviderTests
     {
+        private readonly Mock<IMetadataFacade> _metadataProvidersFacadeMock = new();
+
+        private readonly SortExpressionProvider _provider;
+
+        public SortExpressionProviderTests()
+        {
+            _provider = new SortExpressionProvider(_metadataProvidersFacadeMock.Object);
+        }
+
         [Fact]
         public void Provider_Returns_ListOfSortExpressions()
         {
             // Arrange
+            var propertyInfo = typeof(Comment).GetProperty(nameof(Comment.Text));
+            var propertyMetadata = new PropertyMetadata
+            {
+                IsSortable = true,
+                Name = propertyInfo.Name,
+                PropertyInfo = propertyInfo,
+            };
             var sortTerm = new SortTerm
             {
-                Input = "Text",
                 IsDescending = false,
-                Name = "Text"
+                Name = propertyInfo.Name,
             };
-            var propertyInfo = typeof(Comment).GetProperty(nameof(Comment.Text));
             var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
             {
                 { propertyInfo, sortTerm },
             };
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProvider = new PropertyInfoProvider();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
-            mapper.Property<Comment>(c => c.Text).IsSortable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var propertyMetadataProviders = new IMetadataProvider[]
-            {
-                fluentApiMetadataProvider,
-            };
-            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
-            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
+
+            _metadataProvidersFacadeMock
+                .Setup(x => x.GetMetadata<Comment>(true, false, sortTerm.Name))
+                .Returns(propertyMetadata);
 
             // Act
-            var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
-            var firstExpression = sortExpressions.FirstOrDefault();
+            var sortExpressions = _provider.GetExpressions<Comment>(sortTerms).ToList();
 
             // Assert
             sortExpressions.Should().NotBeEmpty();
-            firstExpression.IsDescending.Should().BeFalse();
-            firstExpression.IsSubsequent.Should().BeFalse();
+            sortExpressions[0].IsDefault.Should().BeFalse();
+            sortExpressions[0].IsDescending.Should().BeFalse();
+            sortExpressions[0].IsSubsequent.Should().BeFalse();
         }
 
         [Fact]
         public void Provider_Returns_EmptyListOfSortExpressions_When_NoMatchingPropertyIsFound()
         {
             // Arrange
-            var sortTerm = new SortTerm
-            {
-                Input = "Text",
-                IsDescending = false,
-                Name = "Text"
-            };
-            var propertyInfo = typeof(Comment).GetProperty(nameof(Comment.Text));
+            var propertyInfo = Mock.Of<PropertyInfo>();
+            var sortTerm = Mock.Of<ISortTerm>();
             var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
             {
                 { propertyInfo, sortTerm },
             };
-            var optionsProviderMock = new Mock<IStrainerOptionsProvider>();
-            optionsProviderMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsProviderMock.Object;
-            var propertyInfoProvider = new PropertyInfoProvider();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var propertyMetadataProviders = new IMetadataProvider[]
-            {
-                fluentApiMetadataProvider,
-            };
-            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
-            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
 
             // Act
-            var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
+            var sortExpressions = _provider.GetExpressions<Comment>(sortTerms);
 
             // Assert
             sortExpressions.Should().BeEmpty();
+
+            _metadataProvidersFacadeMock
+                .Verify(x => x.GetMetadata<Comment>(true, false, sortTerm.Name), Times.Once);
         }
 
         [Fact]
@@ -102,38 +83,34 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             // Arrange
             var sortTerm = new SortTerm
             {
-                Input = "-TopComment.Text.Length",
+                Input = $"-{nameof(Post.TopComment)}.{nameof(Comment.Text)}.{nameof(string.Length)}",
                 IsDescending = true,
-                Name = "TopComment.Text.Length"
+                Name = $"{nameof(Post.TopComment)}.{nameof(Comment.Text)}.{nameof(string.Length)}"
             };
             var propertyInfo = typeof(string).GetProperty(nameof(string.Length));
             var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
             {
                 { propertyInfo, sortTerm },
             };
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProvider = new PropertyInfoProvider();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
-            mapper.Property<Post>(c => c.TopComment.Text.Length).IsSortable();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var propertyMetadataProviders = new IMetadataProvider[]
+            var propertyMetadata = new PropertyMetadata
             {
-                fluentApiMetadataProvider,
+                IsSortable = true,
+                Name = sortTerm.Name,
+                PropertyInfo = propertyInfo,
             };
-            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
-            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
+
+            _metadataProvidersFacadeMock
+                .Setup(x => x.GetMetadata<Post>(true, false, sortTerm.Name))
+                .Returns(propertyMetadata);
 
             // Act
-            var sortExpressions = expressionProvider.GetExpressions<Post>(sortTerms);
-            var firstExpression = sortExpressions.FirstOrDefault();
+            var sortExpressions = _provider.GetExpressions<Post>(sortTerms).ToList();
 
             // Assert
             sortExpressions.Should().NotBeEmpty();
-            firstExpression.IsDescending.Should().BeTrue();
-            firstExpression.IsSubsequent.Should().BeFalse();
+            sortExpressions[0].IsDefault.Should().BeFalse();
+            sortExpressions[0].IsDescending.Should().BeTrue();
+            sortExpressions[0].IsSubsequent.Should().BeFalse();
         }
 
         [Fact]
@@ -144,15 +121,15 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             {
                 new SortTerm
                 {
-                    Input = "-Text,Id",
+                    Input = $"-{nameof(Comment.Text)},{nameof(Comment.Id)}",
                     IsDescending = true,
-                    Name = "Text"
+                    Name = nameof(Comment.Text),
                 },
                 new SortTerm
                 {
-                    Input = "-Text,Id",
+                    Input = $"-{nameof(Comment.Text)},{nameof(Comment.Id)}",
                     IsDescending = false,
-                    Name = "Id"
+                    Name = nameof(Comment.Id),
                 },
             };
             var properties = new PropertyInfo[]
@@ -160,84 +137,51 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
                 typeof(Comment).GetProperty(nameof(Comment.Text)),
                 typeof(Comment).GetProperty(nameof(Comment.Id)),
             };
-            var sortTerms = properties.Zip(termsList, (prop, term) => new { prop, term })
-                .ToDictionary(x => x.prop, x => x.term);
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProvider = new PropertyInfoProvider();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProvider);
-            mapper.Property<Comment>(c => c.Text).IsSortable();
-            mapper.Property<Comment>(c => c.Id).IsSortable();
-            mapper.Property<Comment>(c => c.DateCreated).IsSortable();
-            var metadataSourceTypeProviderMock = new Mock<IMetadataSourceTypeProvider>();
-            var metadataAssemblySourceProviderMock = new Mock<IMetadataAssemblySourceProvider>();
-            var attributeMetadataRetrieverMock = new Mock<IAttributeMetadataRetriever>();
-            var strainerObjectAttributeProviderMock = new Mock<IStrainerAttributeProvider>();
-            var fluentApiMetadataProvider = CreateFluentApiMetadataProvider(optionsProvider, mapper);
-            var attributeMetadataProvider = new AttributeMetadataProvider(
-                metadataSourceTypeProviderMock.Object,
-                metadataAssemblySourceProviderMock.Object,
-                attributeMetadataRetrieverMock.Object,
-                strainerObjectAttributeProviderMock.Object);
-            var propertyMetadataProviders = new IMetadataProvider[]
+            var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
             {
-                attributeMetadataProvider,
-                fluentApiMetadataProvider,
+                { properties[0], termsList[0] },
+                { properties[1], termsList[1] },
             };
-            var mainMetadataProvider = new MetadataFacade(propertyMetadataProviders);
-            var expressionProvider = new SortExpressionProvider(mainMetadataProvider);
+            var propertyMetadatas = new []
+            {
+                new PropertyMetadata
+                {
+                    Name = nameof(Comment.Text),
+                    IsSortable = true,
+                    PropertyInfo = properties[0],
+                },
+                new PropertyMetadata
+                {
+                    Name = nameof(Comment.Id),
+                    IsSortable = true,
+                    PropertyInfo = properties[1],
+                },
+            };
+
+            _metadataProvidersFacadeMock
+                .Setup(x => x.GetMetadata<Comment>(true, false, termsList[0].Name))
+                .Returns(propertyMetadatas[0]);
+            _metadataProvidersFacadeMock
+                .Setup(x => x.GetMetadata<Comment>(true, false, termsList[1].Name))
+                .Returns(propertyMetadatas[1]);
 
             // Act
-            var sortExpressions = expressionProvider.GetExpressions<Comment>(sortTerms);
-            var firstExpression = sortExpressions.FirstOrDefault();
-            var secondExpression = sortExpressions.LastOrDefault();
+            var sortExpressions = _provider.GetExpressions<Comment>(sortTerms).ToList();
 
             // Assert
             sortExpressions.Should().HaveCount(2);
-            firstExpression.IsDescending.Should().BeTrue();
-            firstExpression.IsSubsequent.Should().BeFalse();
-            secondExpression.IsDescending.Should().BeFalse();
-            secondExpression.IsSubsequent.Should().BeTrue();
-        }
-
-        private FluentApiMetadataProvider CreateFluentApiMetadataProvider(
-            IStrainerOptionsProvider optionsProvider,
-            MetadataMapper mapper)
-        {
-            var defaultMetadata = mapper.DefaultMetadata.ToReadOnly();
-            var objectMetadata = mapper.ObjectMetadata.ToReadOnly();
-            var propertyMetadata = mapper
-                .PropertyMetadata
-                .Select(pair =>
-                    new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                        pair.Key, pair.Value.ToReadOnly()))
-                .ToReadOnlyDictionary();
-            var strainerConfiguration = new StrainerConfiguration(
-                new Dictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(),
-                new Dictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(),
-                defaultMetadata,
-                new Dictionary<string, IFilterOperator>(),
-                objectMetadata,
-                propertyMetadata);
-            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfiguration);
-            var configurationMetadataProvider = new ConfigurationMetadataProvider(strainerConfigurationProvider);
-            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
-                optionsProvider,
-                configurationMetadataProvider);
-
-            return fluentApiMetadataProvider;
+            sortExpressions[0].IsDefault.Should().BeFalse();
+            sortExpressions[0].IsDescending.Should().BeTrue();
+            sortExpressions[0].IsSubsequent.Should().BeFalse();
+            sortExpressions[1].IsDefault.Should().BeFalse();
+            sortExpressions[1].IsDescending.Should().BeFalse();
+            sortExpressions[1].IsSubsequent.Should().BeTrue();
         }
 
         private class Comment
         {
-            [StrainerProperty]
-            public DateTimeOffset DateCreated { get; set; }
-
             public int Id { get; set; }
 
-            [StrainerProperty]
             public string Text { get; set; }
         }
 

@@ -89,6 +89,7 @@ namespace Fluorite.Strainer.Services.Sorting
             return new SortExpression<TEntity>
             {
                 Expression = orderExpression,
+                IsDefault = metadata.IsDefaultSorting,
                 IsDescending = sortTerm.IsDescending,
                 IsSubsequent = isSubsequent,
             };

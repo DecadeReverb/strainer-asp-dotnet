@@ -1,7 +1,6 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Configuration;
-using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata.FluentApi
 {
@@ -9,13 +8,19 @@ namespace Fluorite.Strainer.Services.Metadata.FluentApi
     {
         private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly IConfigurationMetadataProvider _metadataProvider;
+        private readonly IFluentApiPropertyMetadataBuilder _propertyMetadataBuilder;
+        private readonly IPropertyInfoProvider _propertyInfoProvider;
 
         public FluentApiMetadataProvider(
             IStrainerOptionsProvider strainerOptionsProvider,
-            IConfigurationMetadataProvider metadataProvider)
+            IConfigurationMetadataProvider metadataProvider,
+            IPropertyInfoProvider propertyInfoProvider,
+            IFluentApiPropertyMetadataBuilder propertyMetadataBuilder)
         {
             _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
+            _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
+            _propertyMetadataBuilder = propertyMetadataBuilder ?? throw new ArgumentNullException(nameof(propertyMetadataBuilder));
         }
 
         public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -59,7 +64,7 @@ namespace Fluorite.Strainer.Services.Metadata.FluentApi
             {
                 if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
                 {
-                    propertyMetadata = BuildPropertyMetadata(objectMetadata);
+                    propertyMetadata = _propertyMetadataBuilder.BuildPropertyMetadata(objectMetadata);
                 }
             }
 
@@ -143,41 +148,11 @@ namespace Fluorite.Strainer.Services.Metadata.FluentApi
             return GetPropertyMetadatasFromObjectMetadata(type, objectMetadata);
         }
 
-        private IPropertyMetadata BuildPropertyMetadata(IObjectMetadata objectMetadata)
-        {
-            return new PropertyMetadata
-            {
-                IsDefaultSorting = true,
-                IsDefaultSortingDescending = objectMetadata.IsDefaultSortingDescending,
-                IsFilterable = objectMetadata.IsFilterable,
-                IsSortable = objectMetadata.IsSortable,
-                Name = objectMetadata.DefaultSortingPropertyName,
-                PropertyInfo = objectMetadata.DefaultSortingPropertyInfo,
-            };
-        }
-
-        private IPropertyMetadata BuildPropertyMetadataUsingPropertyInfo(PropertyInfo propertyInfo, IObjectMetadata objectMetadata)
-        {
-            var isDefaultSorting = objectMetadata.DefaultSortingPropertyInfo == propertyInfo;
-            var isDefaultSortingAscending = isDefaultSorting && objectMetadata.IsDefaultSortingDescending;
-
-            return new PropertyMetadata
-            {
-                IsFilterable = objectMetadata.IsFilterable,
-                IsSortable = objectMetadata.IsSortable,
-                Name = propertyInfo.Name,
-                IsDefaultSorting = isDefaultSorting,
-                IsDefaultSortingDescending = isDefaultSortingAscending,
-                PropertyInfo = propertyInfo,
-            };
-        }
-
         private IReadOnlyDictionary<string, IPropertyMetadata> GetPropertyMetadatasFromObjectMetadata(Type type, IObjectMetadata objectMetadata)
         {
-            // TODO: Get properties from property provider.
-            return type
-                .GetProperties()
-                .Select(propertyInfo => BuildPropertyMetadataUsingPropertyInfo(propertyInfo, objectMetadata))
+            return _propertyInfoProvider
+                .GetPropertyInfos(type)
+                .Select(propertyInfo => _propertyMetadataBuilder.BuildPropertyMetadataFromPropertyInfo(objectMetadata, propertyInfo))
                 .ToDictionary(p => p.Name, p => p)
                 .ToReadOnlyDictionary();
         }
