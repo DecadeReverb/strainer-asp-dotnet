@@ -73,9 +73,8 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 return null;
             }
 
-            // TODO: Get properties from property provider.
-            var attribute = modelType
-                .GetProperties()
+            var attribute = _propertyInfoProvider
+                .GetPropertyInfos(modelType)
                 .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
                 .Where(attribute => attribute != null)
                 .FirstOrDefault(attribute => attribute.IsDefaultSorting);
@@ -192,9 +191,8 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 return null;
             }
 
-            // TODO: Get properties from property provider.
-            var keyValue = modelType
-                .GetProperties()
+            var keyValue = _propertyInfoProvider
+                .GetPropertyInfos(modelType)
                 .Select(propertyInfo =>
                 {
                     var attribute = _strainerAttributeProvider.GetPropertyAttribute(propertyInfo);
@@ -261,9 +259,8 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes
                 return null;
             }
 
-            // TODO: Get properties from property provider.
-            var metadata = modelType
-                .GetProperties()
+            var metadata = _propertyInfoProvider
+                .GetPropertyInfos(modelType)
                 .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
                 .Where(attribute => attribute != null)
                 .Select(attribute => (IPropertyMetadata)attribute);
