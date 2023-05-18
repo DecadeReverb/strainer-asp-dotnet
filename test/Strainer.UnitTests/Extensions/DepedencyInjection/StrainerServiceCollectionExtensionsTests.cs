@@ -1,4 +1,5 @@
 ﻿using Fluorite.Extensions.DependencyInjection;
+using Fluorite.Strainer.AspNetCore.Services;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Sorting;
@@ -199,6 +200,21 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .Lifetime
                 .Should()
                 .Be(serviceLifetime);
+
+            if (serviceLifetime == ServiceLifetime.Singleton)
+            {
+                services.FirstOrDefault(s => s.ServiceType == typeof(IStrainerOptionsProvider))
+                    .ImplementationType
+                    .Should()
+                    .Be<AspNetCoreSingletonStrainerOptionsProvider>();
+            }
+            else
+            {
+                services.FirstOrDefault(s => s.ServiceType == typeof(IStrainerOptionsProvider))
+                    .ImplementationType
+                    .Should()
+                    .Be<AspNetCoreStrainerOptionsProvider>();
+            }
         }
 
         [Fact]
