@@ -10,7 +10,6 @@ using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Moq;
 using System.Reflection;
 

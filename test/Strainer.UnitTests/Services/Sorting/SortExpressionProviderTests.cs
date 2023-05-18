@@ -1,8 +1,5 @@
-﻿using Fluorite.Extensions;
-using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Metadata;
+﻿using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting.Terms;
-using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using Moq;
