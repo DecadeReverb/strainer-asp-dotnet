@@ -574,7 +574,6 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
             services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
 
-            services.Add<ITypeConverter, ComponentModelTypeConverter>(serviceLifetime);
             services.Add<ITypeConverterProvider, TypeConverterProvider>(serviceLifetime);
             services.Add<IStringValueConverter, StringValueConverter>(serviceLifetime);
             services.Add<ITypeChanger, TypeChanger>(serviceLifetime);
