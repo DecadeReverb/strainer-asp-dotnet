@@ -2,7 +2,7 @@
 
 namespace Fluorite.Strainer.Services.Configuration
 {
-    public interface IStrainerModuleLoader
+    public interface IModuleLoadingStrategy
     {
         void Load(IStrainerModule strainerModule);
     }

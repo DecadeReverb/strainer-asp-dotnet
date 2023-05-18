@@ -1,39 +1,26 @@
-﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Services.Metadata;
-using Fluorite.Strainer.Services.Modules;
+﻿using Fluorite.Strainer.Services.Modules;
 
 namespace Fluorite.Strainer.Services.Configuration
 {
     public class StrainerModuleLoader : IStrainerModuleLoader
     {
-        private readonly IPropertyInfoProvider _propertyInfoProvider;
-        private readonly IGenericModuleLoader _genericModuleLoader;
+        private readonly IModuleLoadingStrategySelector _moduleLoadingStrategySelector;
 
-        public StrainerModuleLoader(
-            IPropertyInfoProvider propertyInfoProvider,
-            IGenericModuleLoader genericModuleLoader)
+        public StrainerModuleLoader(IModuleLoadingStrategySelector moduleLoadingStrategySelector)
         {
-            _propertyInfoProvider = propertyInfoProvider;
-            _genericModuleLoader = genericModuleLoader;
+            _moduleLoadingStrategySelector = moduleLoadingStrategySelector ?? throw new ArgumentNullException(nameof(moduleLoadingStrategySelector));
         }
 
-        public void Load(IStrainerModule strainerModule, StrainerOptions options)
+        public void Load(IStrainerModule strainerModule)
         {
-            var isGeneric = strainerModule
-                .GetType()
-                .GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
-
-            if (isGeneric)
+            if (strainerModule is null)
             {
-                _genericModuleLoader.Load(strainerModule, options);
+                throw new ArgumentNullException(nameof(strainerModule));
             }
-            else
-            {
-                var moduleBuilder = new StrainerModuleBuilder(_propertyInfoProvider, strainerModule, options);
 
-                strainerModule.Load(moduleBuilder);
-            }
+            var strategy = _moduleLoadingStrategySelector.Select(strainerModule);
+
+            strategy.Load(strainerModule);
         }
     }
 }

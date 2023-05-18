@@ -582,7 +582,10 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add<IStrainerConfigurationFactory, StrainerConfigurationFactory>(serviceLifetime);
             services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
             services.Add<IStrainerModuleLoader, StrainerModuleLoader>(serviceLifetime);
-            services.Add<IGenericModuleLoader, GenericModuleLoader>(serviceLifetime);
+            services.Add<IModuleLoadingStrategySelector, ModuleLoadingStrategySelector>(serviceLifetime);
+            services.Add<IPlainModuleLoadingStrategy, PlainModuleLoadingStrategy>(serviceLifetime);
+            services.Add<IGenericModuleLoadingStrategy, GenericModuleLoadingStrategy>(serviceLifetime);
+            services.Add<IStrainerModuleBuilderFactory, StrainerModuleBuilderFactory>(serviceLifetime);
             services.Add<IStrainerModuleTypeValidator, StrainerModuleTypeValidator>(serviceLifetime);
             services.Add<IStrainerConfigurationValidator, StrainerConfigurationValidator>(serviceLifetime);
             services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);

@@ -46,6 +46,6 @@ namespace Fluorite.Strainer.Services.Modules
         /// <param name="builder">
         /// The Strainer Module builder.
         /// </param>
-        public abstract void Load(IStrainerModuleBuilder builder);
+        void Load(IStrainerModuleBuilder builder);
     }
 }

@@ -4,18 +4,15 @@ namespace Fluorite.Strainer.Services.Configuration
 {
     public class StrainerConfigurationFactory : IStrainerConfigurationFactory
     {
-        private readonly IStrainerOptionsProvider _optionsProvider;
         private readonly IStrainerModuleLoader _strainerModuleLoader;
         private readonly IStrainerModuleFactory _strainerModuleFactory;
         private readonly IStrainerModuleTypeValidator _strainerModuleTypeValidator;
 
         public StrainerConfigurationFactory(
-            IStrainerOptionsProvider optionsProvider,
             IStrainerModuleLoader strainerModuleLoader,
             IStrainerModuleFactory strainerModuleFactory,
             IStrainerModuleTypeValidator strainerModuleTypeValidator)
         {
-            _optionsProvider = optionsProvider;
             _strainerModuleLoader = strainerModuleLoader;
             _strainerModuleFactory = strainerModuleFactory;
             _strainerModuleTypeValidator = strainerModuleTypeValidator;
@@ -24,13 +21,12 @@ namespace Fluorite.Strainer.Services.Configuration
         public IStrainerConfiguration Create(IReadOnlyCollection<Type> moduleTypes)
         {
             var validModuleTypes = _strainerModuleTypeValidator.GetValidModuleTypes(moduleTypes);
-            var options = _optionsProvider.GetStrainerOptions();
             var modules = validModuleTypes
                 .Select(type => _strainerModuleFactory.CreateModule(type))
                 .Where(instance => instance != null)
                 .ToList();
 
-            modules.ForEach(strainerModule => _strainerModuleLoader.Load(strainerModule, options));
+            modules.ForEach(strainerModule => _strainerModuleLoader.Load(strainerModule));
 
             return new StrainerConfigurationBuilder()
                 .WithPropertyMetadata(modules)
