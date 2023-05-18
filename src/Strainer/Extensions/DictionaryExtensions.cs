@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 
 namespace Fluorite.Extensions
 {
     public static class DictionaryExtensions
     {
-        public static TDictionary MergeLeft<TDictionary, TKey, TValue>(
-            this TDictionary source,
-            params IDictionary<TKey, TValue>[] others)
-            where TDictionary : IDictionary<TKey, TValue>, new()
+        public static Dictionary<TKey, TValue> MergeLeft<TKey, TValue>(
+            this IReadOnlyDictionary<TKey, TValue> source,
+            params IReadOnlyDictionary<TKey, TValue>[] others)
         {
-            var resultDictionary = new TDictionary();
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            foreach (var dictionary in new List<IDictionary<TKey, TValue>> { source }.Concat(others))
+            var resultDictionary = new Dictionary<TKey, TValue>();
+
+            foreach (var dictionary in new[] { source }.Concat(others))
             {
                 foreach (var pair in dictionary)
                 {

@@ -1,14 +1,11 @@
-﻿using FluentAssertions;
-using Fluorite.Extensions.DependencyInjection;
+﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.DependencyInjection
 {
@@ -133,21 +130,11 @@ namespace Fluorite.Strainer.IntegrationTests.DependencyInjection
                     .HasName("hash")
                     .HasExpression(context => Expression.Constant(true));
 
-                builder.AddCustomFilterMethod<Post>(nameof(TestCustomFilterMethod))
-                    .HasFunction(TestCustomFilterMethod);
+                builder.AddCustomFilterMethod<Post>("TestCustomFilterMethod")
+                    .HasFunction(post => post.Id == 1);
 
-                builder.AddCustomSortMethod<Post>(nameof(TestCustomSortMethod))
-                    .HasFunction(TestCustomSortMethod);
-            }
-
-            public IQueryable<Post> TestCustomSortMethod(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-            {
-                return source.OrderBy(post => post.Id);
-            }
-
-            public IQueryable<Post> TestCustomFilterMethod(IQueryable<Post> source, string filterOperator)
-            {
-                return source.Where(post => post.Id == 1);
+                builder.AddCustomSortMethod<Post>("TestCustomSortMethod")
+                    .HasFunction(post => post.Id);
             }
         }
     }

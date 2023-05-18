@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Fluorite.Strainer.Models;
+﻿using Fluorite.Strainer.Models;
 
 namespace Fluorite.Strainer.Services
 {

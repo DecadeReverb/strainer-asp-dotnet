@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Sorting.Terms;
-using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Sorting
 {

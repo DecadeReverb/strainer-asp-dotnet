@@ -2,22 +2,19 @@
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.ExampleWebApi.Modules
 {
-    public class ExampleWebApiStrainerModule : StrainerModule
+    public class ExampleWebApiStrainerModule : StrainerModule<Post>
     {
-        public override void Load(IStrainerModuleBuilder builder)
+        public override void Load(IStrainerModuleBuilder<Post> builder)
         {
-            builder.AddCustomFilterMethod<Post>(nameof(IsNew))
-                .HasFunction(IsNew);
-            builder.AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
-                .HasFunction(HasInTitleFilterOperator);
+            builder.AddCustomFilterMethod("IsNew")
+                .HasFunction(p => EF.Functions.DateDiffDay(DateTime.UtcNow, p.DateCreated) < 7);
 
-            builder.AddCustomSortMethod<Post>(nameof(Popularity))
-                .HasFunction(Popularity);
+            builder.AddCustomSortMethod("Popularity")
+                .HasFunction(p => p.LikeCount);
 
             builder.AddFilterOperator(symbol: "%")
                 .HasName("modulo equal zero")
@@ -25,23 +22,14 @@ namespace Fluorite.Strainer.ExampleWebApi.Modules
                     Expression.Modulo(context.PropertyValue, context.FilterValue),
                     Expression.Constant(0)));
 
-            builder.AddProperty<Post>(p => p.Comments.Count)
+            builder.AddProperty(p => p.Comments.Count)
                 .IsFilterable()
                 .IsSortable();
-        }
 
-        private IQueryable<Post> HasInTitleFilterOperator(IQueryable<Post> source, string filterOperator)
-            => source.Where(p => p.Title.Contains(filterOperator));
-
-        private IQueryable<Post> IsNew(IQueryable<Post> source, string filterOperator)
-            => source.Where(p => EF.Functions.DateDiffDay(DateTime.UtcNow, p.DateCreated) < 7);
-
-        private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-        {
-            return isSubsequent
-                ? (source as IOrderedQueryable<Post>).ThenByDescending(p => p.LikeCount)
-                : source.OrderByDescending(p => p.LikeCount)
-                    .ThenByDescending(p => p.DateCreated);
+            builder.AddProperty(p => p.LikeCount)
+                .IsFilterable()
+                .IsSortable()
+                .IsDefaultSort(isDescending: true);
         }
     }
 }

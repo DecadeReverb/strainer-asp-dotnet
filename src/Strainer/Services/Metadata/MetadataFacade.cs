@@ -1,6 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Fluorite.Strainer.Services.Metadata

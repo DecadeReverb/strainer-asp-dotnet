@@ -1,7 +1,4 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Terms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Fluorite.Strainer.Services.Filtering
@@ -11,16 +8,21 @@ namespace Fluorite.Strainer.Services.Filtering
         private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
         private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
-        private readonly IFilterOperatorParser _parser;
-        private readonly IConfigurationFilterOperatorsProvider _filterOperatorsConfigurationProvider;
+        private readonly IFilterOperatorParser _operatorParser;
+        private readonly IFilterTermNamesParser _namesParser;
+        private readonly IFilterTermValuesParser _valuesParser;
+        private readonly IFilterTermSectionsParser _termSectionsParser;
 
         public FilterTermParser(
-            IFilterOperatorParser parser,
-            IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
+            IFilterOperatorParser operatorParser,
+            IFilterTermNamesParser namesParser,
+            IFilterTermValuesParser valuesParser,
+            IFilterTermSectionsParser termSectionsParser)
         {
-            _parser = parser ?? throw new ArgumentNullException(nameof(parser));
-            _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider
-                ?? throw new ArgumentNullException(nameof(filterOperatorsConfigurationProvider));
+            _operatorParser = operatorParser ?? throw new ArgumentNullException(nameof(_operatorParser));
+            _namesParser = namesParser ?? throw new ArgumentNullException(nameof(namesParser));
+            _valuesParser = valuesParser ?? throw new ArgumentNullException(nameof(valuesParser));
+            _termSectionsParser = termSectionsParser ?? throw new ArgumentNullException(nameof(termSectionsParser));
         }
 
         public IList<IFilterTerm> GetParsedTerms(string input)
@@ -61,16 +63,16 @@ namespace Fluorite.Strainer.Services.Filtering
 
         private IFilterTerm ParseFilterTerm(string input)
         {
-            var (filterName, filterOpertatorSymbol, filterValues) = GetFilterSplits(input);
-            var names = GetFilterNames(filterName);
+            var sections = _termSectionsParser.Parse(input);
+            var names = _namesParser.Parse(sections.Names);
 
             if (!names.Any())
             {
                 return null;
             }
 
-            var values = GetFilterValues(filterValues);
-            var operatorParsed = _parser.GetParsedOperator(filterOpertatorSymbol);
+            var values = _valuesParser.Parse(sections.Values);
+            var operatorParsed = _operatorParser.GetParsedOperator(sections.OperatorSymbol);
 
             return new FilterTerm(input)
             {
@@ -78,54 +80,6 @@ namespace Fluorite.Strainer.Services.Filtering
                 Values = values,
                 Operator = operatorParsed,
             };
-        }
-
-        private (string FilterName, string FilterOperatorSymbol, string FilterValues) GetFilterSplits(string input)
-        {
-            var symbols = _filterOperatorsConfigurationProvider
-                .GetFilterOperators()
-                .Keys
-                .OrderByDescending(s => s.Length)
-                .ToArray();
-            var splitPattern = string.Join("|", symbols.Select(s => $"({Regex.Escape(s)})"));
-            var substrings = Regex.Split(input, splitPattern);
-
-            if (substrings.Length <= 1)
-            {
-                return (substrings.FirstOrDefault(), string.Empty, string.Empty);
-            }
-
-            if (substrings.Length >= 3)
-            {
-                return (substrings[0], substrings[1], substrings[2]);
-            }
-
-            return (string.Empty, string.Empty, string.Empty);
-        }
-
-        private List<string> GetFilterNames(string names)
-        {
-            if (names.Equals(string.Empty))
-            {
-                return new List<string>();
-            }
-
-            return Regex.Split(names, EscapedPipePattern)
-                .Select(filterName => filterName.Trim())
-                .Where(filterName => !string.IsNullOrWhiteSpace(filterName))
-                .ToList();
-        }
-
-        private List<string> GetFilterValues(string values)
-        {
-            if (values.Equals(string.Empty))
-            {
-                return new List<string>();
-            }
-
-            return Regex.Split(values, EscapedPipePattern)
-                .Select(t => t.Trim())
-                .ToList();
         }
 
         private string ParseFilterOperatorAndValue(string filter)

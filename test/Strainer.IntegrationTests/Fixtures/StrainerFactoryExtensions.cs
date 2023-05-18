@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Fluorite.Strainer.IntegrationTests.Fixtures
 {
@@ -11,23 +12,14 @@ namespace Fluorite.Strainer.IntegrationTests.Fixtures
         {
             var customSortingWayFormatter = new TFormatter();
 
-            return factory.CreateProcessor(context =>
+            return factory.CreateProcessor(services =>
             {
-                var newSortingContext = new SortingContext(
-                    context.Sorting.ExpressionProvider,
-                    context.Sorting.ExpressionValidator,
-                    customSortingWayFormatter,
-                    new SortTermParser(
-                        customSortingWayFormatter,
-                        factory.CreateOptionsProvider()));
-                var newContext = new StrainerContext(
-                    context.CustomMethods,
-                    factory.CreateOptionsProvider(),
-                    context.Filter,
-                    newSortingContext,
-                    context.Metadata);
+                var formatter = new ServiceDescriptor(
+                    typeof(ISortingWayFormatter),
+                    typeof(TFormatter),
+                    StrainerFactory.ServicesLifetime);
 
-                return new StrainerProcessor(newContext);
+                services.Add(formatter);
             });
         }
     }

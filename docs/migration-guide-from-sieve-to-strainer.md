@@ -65,11 +65,11 @@ Strainer module has configuration methods allowing registration of a property, o
 Module methods should be called from overriden `Load()` method (**not** from module constructor), like below:
 
 ```cs
-public class AppStrainerModule : StrainerModule
+public class AppStrainerModule : StrainerModule<Post>
 {
-    public override void Load(IStrainerModuleBuilder builder)
+    public override void Load(IStrainerModuleBuilder<Post> builder)
     {
-        builder.AddProperty<Post>(p => p.Comments.Count)
+        builder.AddProperty(p => p.Comments.Count)
             .IsFilterable()
             .IsSortable();
     }
@@ -124,28 +124,17 @@ Strainer introduces new structure of adding such methods by calling appropriate 
 For example, code adding the same method from the example above in Strainer would look like this:
 
 ```cs
-public class ApplicationStrainerModule : StrainerModule
+public class ApplicationStrainerModule : StrainerModule<Post>
 {
-    public override void Load(IStrainerModuleBuilder builder)
+    public override void Load(IStrainerModuleBuilder<Post> builder)
     {
-            builder.AddCustomSortMethod<Post>(nameof(Popularity))
-                .HasFunction(Popularity);
-    }
-
-    private IOrderedQueryable<Post> Popularity(IQueryable<Post> source, bool isDescending, bool isSubsequent)
-    {
-        var result = isSubsequent
-                ? ((IOrderedQueryable<Post>)source).ThenBy(p => p.LikeCount)
-                : source.OrderBy(p => p.LikeCount)
-            .ThenBy(p => p.CommentCount)
-            .ThenBy(p => p.DateCreated);
-
-        return result;
+            builder.AddCustomSortMethod("Popularity")
+                .HasFunction(p => p.LikeCount);
     }
 }
 ```
 
-In the code snippet above, a custom sorting method for `Post` entity is added with a name _"Popularity"_ and a sorting function. Although `HasFunction()` method requires an argument of `Func<T>`, you can easily provide a whole method which returns an `IQueryable` and has fitting parameters. In that way you can seperete your sorting logic in a dedicated method which can be made private.
+In the code snippet above, a custom sorting method for `Post` entity is added with a name _"Popularity"_ and a sorting function.
 
 ### Object-level attribute
 
@@ -198,6 +187,6 @@ public class CommentStrainerModule : StrainerModule<Comment>
 
 When doing so, it is required to explicitly specify whether all object properties should be filterable and sortable, same as when adding a property via `AddProperty()`. 
 
-Notice that strongly typed `StrainerModule<T>` has been used in the example aboe, so there is no need for specifing model type with `AddObject()`.
+Notice that strongly typed `StrainerModule<T>` has been used in the example above, so there is no need for specifing model type with `AddObject()`.
 
 ### ...more will come.

@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
 
 namespace Fluorite.Strainer.Services
@@ -35,5 +36,10 @@ namespace Fluorite.Strainer.Services
         /// Gets the sorting context.
         /// </summary>
         ISortingContext Sorting { get; }
+
+        /// <summary>
+        /// Gets the pipeline context.
+        /// </summary>
+        IPipelineContext Pipeline { get; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
-using System;
-using System.Linq;
+using Fluorite.Strainer.Models.Filtering.Terms;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Filtering
 {
@@ -8,7 +8,8 @@ namespace Fluorite.Strainer.Services.Filtering
     {
         ICustomFilterMethod<TEntity> Build();
 
-        ICustomFilterMethodBuilder<TEntity> HasFunction(
-            Func<IQueryable<TEntity>, string, IQueryable<TEntity>> function);
+        ICustomFilterMethodBuilder<TEntity> HasFunction(Expression<Func<TEntity, bool>> expression);
+
+        ICustomFilterMethodBuilder<TEntity> HasFunction(Func<IFilterTerm, Expression<Func<TEntity, bool>>> filterTermExpression);
     }
 }

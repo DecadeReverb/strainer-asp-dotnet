@@ -1,7 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Fluorite.Strainer.Models.Sorting.Terms;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
@@ -26,20 +25,34 @@ namespace Fluorite.Strainer.Services.Sorting
             Name = name;
         }
 
-        protected Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> Function { get; set; }
+        protected Expression<Func<TEntity, object>> Expression { get; set; }
+
+        protected Func<ISortTerm, Expression<Func<TEntity, object>>> SortTermExpression { get; set; }
 
         protected string Name { get; set; }
 
         public ICustomSortMethod<TEntity> Build() => new CustomSortMethod<TEntity>
         {
-            Function = Function,
+            Expression = Expression,
             Name = Name,
+            SortTermExpression = SortTermExpression,
         };
 
         public ICustomSortMethodBuilder<TEntity> HasFunction(
-            Func<IQueryable<TEntity>, bool, bool, IQueryable<TEntity>> function)
+            Expression<Func<TEntity, object>> expression)
         {
-            Function = function ?? throw new ArgumentNullException(nameof(function));
+            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            SortTermExpression = null;
+
+            Save(Build());
+
+            return this;
+        }
+
+        public ICustomSortMethodBuilder<TEntity> HasFunction(Func<ISortTerm, Expression<Func<TEntity, object>>> sortTermExpression)
+        {
+            SortTermExpression = sortTermExpression ?? throw new ArgumentNullException(nameof(sortTermExpression));
+            Expression = null;
 
             Save(Build());
 

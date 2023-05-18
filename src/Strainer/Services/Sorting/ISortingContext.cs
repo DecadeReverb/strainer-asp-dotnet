@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Sorting
+﻿using Fluorite.Strainer.Services.Validation;
+
+namespace Fluorite.Strainer.Services.Sorting
 {
     public interface ISortingContext
     {
@@ -9,5 +11,7 @@
         ISortingWayFormatter Formatter { get; }
 
         ISortTermParser TermParser { get; }
+
+        ISortTermValueParser TermValueParser { get; }
     }
 }

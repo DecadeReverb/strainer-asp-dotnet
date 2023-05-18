@@ -1,9 +1,6 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.IntegrationTests.Fixtures;
+﻿using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Modules;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Sorting
 {
@@ -88,7 +85,8 @@ namespace Fluorite.Strainer.IntegrationTests.Sorting
             {
                 strainerModuleBuilder
                     .AddProperty<Post>(p => p.Comment.Id)
-                    .IsSortable();
+                    .IsSortable()
+                    .IsDefaultSort();
                 strainerModuleBuilder
                     .AddProperty<Post>(p => p.Comment.Text)
                     .IsSortable();

@@ -1,9 +1,6 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Services.Filtering;
-using System;
+﻿using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Services.Validation;
 using System.Linq.Expressions;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
 {
@@ -40,7 +37,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
 
@@ -59,7 +56,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
 
@@ -78,7 +75,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
 
@@ -97,7 +94,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperator);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*expression*");
         }
 
@@ -124,7 +121,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             Action action = () => validator.Validate(filterOperators);
             action
                 .Should()
-                .Throw<InvalidOperationException>()
+                .ThrowExactly<InvalidOperationException>()
                 .WithMessage("*symbol*");
         }
     }

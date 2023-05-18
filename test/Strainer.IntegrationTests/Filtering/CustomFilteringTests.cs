@@ -1,11 +1,6 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.IntegrationTests.Fixtures;
+﻿using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Modules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Filtering
 {
@@ -199,32 +194,19 @@ namespace Fluorite.Strainer.IntegrationTests.Filtering
 
                 builder
                     .AddProperty<Post>(p => p.LikeCount)
-                    .IsFilterable();
+                    .IsFilterable()
+                    .IsSortable()
+                    .IsDefaultSort();
 
                 builder
-                    .AddCustomFilterMethod<Post>(nameof(HasInTitleFilterOperator))
-                    .HasFunction(HasInTitleFilterOperator);
+                    .AddCustomFilterMethod<Post>("HasInTitleFilterOperator")
+                    .HasFunction(term => p => p.Title.Contains(term.Operator.Symbol));
                 builder
-                    .AddCustomFilterMethod<Post>(nameof(IsNew))
-                    .HasFunction(IsNew);
+                    .AddCustomFilterMethod<Post>("IsNew")
+                    .HasFunction(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
                 builder
-                    .AddCustomFilterMethod<Post>(nameof(IsPopular))
-                    .HasFunction(IsPopular);
-            }
-
-            private IQueryable<Post> HasInTitleFilterOperator(IQueryable<Post> source, string filterOperator)
-            {
-                return source.Where(p => p.Title.Contains(filterOperator));
-            }
-
-            private IQueryable<Post> IsNew(IQueryable<Post> source, string filterOperator)
-            {
-                return source.Where(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
-            }
-
-            private IQueryable<Post> IsPopular(IQueryable<Post> source, string filterOperator)
-            {
-                return source.Where(p => p.LikeCount > 100);
+                    .AddCustomFilterMethod<Post>("IsPopular")
+                    .HasFunction(p => p.LikeCount > 100);
             }
         }
     }

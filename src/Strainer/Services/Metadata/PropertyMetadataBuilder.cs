@@ -1,7 +1,5 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Sorting;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata

@@ -1,9 +1,6 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Services;
-using System.Linq;
-using Xunit;
 
 namespace Fluorite.Strainer.IntegrationTests.Exceptions
 {
@@ -23,12 +20,7 @@ namespace Fluorite.Strainer.IntegrationTests.Exceptions
             {
                 Filters = "does not exist",
             };
-            var processor = Factory.CreateProcessor((context) =>
-            {
-                context.Options.ThrowExceptions = true;
-
-                return new StrainerProcessor(context);
-            });
+            var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
 
             // Assert
             Assert.Throws<StrainerMethodNotFoundException>(() => processor.Apply(model, queryable));

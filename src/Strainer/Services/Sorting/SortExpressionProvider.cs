@@ -1,9 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Metadata;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -92,6 +89,7 @@ namespace Fluorite.Strainer.Services.Sorting
             return new SortExpression<TEntity>
             {
                 Expression = orderExpression,
+                IsDefault = metadata.IsDefaultSorting,
                 IsDescending = sortTerm.IsDescending,
                 IsSubsequent = isSubsequent,
             };

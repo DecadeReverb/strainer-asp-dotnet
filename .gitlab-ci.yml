@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/dotnet/core/sdk:3.1
+image: mcr.microsoft.com/dotnet/sdk:6.0
 
 variables:
  INTEGRATION_TESTS_PROJECT_NAME: 'Strainer.IntegrationTests'
@@ -10,7 +10,9 @@ variables:
  BUILD_CONFIGURATION: 'Release'
  NUGET_PACKAGES_DIRECTORY: '.nuget'
  NUGET_SERVER_URL: 'https://api.nuget.org/v3/index.json'
-
+ COVERAGE_COLLECTOR_NAME: 'XPlat Code Coverage'
+ COVERAGE_REPORT_DIRECTORY_NAME: 'CoverageReport'
+ COVERAGE_REPORT_TYPES: 'Html_Dark;Badges'
 
 stages:
   - build
@@ -45,7 +47,14 @@ build:
 unit tests:
  stage: test
  script:
-  - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION}'
+  - 'dotnet test ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME} --no-restore --no-build --configuration ${BUILD_CONFIGURATION} --collect:"${COVERAGE_COLLECTOR_NAME}"'
+  - 'TEST_RESULTS_FILE_PATH=$(find ${TEST_DIRECTORY}/${UNIT_TESTS_PROJECT_NAME}/TestResults -type f -name "coverage.cobertura.xml" -printf "%h/%f\n")'
+  - 'dotnet tool install dotnet-reportgenerator-globaltool -g'
+  - 'export PATH="$PATH:/root/.dotnet/tools"'
+  - 'reportgenerator -reports:"${TEST_RESULTS_FILE_PATH}" -targetdir:"${COVERAGE_REPORT_DIRECTORY_NAME}" -reporttypes:"${COVERAGE_REPORT_TYPES}"'
+ artifacts:
+  paths:
+   - '${COVERAGE_REPORT_DIRECTORY_NAME}'
  dependencies:
   - build
 
@@ -105,3 +114,13 @@ deploy Strainer.AspNetCore:
   - 'dotnet nuget push ${NUGET_PACKAGE_PATH} --api-key ${NUGET_API_KEY} --source ${NUGET_SERVER_URL}'
  dependencies:
   - pack Strainer.AspNetCore
+
+pages:
+  stage: deploy
+  script:
+  - mkdir .public
+  - cp -r ${COVERAGE_REPORT_DIRECTORY_NAME} .public
+  - mv .public public
+  artifacts:
+    paths:
+    - public

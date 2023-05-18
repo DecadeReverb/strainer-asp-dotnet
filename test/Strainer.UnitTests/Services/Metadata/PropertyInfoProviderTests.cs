@@ -1,8 +1,5 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Services.Metadata;
-using System;
+﻿using Fluorite.Strainer.Services.Metadata;
 using System.Linq.Expressions;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {

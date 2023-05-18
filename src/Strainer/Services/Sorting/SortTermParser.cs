@@ -1,64 +1,67 @@
-﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Fluorite.Strainer.Services.Sorting
 {
     public class SortTermParser : ISortTermParser
     {
-        private const string EscapedCommaPattern = @"(?<!($|[^\\])(\\\\)*?\\),";
-
         private readonly ISortingWayFormatter _formatter;
-        private readonly StrainerOptions _options;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+        private readonly ISortTermValueParser _sortTermValueParser;
 
-        public SortTermParser(ISortingWayFormatter formatter, IStrainerOptionsProvider strainerOptionsProvider)
+        public SortTermParser(
+            ISortingWayFormatter formatter,
+            IStrainerOptionsProvider strainerOptionsProvider,
+            ISortTermValueParser sortTermValueParser)
         {
             _formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
-            _options = strainerOptionsProvider?.GetStrainerOptions()
-                ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+            _sortTermValueParser = sortTermValueParser ?? throw new ArgumentNullException(nameof(sortTermValueParser));
         }
 
         public IList<ISortTerm> GetParsedTerms(string input)
         {
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrEmpty(input))
             {
                 return new List<ISortTerm>();
             }
 
-            input = input.Trim();
-            var value = new List<ISortTerm>();
-
-            foreach (var part in Regex.Split(input, EscapedCommaPattern))
+            var values = _sortTermValueParser.GetParsedValues(input);
+            if (!values.Any())
             {
-                if (string.IsNullOrWhiteSpace(part))
+                return new List<ISortTerm>();
+            }
+
+            var terms = new List<ISortTerm>();
+            var options = _strainerOptionsProvider.GetStrainerOptions();
+
+            foreach (var value in values)
+            {
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     continue;
                 }
 
-                var sortingWay = _formatter.GetSortingWay(part);
+                var sortingWay = _formatter.GetSortingWay(value);
                 if (sortingWay == SortingWay.Unknown)
                 {
-                    sortingWay = _options.DefaultSortingWay;
+                    sortingWay = options.DefaultSortingWay;
                 }
 
                 var sortTerm = new SortTerm()
                 {
-                    Input = part,
+                    Input = value,
                     IsDescending = sortingWay == SortingWay.Descending,
-                    Name = _formatter.Unformat(part, sortingWay),
+                    Name = _formatter.Unformat(value, sortingWay),
                 };
 
-                if (!value.Any(s => s.Name == sortTerm.Name))
+                if (!terms.Any(s => s.Name == sortTerm.Name))
                 {
-                    value.Add(sortTerm);
+                    terms.Add(sortTerm);
                 }
             }
 
-            return value;
+            return terms;
         }
     }
 }

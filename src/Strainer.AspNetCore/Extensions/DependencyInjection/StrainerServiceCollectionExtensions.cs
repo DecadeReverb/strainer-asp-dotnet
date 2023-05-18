@@ -1,20 +1,21 @@
 ﻿using Fluorite.Strainer.AspNetCore.Services;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Configuration;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
+using Fluorite.Strainer.Services.Conversion;
 using Fluorite.Strainer.Services.Filtering;
+using Fluorite.Strainer.Services.Filtering.Steps;
 using Fluorite.Strainer.Services.Metadata;
+using Fluorite.Strainer.Services.Metadata.Attributes;
+using Fluorite.Strainer.Services.Metadata.FluentApi;
 using Fluorite.Strainer.Services.Modules;
+using Fluorite.Strainer.Services.Pagination;
+using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
+using Fluorite.Strainer.Services.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
 
 namespace Fluorite.Extensions.DependencyInjection
@@ -49,7 +50,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
@@ -92,9 +93,9 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
-            IReadOnlyCollection<Assembly> assembliesToScan,
+            Assembly[] assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -108,6 +109,8 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             var moduleTypes = GetModuleTypesFromAssemblies(assembliesToScan);
+
+            services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
 
             return services.AddStrainer(moduleTypes, serviceLifetime);
         }
@@ -139,7 +142,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IReadOnlyCollection<Type> moduleTypes,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -154,75 +157,39 @@ namespace Fluorite.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(moduleTypes));
             }
 
-            if (services.Any(d => d.ServiceType == typeof(IStrainerProcessor)))
-            {
-                throw new InvalidOperationException(
-                    $"Unable to registrer {nameof(IStrainerProcessor)} " +
-                    $"because there is already registered one.");
-            }
+            RegisterStrainerServices(services, moduleTypes, serviceLifetime);
 
-            // Add Strainer options only if they weren't configured yet.
-            if (!services.ContainsServiceOfType<StrainerOptions>())
-            {
-                services.AddOptions<StrainerOptions>();
-            }
-
-            if (serviceLifetime == ServiceLifetime.Singleton)
-            {
-                services.Add<IStrainerOptionsProvider, AspNetCoreSingletonStrainerOptionsProvider>(serviceLifetime);
-            }
-            else
-            {
-                services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
-            }
-
-            services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
-            services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
-            services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
-            services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
-            services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
-            services.Add<IFilterContext, FilterContext>(serviceLifetime);
-
-            services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
-            services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
-            services.Add<ISortingWayFormatter, DescendingPrefixSortingWayFormatter>(serviceLifetime);
-            services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
-            services.Add<ISortingContext, SortingContext>(serviceLifetime);
-
-            services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
-            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
-
-            services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
-            services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
-            services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
-            services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
-
-            services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
-            services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
-            services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);
-
-            services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
-            services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
-            services.Add<IStrainerProcessor, StrainerProcessor>(serviceLifetime);
-
-            services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(serviceProvider =>
-            {
-                try
-                {
-                    var strainerConfiguration = BuildStrainerConfiguration(moduleTypes, serviceProvider);
-
-                    return new StrainerConfigurationProvider(strainerConfiguration);
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException("Unable to add configuration from Strainer modules.", ex);
-                }
-            });
-
-            return new StrainerBuilder(services, serviceLifetime);
+            return services;
         }
 
-        public static IStrainerBuilder AddStrainer(
+        /// <summary>
+        /// Adds Strainer services to the <see cref="IServiceCollection"/>
+        /// with a configuration.
+        /// </summary>
+        /// <param name="services">
+        /// Current instance of <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="configuration">
+        /// A configuration used to bind against <see cref="StrainerOptions"/>.
+        /// </param>
+        /// <param name="serviceLifetime">
+        /// The service lifetime for Strainer services.
+        /// </param>
+        /// <returns>
+        /// An instance of <see cref="IServiceCollection"/> with added
+        /// Strainer services, so additional calls can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="configuration"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Another Strainer processor was already registered within the
+        /// current <see cref="IServiceCollection"/>.
+        /// </exception>
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -273,7 +240,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
             IReadOnlyCollection<Type> moduleTypes,
@@ -337,10 +304,10 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             IConfiguration configuration,
-            IReadOnlyCollection<Assembly> assembliesToScan,
+            Assembly[] assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -359,6 +326,7 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             services.Configure<StrainerOptions>(configuration);
+            services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
 
             return services.AddStrainer(assembliesToScan, serviceLifetime);
         }
@@ -390,7 +358,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
@@ -441,7 +409,7 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
             IReadOnlyCollection<Type> moduleTypes,
@@ -505,10 +473,10 @@ namespace Fluorite.Extensions.DependencyInjection
         /// Another Strainer processor was already registered within the
         /// current <see cref="IServiceCollection"/>.
         /// </exception>
-        public static IStrainerBuilder AddStrainer(
+        public static IServiceCollection AddStrainer(
             this IServiceCollection services,
             Action<StrainerOptions> configure,
-            IReadOnlyCollection<Assembly> assembliesToScan,
+            Assembly[] assembliesToScan,
             ServiceLifetime serviceLifetime = DefaultServiceLifetime)
         {
             if (services == null)
@@ -527,8 +495,125 @@ namespace Fluorite.Extensions.DependencyInjection
             }
 
             services.AddOptions<StrainerOptions>().Configure(configure);
+            services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
 
             return services.AddStrainer(assembliesToScan, serviceLifetime);
+        }
+
+        private static void RegisterStrainerServices(
+            IServiceCollection services,
+            IReadOnlyCollection<Type> moduleTypes,
+            ServiceLifetime serviceLifetime)
+        {
+            if (services.Any(d => d.ServiceType == typeof(IStrainerProcessor)))
+            {
+                throw new InvalidOperationException(
+                    "Unable to registrer Strainer services because they have been registered already.");
+            }
+
+            services.AddOptions<StrainerOptions>();
+
+            if (serviceLifetime == ServiceLifetime.Singleton)
+            {
+                services.Add<IStrainerOptionsProvider, AspNetCoreSingletonStrainerOptionsProvider>(serviceLifetime);
+            }
+            else
+            {
+                services.Add<IStrainerOptionsProvider, AspNetCoreStrainerOptionsProvider>(serviceLifetime);
+            }
+
+            services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
+            services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
+            services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
+            services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
+            services.Add<IFilterTermNamesParser, FilterTermNamesParser>(serviceLifetime);
+            services.Add<IFilterTermValuesParser, FilterTermValuesParser>(serviceLifetime);
+            services.Add<IFilterTermSectionsParser, FilterTermSectionsParser>(serviceLifetime);
+            services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
+            services.Add<ICustomFilteringExpressionProvider, CustomFilteringExpressionProvider>(serviceLifetime);
+            services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
+            services.Add<IFilterExpressionWorkflowBuilder, FilterExpressionWorkflowBuilder>(serviceLifetime);
+            services.Add<IConvertPropertyValueToStringStep, ConvertPropertyValueToStringStep>(serviceLifetime);
+            services.Add<IConvertFilterValueToStringStep, ConvertFilterValueToStringStep>(serviceLifetime);
+            services.Add<IChangeTypeOfFilterValueStep, ChangeTypeOfFilterValueStep>(serviceLifetime);
+            services.Add<IApplyConsantClosureToFilterValueStep, ApplyConsantClosureToFilterValueStep>(serviceLifetime);
+            services.Add<IMitigateCaseInsensitivityStep, MitigateCaseInsensitivityStep>(serviceLifetime);
+            services.Add<IApplyFilterOperatorStep, ApplyFilterOperatorStep>(serviceLifetime);
+            services.Add<IFilterContext, FilterContext>(serviceLifetime);
+
+            services.Add<ISortExpressionProvider, SortExpressionProvider>(serviceLifetime);
+            services.Add<ISortExpressionValidator, SortExpressionValidator>(serviceLifetime);
+            services.Add<ISortingWayFormatter, DescendingPrefixSortingWayFormatter>(serviceLifetime);
+            services.Add<ISortTermValueParser, SortTermValueParser>(serviceLifetime);
+            services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
+            services.Add<ISortingApplier, SortingApplier>(serviceLifetime);
+            services.Add<ICustomSortingExpressionProvider, CustomSortingExpressionProvider>(serviceLifetime);
+            services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
+            services.Add<ISortingContext, SortingContext>(serviceLifetime);
+            services.Add<IPipelineContext, PipelineContext>(serviceLifetime);
+
+            services.Add<IPageNumberEvaluator, PageNumberEvaluator>(serviceLifetime);
+            services.Add<IPageSizeEvaluator, PageSizeEvaluator>(serviceLifetime);
+
+            services.Add<IStrainerPipelineBuilderFactory, StrainerPipelineBuilderFactory>(serviceLifetime);
+            services.Add<IFilterPipelineOperation, FilterPipelineOperation>(serviceLifetime);
+            services.Add<ISortPipelineOperation, SortPipelineOperation>(serviceLifetime);
+            services.Add<IPaginatePipelineOperation, PaginatePipelineOperation>(serviceLifetime);
+
+            services.TryAddSingleton<IMetadataAssemblySourceProvider, AppDomainAssemblySourceProvider>();
+            services.Add<IMetadataSourceTypeProvider, MetadataSourceTypeProvider>(serviceLifetime);
+
+            services.Add<IAttributePropertyMetadataBuilder, AttributePropertyMetadataBuilder>(serviceLifetime);
+            services.Add<IAttributeMetadataRetriever, AttributeMetadataRetriever>(serviceLifetime);
+            services.Add<IStrainerAttributeProvider, StrainerAttributeProvider>(serviceLifetime);
+            services.Add<IPropertyMetadataDictionaryProvider, PropertyMetadataDictionaryProvider>(serviceLifetime);
+            services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);
+            services.Add<IMetadataSourceChecker, MetadataSourceChecker>(serviceLifetime);
+            services.Add<IFluentApiPropertyMetadataBuilder, FluentApiPropertyMetadataBuilder>(serviceLifetime);
+            services.Add<IMetadataProvider, FluentApiMetadataProvider>(serviceLifetime);
+            services.Add<IMetadataProvider, AttributeMetadataProvider>(serviceLifetime);
+            services.Add<IMetadataFacade, MetadataFacade>(serviceLifetime);
+
+            services.Add<ITypeConverter, ComponentModelTypeConverter>(serviceLifetime);
+            services.Add<ITypeConverterProvider, TypeConverterProvider>(serviceLifetime);
+            services.Add<IStringValueConverter, StringValueConverter>(serviceLifetime);
+            services.Add<ITypeChanger, TypeChanger>(serviceLifetime);
+
+            services.Add<IStrainerConfigurationFactory, StrainerConfigurationFactory>(serviceLifetime);
+            services.Add<IStrainerModuleFactory, StrainerModuleFactory>(serviceLifetime);
+            services.Add<IStrainerModuleLoader, StrainerModuleLoader>(serviceLifetime);
+            services.Add<IModuleLoadingStrategySelector, ModuleLoadingStrategySelector>(serviceLifetime);
+            services.Add<IPlainModuleLoadingStrategy, PlainModuleLoadingStrategy>(serviceLifetime);
+            services.Add<IGenericModuleLoadingStrategy, GenericModuleLoadingStrategy>(serviceLifetime);
+            services.Add<IStrainerModuleBuilderFactory, StrainerModuleBuilderFactory>(serviceLifetime);
+            services.Add<IStrainerModuleTypeValidator, StrainerModuleTypeValidator>(serviceLifetime);
+            services.Add<IStrainerConfigurationValidator, StrainerConfigurationValidator>(serviceLifetime);
+            services.Add<IConfigurationCustomMethodsProvider, ConfigurationCustomMethodsProvider>(serviceLifetime);
+            services.Add<IConfigurationFilterOperatorsProvider, ConfigurationFilterOperatorsProvider>(serviceLifetime);
+            services.Add<IConfigurationMetadataProvider, ConfigurationMetadataProvider>(serviceLifetime);
+
+            services.Add<IMetadataMapper, MetadataMapper>(serviceLifetime);
+            services.Add<IStrainerContext, StrainerContext>(serviceLifetime);
+            services.Add<IStrainerProcessor, StrainerProcessor>(serviceLifetime);
+
+            services.AddSingleton<IStrainerConfigurationProvider, StrainerConfigurationProvider>(serviceProvider =>
+            {
+                using var scope = serviceProvider.CreateScope();
+                var configurationFactory = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationFactory>();
+                var configurationValidator = scope.ServiceProvider.GetRequiredService<IStrainerConfigurationValidator>();
+
+                try
+                {
+                    var strainerConfiguration = configurationFactory.Create(moduleTypes);
+                    configurationValidator.Validate(strainerConfiguration);
+
+                    return new StrainerConfigurationProvider(strainerConfiguration);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Unable to add configuration from Strainer modules.", ex);
+                }
+            });
         }
 
         private static void Add<TServiceType, TImplementationType>(
@@ -539,12 +624,6 @@ namespace Fluorite.Extensions.DependencyInjection
             services.Add(new ServiceDescriptor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime));
         }
 
-        private static bool ContainsServiceOfType<TImplementationType>(
-            this IServiceCollection services)
-        {
-            return services.Any(d => d.ServiceType == typeof(TImplementationType));
-        }
-
         private static List<Type> GetModuleTypesFromAssemblies(IReadOnlyCollection<Assembly> assemblies)
         {
             return assemblies
@@ -553,132 +632,6 @@ namespace Fluorite.Extensions.DependencyInjection
                 .SelectMany(type => new[] { type }.Union(type.GetNestedTypes()))
                 .Where(type => !type.IsAbstract && typeof(IStrainerModule).IsAssignableFrom(type))
                 .ToList();
-        }
-
-        private static StrainerConfiguration BuildStrainerConfiguration(IReadOnlyCollection<Type> moduleTypes, IServiceProvider serviceProvider)
-        {
-            var validModuleTypes = moduleTypes
-                .Where(type => !type.IsAbstract && typeof(IStrainerModule).IsAssignableFrom(type));
-
-            var invalidModuleTypes = moduleTypes.Except(validModuleTypes);
-            if (invalidModuleTypes.Any())
-            {
-                throw new InvalidOperationException(
-                    string.Format(
-                        "Valid Strainer module must be a non-abstract class implementing `{0}`. " +
-                        "Invalid types:\n{1}",
-                        typeof(IStrainerModule).FullName,
-                        string.Join("\n", invalidModuleTypes.Select(invalidType => invalidType.FullName))));
-            }
-
-            var modules = validModuleTypes
-                .Select(type => CreateModuleInstance(type))
-                .Where(instance => instance != null)
-                .ToList();
-
-            using var scope = serviceProvider.CreateScope();
-            var optionsProvider = scope.ServiceProvider.GetRequiredService<IStrainerOptionsProvider>();
-            var filterOperatorValidator = scope.ServiceProvider.GetRequiredService<IFilterOperatorValidator>();
-            var propertyInfoProvider = scope.ServiceProvider.GetRequiredService<IPropertyInfoProvider>();
-
-            var options = optionsProvider.GetStrainerOptions();
-
-            modules.ForEach(strainerModule => LoadModule(strainerModule, options, propertyInfoProvider));
-
-            var customFilerMethods = modules
-                .SelectMany(module => module
-                    .CustomFilterMethods
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
-                            pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-            var customSortMethods = modules
-                    .SelectMany(module => module
-                    .CustomSortMethods
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
-                            pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-            var defaultMetadata = modules
-                .SelectMany(module => module.DefaultMetadata)
-                .Merge()
-                .ToReadOnly();
-            var filterOperators = modules
-                .SelectMany(module => module.FilterOperators)
-                .Union(FilterOperatorMapper.DefaultOperators)
-                .Merge()
-                .ToReadOnly();
-            var objectMetadata = modules
-                .SelectMany(module => module.ObjectMetadata.ToReadOnly())
-                .Merge()
-                .ToReadOnly();
-            var propertyMetadata = modules
-                    .SelectMany(module => module
-                    .PropertyMetadata
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                            pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-
-            var compiledConfiguration = new StrainerConfiguration(
-                customFilerMethods,
-                customSortMethods,
-                defaultMetadata,
-                filterOperators,
-                objectMetadata,
-                propertyMetadata);
-
-            // TODO:
-            // Make validation optional?
-            filterOperatorValidator.Validate(filterOperators.Values);
-
-            return compiledConfiguration;
-        }
-
-        private static IStrainerModule CreateModuleInstance(Type type)
-        {
-            try
-            {
-                return Activator.CreateInstance(type) as IStrainerModule;
-            }
-            catch (Exception exception)
-            {
-                throw new InvalidOperationException(
-                    $"Unable to create instance of {type}. " +
-                    $"Ensure that type provides parameterless constructor.",
-                    exception);
-            }
-        }
-
-        private static void LoadModule(
-            IStrainerModule strainerModule,
-            StrainerOptions options,
-            IPropertyInfoProvider propertyInfoProvider)
-        {
-            var genericStrainerModuleInterfaceType = strainerModule
-                .GetType()
-                .GetInterfaces()
-                .FirstOrDefault(i =>
-                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
-
-            if (genericStrainerModuleInterfaceType is not null)
-            {
-                var moduleGenericType = genericStrainerModuleInterfaceType.GetGenericArguments().First();
-                var builderType = typeof(StrainerModuleBuilder<>).MakeGenericType(moduleGenericType);
-                var builder = Activator.CreateInstance(builderType, propertyInfoProvider, strainerModule, options);
-                var method = genericStrainerModuleInterfaceType.GetMethod(nameof(IStrainerModule<object>.Load));
-
-                method.Invoke(strainerModule, new[] { builder });
-            }
-            else
-            {
-                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
-
-                strainerModule.Load(moduleBuilder);
-            }
         }
     }
 }

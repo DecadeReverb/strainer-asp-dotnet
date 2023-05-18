@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata
@@ -10,6 +9,8 @@ namespace Fluorite.Strainer.Services.Metadata
     /// </summary>
     public interface IPropertyInfoProvider
     {
+        PropertyInfo GetPropertyInfo(Type type, string name);
+
         /// <summary>
         /// Gets the <see cref="PropertyInfo"/> and property full name
         /// (for nested property paths).
@@ -26,5 +27,7 @@ namespace Fluorite.Strainer.Services.Metadata
         /// </returns>
         (PropertyInfo PropertyInfo, string FullName) GetPropertyInfoAndFullName<T>(
             Expression<Func<T, object>> expression);
+
+        PropertyInfo[] GetPropertyInfos(Type type);
     }
 }

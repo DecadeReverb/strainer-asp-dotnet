@@ -2,8 +2,6 @@
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
-using System;
-using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Modules
 {
@@ -48,6 +46,6 @@ namespace Fluorite.Strainer.Services.Modules
         /// <param name="builder">
         /// The Strainer Module builder.
         /// </param>
-        public abstract void Load(IStrainerModuleBuilder builder);
+        void Load(IStrainerModuleBuilder builder);
     }
 }

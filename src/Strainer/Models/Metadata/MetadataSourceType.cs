@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Fluorite.Strainer.Models.Metadata
+﻿namespace Fluorite.Strainer.Models.Metadata
 {
     /// <summary>
     /// Defines source type for property metadata.

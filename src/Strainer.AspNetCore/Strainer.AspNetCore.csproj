@@ -5,13 +5,13 @@
     <AssemblyName>Fluorite.Strainer.AspNetCore</AssemblyName>
     <RootNamespace>Fluorite.Strainer.AspNetCore</RootNamespace>
     <Authors>Fluorite</Authors>
-    <Version>3.1.2</Version>
+    <Version>4.0.0-preview1</Version>
     <Description>
       Extensions for using Strainer with ASP.NET Core.
     </Description>
-    <Copyright>Copyright 2019</Copyright>
+    <Copyright>Copyright 2022</Copyright>
     <PackageTags>strainer,sorting,filtering,pagination,fluorite,asp.net core</PackageTags>
-    <PackageLicenseUrl>https://gitlab.com/fluorite/strainer/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://gitlab.com/fluorite/strainer</PackageProjectUrl>
     <PackageIconUrl>https://gitlab.com/fluorite/assets/raw/master/img/logo/png/fluorite-logo-transparent-bg-64.png</PackageIconUrl>
     <RepositoryUrl>https://gitlab.com/fluorite/strainer</RepositoryUrl>
@@ -19,10 +19,10 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
@@ -31,8 +31,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.11" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

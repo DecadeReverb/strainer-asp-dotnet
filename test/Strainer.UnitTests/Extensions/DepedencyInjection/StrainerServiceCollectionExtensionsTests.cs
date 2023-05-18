@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using Fluorite.Extensions.DependencyInjection;
+﻿using Fluorite.Extensions.DependencyInjection;
+using Fluorite.Strainer.AspNetCore.Services;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Models.Sorting;
@@ -11,11 +11,8 @@ using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
+using Moq;
+using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 {
@@ -29,18 +26,58 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             services.AddStrainer();
-            var serviceProvider = services.BuildServiceProvider();
+            using var serviceProvider = services.BuildServiceProvider();
             var processor = serviceProvider.GetService<IStrainerProcessor>();
 
             // Assert
-            processor
-                .Should()
-                .NotBeNull("Because extension method should add " +
-                        "Strainer to the service collection.");
+            processor.Should().NotBeNull();
         }
 
         [Fact]
-        public void ExtensionMethod_AddsStrainer_WithCustomOptions_ViaAction()
+        public void ExtensionMethod_AddsStrainer_WithAssemblies()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            var assemblyMock = new Mock<Assembly>();
+            assemblyMock
+                .Setup(x => x.GetTypes())
+                .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
+
+            // Act
+            services.AddStrainer(new[] { assemblyMock.Object });
+            using var serviceProvider = services.BuildServiceProvider();
+            var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
+
+            // Assert
+            metadataFacade.Should().NotBeNull();
+            metadataFacade
+                .GetDefaultMetadata<Post>()
+                .Should()
+                .NotBeNull();
+        }
+
+        [Fact]
+        public void ExtensionMethod_AddsStrainer_WithModuleTypes()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            var types = new[] { typeof(DerivedModule) };
+
+            // Act
+            services.AddStrainer(types);
+            using var serviceProvider = services.BuildServiceProvider();
+            var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
+
+            // Assert
+            metadataFacade.Should().NotBeNull();
+            metadataFacade
+                .GetDefaultMetadata<Post>()
+                .Should()
+                .NotBeNull();
+        }
+
+        [Fact]
+        public void ExtensionMethod_AddsStrainer_WithAction()
         {
             // Arrange
             var defaultPageSize = 20;
@@ -48,18 +85,45 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             services.AddStrainer(options => options.DefaultPageSize = defaultPageSize);
-            var serviceProvider = services.BuildServiceProvider();
-            var strainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
+            using var serviceProvider = services.BuildServiceProvider();
+            var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();
 
             // Assert
-            strainerOptions
-                .DefaultPageSize
-                .Should()
-                .Be(defaultPageSize);
+            strainerOptionsProvider.Should().NotBeNull();
+            strainerOptionsProvider.GetStrainerOptions().DefaultPageSize.Should().Be(defaultPageSize);
         }
 
         [Fact]
-        public void ExtensionMethod_AddsStrainer_WithCustomOptions_ViaConfiguration()
+        public void ExtensionMethod_AddsStrainer_WithAction_AndAssemblies()
+        {
+            // Arrange
+            var defaultPageSize = 20;
+            var services = new ServiceCollection();
+
+            var assemblyMock = new Mock<Assembly>();
+            assemblyMock
+                .Setup(x => x.GetTypes())
+                .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
+
+            // Act
+            services.AddStrainer(options => options.DefaultPageSize = defaultPageSize, new[] { assemblyMock.Object });
+            using var serviceProvider = services.BuildServiceProvider();
+            var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
+            var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();
+
+            // Assert
+            metadataFacade.Should().NotBeNull();
+            metadataFacade
+                .GetDefaultMetadata<Post>()
+                .Should()
+                .NotBeNull();
+
+            strainerOptionsProvider.Should().NotBeNull();
+            strainerOptionsProvider.GetStrainerOptions().DefaultPageSize.Should().Be(defaultPageSize);
+        }
+
+        [Fact]
+        public void ExtensionMethod_AddsStrainer_WithConfiguration()
         {
             // Arrange
             var defaultPageSize = 20;
@@ -74,21 +138,58 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             services.AddStrainer(configuration);
-            var serviceProvider = services.BuildServiceProvider();
-            var postExtensionStrainerOptions = serviceProvider.GetService<IOptions<StrainerOptions>>()?.Value;
+            using var serviceProvider = services.BuildServiceProvider();
+            var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();
 
             // Assert
-            postExtensionStrainerOptions
-                .DefaultPageSize
-                .Should()
-                .Be(defaultPageSize);
+            strainerOptionsProvider.Should().NotBeNull();
+            strainerOptionsProvider.GetStrainerOptions().DefaultPageSize.Should().Be(defaultPageSize);
         }
 
         [Fact]
-        public void ExtensionMethod_AddsStrainer_WithCustomServiceLifetime()
+        public void ExtensionMethod_AddsStrainer_WithConfiguration_AndAssemblies()
         {
             // Arrange
-            var serviceLifetime = ServiceLifetime.Singleton;
+            var services = new ServiceCollection();
+            var defaultPageSize = 20;
+            var strainerOptions = new Dictionary<string, string>
+            {
+                { nameof(StrainerOptions.DefaultPageSize) , defaultPageSize.ToString() },
+            };
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(strainerOptions)
+                .Build();
+
+            var assemblyMock = new Mock<Assembly>();
+            assemblyMock
+                .Setup(x => x.GetTypes())
+                .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
+
+            // Act
+            services.AddStrainer(configuration, new[] { assemblyMock.Object });
+            using var serviceProvider = services.BuildServiceProvider();
+            var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
+            var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();
+
+
+            // Assert
+            metadataFacade.Should().NotBeNull();
+            metadataFacade
+                .GetDefaultMetadata<Post>()
+                .Should()
+                .NotBeNull();
+
+            strainerOptionsProvider.Should().NotBeNull();
+            strainerOptionsProvider.GetStrainerOptions().DefaultPageSize.Should().Be(defaultPageSize);
+        }
+
+        [Theory]
+        [InlineData(ServiceLifetime.Transient)]
+        [InlineData(ServiceLifetime.Scoped)]
+        [InlineData(ServiceLifetime.Singleton)]
+        public void ExtensionMethod_AddsStrainer_WithCustomServiceLifetime(ServiceLifetime serviceLifetime)
+        {
+            // Arrange
             var services = new ServiceCollection();
 
             // Act
@@ -99,6 +200,21 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .Lifetime
                 .Should()
                 .Be(serviceLifetime);
+
+            if (serviceLifetime == ServiceLifetime.Singleton)
+            {
+                services.FirstOrDefault(s => s.ServiceType == typeof(IStrainerOptionsProvider))
+                    .ImplementationType
+                    .Should()
+                    .Be<AspNetCoreSingletonStrainerOptionsProvider>();
+            }
+            else
+            {
+                services.FirstOrDefault(s => s.ServiceType == typeof(IStrainerOptionsProvider))
+                    .ImplementationType
+                    .Should()
+                    .Be<AspNetCoreStrainerOptionsProvider>();
+            }
         }
 
         [Fact]
@@ -113,7 +229,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Assert
             serviceProvider
-                .GetService<IMetadataFacade>()
+                .GetRequiredService<IMetadataFacade>()
                 .GetDefaultMetadata<Post>()
                 .Should()
                 .NotBeNull();
@@ -127,11 +243,11 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             services.AddStrainer(new[] { typeof(DerivedModule) });
-            var serviceProvider = services.BuildServiceProvider();
+            using var serviceProvider = services.BuildServiceProvider();
 
             // Assert
             serviceProvider
-                .GetService<IMetadataFacade>()
+                .GetRequiredService<IMetadataFacade>()
                 .GetDefaultMetadata<Post>()
                 .Should()
                 .NotBeNull();
@@ -162,6 +278,21 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         }
 
         [Fact]
+        public void ExtensionMethod_Throws_WhenStrainerRegisteredSecondTime()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            services.AddStrainer();
+
+            // Act
+            Action act = () => services.AddStrainer();
+
+            // Assert
+            act.Should().ThrowExactly<InvalidOperationException>()
+                .WithMessage("Unable to registrer Strainer services because they have been registered already.");
+        }
+
+        [Fact]
         public void ExtensionMethod_AddsStrainer_With_TwoPropertyMetadataProviders()
         {
             // Arrange
@@ -169,7 +300,7 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
 
             // Act
             services.AddStrainer();
-            var serviceProvider = services.BuildServiceProvider();
+            using var serviceProvider = services.BuildServiceProvider();
             var propertyMetadataProviders = serviceProvider.GetService<IEnumerable<IMetadataProvider>>();
 
             // Assert
@@ -186,8 +317,8 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             // Act
             services.AddStrainer();
             services.AddScoped<IFilterTermParser, TestFilterTermParser>();
-            var serviceProvider = services.BuildServiceProvider();
-            var postExtensionFilterTermParser = serviceProvider.GetService<IFilterTermParser>();
+            using var serviceProvider = services.BuildServiceProvider();
+            var postExtensionFilterTermParser = serviceProvider.GetRequiredService<IFilterTermParser>();
 
             // Assert
             postExtensionFilterTermParser
@@ -203,13 +334,15 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var services = new ServiceCollection();
             services.AddStrainer();
             services.AddScoped<ISortingWayFormatter, TestSortingWayFormatter>();
-            var serviceProvider = services.BuildServiceProvider();
+            using var serviceProvider = services.BuildServiceProvider();
 
             // Act
             var formatter = serviceProvider.GetRequiredService<ISortingWayFormatter>();
 
             // Assert
-            formatter.Should().BeAssignableTo<TestSortingWayFormatter>();
+            formatter
+                .Should()
+                .BeAssignableTo<TestSortingWayFormatter>();
         }
 
         private abstract class BaseModule : StrainerModule

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Fluorite.Strainer.Services.Metadata
@@ -11,6 +9,23 @@ namespace Fluorite.Strainer.Services.Metadata
     /// </summary>
     public class PropertyInfoProvider : IPropertyInfoProvider
     {
+        private readonly BindingFlags _bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+
+        public PropertyInfo GetPropertyInfo(Type type, string name)
+        {
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
+            }
+
+            return type.GetProperty(name, _bindingFlags);
+        }
+
         /// <summary>
         /// Gets the <see cref="PropertyInfo"/> and property full name
         /// (for nested property paths).
@@ -63,6 +78,16 @@ namespace Fluorite.Strainer.Services.Metadata
             var fullName = string.Join(".", stack.ToArray());
 
             return (propertyInfo, fullName);
+        }
+
+        public PropertyInfo[] GetPropertyInfos(Type type)
+        {
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            return type.GetProperties(_bindingFlags);
         }
     }
 }

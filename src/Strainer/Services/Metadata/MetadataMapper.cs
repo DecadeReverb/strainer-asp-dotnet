@@ -1,25 +1,21 @@
-﻿using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Metadata;
-using System;
-using System.Collections.Generic;
+﻿using Fluorite.Strainer.Models.Metadata;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Metadata
 {
     public class MetadataMapper : IMetadataMapper
     {
-        private readonly StrainerOptions _options;
+        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
         private readonly IPropertyInfoProvider _propertyInfoProvider;
 
         public MetadataMapper(
-            IStrainerOptionsProvider optionsProvider,
+            IStrainerOptionsProvider strainerOptionsProvider,
             IPropertyInfoProvider propertyInfoProvider)
         {
             DefaultMetadata = new Dictionary<Type, IPropertyMetadata>();
             PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
             ObjectMetadata = new Dictionary<Type, IObjectMetadata>();
-            _options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
-                .GetStrainerOptions();
+            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
             _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
         }
 
@@ -36,7 +32,8 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(objectMetadata));
             }
 
-            if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
+            var options = _strainerOptionsProvider.GetStrainerOptions();
+            if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
             {
                 throw new InvalidOperationException(
                     $"Current {nameof(MetadataSourceType)} setting does not " +
@@ -55,7 +52,8 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(propertyMetadata));
             }
 
-            if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
+            var options = _strainerOptionsProvider.GetStrainerOptions();
+            if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
             {
                 throw new InvalidOperationException(
                     $"Current {nameof(MetadataSourceType)} setting does not " +
@@ -86,7 +84,8 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
             }
 
-            if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
+            var options = _strainerOptionsProvider.GetStrainerOptions();
+            if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
             {
                 throw new InvalidOperationException(
                     $"Current {nameof(MetadataSourceType)} setting does not " +
@@ -105,7 +104,8 @@ namespace Fluorite.Strainer.Services.Metadata
                 throw new ArgumentNullException(nameof(propertyExpression));
             }
 
-            if (!_options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
+            var options = _strainerOptionsProvider.GetStrainerOptions();
+            if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
             {
                 throw new InvalidOperationException(
                     $"Current {nameof(MetadataSourceType)} setting does not " +

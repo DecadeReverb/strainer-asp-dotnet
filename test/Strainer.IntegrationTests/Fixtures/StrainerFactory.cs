@@ -1,219 +1,110 @@
-﻿using Fluorite.Extensions;
+﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models;
-using Fluorite.Strainer.Models.Configuration;
-using Fluorite.Strainer.Models.Filtering;
-using Fluorite.Strainer.Models.Metadata;
-using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
-using Fluorite.Strainer.Services.Configuration;
-using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
-using Fluorite.Strainer.Services.Sorting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Fluorite.Strainer.IntegrationTests.Fixtures
 {
-    public class StrainerFactory
+    public class StrainerFactory : IDisposable
     {
+        public const ServiceLifetime ServicesLifetime = ServiceLifetime.Singleton;
+
+        private readonly List<ServiceProvider> _serviceProviders;
+
+        private bool _disposed;
+
         public StrainerFactory()
         {
-
+            _serviceProviders = new ();
         }
 
         public IStrainerProcessor CreateDefaultProcessor<TModule>()
-            where TModule : IStrainerModule
+            where TModule : class, IStrainerModule
         {
             return CreateDefaultProcessor(typeof(TModule));
         }
 
         public IStrainerProcessor CreateDefaultProcessor(params Type[] strainerModuleTypes)
         {
-            var context = CreateDefaultContext(strainerModuleTypes);
+            var serviceProvider = BuildStrainerServiceProvider(_ => { }, _ => { }, strainerModuleTypes);
 
-            return new StrainerProcessor(context);
+            return serviceProvider.GetRequiredService<IStrainerProcessor>();
         }
 
         public IStrainerProcessor CreateDefaultProcessor<TModule>(Action<StrainerOptions> configureOptions)
-            where TModule : IStrainerModule
+            where TModule : class, IStrainerModule
         {
             return CreateDefaultProcessor(configureOptions, typeof(TModule));
         }
 
         public IStrainerProcessor CreateDefaultProcessor(Action<StrainerOptions> configureOptions, params Type[] strainerModuleTypes)
         {
-            if (configureOptions == null)
-            {
-                throw new ArgumentNullException(nameof(configureOptions));
-            }
+            var serviceProvider = BuildStrainerServiceProvider(configureOptions, _ => { }, strainerModuleTypes);
 
-            var context = CreateDefaultContext(strainerModuleTypes);
-            configureOptions(context.Options);
-
-            return new StrainerProcessor(context);
+            return serviceProvider.GetRequiredService<IStrainerProcessor>();
         }
 
-        public IStrainerProcessor CreateProcessor<TModule>(Func<IStrainerContext, IStrainerProcessor> function)
-            where TModule : IStrainerModule
+        public IStrainerProcessor CreateProcessor<TModule>(Action<IServiceCollection> servicesConfig)
+            where TModule : class, IStrainerModule
         {
-            return CreateProcessor(function, typeof(TModule));
+            return CreateProcessor(servicesConfig, typeof(TModule));
         }
 
-        public IStrainerProcessor CreateProcessor(Func<IStrainerContext, IStrainerProcessor> function, params Type[] strainerModuleTypes)
+        public IStrainerProcessor CreateProcessor(Action<IServiceCollection> servicesConfig, params Type[] strainerModuleTypes)
         {
-            if (function == null)
-            {
-                throw new ArgumentNullException(nameof(function));
-            }
+            var serviceProvider = BuildStrainerServiceProvider(_ => { }, servicesConfig, strainerModuleTypes);
 
-            var context = CreateDefaultContext(strainerModuleTypes);
-
-            return function(context);
+            return serviceProvider.GetRequiredService<IStrainerProcessor>();
         }
 
-        public IntegrationTestsStrainerOptionsProvider CreateOptionsProvider()
+        public void Dispose()
         {
-            return new IntegrationTestsStrainerOptionsProvider();
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
-        protected IStrainerContext CreateDefaultContext(params Type[] strainerModuleTypes)
+        protected IStrainerContext CreateDefaultContext(
+            Action<StrainerOptions> options,
+            Action<IServiceCollection> services,
+            params Type[] strainerModuleTypes)
         {
-            if (strainerModuleTypes is null)
-            {
-                throw new ArgumentNullException(nameof(strainerModuleTypes));
-            }
+            var serviceProvider = BuildStrainerServiceProvider(options, services, strainerModuleTypes);
 
-            var optionsProvider = new IntegrationTestsStrainerOptionsProvider();
-            var propertyInfoProvider = new PropertyInfoProvider();
-
-            var modules = strainerModuleTypes
-                .Select(type => Activator.CreateInstance(type) as IStrainerModule)
-                .Where(instance => instance != null)
-                .ToList();
-
-            modules.ForEach(strainerModule => LoadModule(strainerModule, optionsProvider, propertyInfoProvider));
-
-            var customFilerMethods = modules
-                .SelectMany(module => module
-                    .CustomFilterMethods
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>(
-                            pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-            var customSortMethods = modules
-                 .SelectMany(module => module
-                    .CustomSortMethods
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, ICustomSortMethod>>(
-                            pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-            var defaultMetadata = modules
-                .SelectMany(module => module.DefaultMetadata)
-                .Merge()
-                .ToReadOnly();
-            var filterOperators = modules
-                .SelectMany(module => module.FilterOperators)
-                .Union(FilterOperatorMapper.DefaultOperators)
-                .Merge()
-                .ToReadOnly();
-            var objectMetadata = modules
-                .SelectMany(module => module.ObjectMetadata.ToReadOnly())
-                .Merge()
-                .ToReadOnly();
-            var propertyMetadata = modules
-                 .SelectMany(module => module
-                    .PropertyMetadata
-                    .Select(pair =>
-                        new KeyValuePair<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(
-                            pair.Key, pair.Value.ToReadOnly())))
-                .Merge()
-                .ToReadOnly();
-
-            var strainerConfiguration = new StrainerConfiguration(
-                customFilerMethods,
-                customSortMethods,
-                defaultMetadata,
-                filterOperators,
-                objectMetadata,
-                propertyMetadata);
-
-            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfiguration);
-            var configurationMetadataProvider = new ConfigurationMetadataProvider(strainerConfigurationProvider);
-            var configurationFilterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
-            var configurationCustomFilterMethodsProvider = new ConfigurationCustomMethodsProvider(strainerConfigurationProvider);
-
-            var fluentApiMetadataProvider = new FluentApiMetadataProvider(
-                optionsProvider,
-                configurationMetadataProvider);
-            var attributeMetadataProvider = new AttributeMetadataProvider(optionsProvider);
-            var propertyMetadataProviders = new IMetadataProvider[]
-            {
-                fluentApiMetadataProvider,
-                attributeMetadataProvider
-            };
-            var metadataFacade = new MetadataFacade(propertyMetadataProviders);
-
-            var filterExpressionProvider = new FilterExpressionProvider(optionsProvider);
-            var filterOperatorValidator = new FilterOperatorValidator();
-            var filterOperatorParser = new FilterOperatorParser(configurationFilterOperatorsProvider);
-            var filterTermParser = new FilterTermParser(
-                filterOperatorParser,
-                configurationFilterOperatorsProvider);
-            var filteringContext = new FilterContext(
-                filterExpressionProvider,
-                filterOperatorParser,
-                filterOperatorValidator,
-                filterTermParser);
-
-            var sortExpressionProvider = new SortExpressionProvider(metadataFacade);
-            var sortExpressionValidator = new SortExpressionValidator();
-            var sortingWayFormatter = new DescendingPrefixSortingWayFormatter();
-            var sortTermParser = new SortTermParser(sortingWayFormatter, optionsProvider);
-            var sortingContext = new SortingContext(
-                sortExpressionProvider,
-                sortExpressionValidator,
-                sortingWayFormatter,
-                sortTermParser);
-
-            return new StrainerContext(
-                configurationCustomFilterMethodsProvider,
-                optionsProvider,
-                filteringContext,
-                sortingContext,
-                metadataFacade);
+            return serviceProvider.GetRequiredService<IStrainerContext>();
         }
 
-        private void LoadModule(
-            IStrainerModule strainerModule,
-            IntegrationTestsStrainerOptionsProvider optionsProvider,
-            PropertyInfoProvider propertyInfoProvider)
+        protected virtual void Dispose(bool disposing)
         {
-            var options = optionsProvider.GetStrainerOptions();
-            var genericStrainerModuleInterfaceType = strainerModule
-                .GetType()
-                .GetInterfaces()
-                .FirstOrDefault(i =>
-                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrainerModule<>));
-
-            if (genericStrainerModuleInterfaceType is not null)
+            if (!_disposed)
             {
-                var moduleGenericType = genericStrainerModuleInterfaceType.GetGenericArguments().First();
-                var builderType = typeof(StrainerModuleBuilder<>).MakeGenericType(moduleGenericType);
-                var builder = Activator.CreateInstance(builderType, propertyInfoProvider, strainerModule, options);
-                var method = genericStrainerModuleInterfaceType.GetMethod(nameof(IStrainerModule<object>.Load));
+                if (disposing)
+                {
+                    foreach (var serviceProvider in _serviceProviders)
+                    {
+                        serviceProvider.Dispose();
+                    }
 
-                method.Invoke(strainerModule, new[] { builder });
-            }
-            else
-            {
-                var moduleBuilder = new StrainerModuleBuilder(propertyInfoProvider, strainerModule, options);
+                    _serviceProviders.Clear();
+                }
 
-                strainerModule.Load(moduleBuilder);
+                _disposed = true;
             }
+        }
+
+        private ServiceProvider BuildStrainerServiceProvider(
+            Action<StrainerOptions> optionsConfig,
+            Action<IServiceCollection> servicesConfig,
+            Type[] strainerModuleTypes)
+        {
+            var services = new ServiceCollection();
+            services.AddStrainer(optionsConfig, strainerModuleTypes, ServicesLifetime);
+            servicesConfig(services);
+
+            var serviceProvider = services.BuildServiceProvider();
+            _serviceProviders.Add(serviceProvider);
+
+            return serviceProvider;
         }
     }
 }

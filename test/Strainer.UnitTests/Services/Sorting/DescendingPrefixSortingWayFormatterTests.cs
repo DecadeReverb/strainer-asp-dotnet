@@ -1,176 +1,133 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Sorting;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class DescendingPrefixSortingWayFormatterTests
     {
-        private readonly static string DescendingPrefix = DescendingPrefixSortingWayFormatter.DescendingPrefix;
+        private const string DescendingPrefix = DescendingPrefixSortingWayFormatter.DescendingPrefix;
+
+        private readonly DescendingPrefixSortingWayFormatter _formatter;
+
+        public DescendingPrefixSortingWayFormatterTests()
+        {
+            _formatter = new DescendingPrefixSortingWayFormatter();
+        }
 
         [Fact]
-        public void Formatter_DoesNot_ChangeInput_When_Input_Is_Empty()
+        public void Formatter_Throws_ForNullInput_WhenFormatting()
+        {
+            // Arrange
+            string input = null;
+            var sortingWay = SortingWay.Ascending;
+
+            // Act
+            Action act = () => _formatter.Format(input, sortingWay);
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Formatter_Throws_ForUnkownSortingWay_WhenFormatting()
         {
             // Arrange
             var input = string.Empty;
-            var sortingWay = SortingWay.Descending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
+            var sortingWay = SortingWay.Unknown;
 
             // Act
-            var result = formatter.Format(input, sortingWay);
+            Action act = () => _formatter.Format(input, sortingWay);
 
             // Assert
-            result.Should().BeEmpty();
+            act.Should().ThrowExactly<ArgumentException>()
+                .WithMessage($"{nameof(sortingWay)} cannot be {nameof(SortingWay.Unknown)}.*");
+        }
+
+        [Theory]
+        [InlineData("", SortingWay.Ascending, "")]
+        [InlineData(" ", SortingWay.Ascending, " ")]
+        [InlineData("foo", SortingWay.Ascending, "foo")]
+        [InlineData("", SortingWay.Descending, "")]
+        [InlineData(" ", SortingWay.Descending, " ")]
+        [InlineData("foo", SortingWay.Descending, DescendingPrefix + "foo")]
+        public void Formatter_AddsDescendingPrefix(string input, SortingWay sortingWay, string expectedResult)
+        {
+            // Act
+            var result = _formatter.Format(input, sortingWay);
+
+            // Assert
+            result.Should().Be(expectedResult);
         }
 
         [Fact]
-        public void Formatter_DoesNot_Change_Input_When_Input_Is_Whitespace()
+        public void Formatter_Throws_ForNullInput_WhenGettingSortingWay()
+        {
+            // Act
+            Action act = () => _formatter.GetSortingWay(input: null);
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData("", SortingWay.Unknown)]
+        [InlineData(" ", SortingWay.Unknown)]
+        [InlineData("foo", SortingWay.Ascending)]
+        [InlineData(DescendingPrefix + "foo", SortingWay.Descending)]
+        public void Formatter_Returns_CorrectSortingWay(string input, SortingWay sortingWay)
+        {
+            // Act
+            var result = _formatter.GetSortingWay(input);
+
+            // Assert
+            result.Should().Be(sortingWay);
+        }
+
+        [Fact]
+        public void Formatter_Throws_ForNullInput_WhenUnformatting()
         {
             // Arrange
-            var input = " ";
+            string input = null;
             var sortingWay = SortingWay.Ascending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
 
             // Act
-            var result = formatter.Format(input, sortingWay);
+            Action act = () => _formatter.Unformat(input, sortingWay);
 
             // Assert
-            result.Should().BeNullOrWhiteSpace();
+            act.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
-        public void Formatter_AddsDescendingPrefix_If_SortingWay_Is_Descending()
-        {
-            // Arrange
-            var input = "foo";
-            var sortingWay = SortingWay.Descending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
-
-            // Act
-            var result = formatter.Format(input, sortingWay);
-
-            // Assert
-            result.Should().NotBe(input);
-            result.Should().Be(DescendingPrefix + input);
-        }
-
-        [Fact]
-        public void Formatter_DoesNot_Add_DescendingPrefix_If_SortingWay_Is_Ascending()
-        {
-            // Arrange
-            var input = "foo";
-            var sortingWay = SortingWay.Ascending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
-
-            // Act
-            var result = formatter.Format(input, sortingWay);
-
-            // Assert
-            result.Should().Be(input);
-        }
-
-        [Fact]
-        public void Formatter_Gets_SortingWay_Ascending()
-        {
-            // Arrange
-            var input = "foo";
-            var formatter = new DescendingPrefixSortingWayFormatter();
-
-            // Act
-            var result = formatter.GetSortingWay(input);
-
-            // Assert
-            result.Should().Be(SortingWay.Ascending);
-        }
-
-        [Fact]
-        public void Formatter_Gets_SortingWay_Descending()
-        {
-            // Arrange
-            var input = DescendingPrefix + "foo";
-            var formatter = new DescendingPrefixSortingWayFormatter();
-
-            // Act
-            var result = formatter.GetSortingWay(input);
-
-            // Assert
-            result.Should().Be(SortingWay.Descending);
-        }
-
-        [Fact]
-        public void Formatter_Unformats_Input_Removing_Prefix()
-        {
-            // Arrange
-            var input = DescendingPrefix + "foo";
-            var sortingWay = SortingWay.Descending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
-
-            // Act
-            var result = formatter.Unformat(input, sortingWay);
-
-            // Assert
-            result.Should().Be("foo");
-        }
-
-        [Fact]
-        public void Formatter_Unformats_Input_Removing_Prefix_Even_For_Only_Prefix()
-        {
-            // Arrange
-            var input = DescendingPrefix;
-            var sortingWay = SortingWay.Descending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
-
-            // Act
-            var result = formatter.Unformat(input, sortingWay);
-
-            // Assert
-            result.Should().Be(string.Empty);
-        }
-
-        [Fact]
-        public void Formatter_Unformats_Input_Without_Changes()
-        {
-            // Arrange
-            var input = "foo";
-            var sortingWay = SortingWay.Ascending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
-
-            // Act
-            var result = formatter.Unformat(input, sortingWay);
-
-            // Assert
-            result.Should().Be(input);
-        }
-
-        [Fact]
-        public void Formatter_Unformats_Input_Without_Changes_For_EmptyString()
+        public void Formatter_Throws_ForUnkownSortingWay_WhenUnformatting()
         {
             // Arrange
             var input = string.Empty;
-            var sortingWay = SortingWay.Ascending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
+            var sortingWay = SortingWay.Unknown;
 
             // Act
-            var result = formatter.Unformat(input, sortingWay);
+            Action act = () => _formatter.Unformat(input, sortingWay);
 
             // Assert
-            result.Should().Be(input);
+            act.Should().ThrowExactly<ArgumentException>()
+                .WithMessage($"{nameof(sortingWay)} cannot be {nameof(SortingWay.Unknown)}.*");
         }
 
-        [Fact]
-        public void Formatter_Unformats_Input_Without_Changes_For_WhitespaceString()
+        [Theory]
+        [InlineData("", "")]
+        [InlineData(" ", " ")]
+        [InlineData(DescendingPrefix, "")]
+        [InlineData(DescendingPrefix + "foo", "foo")]
+        [InlineData("foo", "foo")]
+        public void Formatter_Returns_UnformatedInput(string input, string expectedResult)
         {
             // Arrange
-            var input = " ";
-            var sortingWay = SortingWay.Ascending;
-            var formatter = new DescendingPrefixSortingWayFormatter();
+            var sortingWay = SortingWay.Descending;
 
             // Act
-            var result = formatter.Unformat(input, sortingWay);
+            var result = _formatter.Unformat(input, sortingWay);
 
             // Assert
-            result.Should().Be(input);
+            result.Should().Be(expectedResult);
         }
     }
 }

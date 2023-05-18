@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Filtering
+﻿using Fluorite.Strainer.Services.Validation;
+
+namespace Fluorite.Strainer.Services.Filtering
 {
     public interface IFilterContext
     {

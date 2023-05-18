@@ -5,13 +5,13 @@
     <AssemblyName>Fluorite.Strainer</AssemblyName>
     <RootNamespace>Fluorite.Strainer</RootNamespace>
     <Authors>Fluorite</Authors>
-    <Version>3.1.2</Version>
+    <Version>4.0.0-preview1</Version>
     <Description>
       Strainer is a simple, clean, and extensible framework based on .NET Standard that enables sorting, filtering, and pagination functionality. Documentation available on GitLab: https://gitlab.com/fluorite/strainer/
     </Description>
-    <Copyright>Copyright 2019</Copyright>
+    <Copyright>Copyright 2022</Copyright>
     <PackageTags>strainer,sorting,filtering,pagination,fluorite</PackageTags>
-    <PackageLicenseUrl>https://gitlab.com/fluorite/strainer/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://gitlab.com/fluorite/strainer</PackageProjectUrl>
     <PackageIconUrl>https://gitlab.com/fluorite/assets/raw/master/img/logo/png/fluorite-logo-transparent-bg-64.png</PackageIconUrl>
     <RepositoryUrl>https://gitlab.com/fluorite/strainer</RepositoryUrl>
@@ -20,10 +20,10 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 

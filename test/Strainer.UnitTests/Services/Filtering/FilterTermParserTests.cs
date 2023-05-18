@@ -1,9 +1,7 @@
-﻿using FluentAssertions;
-using Fluorite.Strainer.Models.Configuration;
+﻿using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Moq;
-using Xunit;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
 {
@@ -21,7 +19,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
-            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+            var namesParser = new FilterTermNamesParser();
+            var valuesParser = new FilterTermValuesParser();
+            var sectionsParser = new FilterTermSectionsParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, sectionsParser);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -42,7 +43,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
-            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+            var namesParser = new FilterTermNamesParser();
+            var valuesParser = new FilterTermValuesParser();
+            var sectionsParser = new FilterTermSectionsParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, sectionsParser);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -63,7 +67,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
-            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+            var namesParser = new FilterTermNamesParser();
+            var valuesParser = new FilterTermValuesParser();
+            var sectionsParser = new FilterTermSectionsParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, sectionsParser);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -84,7 +91,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
-            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+            var namesParser = new FilterTermNamesParser();
+            var valuesParser = new FilterTermValuesParser();
+            var sectionsParser = new FilterTermSectionsParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, sectionsParser);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -105,7 +115,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
-            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+            var namesParser = new FilterTermNamesParser();
+            var valuesParser = new FilterTermValuesParser();
+            var sectionsParser = new FilterTermSectionsParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, sectionsParser);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -126,7 +139,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
-            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+            var namesParser = new FilterTermNamesParser();
+            var valuesParser = new FilterTermValuesParser();
+            var sectionsParser = new FilterTermSectionsParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, sectionsParser);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);
@@ -147,7 +163,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var operatorParser = new FilterOperatorParser(filterOperatorsProvider);
-            var termParser = new FilterTermParser(operatorParser, filterOperatorsProvider);
+            var namesParser = new FilterTermNamesParser();
+            var valuesParser = new FilterTermValuesParser();
+            var sectionsParser = new FilterTermSectionsParser(filterOperatorsProvider);
+            var termParser = new FilterTermParser(operatorParser, namesParser, valuesParser, sectionsParser);
 
             // Act
             var filterTermList = termParser.GetParsedTerms(input);

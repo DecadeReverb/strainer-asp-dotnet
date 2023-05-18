@@ -1,7 +1,5 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
-using System;
-using System.Collections.Generic;
 
 namespace Fluorite.Strainer.Services.Configuration
 {
