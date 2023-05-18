@@ -1,4 +1,5 @@
 ﻿using Fluorite.Extensions.DependencyInjection;
+using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
@@ -101,6 +102,39 @@ namespace Fluorite.Strainer.IntegrationTests.DependencyInjection
             // Assert
             customSortMethods.Should().NotBeNullOrEmpty();
             customSortMethods.Should().ContainSingle(m => m.Key == typeof(Post));
+        }
+
+        [Fact]
+        public void EveryStrainerService_IsResolvable()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddStrainer();
+            using var serviceProvider = services.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            // Assert
+            var exceptions = new List<InvalidOperationException>();
+            var strainerServices = services
+                .Where(x => x.ServiceType.Assembly.Equals(typeof(IStrainerProcessor).Assembly))
+                .ToList();
+
+            foreach (var serviceDescriptor in strainerServices)
+            {
+                var serviceType = serviceDescriptor.ServiceType;
+                try
+                {
+                    scope.ServiceProvider.GetRequiredService(serviceType);
+                }
+                catch (InvalidOperationException e)
+                {
+                    exceptions.Add(e);
+                }
+            }
+
+            exceptions.Should().BeEmpty();
         }
 
         private class Post

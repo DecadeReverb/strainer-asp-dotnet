@@ -22,6 +22,7 @@ namespace Fluorite.Strainer.ExampleWebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(options => options.EnableEndpointRouting = false)
+                .AddControllersAsServices()
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -36,8 +37,7 @@ namespace Fluorite.Strainer.ExampleWebApi
             services.AddSwaggerGenWithDefaultOptions();
             services.AddStrainer(
                 Configuration.GetSection("Strainer"),
-                new[] { typeof(Startup).Assembly },
-                ServiceLifetime.Singleton);
+                new[] { typeof(Startup).Assembly });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
