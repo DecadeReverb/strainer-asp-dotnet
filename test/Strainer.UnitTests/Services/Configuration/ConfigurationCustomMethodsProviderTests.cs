@@ -2,19 +2,18 @@
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Configuration;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Configuration
 {
     public class ConfigurationCustomMethodsProviderTests
     {
-        private readonly Mock<IStrainerConfigurationProvider> _strainerConfigurationProviderMock = new();
+        private readonly IStrainerConfigurationProvider _strainerConfigurationProviderMock = Substitute.For<IStrainerConfigurationProvider>();
 
         private readonly ConfigurationCustomMethodsProvider _provider;
 
         public ConfigurationCustomMethodsProviderTests()
         {
-            _provider = new ConfigurationCustomMethodsProvider(_strainerConfigurationProviderMock.Object);
+            _provider = new ConfigurationCustomMethodsProvider(_strainerConfigurationProviderMock);
         }
 
         [Fact]
@@ -39,20 +38,20 @@ namespace Fluorite.Strainer.UnitTests.Services.Configuration
                     {
                         {
                             "foo",
-                            Mock.Of<ICustomFilterMethod>()
+                            Substitute.For<ICustomFilterMethod>()
                         }
                     }
                 }
             };
 
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
             strainerConfigurationMock
-                .SetupGet(x => x.CustomFilterMethods)
+                .CustomFilterMethods
                 .Returns(customFilterMethods);
 
             _strainerConfigurationProviderMock
-                .Setup(x => x.GetStrainerConfiguration())
-                .Returns(strainerConfigurationMock.Object);
+                .GetStrainerConfiguration()
+                .Returns(strainerConfigurationMock);
 
             // Act
             var result = _provider.GetCustomFilterMethods();
@@ -74,20 +73,20 @@ namespace Fluorite.Strainer.UnitTests.Services.Configuration
                     {
                         {
                             "foo",
-                            Mock.Of<ICustomSortMethod>()
+                            Substitute.For<ICustomSortMethod>()
                         }
                     }
                 }
             };
 
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
             strainerConfigurationMock
-                .SetupGet(x => x.CustomSortMethods)
+                .CustomSortMethods
                 .Returns(customSortMethods);
 
             _strainerConfigurationProviderMock
-                .Setup(x => x.GetStrainerConfiguration())
-                .Returns(strainerConfigurationMock.Object);
+                .GetStrainerConfiguration()
+                .Returns(strainerConfigurationMock);
 
             // Act
             var result = _provider.GetCustomSortMethods();

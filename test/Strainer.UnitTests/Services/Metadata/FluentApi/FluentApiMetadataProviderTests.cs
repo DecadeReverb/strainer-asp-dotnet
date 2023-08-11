@@ -4,26 +4,25 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Metadata.FluentApi;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
 {
     public class FluentApiMetadataProviderTests
     {
-        private readonly Mock<IStrainerOptionsProvider> _optionsProviderMock = new();
-        private readonly Mock<IConfigurationMetadataProvider> _configurationMetadataProviderMock = new();
-        private readonly Mock<IPropertyInfoProvider> _propertyInfoProviderMock = new();
-        private readonly Mock<IFluentApiPropertyMetadataBuilder> _propertyMetadataBuilderMock = new();
+        private readonly IStrainerOptionsProvider _optionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
+        private readonly IConfigurationMetadataProvider _configurationMetadataProviderMock = Substitute.For<IConfigurationMetadataProvider>();
+        private readonly IPropertyInfoProvider _propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
+        private readonly IFluentApiPropertyMetadataBuilder _propertyMetadataBuilderMock = Substitute.For<IFluentApiPropertyMetadataBuilder>();
 
         private readonly FluentApiMetadataProvider _provider;
 
         public FluentApiMetadataProviderTests()
         {
             _provider = new FluentApiMetadataProvider(
-                _optionsProviderMock.Object,
-                _configurationMetadataProviderMock.Object,
-                _propertyInfoProviderMock.Object,
-                _propertyMetadataBuilderMock.Object);
+                _optionsProviderMock,
+                _configurationMetadataProviderMock,
+                _propertyInfoProviderMock,
+                _propertyMetadataBuilderMock);
         }
 
         [Fact]
@@ -31,13 +30,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
             _configurationMetadataProviderMock
-                .Setup(x => x.GetDefaultMetadata())
+                .GetDefaultMetadata()
                 .Returns(new Dictionary<Type, IPropertyMetadata>());
             _configurationMetadataProviderMock
-                .Setup(x => x.GetObjectMetadata())
+                .GetObjectMetadata()
                 .Returns(new Dictionary<Type, IObjectMetadata>());
 
             // Act
@@ -52,22 +51,22 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
             _configurationMetadataProviderMock
-                .Setup(x => x.GetDefaultMetadata())
+                .GetDefaultMetadata()
                 .Returns(new Dictionary<Type, IPropertyMetadata>());
-            var propertyMetadata = Mock.Of<IPropertyMetadata>();
-            var objectMetadata = Mock.Of<IObjectMetadata>();
+            var propertyMetadata = Substitute.For<IPropertyMetadata>();
+            var objectMetadata = Substitute.For<IObjectMetadata>();
             var objectMetadataDictionary = new Dictionary<Type, IObjectMetadata>
             {
                 { typeof(Post), objectMetadata }
             };
             _configurationMetadataProviderMock
-                .Setup(x => x.GetObjectMetadata())
+                .GetObjectMetadata()
                 .Returns(objectMetadataDictionary);
             _propertyMetadataBuilderMock
-                .Setup(x => x.BuildPropertyMetadata(objectMetadata))
+                .BuildPropertyMetadata(objectMetadata)
                 .Returns(propertyMetadata);
 
             // Act
@@ -83,7 +82,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
             var propertyMetadata = new PropertyMetadata
             {
@@ -97,7 +96,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
                 { typeof(Post), propertyMetadata }
             };
             _configurationMetadataProviderMock
-                .Setup(x => x.GetDefaultMetadata())
+                .GetDefaultMetadata()
                 .Returns(defaultMetadataDictionary);
 
             // Act
@@ -113,11 +112,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
             var propertyMetadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
             _configurationMetadataProviderMock
-                .Setup(x => x.GetPropertyMetadata())
+                .GetPropertyMetadata()
                 .Returns(propertyMetadata);
 
             // Act
@@ -135,7 +134,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
             var propertyMetadata = new PropertyMetadata
             {
@@ -150,7 +149,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
                 { typeof(Post), postMetadataDictionary },
             };
             _configurationMetadataProviderMock
-                .Setup(x => x.GetPropertyMetadata())
+                .GetPropertyMetadata()
                 .Returns(propertyMetadataDictionary);
 
             // Act
@@ -169,7 +168,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
             var propertyMetadata = new PropertyMetadata
             {
@@ -186,7 +185,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
                 { typeof(Post), postMetadataDictionary },
             };
             _configurationMetadataProviderMock
-                .Setup(x => x.GetPropertyMetadata())
+                .GetPropertyMetadata()
                 .Returns(propertyMetadataDictionary);
 
             // Act
@@ -205,7 +204,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
 
             // Act
@@ -220,15 +219,15 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.FluentApi
         {
             // Arrange
             _optionsProviderMock
-                .Setup(provider => provider.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
             var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
             _configurationMetadataProviderMock
-                .Setup(x => x.GetPropertyMetadata())
+                .GetPropertyMetadata()
                 .Returns(propertyMetadataDictionary);
             var objectMetadataDictionary = new Dictionary<Type, IObjectMetadata>();
             _configurationMetadataProviderMock
-                .Setup(x => x.GetObjectMetadata())
+                .GetObjectMetadata()
                 .Returns(objectMetadataDictionary);
 
             // Act

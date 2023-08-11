@@ -2,20 +2,20 @@
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
-using Moq;
+using NSubstitute.ReturnsExtensions;
 using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortExpressionProviderTests
     {
-        private readonly Mock<IMetadataFacade> _metadataProvidersFacadeMock = new();
+        private readonly IMetadataFacade _metadataProvidersFacadeMock = Substitute.For<IMetadataFacade>();
 
         private readonly SortExpressionProvider _provider;
 
         public SortExpressionProviderTests()
         {
-            _provider = new SortExpressionProvider(_metadataProvidersFacadeMock.Object);
+            _provider = new SortExpressionProvider(_metadataProvidersFacadeMock);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
 
             _metadataProvidersFacadeMock
-                .Setup(x => x.GetMetadata<Comment>(true, false, sortTerm.Name))
+                .GetMetadata<Comment>(true, false, sortTerm.Name)
                 .Returns(propertyMetadata);
 
             // Act
@@ -57,12 +57,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
         public void Provider_Returns_EmptyListOfSortExpressions_When_NoMatchingPropertyIsFound()
         {
             // Arrange
-            var propertyInfo = Mock.Of<PropertyInfo>();
-            var sortTerm = Mock.Of<ISortTerm>();
+            var propertyInfo = Substitute.For<PropertyInfo>();
+            var sortTerm = Substitute.For<ISortTerm>();
             var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
             {
                 { propertyInfo, sortTerm },
             };
+
+            _metadataProvidersFacadeMock
+                .GetMetadata<Comment>(Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<string>())
+                .ReturnsNull();
 
             // Act
             var sortExpressions = _provider.GetExpressions<Comment>(sortTerms);
@@ -71,7 +75,8 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             sortExpressions.Should().BeEmpty();
 
             _metadataProvidersFacadeMock
-                .Verify(x => x.GetMetadata<Comment>(true, false, sortTerm.Name), Times.Once);
+                .Received(1)
+                .GetMetadata<Comment>(true, false, sortTerm.Name);
         }
 
         [Fact]
@@ -97,7 +102,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
 
             _metadataProvidersFacadeMock
-                .Setup(x => x.GetMetadata<Post>(true, false, sortTerm.Name))
+                .GetMetadata<Post>(true, false, sortTerm.Name)
                 .Returns(propertyMetadata);
 
             // Act
@@ -156,10 +161,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             };
 
             _metadataProvidersFacadeMock
-                .Setup(x => x.GetMetadata<Comment>(true, false, termsList[0].Name))
+                .GetMetadata<Comment>(true, false, termsList[0].Name)
                 .Returns(propertyMetadatas[0]);
             _metadataProvidersFacadeMock
-                .Setup(x => x.GetMetadata<Comment>(true, false, termsList[1].Name))
+                .GetMetadata<Comment>(true, false, termsList[1].Name)
                 .Returns(propertyMetadatas[1]);
 
             // Act

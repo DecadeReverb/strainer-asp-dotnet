@@ -3,24 +3,24 @@ using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Pipelines;
 using Fluorite.Strainer.Services.Sorting;
-using Moq;
+using NSubstitute.ReturnsExtensions;
 
 namespace Fluorite.Strainer.UnitTests.Services.Pipelines
 {
     public class SortPipelineOperationTests
     {
-        private readonly Mock<ISortingApplier> _sortingApplierMock = new();
-        private readonly Mock<ISortTermParser> _sortTermParserMock = new();
-        private readonly Mock<ISortExpressionProvider> _sortExpressionProviderMock = new();
+        private readonly ISortingApplier _sortingApplierMock = Substitute.For<ISortingApplier>();
+        private readonly ISortTermParser _sortTermParserMock = Substitute.For<ISortTermParser>();
+        private readonly ISortExpressionProvider _sortExpressionProviderMock = Substitute.For<ISortExpressionProvider>();
 
         private readonly SortPipelineOperation _operation;
 
         public SortPipelineOperationTests()
         {
             _operation = new SortPipelineOperation(
-                _sortingApplierMock.Object,
-                _sortTermParserMock.Object,
-                _sortExpressionProviderMock.Object);
+                _sortingApplierMock,
+                _sortTermParserMock,
+                _sortExpressionProviderMock);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Throw_ForNullSource()
         {
             // Arrange
-            var model = Mock.Of<IStrainerModel>();
+            var model = Substitute.For<IStrainerModel>();
 
             // Act
             Action act = () => _operation.Execute<object>(model, source: null);
@@ -62,11 +62,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             var sortTerms = new List<ISortTerm>();
 
             _sortTermParserMock
-                .Setup(x => x.GetParsedTerms(model.Sorts))
+                .GetParsedTerms(model.Sorts)
                 .Returns(sortTerms);
             _sortingApplierMock
-                .Setup(x => x.TryApplySorting(sortTerms, source, out sortedSource))
-                .Returns(true);
+                .TryApplySorting(sortTerms, source, out Arg.Any<IQueryable<int>>())
+                .Returns(c =>
+                {
+                    c[2] = sortedSource;
+
+                    return true;
+                });
 
             // Act
             var result = _operation.Execute(model, source);
@@ -90,23 +95,23 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             };
             var sortTerms = new List<ISortTerm>();
 
-            var sortExpressionMock = new Mock<ISortExpression<int>>();
+            var sortExpressionMock = Substitute.For<ISortExpression<int>>();
             sortExpressionMock
-                .SetupGet(x => x.IsDescending)
+                .IsDescending
                 .Returns(true);
             sortExpressionMock
-                .SetupGet(x => x.Expression)
+                .Expression
                 .Returns(x => x);
 
             _sortTermParserMock
-                .Setup(x => x.GetParsedTerms(model.Sorts))
+                .GetParsedTerms(model.Sorts)
                 .Returns(sortTerms);
             _sortingApplierMock
-                .Setup(x => x.TryApplySorting(sortTerms, source, out sortedSource))
+                .TryApplySorting(sortTerms, source, out sortedSource)
                 .Returns(false);
             _sortExpressionProviderMock
-                .Setup(x => x.GetDefaultExpression<int>())
-                .Returns(sortExpressionMock.Object);
+                .GetDefaultExpression<int>()
+                .Returns(sortExpressionMock);
 
             // Act
             var result = _operation.Execute(model, source);
@@ -123,7 +128,6 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         {
             // Arrange
             var source = Enumerable.Range(1, 10).AsQueryable();
-            IQueryable<int> sortedSource = null;
             var model = new StrainerModel
             {
                 Sorts = "foo",
@@ -131,11 +135,14 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             var sortTerms = new List<ISortTerm>();
 
             _sortTermParserMock
-                .Setup(x => x.GetParsedTerms(model.Sorts))
+                .GetParsedTerms(model.Sorts)
                 .Returns(sortTerms);
             _sortingApplierMock
-                .Setup(x => x.TryApplySorting(sortTerms, source, out sortedSource))
+                .TryApplySorting(sortTerms, source, out Arg.Any<IQueryable<int>>())
                 .Returns(false);
+            _sortExpressionProviderMock
+                .GetDefaultExpression<int>()
+                .ReturnsNull();
 
             // Act
             var result = _operation.Execute(model, source);

@@ -1,22 +1,21 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Pagination;
 using Fluorite.Strainer.Services.Pipelines;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Pipelines
 {
     public class PaginatePipelineOperationTests
     {
-        private readonly Mock<IPageNumberEvaluator> _pageNumberEvaluatorMock = new();
-        private readonly Mock<IPageSizeEvaluator> _pageSizeEvaluatorMock = new();
+        private readonly IPageNumberEvaluator _pageNumberEvaluatorMock = Substitute.For<IPageNumberEvaluator>();
+        private readonly IPageSizeEvaluator _pageSizeEvaluatorMock = Substitute.For<IPageSizeEvaluator>();
 
         private readonly PaginatePipelineOperation _operation;
 
         public PaginatePipelineOperationTests()
         {
             _operation = new PaginatePipelineOperation(
-                _pageNumberEvaluatorMock.Object,
-                _pageSizeEvaluatorMock.Object);
+                _pageNumberEvaluatorMock,
+                _pageSizeEvaluatorMock);
         }
 
         [Fact]
@@ -36,7 +35,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Throw_ForNullSource()
         {
             // Arrange
-            var model = Mock.Of<IStrainerModel>();
+            var model = Substitute.For<IStrainerModel>();
 
             // Act
             Action act = () => _operation.Execute<object>(model, source: null);
@@ -50,7 +49,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         {
             // Arrange
             var source = Enumerable.Range(1, 10).AsQueryable();
-            var model = Mock.Of<IStrainerModel>();
+            var model = Substitute.For<IStrainerModel>();
 
             // Act
             var result = _operation.Execute(model, source);
@@ -68,13 +67,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             var pageNumber = 3;
             var pageSize = 4;
             var source = Enumerable.Range(1, 10).AsQueryable();
-            var model = Mock.Of<IStrainerModel>();
+            var model = Substitute.For<IStrainerModel>();
 
             _pageNumberEvaluatorMock
-                .Setup(x => x.Evaluate(model))
+                .Evaluate(model)
                 .Returns(pageNumber);
             _pageSizeEvaluatorMock
-                .Setup(x => x.Evaluate(model))
+                .Evaluate(model)
                 .Returns(pageSize);
 
             // Act

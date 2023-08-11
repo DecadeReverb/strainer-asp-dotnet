@@ -2,19 +2,18 @@
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
-using Moq;
 using System.Collections;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {
     public class MetadataSourceCheckerTests
     {
-        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
+        private readonly IStrainerOptionsProvider _strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
         private readonly MetadataSourceChecker _checker;
 
         public MetadataSourceCheckerTests()
         {
-            _checker = new MetadataSourceChecker(_strainerOptionsProviderMock.Object);
+            _checker = new MetadataSourceChecker(_strainerOptionsProviderMock);
         }
 
         [Theory]
@@ -27,7 +26,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 MetadataSourceType = sourceType,
             };
             _strainerOptionsProviderMock
-                .Setup(x => x.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(strainerOptions);
 
             // Act

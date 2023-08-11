@@ -1,7 +1,6 @@
 ﻿using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering
 {
@@ -13,10 +12,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             // Arrange
             string symbol = null;
             var filterOperators = FilterOperatorMapper.DefaultOperators;
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
-            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
+            strainerConfigurationMock
+                .FilterOperators
                 .Returns(filterOperators);
-            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var parser = new FilterOperatorParser(filterOperatorsProvider);
 
@@ -33,10 +33,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             // Arrange
             var symbol = string.Empty;
             var filterOperators = FilterOperatorMapper.DefaultOperators;
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
-            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
+            strainerConfigurationMock
+                .FilterOperators
                 .Returns(filterOperators);
-            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var parser = new FilterOperatorParser(filterOperatorsProvider);
 
@@ -53,10 +54,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
             // Arrange
             var symbol = " ";
             var filterOperators = FilterOperatorMapper.DefaultOperators;
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
-            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
+            strainerConfigurationMock
+                .FilterOperators
                 .Returns(filterOperators);
-            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var parser = new FilterOperatorParser(filterOperatorsProvider);
 
@@ -72,10 +74,11 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering
         {
             // Arrange
             var filterOperators = FilterOperatorMapper.DefaultOperators;
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
-            strainerConfigurationMock.SetupGet(configuration => configuration.FilterOperators)
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
+            strainerConfigurationMock
+                .FilterOperators
                 .Returns(filterOperators);
-            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock.Object);
+            var strainerConfigurationProvider = new StrainerConfigurationProvider(strainerConfigurationMock);
             var filterOperatorsProvider = new ConfigurationFilterOperatorsProvider(strainerConfigurationProvider);
             var parser = new FilterOperatorParser(filterOperatorsProvider);
 

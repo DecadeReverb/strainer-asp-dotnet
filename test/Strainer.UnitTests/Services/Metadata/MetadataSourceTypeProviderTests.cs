@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Services.Metadata;
-using Moq;
 using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
@@ -33,16 +32,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
                 typeof(Version),
                 typeof(DateTime),
             };
-            var assemblyMock = new Mock<Assembly>();
+            var assemblyMock = Substitute.For<Assembly>();
             assemblyMock
-                .Setup(x => x.GetTypes())
+                .GetTypes()
                 .Returns(types);
             assemblyMock
-                .SetupGet(x => x.FullName)
+                .FullName
                 .Returns("TestAssembly");
             var assemblies = new Assembly[]
             {
-                assemblyMock.Object,
+                assemblyMock,
             };
 
             // Act
@@ -59,13 +58,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void Should_Return_TypesNotFromTraceDataCollector()
         {
             // Arrange
-            var assemblyMock = new Mock<Assembly>();
+            var assemblyMock = Substitute.For<Assembly>();
             assemblyMock
-                .SetupGet(x => x.FullName)
+                .FullName
                 .Returns("Microsoft.VisualStudio.TraceDataCollector");
             var assemblies = new Assembly[]
             {
-                assemblyMock.Object,
+                assemblyMock,
             };
 
             // Act

@@ -1,26 +1,25 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Pipelines;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Pipelines
 {
     public class StrainerPipelineBuilderTests
     {
-        private readonly Mock<IFilterPipelineOperation> _filterPipelineOperationMock = new();
-        private readonly Mock<ISortPipelineOperation> _sortPipelineOperationMock = new();
-        private readonly Mock<IPaginatePipelineOperation> _paginatePipelineOperationMock = new();
-        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
+        private readonly IFilterPipelineOperation _filterPipelineOperationMock = Substitute.For<IFilterPipelineOperation>();
+        private readonly ISortPipelineOperation _sortPipelineOperationMock = Substitute.For<ISortPipelineOperation>();
+        private readonly IPaginatePipelineOperation _paginatePipelineOperationMock = Substitute.For<IPaginatePipelineOperation>();
+        private readonly IStrainerOptionsProvider _strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
 
         private readonly StrainerPipelineBuilder _builder;
 
         public StrainerPipelineBuilderTests()
         {
             _builder = new StrainerPipelineBuilder(
-                _filterPipelineOperationMock.Object,
-                _sortPipelineOperationMock.Object,
-                _paginatePipelineOperationMock.Object,
-                _strainerOptionsProviderMock.Object);
+                _filterPipelineOperationMock,
+                _sortPipelineOperationMock,
+                _paginatePipelineOperationMock,
+                _strainerOptionsProviderMock);
         }
 
         [Fact]
@@ -38,16 +37,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         {
             // Arrange
             var query = new List<string> { "foo" }.AsQueryable();
-            var model = Mock.Of<IStrainerModel>();
+            var model = Substitute.For<IStrainerModel>();
 
             _filterPipelineOperationMock
-                .Setup(x => x.Execute(model, query))
+                .Execute(model, query)
                 .Returns(query);
             _sortPipelineOperationMock
-                .Setup(x => x.Execute(model, query))
+                .Execute(model, query)
                 .Returns(query);
             _paginatePipelineOperationMock
-                .Setup(x => x.Execute(model, query))
+                .Execute(model, query)
                 .Returns(query);
 
             // Act
@@ -66,9 +65,10 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
             // Assert
             resultQuery.Should().NotBeNull();
             resultQuery.Should().BeSameAs(query);
-            _filterPipelineOperationMock.Verify(x => x.Execute(model, query), Times.Once);
-            _sortPipelineOperationMock.Verify(x => x.Execute(model, query), Times.Once);
-            _paginatePipelineOperationMock.Verify(x => x.Execute(model, query), Times.Once);
+
+            _filterPipelineOperationMock.Received(1).Execute(model, query);
+            _sortPipelineOperationMock.Received(1).Execute(model, query);
+            _paginatePipelineOperationMock.Received(1).Execute(model, query);
         }
     }
 }

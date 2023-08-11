@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Services.Metadata.Attributes;
-using Moq;
 using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
@@ -42,13 +41,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
         {
             // Arrange
             var objectAttribute = new StrainerObjectAttribute("foo");
-            var typeMock = new Mock<Type>();
+            var typeMock = Substitute.For<Type>();
             typeMock
-                .Setup(x => x.GetCustomAttributes(typeof(StrainerObjectAttribute), false))
+                .GetCustomAttributes(typeof(StrainerObjectAttribute), false)
                 .Returns(new[] { objectAttribute });
 
             // Act
-            var result = _provider.GetObjectAttribute(typeMock.Object);
+            var result = _provider.GetObjectAttribute(typeMock);
 
             // Assert
             result.Should().NotBeNull();
@@ -70,28 +69,28 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes
         {
             // Arrange
             var propertyAttribute = new StrainerPropertyAttribute();
-            var propertyInfoMock = new Mock<PropertyInfo>();
+            var propertyInfoMock = Substitute.For<PropertyInfo>();
             propertyInfoMock
-                .Setup(x => x.GetCustomAttributes(typeof(StrainerPropertyAttribute), false))
+                .GetCustomAttributes(typeof(StrainerPropertyAttribute), false)
                 .Returns(new[] { propertyAttribute });
 
             // Act
-            var result = _provider.GetPropertyAttribute(propertyInfoMock.Object);
+            var result = _provider.GetPropertyAttribute(propertyInfoMock);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeSameAs(propertyAttribute);
-            result.PropertyInfo.Should().BeSameAs(propertyInfoMock.Object);
+            result.PropertyInfo.Should().BeSameAs(propertyInfoMock);
         }
 
         [Fact]
         public void Should_Return_NullWhen_PropertyAttributeNotFound()
         {
             // Arrange
-            var propertyInfoMock = new Mock<PropertyInfo>();
+            var propertyInfoMock = Substitute.For<PropertyInfo>();
 
             // Act
-            var result = _provider.GetPropertyAttribute(propertyInfoMock.Object);
+            var result = _provider.GetPropertyAttribute(propertyInfoMock);
 
             // Assert
             result.Should().BeNull();

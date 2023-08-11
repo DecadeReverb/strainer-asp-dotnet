@@ -2,24 +2,23 @@
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Sorting;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Sorting
 {
     public class SortTermParserTests
     {
-        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
-        private readonly Mock<ISortingWayFormatter> _sortingWayFormatterMock = new();
-        private readonly Mock<ISortTermValueParser> _sortTermValueParserMock = new();
+        private readonly IStrainerOptionsProvider _strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
+        private readonly ISortingWayFormatter _sortingWayFormatterMock = Substitute.For<ISortingWayFormatter>();
+        private readonly ISortTermValueParser _sortTermValueParserMock = Substitute.For<ISortTermValueParser>();
 
         private readonly SortTermParser _parser;
 
         public SortTermParserTests()
         {
             _parser = new SortTermParser(
-                _sortingWayFormatterMock.Object,
-                _strainerOptionsProviderMock.Object,
-                _sortTermValueParserMock.Object);
+                _sortingWayFormatterMock,
+                _strainerOptionsProviderMock,
+                _sortTermValueParserMock);
         }
 
         [Theory]
@@ -42,7 +41,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var input = " ";
 
             _sortTermValueParserMock
-                .Setup(x => x.GetParsedValues(input))
+                .GetParsedValues(input)
                 .Returns(Array.Empty<string>());
 
             // Act
@@ -63,15 +62,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Sorting
             var sortingWay = SortingWay.Descending;
 
             _sortTermValueParserMock
-                .Setup(x => x.GetParsedValues(input))
+                .GetParsedValues(input)
                 .Returns(new[] { parsedInput });
             _sortingWayFormatterMock
-                .Setup(x => x.GetSortingWay(parsedInput))
+                .GetSortingWay(parsedInput)
                 .Returns(sortingWay);
             _sortingWayFormatterMock
-                .Setup(x => x.Unformat(parsedInput, sortingWay))
+                .Unformat(parsedInput, sortingWay)
                 .Returns(formattedValue);
-            _strainerOptionsProviderMock.Setup(provider => provider.GetStrainerOptions())
+            _strainerOptionsProviderMock
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
 
             // Act

@@ -2,7 +2,7 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Pipelines;
-using Moq;
+using NSubstitute.ExceptionExtensions;
 
 namespace Fluorite.Strainer.UnitTests.Services.Pipelines
 {
@@ -12,7 +12,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Throw_ForNullOperations()
         {
             // Arrange
-            var strainerOptionsProvider = Mock.Of<IStrainerOptionsProvider>();
+            var strainerOptionsProvider = Substitute.For<IStrainerOptionsProvider>();
 
             // Act
             Action action = () => _ = new StrainerPipeline(operations: null, strainerOptionsProvider);
@@ -38,7 +38,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Throw_ForNullModel()
         {
             // Arrange
-            var strainerOptionsProvider = Mock.Of<IStrainerOptionsProvider>();
+            var strainerOptionsProvider = Substitute.For<IStrainerOptionsProvider>();
             var operations = new List<IStrainerPipelineOperation>();
             var pipeline = CreatePipeline(operations, strainerOptionsProvider);
             var source = new List<Uri>().AsQueryable();
@@ -54,7 +54,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Throw_ForNullSource()
         {
             // Arrange
-            var strainerOptionsProvider = Mock.Of<IStrainerOptionsProvider>();
+            var strainerOptionsProvider = Substitute.For<IStrainerOptionsProvider>();
             var operations = new List<IStrainerPipelineOperation>();
             var pipeline = CreatePipeline(operations, strainerOptionsProvider);
             var model = new StrainerModel();
@@ -70,7 +70,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Execute_Operations_Empty()
         {
             // Arrange
-            var strainerOptionsProvider = Mock.Of<IStrainerOptionsProvider>();
+            var strainerOptionsProvider = Substitute.For<IStrainerOptionsProvider>();
             var operations = new List<IStrainerPipelineOperation>();
             var pipeline = CreatePipeline(operations, strainerOptionsProvider);
             var model = new StrainerModel();
@@ -87,22 +87,22 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Execute_Operations()
         {
             // Arrange
-            var strainerOptionsProvider = Mock.Of<IStrainerOptionsProvider>();
+            var strainerOptionsProvider = Substitute.For<IStrainerOptionsProvider>();
             var operationResult = new List<Uri>().AsQueryable().Where(x => x.IsFile);
-            var operationMock = new Mock<IStrainerPipelineOperation>();
+            var operationMock = Substitute.For<IStrainerPipelineOperation>();
             operationMock
-                .Setup(x => x.Execute(
-                    It.IsAny<IStrainerModel>(),
-                    It.IsAny<IQueryable<Uri>>()))
+                .Execute(
+                    Arg.Any<IStrainerModel>(),
+                    Arg.Any<IQueryable<Uri>>())
                 .Returns(operationResult);
             var operations = new List<IStrainerPipelineOperation>
             {
-                operationMock.Object,
+                operationMock,
             };
             var pipeline = CreatePipeline(operations, strainerOptionsProvider);
             var model = new StrainerModel();
             var source = new List<Uri>().AsQueryable();
-            var context = Mock.Of<IStrainerContext>();
+            var context = Substitute.For<IStrainerContext>();
 
             // Act
             var result = pipeline.Run(model, source);
@@ -115,22 +115,22 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_Return_Source_WhenOperationThrows()
         {
             // Arrange
-            var strainerOptionsProviderMock = new Mock<IStrainerOptionsProvider>();
+            var strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
             strainerOptionsProviderMock
-                .Setup(x => x.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
 
-            var operationMock = new Mock<IStrainerPipelineOperation>();
+            var operationMock = Substitute.For<IStrainerPipelineOperation>();
             operationMock
-                .Setup(x => x.Execute(
-                    It.IsAny<IStrainerModel>(),
-                    It.IsAny<IQueryable<Uri>>()))
+                .Execute(
+                    Arg.Any<IStrainerModel>(),
+                    Arg.Any<IQueryable<Uri>>())
                 .Throws(new StrainerException());
             var operations = new List<IStrainerPipelineOperation>
             {
-                operationMock.Object,
+                operationMock,
             };
-            var pipeline = CreatePipeline(operations, strainerOptionsProviderMock.Object);
+            var pipeline = CreatePipeline(operations, strainerOptionsProviderMock);
             var model = new StrainerModel();
             var source = new List<Uri>().AsQueryable();
 
@@ -145,25 +145,25 @@ namespace Fluorite.Strainer.UnitTests.Services.Pipelines
         public void Should_PassException_WhenOperationThrows_WithEnabledExceptions()
         {
             // Arrange
-            var strainerOptionsProviderMock = new Mock<IStrainerOptionsProvider>();
+            var strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
             strainerOptionsProviderMock
-                .Setup(x => x.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions
                 {
                     ThrowExceptions = true,
                 });
 
-            var operationMock = new Mock<IStrainerPipelineOperation>();
+            var operationMock = Substitute.For<IStrainerPipelineOperation>();
             operationMock
-                .Setup(x => x.Execute(
-                    It.IsAny<IStrainerModel>(),
-                    It.IsAny<IQueryable<Uri>>()))
+                .Execute(
+                    Arg.Any<IStrainerModel>(),
+                    Arg.Any<IQueryable<Uri>>())
                 .Throws(new StrainerException());
             var operations = new List<IStrainerPipelineOperation>
             {
-                operationMock.Object,
+                operationMock,
             };
-            var pipeline = CreatePipeline(operations, strainerOptionsProviderMock.Object);
+            var pipeline = CreatePipeline(operations, strainerOptionsProviderMock);
             var model = new StrainerModel();
             var source = new List<Uri>().AsQueryable();
 

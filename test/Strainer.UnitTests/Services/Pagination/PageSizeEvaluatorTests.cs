@@ -1,18 +1,18 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Pagination;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Pagination
 {
     public class PageSizeEvaluatorTests
     {
-        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
+        private readonly IStrainerOptionsProvider _strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
+
         private readonly PageSizeEvaluator _evaluator;
 
         public PageSizeEvaluatorTests()
         {
-            _evaluator = new PageSizeEvaluator(_strainerOptionsProviderMock.Object);
+            _evaluator = new PageSizeEvaluator(_strainerOptionsProviderMock);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pagination
             };
 
             _strainerOptionsProviderMock
-                .Setup(x => x.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
 
             // Act
@@ -74,7 +74,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Pagination
             };
 
             _strainerOptionsProviderMock
-                .Setup(x => x.GetStrainerOptions())
+                .GetStrainerOptions()
                 .Returns(strainerOptions);
 
             // Act

@@ -11,7 +11,6 @@ using Fluorite.Strainer.Services.Modules;
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
@@ -38,13 +37,13 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
         {
             // Arrange
             var services = new ServiceCollection();
-            var assemblyMock = new Mock<Assembly>();
+            var assemblyMock = Substitute.For<Assembly>();
             assemblyMock
-                .Setup(x => x.GetTypes())
+                .GetTypes()
                 .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
 
             // Act
-            services.AddStrainer(new[] { assemblyMock.Object });
+            services.AddStrainer(new[] { assemblyMock });
             using var serviceProvider = services.BuildServiceProvider();
             var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
 
@@ -100,13 +99,13 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
             var defaultPageSize = 20;
             var services = new ServiceCollection();
 
-            var assemblyMock = new Mock<Assembly>();
+            var assemblyMock = Substitute.For<Assembly>();
             assemblyMock
-                .Setup(x => x.GetTypes())
+                .GetTypes()
                 .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
 
             // Act
-            services.AddStrainer(options => options.DefaultPageSize = defaultPageSize, new[] { assemblyMock.Object });
+            services.AddStrainer(options => options.DefaultPageSize = defaultPageSize, new[] { assemblyMock });
             using var serviceProvider = services.BuildServiceProvider();
             var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
             var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();
@@ -160,13 +159,13 @@ namespace Fluorite.Strainer.UnitTests.Extensions.DepedencyInjection
                 .AddInMemoryCollection(strainerOptions)
                 .Build();
 
-            var assemblyMock = new Mock<Assembly>();
+            var assemblyMock = Substitute.For<Assembly>();
             assemblyMock
-                .Setup(x => x.GetTypes())
+                .GetTypes()
                 .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
 
             // Act
-            services.AddStrainer(configuration, new[] { assemblyMock.Object });
+            services.AddStrainer(configuration, new[] { assemblyMock });
             using var serviceProvider = services.BuildServiceProvider();
             var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
             var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();

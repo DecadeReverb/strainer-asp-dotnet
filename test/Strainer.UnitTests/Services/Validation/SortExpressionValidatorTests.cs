@@ -1,7 +1,6 @@
 ﻿using Fluorite.Strainer.Exceptions;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Validation;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Validation
 {
@@ -31,7 +30,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Validation
             var type = typeof(Version);
             var innerMetadata = new Dictionary<string, IPropertyMetadata>
             {
-                { "foo", Mock.Of<IPropertyMetadata>() },
+                { "foo", Substitute.For<IPropertyMetadata>() },
             };
             var propertyMetadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
             {

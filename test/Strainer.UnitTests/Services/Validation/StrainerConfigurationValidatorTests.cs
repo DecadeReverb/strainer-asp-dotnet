@@ -2,22 +2,21 @@
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Validation;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Validation
 {
     public class StrainerConfigurationValidatorTests
     {
-        private readonly Mock<ISortExpressionValidator> _sortExpressionValidatorMock = new();
-        private readonly Mock<IFilterOperatorValidator> _filterOperatorValidatorMock = new();
+        private readonly ISortExpressionValidator _sortExpressionValidatorMock = Substitute.For<ISortExpressionValidator>();
+        private readonly IFilterOperatorValidator _filterOperatorValidatorMock = Substitute.For<IFilterOperatorValidator>();
 
         private readonly StrainerConfigurationValidator _validator;
 
         public StrainerConfigurationValidatorTests()
         {
             _validator = new StrainerConfigurationValidator(
-                _filterOperatorValidatorMock.Object,
-                _sortExpressionValidatorMock.Object);
+                _filterOperatorValidatorMock,
+                _sortExpressionValidatorMock);
         }
 
         [Fact]
@@ -37,19 +36,19 @@ namespace Fluorite.Strainer.UnitTests.Services.Validation
             var filterOperators = new Dictionary<string, IFilterOperator>();
             var propertyMetadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
 
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
             strainerConfigurationMock
-                .SetupGet(x => x.FilterOperators)
+                .FilterOperators
                 .Returns(filterOperators);
             strainerConfigurationMock
-                .SetupGet(x => x.PropertyMetadata)
+                .PropertyMetadata
                 .Returns(propertyMetadata);
             _sortExpressionValidatorMock
-                .Setup(x => x.Validate(propertyMetadata))
-                .Throws<Exception>();
+                .When(x => x.Validate(propertyMetadata))
+                .Throw<Exception>();
 
             // Act
-            Action act = () => _validator.Validate(strainerConfigurationMock.Object);
+            Action act = () => _validator.Validate(strainerConfigurationMock);
 
             // Assert
             act.Should().ThrowExactly<InvalidOperationException>()
@@ -64,16 +63,16 @@ namespace Fluorite.Strainer.UnitTests.Services.Validation
             var filterOperators = new Dictionary<string, IFilterOperator>();
             var propertyMetadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
 
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
+            var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
             strainerConfigurationMock
-                .SetupGet(x => x.FilterOperators)
+                .FilterOperators
                 .Returns(filterOperators);
             strainerConfigurationMock
-                .SetupGet(x => x.PropertyMetadata)
+                .PropertyMetadata
                 .Returns(propertyMetadata);
 
             // Act
-            Action act = () => _validator.Validate(strainerConfigurationMock.Object);
+            Action act = () => _validator.Validate(strainerConfigurationMock);
 
             // Assert
             act.Should().NotThrow<InvalidOperationException>();

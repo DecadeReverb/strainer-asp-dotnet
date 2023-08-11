@@ -2,7 +2,6 @@
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
-using Moq;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
 {
@@ -12,12 +11,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void AddPropertyMetadata_Adds_PropertyMetadata_Via_AddPropertyMetadata()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            var optionsMock = Substitute.For<IStrainerOptionsProvider>();
+            optionsMock
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            var optionsProvider = optionsMock;
+            var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
             var metadata = new PropertyMetadata()
             {
                 Name = nameof(Post.Id),
@@ -38,12 +38,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void AddPropertyMetadata_Adds_Different_PropertyMetadata_For_Already_Existing_PropertyMetadata()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            var optionsMock = Substitute.For<IStrainerOptionsProvider>();
+            optionsMock
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            var optionsProvider = optionsMock;
+            var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
             var firstMetadata = new PropertyMetadata()
             {
                 Name = "first",
@@ -73,12 +74,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void AddPropertyMetadata_Adds_AlreadyExistingPropertyMetadata_Via_AddPropertyMetadata_Without_Duplicating()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            var optionsMock = Substitute.For<IStrainerOptionsProvider>();
+            optionsMock
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions());
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            var optionsProvider = optionsMock;
+            var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
             var metadata = new PropertyMetadata()
             {
                 Name = nameof(Post.Id),
@@ -100,12 +102,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void Property_Throws_Exception_With_FluentApiMetadataSourceType_Disabled()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            var optionsMock = Substitute.For<IStrainerOptionsProvider>();
+            optionsMock
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            var optionsProvider = optionsMock;
+            var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => mapper.Property<Post>(p => p.Id));
@@ -115,12 +118,13 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
         public void AddPropertyMetadata_Throws_Exception_With_FluentApiMetadataSourceType_Disabled()
         {
             // Arrange
-            var optionsMock = new Mock<IStrainerOptionsProvider>();
-            optionsMock.Setup(provider => provider.GetStrainerOptions())
+            var optionsMock = Substitute.For<IStrainerOptionsProvider>();
+            optionsMock
+                .GetStrainerOptions()
                 .Returns(new StrainerOptions { MetadataSourceType = MetadataSourceType.Attributes });
-            var optionsProvider = optionsMock.Object;
-            var propertyInfoProviderMock = new Mock<IPropertyInfoProvider>();
-            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock.Object);
+            var optionsProvider = optionsMock;
+            var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
+            var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
             var metadata = new PropertyMetadata()
             {
                 Name = nameof(Post.Id),

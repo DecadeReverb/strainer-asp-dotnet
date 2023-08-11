@@ -1,5 +1,4 @@
 ﻿using Fluorite.Strainer.Services.Metadata;
-using Moq;
 using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata
@@ -12,7 +11,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata
             // Arrange
             var assemblies = new Assembly[]
             {
-                Mock.Of<Assembly>(),
+                Substitute.For<Assembly>(),
             };
             var provider = new AssemblySourceProvider(assemblies); ;
 
