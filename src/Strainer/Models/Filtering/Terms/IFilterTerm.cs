@@ -3,7 +3,7 @@
 namespace Fluorite.Strainer.Models.Filtering.Terms;
 
 /// <summary>
-/// Provides detailed information about filter term.
+/// Holds segregated details about a single filtering term.
 /// </summary>
 public interface IFilterTerm
 {

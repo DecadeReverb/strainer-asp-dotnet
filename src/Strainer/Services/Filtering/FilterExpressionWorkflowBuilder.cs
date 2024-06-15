@@ -2,6 +2,9 @@
 
 namespace Fluorite.Strainer.Services.Filtering;
 
+/// <summary>
+/// Provides filter workflow building capabilites.
+/// </summary>
 public class FilterExpressionWorkflowBuilder : IFilterExpressionWorkflowBuilder
 {
     private readonly IConvertPropertyValueToStringStep _convertPropertyValueToStringStep;
@@ -11,6 +14,9 @@ public class FilterExpressionWorkflowBuilder : IFilterExpressionWorkflowBuilder
     private readonly IMitigateCaseInsensitivityStep _mitigateCaseInsensitivityStep;
     private readonly IApplyFilterOperatorStep _applyFilterOperatorStep;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilterExpressionWorkflowBuilder"/> class.
+    /// </summary>
     public FilterExpressionWorkflowBuilder(
         IConvertPropertyValueToStringStep convertPropertyValueToStringStep,
         IConvertFilterValueToStringStep convertFilterValueToStringStep,
@@ -27,6 +33,7 @@ public class FilterExpressionWorkflowBuilder : IFilterExpressionWorkflowBuilder
         _applyFilterOperatorStep = Guard.Against.Null(applyFilterOperatorStep);
     }
 
+    /// <inheritdoc/>
     public IFilterExpressionWorkflow BuildDefaultWorkflow()
     {
         var steps = new List<IFilterExpressionWorkflowStep>

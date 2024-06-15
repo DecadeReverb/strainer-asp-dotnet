@@ -5,6 +5,9 @@ using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Filtering;
 
+/// <summary>
+/// Provides core information needed in a process of running a filter expression workflow.
+/// </summary>
 public class FilterExpressionWorkflowContext
 {
     public object FilterTermConstant { get; set; }
