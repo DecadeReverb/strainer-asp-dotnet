@@ -18,14 +18,17 @@ public class SortingApplier : ISortingApplier
         IMetadataFacade metadataFacade,
         IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _customSortingExpressionProvider = customSortingExpressionProvider;
-        _sortExpressionProvider = sortExpressionProvider;
-        _metadataFacade = metadataFacade;
-        _strainerOptionsProvider = strainerOptionsProvider;
+        _customSortingExpressionProvider = Guard.Against.Null(customSortingExpressionProvider);
+        _sortExpressionProvider = Guard.Against.Null(sortExpressionProvider);
+        _metadataFacade = Guard.Against.Null(metadataFacade);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public bool TryApplySorting<T>(IList<ISortTerm> sortTerms, IQueryable<T> source, out IQueryable<T> sortedSource)
     {
+        Guard.Against.Null(sortTerms);
+        Guard.Against.Null(source);
+
         var options = _strainerOptionsProvider.GetStrainerOptions();
         var isSubsequent = false;
         var isSortingApplied = false;

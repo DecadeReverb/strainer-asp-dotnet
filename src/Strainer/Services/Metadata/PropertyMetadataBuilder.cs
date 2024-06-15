@@ -15,15 +15,10 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
         PropertyInfo propertyInfo,
         string fullName)
     {
-        if (string.IsNullOrEmpty(fullName))
-        {
-            throw new ArgumentException($"'{nameof(fullName)}' cannot be null or empty", nameof(fullName));
-        }
-
-        _propertyMetadata = propertyMetadata ?? throw new ArgumentNullException(nameof(propertyMetadata));
-        _defaultMetadata = defaultMetadata ?? throw new ArgumentNullException(nameof(defaultMetadata));
-        PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
-        FullName = fullName;
+        _propertyMetadata = Guard.Against.Null(propertyMetadata);
+        _defaultMetadata = Guard.Against.Null(defaultMetadata);
+        PropertyInfo = Guard.Against.Null(propertyInfo);
+        FullName = Guard.Against.NullOrWhiteSpace(fullName);
 
         Save(Build());
     }
@@ -74,13 +69,7 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
 
     public virtual IPropertyMetadataBuilder<TEntity> HasDisplayName(string displayName)
     {
-        if (string.IsNullOrWhiteSpace(displayName))
-        {
-            throw new ArgumentException(
-                $"{nameof(displayName)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(displayName));
-        }
+        Guard.Against.NullOrWhiteSpace(displayName);
 
         DisplayName = displayName;
         Save(Build());
@@ -90,15 +79,7 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
 
     protected void Save(IPropertyMetadata propertyMetadata)
     {
-        if (propertyMetadata == null)
-        {
-            throw new ArgumentNullException(nameof(propertyMetadata));
-        }
-
-        if (propertyMetadata == null)
-        {
-            throw new ArgumentNullException(nameof(propertyMetadata));
-        }
+        Guard.Against.Null(propertyMetadata);
 
         if (!_propertyMetadata.ContainsKey(typeof(TEntity)))
         {

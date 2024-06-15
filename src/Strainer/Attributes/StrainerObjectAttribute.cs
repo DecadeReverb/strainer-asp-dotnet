@@ -17,21 +17,15 @@ public class StrainerObjectAttribute : Attribute, IObjectMetadata
     /// <param name="defaultSortingPropertyName">
     /// Property name being default sorting property for marked object.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="defaultSortingPropertyName"/> is <see langword="null"/>.
+    /// </exception>
     /// <exception cref="ArgumentException">
-    /// <paramref name="defaultSortingPropertyName"/> is <see langword="null"/>,
-    /// empty or contains only whitespace characters.
+    /// <paramref name="defaultSortingPropertyName"/> is empty or contains only whitespace characters.
     /// </exception>
     public StrainerObjectAttribute(string defaultSortingPropertyName)
     {
-        if (string.IsNullOrWhiteSpace(defaultSortingPropertyName))
-        {
-            throw new ArgumentException(
-                $"{nameof(defaultSortingPropertyName)} cannot be null, empty " +
-                "or contain only whitespace characters.",
-                nameof(defaultSortingPropertyName));
-        }
-
-        DefaultSortingPropertyName = defaultSortingPropertyName;
+        DefaultSortingPropertyName = Guard.Against.NullOrWhiteSpace(defaultSortingPropertyName);
     }
 
     /// <summary>

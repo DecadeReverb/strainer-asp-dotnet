@@ -12,16 +12,13 @@ public class PlainModuleLoadingStrategy : IPlainModuleLoadingStrategy, IModuleLo
         IPropertyInfoProvider propertyInfoProvider,
         IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+        _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public void Load(IStrainerModule strainerModule)
     {
-        if (strainerModule is null)
-        {
-            throw new ArgumentNullException(nameof(strainerModule));
-        }
+        Guard.Against.Null(strainerModule);
 
         // TODO: Use factory for builder?
         var options = _strainerOptionsProvider.GetStrainerOptions();

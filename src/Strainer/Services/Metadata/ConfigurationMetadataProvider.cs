@@ -8,8 +8,7 @@ public class ConfigurationMetadataProvider : IConfigurationMetadataProvider
 
     public ConfigurationMetadataProvider(IStrainerConfigurationProvider strainerConfigurationProvider)
     {
-        _strainerConfigurationProvider = strainerConfigurationProvider
-            ?? throw new ArgumentNullException(nameof(strainerConfigurationProvider));
+        _strainerConfigurationProvider = Guard.Against.Null(strainerConfigurationProvider);
     }
 
     /// <summary>

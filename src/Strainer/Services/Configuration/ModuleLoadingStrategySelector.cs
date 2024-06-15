@@ -11,16 +11,13 @@ public class ModuleLoadingStrategySelector : IModuleLoadingStrategySelector
         IGenericModuleLoadingStrategy genericModuleLoadingStrategy,
         IPlainModuleLoadingStrategy plainModuleLoadingStrategy)
     {
-        _genericModuleLoadingStrategy = genericModuleLoadingStrategy ?? throw new ArgumentNullException(nameof(genericModuleLoadingStrategy));
-        _plainModuleLoadingStrategy = plainModuleLoadingStrategy ?? throw new ArgumentNullException(nameof(plainModuleLoadingStrategy));
+        _genericModuleLoadingStrategy = Guard.Against.Null(genericModuleLoadingStrategy);
+        _plainModuleLoadingStrategy = Guard.Against.Null(plainModuleLoadingStrategy);
     }
 
     public IModuleLoadingStrategy Select(IStrainerModule strainerModule)
     {
-        if (strainerModule is null)
-        {
-            throw new ArgumentNullException(nameof(strainerModule));
-        }
+        Guard.Against.Null(strainerModule);
 
         var isGeneric = strainerModule
             .GetType()

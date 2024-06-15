@@ -14,9 +14,9 @@ public class SortTermParser : ISortTermParser
         IStrainerOptionsProvider strainerOptionsProvider,
         ISortTermValueParser sortTermValueParser)
     {
-        _formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
-        _sortTermValueParser = sortTermValueParser ?? throw new ArgumentNullException(nameof(sortTermValueParser));
+        _formatter = Guard.Against.Null(formatter);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
+        _sortTermValueParser = Guard.Against.Null(sortTermValueParser);
     }
 
     public IList<ISortTerm> GetParsedTerms(string input)

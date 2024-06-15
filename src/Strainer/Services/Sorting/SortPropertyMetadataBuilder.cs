@@ -14,10 +14,7 @@ public class SortPropertyMetadataBuilder<TEntity> : PropertyMetadataBuilder<TEnt
         IPropertyMetadata basePropertyMetadata)
         : base(propertyMetadata, defaultMetadata, propertyInfo, fullName)
     {
-        if (basePropertyMetadata is null)
-        {
-            throw new ArgumentNullException(nameof(basePropertyMetadata));
-        }
+        Guard.Against.Null(basePropertyMetadata);
 
         DisplayName = basePropertyMetadata.DisplayName;
         IsDefaultSorting = basePropertyMetadata.IsDefaultSorting;

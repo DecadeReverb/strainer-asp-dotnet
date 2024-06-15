@@ -12,17 +12,8 @@ public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity
         IDictionary<Type, IDictionary<string, ICustomSortMethod>> customFilterMethodsDictionary,
         string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException(
-                $"{nameof(name)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(name));
-        }
-
-        _customMethods = customFilterMethodsDictionary
-            ?? throw new ArgumentNullException(nameof(customFilterMethodsDictionary));
-        Name = name;
+        _customMethods = Guard.Against.Null(customFilterMethodsDictionary);
+        Name = Guard.Against.NullOrWhiteSpace(name);
     }
 
     protected Expression<Func<TEntity, object>> Expression { get; set; }
@@ -41,7 +32,7 @@ public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity
     public ICustomSortMethodBuilder<TEntity> HasFunction(
         Expression<Func<TEntity, object>> expression)
     {
-        Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+        Expression = Guard.Against.Null(expression);
         SortTermExpression = null;
 
         Save(Build());
@@ -51,7 +42,7 @@ public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity
 
     public ICustomSortMethodBuilder<TEntity> HasFunction(Func<ISortTerm, Expression<Func<TEntity, object>>> sortTermExpression)
     {
-        SortTermExpression = sortTermExpression ?? throw new ArgumentNullException(nameof(sortTermExpression));
+        SortTermExpression = Guard.Against.Null(sortTermExpression);
         Expression = null;
 
         Save(Build());
@@ -61,10 +52,7 @@ public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity
 
     protected void Save(ICustomSortMethod<TEntity> customSortMethod)
     {
-        if (customSortMethod == null)
-        {
-            throw new ArgumentNullException(nameof(customSortMethod));
-        }
+        Guard.Against.Null(customSortMethod);
 
         if (!_customMethods.ContainsKey(typeof(TEntity)))
         {

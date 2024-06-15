@@ -15,8 +15,8 @@ public class MetadataMapper : IMetadataMapper
         DefaultMetadata = new Dictionary<Type, IPropertyMetadata>();
         PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
         ObjectMetadata = new Dictionary<Type, IObjectMetadata>();
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
-        _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
+        _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
     }
 
     public IDictionary<Type, IPropertyMetadata> DefaultMetadata { get; }
@@ -27,10 +27,7 @@ public class MetadataMapper : IMetadataMapper
 
     public void AddObjectMetadata<TEntity>(IObjectMetadata objectMetadata)
     {
-        if (objectMetadata == null)
-        {
-            throw new ArgumentNullException(nameof(objectMetadata));
-        }
+        Guard.Against.Null(objectMetadata);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
@@ -47,10 +44,7 @@ public class MetadataMapper : IMetadataMapper
 
     public void AddPropertyMetadata<TEntity>(IPropertyMetadata propertyMetadata)
     {
-        if (propertyMetadata == null)
-        {
-            throw new ArgumentNullException(nameof(propertyMetadata));
-        }
+        Guard.Against.Null(propertyMetadata);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
@@ -79,10 +73,7 @@ public class MetadataMapper : IMetadataMapper
 
     public IObjectMetadataBuilder<TEntity> Object<TEntity>(Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
     {
-        if (defaultSortingPropertyExpression == null)
-        {
-            throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
-        }
+        Guard.Against.Null(defaultSortingPropertyExpression);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
@@ -99,10 +90,7 @@ public class MetadataMapper : IMetadataMapper
 
     public IPropertyMetadataBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> propertyExpression)
     {
-        if (propertyExpression == null)
-        {
-            throw new ArgumentNullException(nameof(propertyExpression));
-        }
+        Guard.Against.Null(propertyExpression);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         if (!options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))

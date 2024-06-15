@@ -23,14 +23,12 @@ public class StrainerContext : IStrainerContext
         IMetadataFacade metadataProvidersFacade,
         IPipelineContext pipelineContext)
     {
-        CustomMethods = customMethodsConfigurationProvider
-            ?? throw new ArgumentNullException(nameof(customMethodsConfigurationProvider));
-        Filter = filteringContext ?? throw new ArgumentNullException(nameof(filteringContext));
-        Sorting = sortingContext ?? throw new ArgumentNullException(nameof(sortingContext));
-        Metadata = metadataProvidersFacade ?? throw new ArgumentNullException(nameof(metadataProvidersFacade));
-        Pipeline = pipelineContext ?? throw new ArgumentNullException(nameof(pipelineContext));
-        Options = (optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
-            .GetStrainerOptions();
+        CustomMethods = Guard.Against.Null(customMethodsConfigurationProvider);
+        Filter = Guard.Against.Null(filteringContext);
+        Sorting = Guard.Against.Null(sortingContext);
+        Metadata = Guard.Against.Null(metadataProvidersFacade);
+        Pipeline = Guard.Against.Null(pipelineContext);
+        Options = Guard.Against.Null(optionsProvider).GetStrainerOptions();
     }
 
     /// <summary>

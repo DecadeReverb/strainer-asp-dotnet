@@ -77,10 +77,7 @@ public abstract class StrainerModule<T> : IStrainerModule<T>, IStrainerModule
     /// </param>
     public void Load(IStrainerModuleBuilder builder)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        Guard.Against.Null(builder);
 
         if (builder is not IStrainerModuleBuilder<T> typedBuilder)
         {

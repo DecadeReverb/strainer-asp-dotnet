@@ -12,21 +12,14 @@ public class PaginatePipelineOperation : IPaginatePipelineOperation, IStrainerPi
         IPageNumberEvaluator pageNumberEvaluator,
         IPageSizeEvaluator pageSizeEvaluator)
     {
-        _pageNumberEvaluator = pageNumberEvaluator;
-        _pageSizeEvaluator = pageSizeEvaluator;
+        _pageNumberEvaluator = Guard.Against.Null(pageNumberEvaluator);
+        _pageSizeEvaluator = Guard.Against.Null(pageSizeEvaluator);
     }
 
     public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var page = _pageNumberEvaluator.Evaluate(model);
         var pageSize = _pageSizeEvaluator.Evaluate(model);

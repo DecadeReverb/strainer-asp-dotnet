@@ -10,11 +10,13 @@ public class FilterTermSectionsParser : IFilterTermSectionsParser
     public FilterTermSectionsParser(
         IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
     {
-        _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider;
+        _filterOperatorsConfigurationProvider = Guard.Against.Null(filterOperatorsConfigurationProvider);
     }
 
     public FilterTermSections Parse(string input)
     {
+        Guard.Against.Null(input);
+
         var symbols = _filterOperatorsConfigurationProvider
             .GetFilterOperators()
             .Keys

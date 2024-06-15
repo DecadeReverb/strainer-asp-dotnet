@@ -53,15 +53,8 @@ public static class StrainerProcessorQueryableExtensions
         bool applySorting = true,
         bool applyPagination = true)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (strainerProcessor is null)
-        {
-            throw new ArgumentNullException(nameof(strainerProcessor));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(strainerProcessor);
 
         if (strainerModel is null)
         {
@@ -103,15 +96,8 @@ public static class StrainerProcessorQueryableExtensions
         IStrainerModel strainerModel,
         IStrainerProcessor strainerProcessor)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (strainerProcessor is null)
-        {
-            throw new ArgumentNullException(nameof(strainerProcessor));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(strainerProcessor);
 
         if (strainerModel is null)
         {
@@ -151,15 +137,8 @@ public static class StrainerProcessorQueryableExtensions
         IStrainerModel strainerModel,
         IStrainerProcessor strainerProcessor)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (strainerProcessor is null)
-        {
-            throw new ArgumentNullException(nameof(strainerProcessor));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(strainerProcessor);
 
         if (strainerModel is null)
         {
@@ -199,15 +178,8 @@ public static class StrainerProcessorQueryableExtensions
         IStrainerModel strainerModel,
         IStrainerProcessor strainerProcessor)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (strainerProcessor is null)
-        {
-            throw new ArgumentNullException(nameof(strainerProcessor));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(strainerProcessor);
 
         if (strainerModel is null)
         {

@@ -25,8 +25,8 @@ public class FilterExpressionContext : IFilterExpressionContext
     /// </exception>
     public FilterExpressionContext(Expression filterValue, Expression propertyValue)
     {
-        FilterValue = filterValue ?? throw new ArgumentNullException(nameof(filterValue));
-        PropertyValue = propertyValue ?? throw new ArgumentNullException(nameof(propertyValue));
+        FilterValue = Guard.Against.Null(filterValue);
+        PropertyValue = Guard.Against.Null(propertyValue);
     }
 
     /// <summary>

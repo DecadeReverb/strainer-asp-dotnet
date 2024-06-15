@@ -14,8 +14,8 @@ public class FilterExpressionProvider : IFilterExpressionProvider
         ITypeConverterProvider typeConverterProvider,
         IFilterExpressionWorkflowBuilder filterExpressionWorkflowBuilder)
     {
-        _typeConverterProvider = typeConverterProvider;
-        _filterExpressionWorkflowBuilder = filterExpressionWorkflowBuilder;
+        _typeConverterProvider = Guard.Against.Null(typeConverterProvider);
+        _filterExpressionWorkflowBuilder = Guard.Against.Null(filterExpressionWorkflowBuilder);
     }
 
     public Expression GetExpression(
@@ -24,20 +24,9 @@ public class FilterExpressionProvider : IFilterExpressionProvider
         ParameterExpression parameterExpression,
         Expression innerExpression)
     {
-        if (metadata == null)
-        {
-            throw new ArgumentNullException(nameof(metadata));
-        }
-
-        if (filterTerm == null)
-        {
-            throw new ArgumentNullException(nameof(filterTerm));
-        }
-
-        if (parameterExpression == null)
-        {
-            throw new ArgumentNullException(nameof(parameterExpression));
-        }
+        Guard.Against.Null(metadata);
+        Guard.Against.Null(filterTerm);
+        Guard.Against.Null(parameterExpression);
 
         if (filterTerm.Values == null)
         {

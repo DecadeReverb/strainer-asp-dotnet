@@ -11,8 +11,8 @@ public class StrainerUnsupportedOperatorException : StrainerException
         PropertyInfo propertyInfo,
         object value)
     {
-        FilterOperator = filterOperator ?? throw new ArgumentNullException(nameof(filterOperator));
-        PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+        FilterOperator = Guard.Against.Null(filterOperator);
+        PropertyInfo = Guard.Against.Null(propertyInfo);
         Value = value;
     }
 
@@ -23,8 +23,8 @@ public class StrainerUnsupportedOperatorException : StrainerException
         object value)
         : base(message)
     {
-        FilterOperator = filterOperator ?? throw new ArgumentNullException(nameof(filterOperator));
-        PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+        FilterOperator = Guard.Against.Null(filterOperator);
+        PropertyInfo = Guard.Against.Null(propertyInfo);
         Value = value;
     }
 
@@ -36,8 +36,8 @@ public class StrainerUnsupportedOperatorException : StrainerException
         object value)
         : base(message, innerException)
     {
-        FilterOperator = filterOperator ?? throw new ArgumentNullException(nameof(filterOperator));
-        PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+        FilterOperator = Guard.Against.Null(filterOperator);
+        PropertyInfo = Guard.Against.Null(propertyInfo);
         Value = value;
     }
 

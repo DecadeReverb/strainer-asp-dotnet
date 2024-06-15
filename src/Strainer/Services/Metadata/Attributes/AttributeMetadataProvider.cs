@@ -16,10 +16,10 @@ public class AttributeMetadataProvider : IMetadataProvider
         IAttributeMetadataRetriever attributeMetadataRetriever,
         IStrainerAttributeProvider strainerAttributeProvider)
     {
-        _metadataSourceTypeProvider = metadataSourceTypeProvider ?? throw new ArgumentNullException(nameof(metadataSourceTypeProvider));
-        _metadataAssemblySourceProvider = metadataAssemblySourceProvider ?? throw new ArgumentNullException(nameof(metadataAssemblySourceProvider));
-        _attributeMetadataRetriever = attributeMetadataRetriever ?? throw new ArgumentNullException(nameof(attributeMetadataRetriever));
-        _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
+        _metadataSourceTypeProvider = Guard.Against.Null(metadataSourceTypeProvider);
+        _metadataAssemblySourceProvider = Guard.Against.Null(metadataAssemblySourceProvider);
+        _attributeMetadataRetriever = Guard.Against.Null(attributeMetadataRetriever);
+        _strainerAttributeProvider = Guard.Against.Null(strainerAttributeProvider);
     }
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -41,10 +41,7 @@ public class AttributeMetadataProvider : IMetadataProvider
 
     public IPropertyMetadata GetDefaultMetadata(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         var propertyMetadata = _attributeMetadataRetriever.GetDefaultMetadataFromPropertyAttribute(modelType);
         propertyMetadata ??= _attributeMetadataRetriever.GetDefaultMetadataFromObjectAttribute(modelType);
@@ -57,6 +54,8 @@ public class AttributeMetadataProvider : IMetadataProvider
         bool isFilterableRequired,
         string name)
     {
+        Guard.Against.NullOrWhiteSpace(name);
+
         return GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
     }
 
@@ -66,10 +65,8 @@ public class AttributeMetadataProvider : IMetadataProvider
         bool isFilterableRequired,
         string name)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
+        Guard.Against.NullOrWhiteSpace(name);
 
         var propertyMetadata = _attributeMetadataRetriever.GetMetadataFromPropertyAttribute(modelType, isSortableRequired, isFilterableRequired, name);
         propertyMetadata ??= _attributeMetadataRetriever.GetMetadataFromObjectAttribute(modelType, isSortableRequired, isFilterableRequired, name);
@@ -84,10 +81,7 @@ public class AttributeMetadataProvider : IMetadataProvider
 
     public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         var propertyMetadatas = _attributeMetadataRetriever.GetMetadataFromPropertyAttribute(modelType);
         propertyMetadatas ??= _attributeMetadataRetriever.GetMetadataFromObjectAttribute(modelType);

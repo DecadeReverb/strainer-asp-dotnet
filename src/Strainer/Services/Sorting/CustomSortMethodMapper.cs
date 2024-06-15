@@ -13,10 +13,7 @@ public class CustomSortMethodMapper : ICustomSortMethodMapper
 
     public void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod)
     {
-        if (sortMethod == null)
-        {
-            throw new ArgumentNullException(nameof(sortMethod));
-        }
+        Guard.Against.Null(sortMethod);
 
         if (!Methods.ContainsKey(typeof(TEntity)))
         {
@@ -28,13 +25,7 @@ public class CustomSortMethodMapper : ICustomSortMethodMapper
 
     public ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException(
-                $"{nameof(name)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(name));
-        }
+        Guard.Against.NullOrWhiteSpace(name);
 
         if (!Methods.ContainsKey(typeof(TEntity)))
         {

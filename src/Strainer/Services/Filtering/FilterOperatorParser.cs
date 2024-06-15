@@ -8,8 +8,7 @@ public class FilterOperatorParser : IFilterOperatorParser
 
     public FilterOperatorParser(IConfigurationFilterOperatorsProvider filterOperatorsConfigurationProvider)
     {
-        _filterOperatorsConfigurationProvider = filterOperatorsConfigurationProvider
-            ?? throw new ArgumentNullException(nameof(filterOperatorsConfigurationProvider));
+        _filterOperatorsConfigurationProvider = Guard.Against.Null(filterOperatorsConfigurationProvider);
     }
 
     public virtual IFilterOperator GetParsedOperator(string symbol)

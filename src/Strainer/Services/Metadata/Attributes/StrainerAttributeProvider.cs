@@ -7,20 +7,14 @@ public class StrainerAttributeProvider : IStrainerAttributeProvider
 {
     public StrainerObjectAttribute GetObjectAttribute(Type type)
     {
-        if (type is null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
+        Guard.Against.Null(type);
 
         return type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
     }
 
     public StrainerPropertyAttribute GetPropertyAttribute(PropertyInfo propertyInfo)
     {
-        if (propertyInfo is null)
-        {
-            throw new ArgumentNullException(nameof(propertyInfo));
-        }
+        Guard.Against.Null(propertyInfo);
 
         var attribute = propertyInfo.GetCustomAttribute<StrainerPropertyAttribute>(inherit: false);
         if (attribute != null && attribute.PropertyInfo == null)

@@ -24,7 +24,7 @@ public class AspNetCoreSingletonStrainerOptionsProvider : IStrainerOptionsProvid
     /// </exception>
     public AspNetCoreSingletonStrainerOptionsProvider(IOptionsMonitor<StrainerOptions> options)
     {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
+        _options = Guard.Against.Null(options);
     }
 
     /// <summary>

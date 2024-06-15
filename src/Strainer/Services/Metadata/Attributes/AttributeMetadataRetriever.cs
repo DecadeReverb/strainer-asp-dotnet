@@ -18,19 +18,16 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         IStrainerAttributeProvider strainerAttributeProvider,
         IPropertyInfoProvider propertyInfoProvider)
     {
-        _metadataSourceChecker = metadataSourceChecker ?? throw new ArgumentNullException(nameof(metadataSourceChecker));
-        _attributePropertyMetadataBuilder = attributePropertyMetadataBuilder ?? throw new ArgumentNullException(nameof(attributePropertyMetadataBuilder));
-        _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
-        _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-        _propertyMetadataDictionaryProvider = propertyMetadataDictionaryProvider ?? throw new ArgumentNullException(nameof(propertyMetadataDictionaryProvider));
+        _metadataSourceChecker = Guard.Against.Null(metadataSourceChecker);
+        _attributePropertyMetadataBuilder = Guard.Against.Null(attributePropertyMetadataBuilder);
+        _strainerAttributeProvider = Guard.Against.Null(strainerAttributeProvider);
+        _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
+        _propertyMetadataDictionaryProvider = Guard.Against.Null(propertyMetadataDictionaryProvider);
     }
 
     public IPropertyMetadata GetDefaultMetadataFromObjectAttribute(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
         {
@@ -68,6 +65,8 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
 
     public IPropertyMetadata GetDefaultMetadataFromPropertyAttribute(Type modelType)
     {
+        Guard.Against.Null(modelType);
+
         if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
         {
             return null;
@@ -97,10 +96,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromObjectAttributes(ICollection<Type> types)
     {
-        if (types is null)
-        {
-            throw new ArgumentNullException(nameof(types));
-        }
+        Guard.Against.Null(types);
 
         return types
             .Select(type => new
@@ -120,10 +116,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromPropertyAttributes(ICollection<Type> types)
     {
-        if (types is null)
-        {
-            throw new ArgumentNullException(nameof(types));
-        }
+        Guard.Against.Null(types);
 
         return types
             .Select(type => new
@@ -142,10 +135,8 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         bool isFilterableRequired,
         string name)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
+        Guard.Against.NullOrWhiteSpace(name);
 
         if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
         {
@@ -181,10 +172,8 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         bool isFilterableRequired,
         string name)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
+        Guard.Against.NullOrWhiteSpace(name);
 
         if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
         {
@@ -219,10 +208,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
 
     public IEnumerable<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
         {
@@ -249,10 +235,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
 
     public IEnumerable<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         if (!IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes))
         {

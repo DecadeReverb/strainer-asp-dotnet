@@ -29,8 +29,8 @@ public class StrainerProcessor : IStrainerProcessor
         IStrainerPipelineBuilderFactory strainerPipelineBuilderFactory,
         IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _strainerPipelineBuilderFactory = strainerPipelineBuilderFactory ?? throw new ArgumentNullException(nameof(strainerPipelineBuilderFactory));
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+        _strainerPipelineBuilderFactory = Guard.Against.Null(strainerPipelineBuilderFactory);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     /// <summary>
@@ -83,15 +83,8 @@ public class StrainerProcessor : IStrainerProcessor
         bool applySorting = true,
         bool applyPagination = true)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var builder = _strainerPipelineBuilderFactory.CreateBuilder();
 
@@ -144,15 +137,8 @@ public class StrainerProcessor : IStrainerProcessor
         IStrainerModel model,
         IQueryable<TEntity> source)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var pipeline = _strainerPipelineBuilderFactory
             .CreateBuilder()
@@ -188,15 +174,8 @@ public class StrainerProcessor : IStrainerProcessor
         IStrainerModel model,
         IQueryable<TEntity> source)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var pipeline = _strainerPipelineBuilderFactory
             .CreateBuilder()
@@ -235,15 +214,8 @@ public class StrainerProcessor : IStrainerProcessor
         IStrainerModel model,
         IQueryable<TEntity> source)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var pipeline = _strainerPipelineBuilderFactory
             .CreateBuilder()

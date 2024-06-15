@@ -21,12 +21,12 @@ public class StrainerMethodNotFoundException : StrainerException
 
     public StrainerMethodNotFoundException(string methodName, string message) : base(message)
     {
-        MethodName = methodName ?? throw new ArgumentNullException(nameof(methodName));
+        MethodName = Guard.Against.Null(methodName);
     }
 
     public StrainerMethodNotFoundException(string methodName, string message, Exception innerException) : base(message, innerException)
     {
-        MethodName = methodName ?? throw new ArgumentNullException(nameof(methodName));
+        MethodName = Guard.Against.Null(methodName);
     }
 
     protected StrainerMethodNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)

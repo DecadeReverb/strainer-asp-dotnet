@@ -8,10 +8,8 @@ public static class DictionaryExtensions
         this IReadOnlyDictionary<TKey, TValue> source,
         params IReadOnlyDictionary<TKey, TValue>[] others)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(others);
 
         var resultDictionary = new Dictionary<TKey, TValue>();
 
@@ -29,10 +27,7 @@ public static class DictionaryExtensions
     public static IReadOnlyDictionary<TKey, TValue> ToReadOnly<TKey, TValue>(
         this IDictionary<TKey, TValue> source)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(source);
 
         return new ReadOnlyDictionary<TKey, TValue>(source);
     }

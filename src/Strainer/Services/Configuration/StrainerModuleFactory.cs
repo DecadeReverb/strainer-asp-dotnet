@@ -6,10 +6,7 @@ public class StrainerModuleFactory : IStrainerModuleFactory
 {
     public IStrainerModule CreateModule(Type moduleType)
     {
-        if (moduleType is null)
-        {
-            throw new ArgumentNullException(nameof(moduleType));
-        }
+        Guard.Against.Null(moduleType);
 
         if (!typeof(IStrainerModule).IsAssignableFrom(moduleType))
         {

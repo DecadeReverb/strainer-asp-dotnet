@@ -11,10 +11,7 @@ public class FilterOperatorValidator : IFilterOperatorValidator
 
     public void Validate(IFilterOperator filterOperator)
     {
-        if (filterOperator == null)
-        {
-            throw new ArgumentNullException(nameof(filterOperator));
-        }
+        Guard.Against.Null(filterOperator);
 
         if (string.IsNullOrWhiteSpace(filterOperator.Symbol))
         {
@@ -34,10 +31,7 @@ public class FilterOperatorValidator : IFilterOperatorValidator
 
     public void Validate(IEnumerable<IFilterOperator> filterOperators)
     {
-        if (filterOperators == null)
-        {
-            throw new ArgumentNullException(nameof(filterOperators));
-        }
+        Guard.Against.Null(filterOperators);
 
         if (!filterOperators.Any())
         {

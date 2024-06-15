@@ -9,7 +9,7 @@ public class MetadataFacade : IMetadataFacade
 
     public MetadataFacade(IEnumerable<IMetadataProvider> metadataProviders)
     {
-        _metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
+        _metadataProviders = Guard.Against.Null(metadataProviders);
     }
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
@@ -36,10 +36,7 @@ public class MetadataFacade : IMetadataFacade
 
     public IPropertyMetadata GetDefaultMetadata(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         foreach (var provider in _metadataProviders)
         {
@@ -68,10 +65,8 @@ public class MetadataFacade : IMetadataFacade
         bool isFilterableRequired,
         string name)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
+        Guard.Against.NullOrWhiteSpace(name);
 
         foreach (var provider in _metadataProviders)
         {
@@ -93,10 +88,7 @@ public class MetadataFacade : IMetadataFacade
 
     public IEnumerable<IPropertyMetadata> GetMetadatas(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         foreach (var provider in _metadataProviders)
         {

@@ -8,15 +8,12 @@ public class MitigateCaseInsensitivityStep : IMitigateCaseInsensitivityStep
 
     public MitigateCaseInsensitivityStep(IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public void Execute(FilterExpressionWorkflowContext context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        Guard.Against.Null(context);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
 

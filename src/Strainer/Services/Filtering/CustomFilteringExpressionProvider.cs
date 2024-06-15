@@ -11,7 +11,7 @@ public class CustomFilteringExpressionProvider : ICustomFilteringExpressionProvi
 
     public CustomFilteringExpressionProvider(IConfigurationCustomMethodsProvider configurationCustomMethodsProvider)
     {
-        _configurationCustomMethodsProvider = configurationCustomMethodsProvider;
+        _configurationCustomMethodsProvider = Guard.Against.Null(configurationCustomMethodsProvider);
     }
 
     public bool TryGetCustomExpression<T>(
@@ -19,6 +19,9 @@ public class CustomFilteringExpressionProvider : ICustomFilteringExpressionProvi
         string filterTermName,
         out Expression<Func<T, bool>> expression)
     {
+        Guard.Against.Null(filterTerm);
+        Guard.Against.Null(filterTermName);
+
         if (!TryGetCustomMethod<T>(filterTermName, out var customMethod))
         {
             expression = null;

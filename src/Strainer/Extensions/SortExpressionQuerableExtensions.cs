@@ -30,15 +30,8 @@ public static class SortExpressionQuerableExtensions
         this IQueryable<TEntity> source,
         ISortExpression<TEntity> sortExpression)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (sortExpression == null)
-        {
-            throw new ArgumentNullException(nameof(sortExpression));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(sortExpression);
 
         if (sortExpression.IsSubsequent)
         {

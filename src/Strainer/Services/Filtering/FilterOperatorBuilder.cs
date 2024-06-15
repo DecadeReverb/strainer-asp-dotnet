@@ -7,20 +7,20 @@ public class FilterOperatorBuilder : IFilterOperatorBuilder
 {
     private readonly IDictionary<string, IFilterOperator> _filterOperators;
 
+    public FilterOperatorBuilder(string symbol)
+    {
+        _filterOperators = new Dictionary<string, IFilterOperator>();
+        Symbol = Guard.Against.NullOrWhiteSpace(symbol);
+
+        Save(Build()); // Is this really needed?
+    }
+
     public FilterOperatorBuilder(
         IDictionary<string, IFilterOperator> filterOperators,
         string symbol)
     {
-        if (string.IsNullOrWhiteSpace(symbol))
-        {
-            throw new ArgumentException(
-                $"{nameof(symbol)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(symbol));
-        }
-
-        _filterOperators = filterOperators;
-        Symbol = symbol;
+        _filterOperators = Guard.Against.Null(filterOperators);
+        Symbol = Guard.Against.NullOrWhiteSpace(symbol);
 
         Save(Build()); // Is this really needed?
     }
@@ -46,7 +46,7 @@ public class FilterOperatorBuilder : IFilterOperatorBuilder
 
     public IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression)
     {
-        Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+        Expression = Guard.Against.Null(expression);
         Save(Build());
 
         return this;
@@ -54,15 +54,7 @@ public class FilterOperatorBuilder : IFilterOperatorBuilder
 
     public IFilterOperatorBuilder HasName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException(
-                $"{nameof(name)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(name));
-        }
-
-        Name = name;
+        Name = Guard.Against.NullOrWhiteSpace(name);
         Save(Build());
 
         return this;
@@ -86,15 +78,7 @@ public class FilterOperatorBuilder : IFilterOperatorBuilder
 
     protected void Save(IFilterOperator filterOperator)
     {
-        if (_filterOperators is null)
-        {
-            return;
-        }
-
-        if (filterOperator is null)
-        {
-            throw new ArgumentNullException(nameof(filterOperator));
-        }
+        Guard.Against.Null(filterOperator);
 
         _filterOperators[Symbol] = filterOperator;
     }

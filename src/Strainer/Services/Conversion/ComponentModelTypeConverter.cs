@@ -8,7 +8,7 @@ public class ComponentModelTypeConverter : ITypeConverter
 
     public ComponentModelTypeConverter(TypeConverter typeConverter)
     {
-        _typeConverter = typeConverter ?? throw new ArgumentNullException(nameof(typeConverter));
+        _typeConverter = Guard.Against.Null(typeConverter);
     }
 
     public bool CanConvertFrom(Type type) => _typeConverter.CanConvertFrom(type);

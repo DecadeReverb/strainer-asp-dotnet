@@ -5,6 +5,7 @@ using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Fluorite.Strainer.Services.Modules;
 
@@ -43,9 +44,9 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
         IStrainerModule strainerModule,
         StrainerOptions strainerOptions)
     {
-        PropertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-        Module = strainerModule ?? throw new ArgumentNullException(nameof(strainerModule));
-        Options = strainerOptions ?? throw new ArgumentNullException(nameof(strainerOptions));
+        PropertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
+        Module = Guard.Against.Null(strainerModule);
+        Options = Guard.Against.Null(strainerOptions);
     }
 
     /// <summary>
@@ -78,13 +79,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     /// </exception>
     public ICustomFilterMethodBuilder<T> AddCustomFilterMethod(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException(
-                $"{nameof(name)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(name));
-        }
+        Guard.Against.NullOrWhiteSpace(name);
 
         return new CustomFilterMethodBuilder<T>(
             Module.CustomFilterMethods,
@@ -106,13 +101,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     /// </exception>
     public ICustomSortMethodBuilder<T> AddCustomSortMethod(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException(
-                $"{nameof(name)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(name));
-        }
+        Guard.Against.NullOrWhiteSpace(name);
 
         return new CustomSortMethodBuilder<T>(
             Module.CustomSortMethods,
@@ -137,13 +126,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     /// </exception>
     public IFilterOperatorBuilder AddFilterOperator(string symbol)
     {
-        if (string.IsNullOrWhiteSpace(symbol))
-        {
-            throw new ArgumentException(
-                $"{nameof(symbol)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(symbol));
-        }
+        Guard.Against.NullOrWhiteSpace(symbol);
 
         if (Module.FilterOperators.Keys.Contains(symbol))
         {
@@ -176,10 +159,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     public IObjectMetadataBuilder<T> AddObject(
         Expression<Func<T, object>> defaultSortingPropertyExpression)
     {
-        if (defaultSortingPropertyExpression == null)
-        {
-            throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
-        }
+        Guard.Against.Null(defaultSortingPropertyExpression);
 
         if (!Options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
         {
@@ -213,10 +193,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     public IPropertyMetadataBuilder<T> AddProperty(
         Expression<Func<T, object>> propertyExpression)
     {
-        if (propertyExpression == null)
-        {
-            throw new ArgumentNullException(nameof(propertyExpression));
-        }
+        Guard.Against.Null(propertyExpression);
 
         if (!Options.MetadataSourceType.HasFlag(MetadataSourceType.FluentApi))
         {

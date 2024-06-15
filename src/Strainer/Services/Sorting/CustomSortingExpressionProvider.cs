@@ -11,7 +11,7 @@ public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
 
     public CustomSortingExpressionProvider(IConfigurationCustomMethodsProvider configurationCustomMethodsProvider)
     {
-        _configurationCustomMethodsProvider = configurationCustomMethodsProvider;
+        _configurationCustomMethodsProvider = Guard.Against.Null(configurationCustomMethodsProvider);
     }
 
     public bool TryGetCustomExpression<T>(
@@ -19,6 +19,8 @@ public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
         bool isSubsequent,
         out ISortExpression<T> sortExpression)
     {
+        Guard.Against.Null(sortTerm);
+
         if (!TryGetCustomSortingMethod<T>(sortTerm, out var customMethod))
         {
             sortExpression = null;

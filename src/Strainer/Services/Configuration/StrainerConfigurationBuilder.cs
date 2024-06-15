@@ -41,6 +41,8 @@ public class StrainerConfigurationBuilder : IStrainerConfigurationBuilder
 
     public IStrainerConfigurationBuilder WithPropertyMetadata(ICollection<IStrainerModule> modules)
     {
+        Guard.Against.Null(modules);
+
         propertyMetadata = modules
             .SelectMany(module => module
             .PropertyMetadata
@@ -55,6 +57,8 @@ public class StrainerConfigurationBuilder : IStrainerConfigurationBuilder
 
     public IStrainerConfigurationBuilder WithObjectMetadata(ICollection<IStrainerModule> modules)
     {
+        Guard.Against.Null(modules);
+
         objectMetadata = modules
             .SelectMany(module => module.ObjectMetadata.ToReadOnly())
             .Merge()
@@ -65,6 +69,8 @@ public class StrainerConfigurationBuilder : IStrainerConfigurationBuilder
 
     public IStrainerConfigurationBuilder WithFilterOperators(ICollection<IStrainerModule> modules)
     {
+        Guard.Against.Null(modules);
+
         filterOperators = modules
             .SelectMany(module => module.FilterOperators)
             .Union(FilterOperatorMapper.DefaultOperators)
@@ -76,6 +82,8 @@ public class StrainerConfigurationBuilder : IStrainerConfigurationBuilder
 
     public IStrainerConfigurationBuilder WithDefaultMetadata(ICollection<IStrainerModule> modules)
     {
+        Guard.Against.Null(modules);
+
         defaultMetadata = modules
             .SelectMany(module => module.DefaultMetadata)
             .Merge()
@@ -86,6 +94,8 @@ public class StrainerConfigurationBuilder : IStrainerConfigurationBuilder
 
     public IStrainerConfigurationBuilder WithCustomSortMethods(ICollection<IStrainerModule> modules)
     {
+        Guard.Against.Null(modules);
+
         customSortMethods = modules
             .SelectMany(module => module
             .CustomSortMethods
@@ -100,6 +110,8 @@ public class StrainerConfigurationBuilder : IStrainerConfigurationBuilder
 
     public IStrainerConfigurationBuilder WithCustomFilterMethods(ICollection<IStrainerModule> modules)
     {
+        Guard.Against.Null(modules);
+
         customFilterMethods = modules
             .SelectMany(module => module
                 .CustomFilterMethods

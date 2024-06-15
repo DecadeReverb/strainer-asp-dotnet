@@ -1,4 +1,6 @@
-﻿namespace Fluorite.Extensions;
+﻿using Fluorite.Strainer.Services;
+
+namespace Fluorite.Extensions;
 
 /// <summary>
 /// Provides extension methods for <see cref="string"/>.
@@ -25,15 +27,8 @@ public static class StringExtensions
     /// </exception>
     public static string TrimEnd(this string source, string trimString)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (trimString == null)
-        {
-            throw new ArgumentNullException(nameof(trimString));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(trimString);
 
         if (source == string.Empty || trimString == string.Empty)
         {
@@ -68,15 +63,8 @@ public static class StringExtensions
     /// </exception>
     public static string TrimEndOnce(this string source, string trimString)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (trimString == null)
-        {
-            throw new ArgumentNullException(nameof(trimString));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(trimString);
 
         if (source == string.Empty || trimString == string.Empty)
         {
@@ -113,15 +101,8 @@ public static class StringExtensions
     /// </exception>
     public static string TrimStart(this string source, string trimString)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (trimString == null)
-        {
-            throw new ArgumentNullException(nameof(trimString));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(trimString);
 
         if (source == string.Empty || trimString == string.Empty)
         {
@@ -157,15 +138,8 @@ public static class StringExtensions
     /// </exception>
     public static string TrimStartOnce(this string source, string trimString)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (trimString == null)
-        {
-            throw new ArgumentNullException(nameof(trimString));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(trimString);
 
         if (source == string.Empty || trimString == string.Empty)
         {

@@ -8,7 +8,7 @@ public class AssemblySourceProvider : IMetadataAssemblySourceProvider
 
     public AssemblySourceProvider(Assembly[] assemblies)
     {
-        _assemblies = assemblies ?? throw new ArgumentNullException(nameof(assemblies));
+        _assemblies = Guard.Against.Null(assemblies);
     }
 
     public Assembly[] GetAssemblies() => _assemblies;

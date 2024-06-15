@@ -12,17 +12,8 @@ public class CustomFilterMethodBuilder<TEntity> : ICustomFilterMethodBuilder<TEn
         IDictionary<Type, IDictionary<string, ICustomFilterMethod>> customFilterMethodsDictionary,
         string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException(
-                $"{nameof(name)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(name));
-        }
-
-        _customMethods = customFilterMethodsDictionary
-            ?? throw new ArgumentNullException(nameof(customFilterMethodsDictionary));
-        Name = name;
+        _customMethods = Guard.Against.Null(customFilterMethodsDictionary);
+        Name = Guard.Against.NullOrWhiteSpace(name);
     }
 
     protected Expression<Func<TEntity, bool>> Expression { get; set; }
@@ -41,7 +32,7 @@ public class CustomFilterMethodBuilder<TEntity> : ICustomFilterMethodBuilder<TEn
     public ICustomFilterMethodBuilder<TEntity> HasFunction(
         Expression<Func<TEntity, bool>> expression)
     {
-        Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+        Expression = Guard.Against.Null(expression);
 
         Save(Build());
 
@@ -51,7 +42,7 @@ public class CustomFilterMethodBuilder<TEntity> : ICustomFilterMethodBuilder<TEn
     public ICustomFilterMethodBuilder<TEntity> HasFunction(
         Func<IFilterTerm, Expression<Func<TEntity, bool>>> filterTermExpression)
     {
-        FilterTermExpression = filterTermExpression ?? throw new ArgumentNullException(nameof(filterTermExpression));
+        FilterTermExpression = Guard.Against.Null(filterTermExpression);
 
         Save(Build());
 
@@ -60,10 +51,7 @@ public class CustomFilterMethodBuilder<TEntity> : ICustomFilterMethodBuilder<TEn
 
     protected void Save(ICustomFilterMethod<TEntity> customFilterMethod)
     {
-        if (customFilterMethod == null)
-        {
-            throw new ArgumentNullException(nameof(customFilterMethod));
-        }
+        Guard.Against.Null(customFilterMethod);
 
         if (!_customMethods.ContainsKey(typeof(TEntity)))
         {

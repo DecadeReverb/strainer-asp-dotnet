@@ -6,15 +6,8 @@ public class TypeChanger : ITypeChanger
 {
     public object ChangeType(string value, Type targetType)
     {
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
-        if (targetType is null)
-        {
-            throw new ArgumentNullException(nameof(targetType));
-        }
+        Guard.Against.Null(value);
+        Guard.Against.Null(targetType);
 
         try
         {

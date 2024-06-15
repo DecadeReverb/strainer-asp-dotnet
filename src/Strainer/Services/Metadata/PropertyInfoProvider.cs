@@ -13,15 +13,8 @@ public class PropertyInfoProvider : IPropertyInfoProvider
 
     public PropertyInfo GetPropertyInfo(Type type, string name)
     {
-        if (type is null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
-
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
-        }
+        Guard.Against.Null(type);
+        Guard.Against.NullOrWhiteSpace(name);
 
         return type.GetProperty(name, _bindingFlags);
     }
@@ -49,10 +42,7 @@ public class PropertyInfoProvider : IPropertyInfoProvider
     /// </exception>
     public (PropertyInfo PropertyInfo, string FullName) GetPropertyInfoAndFullName<T>(Expression<Func<T, object>> expression)
     {
-        if (expression == null)
-        {
-            throw new ArgumentNullException(nameof(expression));
-        }
+        Guard.Against.Null(expression);
 
         if (expression.Body is not MemberExpression body)
         {
@@ -82,10 +72,7 @@ public class PropertyInfoProvider : IPropertyInfoProvider
 
     public PropertyInfo[] GetPropertyInfos(Type type)
     {
-        if (type is null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
+        Guard.Against.Null(type);
 
         return type.GetProperties(_bindingFlags);
     }

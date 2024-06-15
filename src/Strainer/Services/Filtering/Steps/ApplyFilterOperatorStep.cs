@@ -7,10 +7,7 @@ public class ApplyFilterOperatorStep : IApplyFilterOperatorStep
 {
     public void Execute(FilterExpressionWorkflowContext context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        Guard.Against.Null(context);
 
         var filterOperatorContext = new FilterExpressionContext(context.FinalExpression, context.PropertyValue);
 

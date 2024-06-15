@@ -9,8 +9,7 @@ public class ConfigurationFilterOperatorsProvider : IConfigurationFilterOperator
 
     public ConfigurationFilterOperatorsProvider(IStrainerConfigurationProvider strainerConfigurationProvider)
     {
-        _strainerConfigurationProvider = strainerConfigurationProvider
-            ?? throw new ArgumentNullException(nameof(strainerConfigurationProvider));
+        _strainerConfigurationProvider = Guard.Against.Null(strainerConfigurationProvider);
     }
 
     /// <summary>

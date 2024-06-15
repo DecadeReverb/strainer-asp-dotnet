@@ -8,15 +8,12 @@ public class PageNumberEvaluator : IPageNumberEvaluator
 
     public PageNumberEvaluator(IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public int Evaluate(IStrainerModel model)
     {
-        if (model is null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
+        Guard.Against.Null(model);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
 

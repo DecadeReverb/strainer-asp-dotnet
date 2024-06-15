@@ -15,22 +15,15 @@ public class SortPipelineOperation : ISortPipelineOperation, IStrainerPipelineOp
         ISortTermParser sortTermParser,
         ISortExpressionProvider sortExpressionProvider)
     {
-        _sortingApplier = sortingApplier;
-        _sortTermParser = sortTermParser;
-        _sortExpressionProvider = sortExpressionProvider;
+        _sortingApplier = Guard.Against.Null(sortingApplier);
+        _sortTermParser = Guard.Against.Null(sortTermParser);
+        _sortExpressionProvider = Guard.Against.Null(sortExpressionProvider);
     }
 
     public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var parsedTerms = _sortTermParser.GetParsedTerms(model.Sorts);
         var isSortingApplied = _sortingApplier.TryApplySorting(parsedTerms, source, out var sortedSource);

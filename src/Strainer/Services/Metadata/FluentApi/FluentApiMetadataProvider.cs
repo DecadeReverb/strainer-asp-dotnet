@@ -17,10 +17,10 @@ public class FluentApiMetadataProvider : IMetadataProvider
         IPropertyInfoProvider propertyInfoProvider,
         IFluentApiPropertyMetadataBuilder propertyMetadataBuilder)
     {
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
-        _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
-        _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-        _propertyMetadataBuilder = propertyMetadataBuilder ?? throw new ArgumentNullException(nameof(propertyMetadataBuilder));
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
+        _metadataProvider = Guard.Against.Null(metadataProvider);
+        _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
+        _propertyMetadataBuilder = Guard.Against.Null(propertyMetadataBuilder);
     }
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -48,10 +48,7 @@ public class FluentApiMetadataProvider : IMetadataProvider
 
     public IPropertyMetadata GetDefaultMetadata(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         if (!IsFluentApiEnabled())
         {
@@ -85,10 +82,8 @@ public class FluentApiMetadataProvider : IMetadataProvider
         bool isFilterableRequired,
         string name)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
+        Guard.Against.NullOrWhiteSpace(name);
 
         if (!IsFluentApiEnabled())
         {
@@ -119,10 +114,7 @@ public class FluentApiMetadataProvider : IMetadataProvider
 
     public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
     {
-        if (modelType is null)
-        {
-            throw new ArgumentNullException(nameof(modelType));
-        }
+        Guard.Against.Null(modelType);
 
         if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var metadatas))
         {

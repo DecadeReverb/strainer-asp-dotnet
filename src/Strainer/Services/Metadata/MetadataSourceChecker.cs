@@ -8,7 +8,7 @@ public class MetadataSourceChecker : IMetadataSourceChecker
 
     public MetadataSourceChecker(IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)

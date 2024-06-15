@@ -8,15 +8,12 @@ public class ChangeTypeOfFilterValueStep : IChangeTypeOfFilterValueStep
 
     public ChangeTypeOfFilterValueStep(ITypeChanger typeChanger)
     {
-        _typeChanger = typeChanger ?? throw new ArgumentNullException(nameof(typeChanger));
+        _typeChanger = Guard.Against.Null(typeChanger);
     }
 
     public void Execute(FilterExpressionWorkflowContext context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        Guard.Against.Null(context);
 
         if (context.Term.Operator.IsStringBased)
         {

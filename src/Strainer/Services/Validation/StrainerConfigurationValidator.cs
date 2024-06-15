@@ -12,8 +12,8 @@ public class StrainerConfigurationValidator : IStrainerConfigurationValidator
         IFilterOperatorValidator filterOperatorValidator,
         ISortExpressionValidator sortExpressionValidator)
     {
-        _filterOperatorValidator = filterOperatorValidator ?? throw new ArgumentNullException(nameof(filterOperatorValidator));
-        _sortExpressionValidator = sortExpressionValidator ?? throw new ArgumentNullException(nameof(sortExpressionValidator));
+        _filterOperatorValidator = Guard.Against.Null(filterOperatorValidator);
+        _sortExpressionValidator = Guard.Against.Null(sortExpressionValidator);
     }
 
     /// <summary>
@@ -30,10 +30,7 @@ public class StrainerConfigurationValidator : IStrainerConfigurationValidator
     /// </exception>
     public void Validate(IStrainerConfiguration strainerConfiguration)
     {
-        if (strainerConfiguration is null)
-        {
-            throw new ArgumentNullException(nameof(strainerConfiguration));
-        }
+        Guard.Against.Null(strainerConfiguration);
 
         try
         {

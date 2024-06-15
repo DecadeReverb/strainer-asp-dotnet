@@ -21,24 +21,17 @@ public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipeli
         IMetadataFacade metadataFacade,
         IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _customFilteringExpressionProvider = customFilteringExpressionProvider;
-        _filterExpressionProvider = filterExpressionProvider;
-        _filterTermParser = filterTermParser;
-        _metadataFacade = metadataFacade;
-        _strainerOptionsProvider = strainerOptionsProvider;
+        _customFilteringExpressionProvider = Guard.Against.Null(customFilteringExpressionProvider);
+        _filterExpressionProvider = Guard.Against.Null(filterExpressionProvider);
+        _filterTermParser = Guard.Against.Null(filterTermParser);
+        _metadataFacade = Guard.Against.Null(metadataFacade);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public IQueryable<T> Execute<T>(IStrainerModel model, IQueryable<T> source)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         var parsedTerms = _filterTermParser.GetParsedTerms(model.Filters);

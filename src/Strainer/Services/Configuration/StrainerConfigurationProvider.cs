@@ -20,7 +20,7 @@ public class StrainerConfigurationProvider : IStrainerConfigurationProvider
     /// </exception>
     public StrainerConfigurationProvider(IStrainerConfiguration strainerConfiguration)
     {
-        _strainerConfiguration = strainerConfiguration ?? throw new ArgumentNullException(nameof(strainerConfiguration));
+        _strainerConfiguration = Guard.Against.Null(strainerConfiguration);
     }
 
     /// <summary>

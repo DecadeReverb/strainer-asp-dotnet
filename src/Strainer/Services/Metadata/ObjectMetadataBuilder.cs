@@ -14,13 +14,11 @@ public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
         IDictionary<Type, IObjectMetadata> objectMetadata,
         Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
     {
-        if (defaultSortingPropertyExpression is null)
-        {
-            throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
-        }
+        Guard.Against.Null(objectMetadata);
+        Guard.Against.Null(defaultSortingPropertyExpression);
 
         (_defaultSortingPropertyName, _defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
-        _objectMetadata = objectMetadata ?? throw new ArgumentNullException(nameof(objectMetadata));
+        _objectMetadata = objectMetadata;
 
         Save(Build());
     }
@@ -69,21 +67,11 @@ public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
 
     protected void Save(IObjectMetadata objectMetadata)
     {
-        if (objectMetadata == null)
-        {
-            throw new ArgumentNullException(nameof(objectMetadata));
-        }
-
-        _objectMetadata[typeof(TEntity)] = objectMetadata;
+        _objectMetadata[typeof(TEntity)] = Guard.Against.Null(objectMetadata);
     }
 
     private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
     {
-        if (expression == null)
-        {
-            throw new ArgumentNullException(nameof(expression));
-        }
-
         if (expression.Body is not MemberExpression body)
         {
             var ubody = expression.Body as UnaryExpression;

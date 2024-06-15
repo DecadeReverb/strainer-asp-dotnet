@@ -8,15 +8,12 @@ public class PageSizeEvaluator : IPageSizeEvaluator
 
     public PageSizeEvaluator(IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public int Evaluate(IStrainerModel model)
     {
-        if (model is null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
+        Guard.Against.Null(model);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         var pageSize = model.PageSize ?? options.DefaultPageSize;

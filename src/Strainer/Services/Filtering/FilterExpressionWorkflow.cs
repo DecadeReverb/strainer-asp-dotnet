@@ -8,15 +8,12 @@ public class FilterExpressionWorkflow : IFilterExpressionWorkflow
 
     public FilterExpressionWorkflow(IReadOnlyCollection<IFilterExpressionWorkflowStep> steps)
     {
-        _steps = steps ?? throw new ArgumentNullException(nameof(steps));
+        _steps = Guard.Against.Null(steps);
     }
 
     public Expression Run(FilterExpressionWorkflowContext workflowContext)
     {
-        if (workflowContext is null)
-        {
-            throw new ArgumentNullException(nameof(workflowContext));
-        }
+        Guard.Against.Null(workflowContext);
 
         foreach (var step in _steps)
         {

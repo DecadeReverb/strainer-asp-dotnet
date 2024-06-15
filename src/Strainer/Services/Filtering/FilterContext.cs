@@ -10,10 +10,10 @@ public class FilterContext : IFilterContext
         IFilterOperatorValidator operatorValidator,
         IFilterTermParser termParser)
     {
-        ExpressionProvider = expressionProvider ?? throw new ArgumentNullException(nameof(expressionProvider));
-        OperatorParser = operatorParser ?? throw new ArgumentNullException(nameof(operatorParser));
-        OperatorValidator = operatorValidator ?? throw new ArgumentNullException(nameof(operatorValidator));
-        TermParser = termParser ?? throw new ArgumentNullException(nameof(termParser));
+        ExpressionProvider = Guard.Against.Null(expressionProvider);
+        OperatorParser = Guard.Against.Null(operatorParser);
+        OperatorValidator = Guard.Against.Null(operatorValidator);
+        TermParser = Guard.Against.Null(termParser);
     }
 
     public IFilterExpressionProvider ExpressionProvider { get; }

@@ -8,15 +8,12 @@ public class StrainerModuleLoader : IStrainerModuleLoader
 
     public StrainerModuleLoader(IModuleLoadingStrategySelector moduleLoadingStrategySelector)
     {
-        _moduleLoadingStrategySelector = moduleLoadingStrategySelector ?? throw new ArgumentNullException(nameof(moduleLoadingStrategySelector));
+        _moduleLoadingStrategySelector = Guard.Against.Null(moduleLoadingStrategySelector);
     }
 
     public void Load(IStrainerModule strainerModule)
     {
-        if (strainerModule is null)
-        {
-            throw new ArgumentNullException(nameof(strainerModule));
-        }
+        Guard.Against.Null(strainerModule);
 
         var strategy = _moduleLoadingStrategySelector.Select(strainerModule);
 

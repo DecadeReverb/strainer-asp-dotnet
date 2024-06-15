@@ -13,10 +13,10 @@ public class StrainerPipelineBuilderFactory : IStrainerPipelineBuilderFactory
         IPaginatePipelineOperation paginatePipelineOperation,
         IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _filterPipelineOperation = filterPipelineOperation;
-        _sortPipelineOperation = sortPipelineOperation;
-        _paginatePipelineOperation = paginatePipelineOperation;
-        _strainerOptionsProvider = strainerOptionsProvider;
+        _filterPipelineOperation = Guard.Against.Null(filterPipelineOperation);
+        _sortPipelineOperation = Guard.Against.Null(sortPipelineOperation);
+        _paginatePipelineOperation = Guard.Against.Null(paginatePipelineOperation);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public IStrainerPipelineBuilder CreateBuilder()

@@ -54,10 +54,7 @@ public static class StrainerServiceCollectionExtensions
         this IServiceCollection services,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
+        Guard.Against.Null(services);
 
         return services.AddStrainer(new List<Type>(), serviceLifetime);
     }
@@ -98,15 +95,8 @@ public static class StrainerServiceCollectionExtensions
         Assembly[] assembliesToScan,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services == null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (assembliesToScan is null)
-        {
-            throw new ArgumentNullException(nameof(assembliesToScan));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(assembliesToScan);
 
         var moduleTypes = GetModuleTypesFromAssemblies(assembliesToScan);
 
@@ -147,15 +137,8 @@ public static class StrainerServiceCollectionExtensions
         IReadOnlyCollection<Type> moduleTypes,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services == null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (moduleTypes is null)
-        {
-            throw new ArgumentNullException(nameof(moduleTypes));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(moduleTypes);
 
         RegisterStrainerServices(services, moduleTypes, serviceLifetime);
 
@@ -194,15 +177,8 @@ public static class StrainerServiceCollectionExtensions
         IConfiguration configuration,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (configuration is null)
-        {
-            throw new ArgumentNullException(nameof(configuration));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(configuration);
 
         return services.AddStrainer(configuration, new List<Type>(), serviceLifetime);
     }
@@ -246,20 +222,9 @@ public static class StrainerServiceCollectionExtensions
         IReadOnlyCollection<Type> moduleTypes,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (moduleTypes is null)
-        {
-            throw new ArgumentNullException(nameof(moduleTypes));
-        }
-
-        if (configuration is null)
-        {
-            throw new ArgumentNullException(nameof(configuration));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(configuration);
+        Guard.Against.Null(moduleTypes);
 
         services.Configure<StrainerOptions>(configuration);
 
@@ -310,20 +275,9 @@ public static class StrainerServiceCollectionExtensions
         Assembly[] assembliesToScan,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services == null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (assembliesToScan is null)
-        {
-            throw new ArgumentNullException(nameof(assembliesToScan));
-        }
-
-        if (configuration == null)
-        {
-            throw new ArgumentNullException(nameof(configuration));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(configuration);
+        Guard.Against.Null(assembliesToScan);
 
         services.Configure<StrainerOptions>(configuration);
         services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));
@@ -363,15 +317,8 @@ public static class StrainerServiceCollectionExtensions
         Action<StrainerOptions> configure,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (configure is null)
-        {
-            throw new ArgumentNullException(nameof(configure));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(configure);
 
         return services.AddStrainer(configure, new List<Type>(), serviceLifetime);
     }
@@ -415,20 +362,9 @@ public static class StrainerServiceCollectionExtensions
         IReadOnlyCollection<Type> moduleTypes,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (moduleTypes is null)
-        {
-            throw new ArgumentNullException(nameof(moduleTypes));
-        }
-
-        if (configure is null)
-        {
-            throw new ArgumentNullException(nameof(configure));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(configure);
+        Guard.Against.Null(moduleTypes);
 
         services.AddOptions<StrainerOptions>().Configure(configure);
 
@@ -479,20 +415,9 @@ public static class StrainerServiceCollectionExtensions
         Assembly[] assembliesToScan,
         ServiceLifetime serviceLifetime = DefaultServiceLifetime)
     {
-        if (services == null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (assembliesToScan is null)
-        {
-            throw new ArgumentNullException(nameof(assembliesToScan));
-        }
-
-        if (configure == null)
-        {
-            throw new ArgumentNullException(nameof(configure));
-        }
+        Guard.Against.Null(services);
+        Guard.Against.Null(configure);
+        Guard.Against.Null(assembliesToScan);
 
         services.AddOptions<StrainerOptions>().Configure(configure);
         services.AddSingleton<IMetadataAssemblySourceProvider>(new AssemblySourceProvider(assembliesToScan));

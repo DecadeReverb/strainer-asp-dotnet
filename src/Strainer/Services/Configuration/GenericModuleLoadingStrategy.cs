@@ -8,15 +8,12 @@ public class GenericModuleLoadingStrategy : IGenericModuleLoadingStrategy, IModu
 
     public GenericModuleLoadingStrategy(IStrainerModuleBuilderFactory strainerModuleBuilderFactory)
     {
-        _strainerModuleBuilderFactory = strainerModuleBuilderFactory ?? throw new ArgumentNullException(nameof(strainerModuleBuilderFactory));
+        _strainerModuleBuilderFactory = Guard.Against.Null(strainerModuleBuilderFactory);
     }
 
     public void Load(IStrainerModule strainerModule)
     {
-        if (strainerModule is null)
-        {
-            throw new ArgumentNullException(nameof(strainerModule));
-        }
+        Guard.Against.Null(strainerModule);
 
         var genericStrainerModuleInterfaceType = strainerModule
             .GetType()

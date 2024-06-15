@@ -15,7 +15,6 @@ public class StrainerPropertyAttribute : Attribute, IPropertyMetadata
     /// </summary>
     public StrainerPropertyAttribute()
     {
-
     }
 
     /// <summary>

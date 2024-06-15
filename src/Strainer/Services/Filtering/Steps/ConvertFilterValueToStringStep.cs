@@ -8,15 +8,12 @@ public class ConvertFilterValueToStringStep : IConvertFilterValueToStringStep
 
     public ConvertFilterValueToStringStep(IStringValueConverter stringValueConverter)
     {
-        _stringValueConverter = stringValueConverter ?? throw new ArgumentNullException(nameof(stringValueConverter));
+        _stringValueConverter = Guard.Against.Null(stringValueConverter);
     }
 
     public void Execute(FilterExpressionWorkflowContext context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        Guard.Against.Null(context);
 
         if (context.Term.Operator.IsStringBased)
         {

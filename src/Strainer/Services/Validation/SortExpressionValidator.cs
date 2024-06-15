@@ -7,10 +7,7 @@ public class SortExpressionValidator : ISortExpressionValidator
 {
     public void Validate(IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadata)
     {
-        if (propertyMetadata == null)
-        {
-            throw new ArgumentNullException(nameof(propertyMetadata));
-        }
+        Guard.Against.Null(propertyMetadata);
 
         foreach (var typeKeyPair in propertyMetadata)
         {

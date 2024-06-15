@@ -22,8 +22,7 @@ public class ConfigurationCustomMethodsProvider : IConfigurationCustomMethodsPro
     /// </exception>
     public ConfigurationCustomMethodsProvider(IStrainerConfigurationProvider strainerConfigurationProvider)
     {
-        _strainerConfigurationProvider = strainerConfigurationProvider
-            ?? throw new ArgumentNullException(nameof(strainerConfigurationProvider));
+        _strainerConfigurationProvider = Guard.Against.Null(strainerConfigurationProvider);
     }
 
     /// <summary>

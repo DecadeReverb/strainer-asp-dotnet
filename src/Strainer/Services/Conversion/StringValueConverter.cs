@@ -6,20 +6,9 @@ public class StringValueConverter : IStringValueConverter
 {
     public object Convert(string value, Type targetType, ITypeConverter typeConverter)
     {
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
-        if (targetType is null)
-        {
-            throw new ArgumentNullException(nameof(targetType));
-        }
-
-        if (typeConverter is null)
-        {
-            throw new ArgumentNullException(nameof(typeConverter));
-        }
+        Guard.Against.Null(value);
+        Guard.Against.Null(targetType);
+        Guard.Against.Null(typeConverter);
 
         try
         {

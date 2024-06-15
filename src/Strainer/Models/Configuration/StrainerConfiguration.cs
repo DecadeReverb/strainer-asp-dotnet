@@ -22,12 +22,12 @@ public class StrainerConfiguration : IStrainerConfiguration
         IReadOnlyDictionary<Type, IObjectMetadata> objectMetadata,
         IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadata)
     {
-        CustomFilterMethods = customFilterMethods ?? throw new ArgumentNullException(nameof(customFilterMethods));
-        CustomSortMethods = customSortMethods ?? throw new ArgumentNullException(nameof(customSortMethods));
-        DefaultMetadata = defaultMetadata ?? throw new ArgumentNullException(nameof(defaultMetadata));
-        FilterOperators = filterOperators ?? throw new ArgumentNullException(nameof(filterOperators));
-        ObjectMetadata = objectMetadata ?? throw new ArgumentNullException(nameof(objectMetadata));
-        PropertyMetadata = propertyMetadata ?? throw new ArgumentNullException(nameof(propertyMetadata));
+        CustomFilterMethods = Guard.Against.Null(customFilterMethods);
+        CustomSortMethods = Guard.Against.Null(customSortMethods);
+        DefaultMetadata = Guard.Against.Null(defaultMetadata);
+        FilterOperators = Guard.Against.Null(filterOperators);
+        ObjectMetadata = Guard.Against.Null(objectMetadata);
+        PropertyMetadata = Guard.Against.Null(propertyMetadata);
     }
 
     /// <summary>

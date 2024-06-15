@@ -19,10 +19,10 @@ public class FilterTermParser : IFilterTermParser
         IFilterTermValuesParser valuesParser,
         IFilterTermSectionsParser termSectionsParser)
     {
-        _operatorParser = operatorParser ?? throw new ArgumentNullException(nameof(_operatorParser));
-        _namesParser = namesParser ?? throw new ArgumentNullException(nameof(namesParser));
-        _valuesParser = valuesParser ?? throw new ArgumentNullException(nameof(valuesParser));
-        _termSectionsParser = termSectionsParser ?? throw new ArgumentNullException(nameof(termSectionsParser));
+        _operatorParser = Guard.Against.Null(operatorParser);
+        _namesParser = Guard.Against.Null(namesParser);
+        _valuesParser = Guard.Against.Null(valuesParser);
+        _termSectionsParser = Guard.Against.Null(termSectionsParser);
     }
 
     public IList<IFilterTerm> GetParsedTerms(string input)

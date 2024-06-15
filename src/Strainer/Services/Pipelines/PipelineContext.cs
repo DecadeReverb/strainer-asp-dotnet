@@ -4,12 +4,7 @@ public class PipelineContext : IPipelineContext
 {
     public PipelineContext(IStrainerPipelineBuilderFactory strainerPipelineBuilderFactory)
     {
-        if (strainerPipelineBuilderFactory == null)
-        {
-            throw new ArgumentException(nameof(strainerPipelineBuilderFactory));
-        }
-
-        BuilderFactory = strainerPipelineBuilderFactory;
+        BuilderFactory = Guard.Against.Null(strainerPipelineBuilderFactory);
     }
 
     public IStrainerPipelineBuilderFactory BuilderFactory { get; }

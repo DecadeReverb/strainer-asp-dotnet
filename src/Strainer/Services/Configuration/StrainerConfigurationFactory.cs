@@ -13,13 +13,15 @@ public class StrainerConfigurationFactory : IStrainerConfigurationFactory
         IStrainerModuleFactory strainerModuleFactory,
         IStrainerModuleTypeValidator strainerModuleTypeValidator)
     {
-        _strainerModuleLoader = strainerModuleLoader;
-        _strainerModuleFactory = strainerModuleFactory;
-        _strainerModuleTypeValidator = strainerModuleTypeValidator;
+        _strainerModuleLoader = Guard.Against.Null(strainerModuleLoader);
+        _strainerModuleFactory = Guard.Against.Null(strainerModuleFactory);
+        _strainerModuleTypeValidator = Guard.Against.Null(strainerModuleTypeValidator);
     }
 
     public IStrainerConfiguration Create(IReadOnlyCollection<Type> moduleTypes)
     {
+        Guard.Against.Null(moduleTypes);
+
         var validModuleTypes = _strainerModuleTypeValidator.GetValidModuleTypes(moduleTypes);
         var modules = validModuleTypes
             .Select(type => _strainerModuleFactory.CreateModule(type))

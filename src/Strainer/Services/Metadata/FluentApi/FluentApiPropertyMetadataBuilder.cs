@@ -7,10 +7,7 @@ public class FluentApiPropertyMetadataBuilder : IFluentApiPropertyMetadataBuilde
 {
     public IPropertyMetadata BuildPropertyMetadata(IObjectMetadata objectMetadata)
     {
-        if (objectMetadata is null)
-        {
-            throw new ArgumentNullException(nameof(objectMetadata));
-        }
+        Guard.Against.Null(objectMetadata);
 
         return new PropertyMetadata
         {
@@ -25,15 +22,8 @@ public class FluentApiPropertyMetadataBuilder : IFluentApiPropertyMetadataBuilde
 
     public IPropertyMetadata BuildPropertyMetadataFromPropertyInfo(IObjectMetadata objectMetadata, PropertyInfo propertyInfo)
     {
-        if (propertyInfo is null)
-        {
-            throw new ArgumentNullException(nameof(propertyInfo));
-        }
-
-        if (objectMetadata is null)
-        {
-            throw new ArgumentNullException(nameof(objectMetadata));
-        }
+        Guard.Against.Null(objectMetadata);
+        Guard.Against.Null(propertyInfo);
 
         var isDefaultSorting = objectMetadata.DefaultSortingPropertyInfo == propertyInfo;
         var isDefaultSortingAscending = isDefaultSorting && objectMetadata.IsDefaultSortingDescending;

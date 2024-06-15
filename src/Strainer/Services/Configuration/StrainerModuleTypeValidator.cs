@@ -6,6 +6,8 @@ public class StrainerModuleTypeValidator : IStrainerModuleTypeValidator
 {
     public ICollection<Type> GetValidModuleTypes(IReadOnlyCollection<Type> types)
     {
+        Guard.Against.Null(types);
+
         var validModuleTypes = types
             .Where(type => !type.IsAbstract && typeof(IStrainerModule).IsAssignableFrom(type))
             .ToList();

@@ -15,10 +15,10 @@ public class StrainerPipelineBuilder : IStrainerPipelineBuilder
         IStrainerOptionsProvider strainerOptionsProvider)
     {
         _operations = new ();
-        _filterPipelineOperation = filterPipelineOperation;
-        _sortPipelineOperation = sortPipelineOperation;
-        _paginatePipelineOperation = paginatePipelineOperation;
-        _strainerOptionsProvider = strainerOptionsProvider;
+        _filterPipelineOperation = Guard.Against.Null(filterPipelineOperation);
+        _sortPipelineOperation = Guard.Against.Null(sortPipelineOperation);
+        _paginatePipelineOperation = Guard.Against.Null(paginatePipelineOperation);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public IStrainerPipeline Build()

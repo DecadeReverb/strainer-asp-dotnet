@@ -8,15 +8,8 @@ public class AttributePropertyMetadataBuilder : IAttributePropertyMetadataBuilde
 {
     public IPropertyMetadata BuildDefaultPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
     {
-        if (attribute is null)
-        {
-            throw new ArgumentNullException(nameof(attribute));
-        }
-
-        if (propertyInfo is null)
-        {
-            throw new ArgumentNullException(nameof(propertyInfo));
-        }
+        Guard.Against.Null(attribute);
+        Guard.Against.Null(propertyInfo);
 
         return new PropertyMetadata
         {
@@ -31,15 +24,8 @@ public class AttributePropertyMetadataBuilder : IAttributePropertyMetadataBuilde
 
     public IPropertyMetadata BuildPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
     {
-        if (attribute is null)
-        {
-            throw new ArgumentNullException(nameof(attribute));
-        }
-
-        if (propertyInfo is null)
-        {
-            throw new ArgumentNullException(nameof(propertyInfo));
-        }
+        Guard.Against.Null(attribute);
+        Guard.Against.Null(propertyInfo);
 
         var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
 

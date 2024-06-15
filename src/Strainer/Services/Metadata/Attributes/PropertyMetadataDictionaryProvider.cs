@@ -15,13 +15,15 @@ public class PropertyMetadataDictionaryProvider : IPropertyMetadataDictionaryPro
         IStrainerAttributeProvider strainerAttributeProvider,
         IAttributePropertyMetadataBuilder attributePropertyMetadataBuilder)
     {
-        _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-        _strainerAttributeProvider = strainerAttributeProvider ?? throw new ArgumentNullException(nameof(strainerAttributeProvider));
-        _attributePropertyMetadataBuilder = attributePropertyMetadataBuilder ?? throw new ArgumentNullException(nameof(attributePropertyMetadataBuilder));
+        _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
+        _strainerAttributeProvider = Guard.Against.Null(strainerAttributeProvider);
+        _attributePropertyMetadataBuilder = Guard.Against.Null(attributePropertyMetadataBuilder);
     }
 
     public IReadOnlyDictionary<string, IPropertyMetadata> GetMetadata(Type type)
     {
+        Guard.Against.Null(type);
+
         return _propertyInfoProvider.GetPropertyInfos(type)
             .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
             .Where(attribute => attribute != null)
@@ -31,6 +33,9 @@ public class PropertyMetadataDictionaryProvider : IPropertyMetadataDictionaryPro
 
     public IReadOnlyDictionary<string, IPropertyMetadata> GetMetadata(Type type, StrainerObjectAttribute strainerObjectAttribute)
     {
+        Guard.Against.Null(type);
+        Guard.Against.Null(strainerObjectAttribute);
+
         return _propertyInfoProvider.GetPropertyInfos(type)
             .Select(propertyInfo => _attributePropertyMetadataBuilder.BuildPropertyMetadata(strainerObjectAttribute, propertyInfo))
             .ToDictionary(metadata => metadata.Name, metadata => metadata)

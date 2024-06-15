@@ -11,11 +11,11 @@ public class SortingContext : ISortingContext
         ISortTermParser sortTermParser,
         ISortTermValueParser sortTermValueParser)
     {
-        ExpressionProvider = expressionProvider ?? throw new ArgumentNullException(nameof(expressionProvider));
-        ExpressionValidator = expressionValidator ?? throw new ArgumentNullException(nameof(expressionValidator));
-        Formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
-        TermParser = sortTermParser ?? throw new ArgumentNullException(nameof(sortTermParser));
-        TermValueParser = sortTermValueParser ?? throw new ArgumentNullException(nameof(sortTermValueParser));
+        ExpressionProvider = Guard.Against.Null(expressionProvider);
+        ExpressionValidator = Guard.Against.Null(expressionValidator);
+        Formatter = Guard.Against.Null(formatter);
+        TermParser = Guard.Against.Null(sortTermParser);
+        TermValueParser = Guard.Against.Null(sortTermValueParser);
     }
 
     public ISortExpressionProvider ExpressionProvider { get; set; }

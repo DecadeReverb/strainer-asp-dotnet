@@ -8,15 +8,8 @@ public static class EnumerableExtensions
         this IEnumerable<T> source,
         params IEnumerable<T>[] sequences)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (sequences is null)
-        {
-            throw new ArgumentNullException(nameof(sequences));
-        }
+        Guard.Against.Null(source);
+        Guard.Against.Null(sequences);
 
         return Enumerable.Concat(source, sequences.SelectMany(x => x));
     }
@@ -24,10 +17,7 @@ public static class EnumerableExtensions
     public static IDictionary<TKey, TValue> Merge<TKey, TValue>(
         this IEnumerable<KeyValuePair<TKey, TValue>> keyValuePairs)
     {
-        if (keyValuePairs is null)
-        {
-            throw new ArgumentNullException(nameof(keyValuePairs));
-        }
+        Guard.Against.Null(keyValuePairs);
 
         var result = new Dictionary<TKey, TValue>();
 
@@ -42,10 +32,7 @@ public static class EnumerableExtensions
     public static IDictionary<TKey, TValue> ToDictionary<TKey, TValue>(
         this IEnumerable<KeyValuePair<TKey, TValue>> source)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(source);
 
         return source.ToDictionary(pair => pair.Key, pair => pair.Value);
     }
@@ -53,10 +40,7 @@ public static class EnumerableExtensions
     public static IReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
         this IEnumerable<KeyValuePair<TKey, TValue>> source)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(source);
 
         return new ReadOnlyDictionary<TKey, TValue>(source.ToDictionary());
     }

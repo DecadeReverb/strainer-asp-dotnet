@@ -6,10 +6,7 @@ public class MetadataSourceTypeProvider : IMetadataSourceTypeProvider
 {
     public IList<Type> GetSourceTypes(Assembly[] assemblies)
     {
-        if (assemblies is null)
-        {
-            throw new ArgumentNullException(nameof(assemblies));
-        }
+        Guard.Against.Null(assemblies);
 
         // TODO:
         // Check if TraceDataCollector is still causing an issue.

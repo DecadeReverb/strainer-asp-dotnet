@@ -13,10 +13,7 @@ public class CustomFilterMethodMapper : ICustomFilterMethodMapper
 
     public void AddMap<TEntity>(ICustomFilterMethod<TEntity> customMethod)
     {
-        if (customMethod == null)
-        {
-            throw new ArgumentNullException(nameof(customMethod));
-        }
+        Guard.Against.Null(customMethod);
 
         if (!Methods.ContainsKey(typeof(TEntity)))
         {
@@ -28,13 +25,7 @@ public class CustomFilterMethodMapper : ICustomFilterMethodMapper
 
     public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException(
-                $"{nameof(name)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(name));
-        }
+        Guard.Against.NullOrWhiteSpace(name);
 
         if (!Methods.ContainsKey(typeof(TEntity)))
         {

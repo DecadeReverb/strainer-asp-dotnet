@@ -6,17 +6,17 @@ public class StrainerSortExpressionValidatorException : StrainerException
 {
     public StrainerSortExpressionValidatorException(Type entityType)
     {
-        EntityType = entityType ?? throw new ArgumentNullException(nameof(entityType));
+        EntityType = Guard.Against.Null(entityType);
     }
 
     public StrainerSortExpressionValidatorException(Type entityType, string message) : base(message)
     {
-        EntityType = entityType ?? throw new ArgumentNullException(nameof(entityType));
+        EntityType = Guard.Against.Null(entityType);
     }
 
     public StrainerSortExpressionValidatorException(Type entityType, string message, Exception innerException) : base(message, innerException)
     {
-        EntityType = entityType ?? throw new ArgumentNullException(nameof(entityType));
+        EntityType = Guard.Against.Null(entityType);
     }
 
     protected StrainerSortExpressionValidatorException(SerializationInfo info, StreamingContext context) : base(info, context)

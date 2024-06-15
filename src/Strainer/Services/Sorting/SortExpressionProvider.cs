@@ -22,8 +22,7 @@ public class SortExpressionProvider : ISortExpressionProvider
     /// </summary>
     public SortExpressionProvider(IMetadataFacade metadataProvidersFacade)
     {
-        _metadataProvidersFacade = metadataProvidersFacade
-            ?? throw new ArgumentNullException(nameof(metadataProvidersFacade));
+        _metadataProvidersFacade = Guard.Against.Null(metadataProvidersFacade);
     }
 
     public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
@@ -49,15 +48,8 @@ public class SortExpressionProvider : ISortExpressionProvider
         ISortTerm sortTerm,
         bool isSubsequent)
     {
-        if (propertyInfo == null)
-        {
-            throw new ArgumentNullException(nameof(propertyInfo));
-        }
-
-        if (sortTerm == null)
-        {
-            throw new ArgumentNullException(nameof(sortTerm));
-        }
+        Guard.Against.Null(propertyInfo);
+        Guard.Against.Null(sortTerm);
 
         var metadata = _metadataProvidersFacade.GetMetadata<TEntity>(
             isSortableRequired: true,
@@ -114,10 +106,7 @@ public class SortExpressionProvider : ISortExpressionProvider
     public IReadOnlyCollection<ISortExpression<TEntity>> GetExpressions<TEntity>(
         IEnumerable<KeyValuePair<PropertyInfo, ISortTerm>> sortTerms)
     {
-        if (sortTerms == null)
-        {
-            throw new ArgumentNullException(nameof(sortTerms));
-        }
+        Guard.Against.Null(sortTerms);
 
         var expressions = new List<ISortExpression<TEntity>>();
         var isSubqequent = false;

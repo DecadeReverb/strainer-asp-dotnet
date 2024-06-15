@@ -13,21 +13,14 @@ public class StrainerModuleBuilderFactory : IStrainerModuleBuilderFactory
         IPropertyInfoProvider propertyInfoProvider,
         IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+        _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
     }
 
     public object Create(Type moduleTypeParameter, IStrainerModule strainerModule)
     {
-        if (moduleTypeParameter is null)
-        {
-            throw new ArgumentNullException(nameof(moduleTypeParameter));
-        }
-
-        if (strainerModule is null)
-        {
-            throw new ArgumentNullException(nameof(strainerModule));
-        }
+        Guard.Against.Null(moduleTypeParameter);
+        Guard.Against.Null(strainerModule);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         var builderType = typeof(StrainerModuleBuilder<>).MakeGenericType(moduleTypeParameter);

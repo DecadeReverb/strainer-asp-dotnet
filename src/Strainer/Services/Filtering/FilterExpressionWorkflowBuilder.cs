@@ -19,12 +19,12 @@ public class FilterExpressionWorkflowBuilder : IFilterExpressionWorkflowBuilder
         IMitigateCaseInsensitivityStep mitigateCaseInsensitivityStep,
         IApplyFilterOperatorStep applyFilterOperatorStep)
     {
-        _convertPropertyValueToStringStep = convertPropertyValueToStringStep;
-        _convertFilterValueToStringStep = convertFilterValueToStringStep;
-        _changeTypeOfFilterValueStep = changeTypeOfFilterValueStep;
-        _applyConsantClosureToFilterValueStep = applyConsantClosureToFilterValueStep;
-        _mitigateCaseInsensitivityStep = mitigateCaseInsensitivityStep;
-        _applyFilterOperatorStep = applyFilterOperatorStep;
+        _convertPropertyValueToStringStep = Guard.Against.Null(convertPropertyValueToStringStep);
+        _convertFilterValueToStringStep = Guard.Against.Null(convertFilterValueToStringStep);
+        _changeTypeOfFilterValueStep = Guard.Against.Null(changeTypeOfFilterValueStep);
+        _applyConsantClosureToFilterValueStep = Guard.Against.Null(applyConsantClosureToFilterValueStep);
+        _mitigateCaseInsensitivityStep = Guard.Against.Null(mitigateCaseInsensitivityStep);
+        _applyFilterOperatorStep = Guard.Against.Null(applyFilterOperatorStep);
     }
 
     public IFilterExpressionWorkflow BuildDefaultWorkflow()

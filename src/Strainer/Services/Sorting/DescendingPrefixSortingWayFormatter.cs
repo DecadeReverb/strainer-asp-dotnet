@@ -44,10 +44,7 @@ public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
     /// </exception>
     public string Format(string input, SortingWay sortingWay)
     {
-        if (input == null)
-        {
-            throw new ArgumentNullException(nameof(input));
-        }
+        Guard.Against.Null(input);
 
         if (sortingWay == SortingWay.Unknown)
         {
@@ -84,10 +81,7 @@ public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
     /// </exception>
     public SortingWay GetSortingWay(string input)
     {
-        if (input is null)
-        {
-            throw new ArgumentNullException(nameof(input));
-        }
+        Guard.Against.Null(input);
 
         if (string.IsNullOrWhiteSpace(input))
         {
@@ -122,10 +116,7 @@ public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
     /// </exception>
     public string Unformat(string input, SortingWay sortingWay)
     {
-        if (input is null)
-        {
-            throw new ArgumentNullException(nameof(input));
-        }
+        Guard.Against.Null(input);
 
         if (sortingWay == SortingWay.Unknown)
         {
