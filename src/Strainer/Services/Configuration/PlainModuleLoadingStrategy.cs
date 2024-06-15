@@ -1,33 +1,32 @@
 ﻿using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Modules;
 
-namespace Fluorite.Strainer.Services.Configuration
+namespace Fluorite.Strainer.Services.Configuration;
+
+public class PlainModuleLoadingStrategy : IPlainModuleLoadingStrategy, IModuleLoadingStrategy
 {
-    public class PlainModuleLoadingStrategy : IPlainModuleLoadingStrategy, IModuleLoadingStrategy
+    private readonly IPropertyInfoProvider _propertyInfoProvider;
+    private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+
+    public PlainModuleLoadingStrategy(
+        IPropertyInfoProvider propertyInfoProvider,
+        IStrainerOptionsProvider strainerOptionsProvider)
     {
-        private readonly IPropertyInfoProvider _propertyInfoProvider;
-        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+        _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
+        _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+    }
 
-        public PlainModuleLoadingStrategy(
-            IPropertyInfoProvider propertyInfoProvider,
-            IStrainerOptionsProvider strainerOptionsProvider)
+    public void Load(IStrainerModule strainerModule)
+    {
+        if (strainerModule is null)
         {
-            _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
+            throw new ArgumentNullException(nameof(strainerModule));
         }
 
-        public void Load(IStrainerModule strainerModule)
-        {
-            if (strainerModule is null)
-            {
-                throw new ArgumentNullException(nameof(strainerModule));
-            }
+        // TODO: Use factory for builder?
+        var options = _strainerOptionsProvider.GetStrainerOptions();
+        var builder = new StrainerModuleBuilder(_propertyInfoProvider, strainerModule, options);
 
-            // TODO: Use factory for builder?
-            var options = _strainerOptionsProvider.GetStrainerOptions();
-            var builder = new StrainerModuleBuilder(_propertyInfoProvider, strainerModule, options);
-
-            strainerModule.Load(builder);
-        }
+        strainerModule.Load(builder);
     }
 }

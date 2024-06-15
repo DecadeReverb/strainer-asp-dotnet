@@ -1,21 +1,20 @@
-﻿namespace Fluorite.Strainer.Models.Metadata
+﻿namespace Fluorite.Strainer.Models.Metadata;
+
+/// <summary>
+/// Defines source type for property metadata.
+/// </summary>
+[Flags]
+public enum MetadataSourceType
 {
-    /// <summary>
-    /// Defines source type for property metadata.
-    /// </summary>
-    [Flags]
-    public enum MetadataSourceType
-    {
-        None = 1,
+    None = 1,
 
-        PropertyAttributes = 2,
+    PropertyAttributes = 2,
 
-        ObjectAttributes = 4,
+    ObjectAttributes = 4,
 
-        Attributes = PropertyAttributes | ObjectAttributes,
+    Attributes = PropertyAttributes | ObjectAttributes,
 
-        FluentApi = 8,
+    FluentApi = 8,
 
-        All = PropertyAttributes | ObjectAttributes | FluentApi,
-    }
+    All = PropertyAttributes | ObjectAttributes | FluentApi,
 }

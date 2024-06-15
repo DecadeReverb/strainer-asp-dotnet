@@ -1,13 +1,12 @@
-﻿namespace Fluorite.Strainer.Services.Pipelines
+﻿namespace Fluorite.Strainer.Services.Pipelines;
+
+public interface IStrainerPipelineBuilder
 {
-    public interface IStrainerPipelineBuilder
-    {
-        IStrainerPipeline Build();
+    IStrainerPipeline Build();
 
-        IStrainerPipelineBuilder Filter();
+    IStrainerPipelineBuilder Filter();
 
-        IStrainerPipelineBuilder Paginate();
+    IStrainerPipelineBuilder Paginate();
 
-        IStrainerPipelineBuilder Sort();
-    }
+    IStrainerPipelineBuilder Sort();
 }

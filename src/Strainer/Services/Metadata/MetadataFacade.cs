@@ -1,114 +1,113 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
 using System.Collections.ObjectModel;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+public class MetadataFacade : IMetadataFacade
 {
-    public class MetadataFacade : IMetadataFacade
+    private readonly IEnumerable<IMetadataProvider> _metadataProviders;
+
+    public MetadataFacade(IEnumerable<IMetadataProvider> metadataProviders)
     {
-        private readonly IEnumerable<IMetadataProvider> _metadataProviders;
+        _metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
+    }
 
-        public MetadataFacade(IEnumerable<IMetadataProvider> metadataProviders)
+    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
+    {
+        var metadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
+
+        foreach (var provider in _metadataProviders)
         {
-            _metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
-        }
+            var current = provider.GetAllPropertyMetadata();
 
-        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
-        {
-            var metadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
-
-            foreach (var provider in _metadataProviders)
+            if (current != null)
             {
-                var current = provider.GetAllPropertyMetadata();
-
-                if (current != null)
-                {
-                    return current;
-                }
+                return current;
             }
-
-            return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(metadata);
         }
 
-        public IPropertyMetadata GetDefaultMetadata<TEntity>()
+        return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(metadata);
+    }
+
+    public IPropertyMetadata GetDefaultMetadata<TEntity>()
+    {
+        return GetDefaultMetadata(typeof(TEntity));
+    }
+
+    public IPropertyMetadata GetDefaultMetadata(Type modelType)
+    {
+        if (modelType is null)
         {
-            return GetDefaultMetadata(typeof(TEntity));
+            throw new ArgumentNullException(nameof(modelType));
         }
 
-        public IPropertyMetadata GetDefaultMetadata(Type modelType)
+        foreach (var provider in _metadataProviders)
         {
-            if (modelType is null)
+            var metadata = provider.GetDefaultMetadata(modelType);
+
+            if (metadata != null)
             {
-                throw new ArgumentNullException(nameof(modelType));
+                return metadata;
             }
-
-            foreach (var provider in _metadataProviders)
-            {
-                var metadata = provider.GetDefaultMetadata(modelType);
-
-                if (metadata != null)
-                {
-                    return metadata;
-                }
-            }
-
-            return null;
         }
 
-        public IPropertyMetadata GetMetadata<TEntity>(
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
+        return null;
+    }
+
+    public IPropertyMetadata GetMetadata<TEntity>(
+        bool isSortableRequired,
+        bool isFilterableRequired,
+        string name)
+    {
+        return GetMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
+    }
+
+    public IPropertyMetadata GetMetadata(
+        Type modelType,
+        bool isSortableRequired,
+        bool isFilterableRequired,
+        string name)
+    {
+        if (modelType is null)
         {
-            return GetMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
+            throw new ArgumentNullException(nameof(modelType));
         }
 
-        public IPropertyMetadata GetMetadata(
-            Type modelType,
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
+        foreach (var provider in _metadataProviders)
         {
-            if (modelType is null)
+            var metadata = provider.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name);
+
+            if (metadata != null)
             {
-                throw new ArgumentNullException(nameof(modelType));
+                return metadata;
             }
-
-            foreach (var provider in _metadataProviders)
-            {
-                var metadata = provider.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name);
-
-                if (metadata != null)
-                {
-                    return metadata;
-                }
-            }
-
-            return null;
         }
 
-        public IEnumerable<IPropertyMetadata> GetMetadatas<TEntity>()
+        return null;
+    }
+
+    public IEnumerable<IPropertyMetadata> GetMetadatas<TEntity>()
+    {
+        return GetMetadatas(typeof(TEntity));
+    }
+
+    public IEnumerable<IPropertyMetadata> GetMetadatas(Type modelType)
+    {
+        if (modelType is null)
         {
-            return GetMetadatas(typeof(TEntity));
+            throw new ArgumentNullException(nameof(modelType));
         }
 
-        public IEnumerable<IPropertyMetadata> GetMetadatas(Type modelType)
+        foreach (var provider in _metadataProviders)
         {
-            if (modelType is null)
+            var metadatas = provider.GetPropertyMetadatas(modelType);
+
+            if (metadatas != null)
             {
-                throw new ArgumentNullException(nameof(modelType));
+                return metadatas;
             }
-
-            foreach (var provider in _metadataProviders)
-            {
-                var metadatas = provider.GetPropertyMetadatas(modelType);
-
-                if (metadatas != null)
-                {
-                    return metadatas;
-                }
-            }
-
-            return null;
         }
+
+        return null;
     }
 }

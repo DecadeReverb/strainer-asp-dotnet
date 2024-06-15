@@ -1,13 +1,12 @@
 ﻿using Fluorite.Strainer.Models.Sorting;
 
-namespace Fluorite.Strainer.Services.Sorting
+namespace Fluorite.Strainer.Services.Sorting;
+
+public interface ICustomSortMethodMapper
 {
-    public interface ICustomSortMethodMapper
-    {
-        IDictionary<Type, IDictionary<string, ICustomSortMethod>> Methods { get; }
+    IDictionary<Type, IDictionary<string, ICustomSortMethod>> Methods { get; }
 
-        void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod);
+    void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod);
 
-        ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
-    }
+    ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
 }

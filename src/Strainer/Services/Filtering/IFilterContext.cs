@@ -1,15 +1,14 @@
 ﻿using Fluorite.Strainer.Services.Validation;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public interface IFilterContext
 {
-    public interface IFilterContext
-    {
-        IFilterExpressionProvider ExpressionProvider { get; }
+    IFilterExpressionProvider ExpressionProvider { get; }
 
-        IFilterOperatorParser OperatorParser { get; }
+    IFilterOperatorParser OperatorParser { get; }
 
-        IFilterOperatorValidator OperatorValidator { get; }
+    IFilterOperatorValidator OperatorValidator { get; }
 
-        IFilterTermParser TermParser { get; }
-    }
+    IFilterTermParser TermParser { get; }
 }

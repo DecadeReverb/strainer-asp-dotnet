@@ -1,29 +1,28 @@
 ﻿using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public class FilterExpressionWorkflow : IFilterExpressionWorkflow
 {
-    public class FilterExpressionWorkflow : IFilterExpressionWorkflow
+    private readonly IReadOnlyCollection<IFilterExpressionWorkflowStep> _steps;
+
+    public FilterExpressionWorkflow(IReadOnlyCollection<IFilterExpressionWorkflowStep> steps)
     {
-        private readonly IReadOnlyCollection<IFilterExpressionWorkflowStep> _steps;
+        _steps = steps ?? throw new ArgumentNullException(nameof(steps));
+    }
 
-        public FilterExpressionWorkflow(IReadOnlyCollection<IFilterExpressionWorkflowStep> steps)
+    public Expression Run(FilterExpressionWorkflowContext workflowContext)
+    {
+        if (workflowContext is null)
         {
-            _steps = steps ?? throw new ArgumentNullException(nameof(steps));
+            throw new ArgumentNullException(nameof(workflowContext));
         }
 
-        public Expression Run(FilterExpressionWorkflowContext workflowContext)
+        foreach (var step in _steps)
         {
-            if (workflowContext is null)
-            {
-                throw new ArgumentNullException(nameof(workflowContext));
-            }
-
-            foreach (var step in _steps)
-            {
-                step.Execute(workflowContext);
-            }
-
-            return workflowContext.FinalExpression;
+            step.Execute(workflowContext);
         }
+
+        return workflowContext.FinalExpression;
     }
 }

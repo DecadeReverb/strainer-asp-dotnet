@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Pipelines
+﻿namespace Fluorite.Strainer.Services.Pipelines;
+
+public interface IPipelineContext
 {
-    public interface IPipelineContext
-    {
-        IStrainerPipelineBuilderFactory BuilderFactory { get; }
-    }
+    IStrainerPipelineBuilderFactory BuilderFactory { get; }
 }

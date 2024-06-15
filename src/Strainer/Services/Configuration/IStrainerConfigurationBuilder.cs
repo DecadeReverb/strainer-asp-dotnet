@@ -1,22 +1,21 @@
 ﻿using Fluorite.Strainer.Models.Configuration;
 using Fluorite.Strainer.Services.Modules;
 
-namespace Fluorite.Strainer.Services.Configuration
+namespace Fluorite.Strainer.Services.Configuration;
+
+public interface IStrainerConfigurationBuilder
 {
-    public interface IStrainerConfigurationBuilder
-    {
-        IStrainerConfiguration Build();
+    IStrainerConfiguration Build();
 
-        IStrainerConfigurationBuilder WithCustomFilterMethods(ICollection<IStrainerModule> modules);
+    IStrainerConfigurationBuilder WithCustomFilterMethods(ICollection<IStrainerModule> modules);
 
-        IStrainerConfigurationBuilder WithCustomSortMethods(ICollection<IStrainerModule> modules);
+    IStrainerConfigurationBuilder WithCustomSortMethods(ICollection<IStrainerModule> modules);
 
-        IStrainerConfigurationBuilder WithDefaultMetadata(ICollection<IStrainerModule> modules);
+    IStrainerConfigurationBuilder WithDefaultMetadata(ICollection<IStrainerModule> modules);
 
-        IStrainerConfigurationBuilder WithFilterOperators(ICollection<IStrainerModule> modules);
+    IStrainerConfigurationBuilder WithFilterOperators(ICollection<IStrainerModule> modules);
 
-        IStrainerConfigurationBuilder WithObjectMetadata(ICollection<IStrainerModule> modules);
+    IStrainerConfigurationBuilder WithObjectMetadata(ICollection<IStrainerModule> modules);
 
-        IStrainerConfigurationBuilder WithPropertyMetadata(ICollection<IStrainerModule> modules);
-    }
+    IStrainerConfigurationBuilder WithPropertyMetadata(ICollection<IStrainerModule> modules);
 }

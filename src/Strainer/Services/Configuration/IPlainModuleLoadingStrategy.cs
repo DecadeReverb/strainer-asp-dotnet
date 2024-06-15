@@ -1,6 +1,5 @@
-﻿namespace Fluorite.Strainer.Services.Configuration
+﻿namespace Fluorite.Strainer.Services.Configuration;
+
+public interface IPlainModuleLoadingStrategy : IModuleLoadingStrategy
 {
-    public interface IPlainModuleLoadingStrategy : IModuleLoadingStrategy
-    {
-    }
 }

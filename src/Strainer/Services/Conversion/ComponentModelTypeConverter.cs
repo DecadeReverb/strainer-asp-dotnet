@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel;
 
-namespace Fluorite.Strainer.Services.Conversion
+namespace Fluorite.Strainer.Services.Conversion;
+
+public class ComponentModelTypeConverter : ITypeConverter
 {
-    public class ComponentModelTypeConverter : ITypeConverter
+    private readonly TypeConverter _typeConverter;
+
+    public ComponentModelTypeConverter(TypeConverter typeConverter)
     {
-        private readonly TypeConverter _typeConverter;
-
-        public ComponentModelTypeConverter(TypeConverter typeConverter)
-        {
-            _typeConverter = typeConverter ?? throw new ArgumentNullException(nameof(typeConverter));
-        }
-
-        public bool CanConvertFrom(Type type) => _typeConverter.CanConvertFrom(type);
-
-        public object ConvertFrom(object value) => _typeConverter.ConvertFrom(value);
+        _typeConverter = typeConverter ?? throw new ArgumentNullException(nameof(typeConverter));
     }
+
+    public bool CanConvertFrom(Type type) => _typeConverter.CanConvertFrom(type);
+
+    public object ConvertFrom(object value) => _typeConverter.ConvertFrom(value);
 }

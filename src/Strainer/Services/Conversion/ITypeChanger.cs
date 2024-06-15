@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Conversion
+﻿namespace Fluorite.Strainer.Services.Conversion;
+
+public interface ITypeChanger
 {
-    public interface ITypeChanger
-    {
-        object ChangeType(string value, Type targetType);
-    }
+    object ChangeType(string value, Type targetType);
 }

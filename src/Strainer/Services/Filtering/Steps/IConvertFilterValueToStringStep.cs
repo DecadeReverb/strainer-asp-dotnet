@@ -1,6 +1,5 @@
-﻿namespace Fluorite.Strainer.Services.Filtering.Steps
+﻿namespace Fluorite.Strainer.Services.Filtering.Steps;
+
+public interface IConvertFilterValueToStringStep : IFilterExpressionWorkflowStep
 {
-    public interface IConvertFilterValueToStringStep : IFilterExpressionWorkflowStep
-    {
-    }
 }

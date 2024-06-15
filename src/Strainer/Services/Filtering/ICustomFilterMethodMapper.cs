@@ -1,13 +1,12 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public interface ICustomFilterMethodMapper
 {
-    public interface ICustomFilterMethodMapper
-    {
-        IDictionary<Type, IDictionary<string, ICustomFilterMethod>> Methods { get; }
+    IDictionary<Type, IDictionary<string, ICustomFilterMethod>> Methods { get; }
 
-        void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod);
+    void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod);
 
-        ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
-    }
+    ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
 }

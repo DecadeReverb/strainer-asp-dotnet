@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Filtering
+﻿namespace Fluorite.Strainer.Services.Filtering;
+
+public interface IFilterTermNamesParser
 {
-    public interface IFilterTermNamesParser
-    {
-        IList<string> Parse(string input);
-    }
+    IList<string> Parse(string input);
 }

@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Configuration
+﻿namespace Fluorite.Strainer.Services.Configuration;
+
+public interface IStrainerModuleTypeValidator
 {
-    public interface IStrainerModuleTypeValidator
-    {
-        ICollection<Type> GetValidModuleTypes(IReadOnlyCollection<Type> types);
-    }
+    ICollection<Type> GetValidModuleTypes(IReadOnlyCollection<Type> types);
 }

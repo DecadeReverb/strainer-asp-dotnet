@@ -1,17 +1,16 @@
-﻿namespace Fluorite.Strainer.Services.Pipelines
-{
-    public class PipelineContext : IPipelineContext
-    {
-        public PipelineContext(IStrainerPipelineBuilderFactory strainerPipelineBuilderFactory)
-        {
-            if (strainerPipelineBuilderFactory == null)
-            {
-                throw new ArgumentException(nameof(strainerPipelineBuilderFactory));
-            }
+﻿namespace Fluorite.Strainer.Services.Pipelines;
 
-            BuilderFactory = strainerPipelineBuilderFactory;
+public class PipelineContext : IPipelineContext
+{
+    public PipelineContext(IStrainerPipelineBuilderFactory strainerPipelineBuilderFactory)
+    {
+        if (strainerPipelineBuilderFactory == null)
+        {
+            throw new ArgumentException(nameof(strainerPipelineBuilderFactory));
         }
 
-        public IStrainerPipelineBuilderFactory BuilderFactory { get; }
+        BuilderFactory = strainerPipelineBuilderFactory;
     }
+
+    public IStrainerPipelineBuilderFactory BuilderFactory { get; }
 }

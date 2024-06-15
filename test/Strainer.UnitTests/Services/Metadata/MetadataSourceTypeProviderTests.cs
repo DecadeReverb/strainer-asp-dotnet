@@ -1,78 +1,77 @@
 ﻿using Fluorite.Strainer.Services.Metadata;
 using System.Reflection;
 
-namespace Fluorite.Strainer.UnitTests.Services.Metadata
+namespace Fluorite.Strainer.UnitTests.Services.Metadata;
+
+public class MetadataSourceTypeProviderTests
 {
-    public class MetadataSourceTypeProviderTests
+    private readonly MetadataSourceTypeProvider _provider;
+
+    public MetadataSourceTypeProviderTests()
     {
-        private readonly MetadataSourceTypeProvider _provider;
+        _provider = new MetadataSourceTypeProvider();
+    }
 
-        public MetadataSourceTypeProviderTests()
+    [Fact]
+    public void Should_Throw_ForNullAssemblies()
+    {
+        // Act
+        Action act = () => _provider.GetSourceTypes(assemblies: null);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Should_Return_OnlyClassesOrValueTypes()
+    {
+        // Arrange
+        var types = new Type[]
         {
-            _provider = new MetadataSourceTypeProvider();
-        }
-
-        [Fact]
-        public void Should_Throw_ForNullAssemblies()
+            typeof(IDisposable),
+            typeof(Version),
+            typeof(DateTime),
+        };
+        var assemblyMock = Substitute.For<Assembly>();
+        assemblyMock
+            .GetTypes()
+            .Returns(types);
+        assemblyMock
+            .FullName
+            .Returns("TestAssembly");
+        var assemblies = new Assembly[]
         {
-            // Act
-            Action act = () => _provider.GetSourceTypes(assemblies: null);
+            assemblyMock,
+        };
 
-            // Assert
-            act.Should().ThrowExactly<ArgumentNullException>();
-        }
+        // Act
+        var result = _provider.GetSourceTypes(assemblies);
 
-        [Fact]
-        public void Should_Return_OnlyClassesOrValueTypes()
+        // Assert
+        result.Should().NotBeNullOrEmpty();
+        result.Should().Contain(typeof(Version));
+        result.Should().Contain(typeof(DateTime));
+        result.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void Should_Return_TypesNotFromTraceDataCollector()
+    {
+        // Arrange
+        var assemblyMock = Substitute.For<Assembly>();
+        assemblyMock
+            .FullName
+            .Returns("Microsoft.VisualStudio.TraceDataCollector");
+        var assemblies = new Assembly[]
         {
-            // Arrange
-            var types = new Type[]
-            {
-                typeof(IDisposable),
-                typeof(Version),
-                typeof(DateTime),
-            };
-            var assemblyMock = Substitute.For<Assembly>();
-            assemblyMock
-                .GetTypes()
-                .Returns(types);
-            assemblyMock
-                .FullName
-                .Returns("TestAssembly");
-            var assemblies = new Assembly[]
-            {
-                assemblyMock,
-            };
+            assemblyMock,
+        };
 
-            // Act
-            var result = _provider.GetSourceTypes(assemblies);
+        // Act
+        var result = _provider.GetSourceTypes(assemblies);
 
-            // Assert
-            result.Should().NotBeNullOrEmpty();
-            result.Should().Contain(typeof(Version));
-            result.Should().Contain(typeof(DateTime));
-            result.Should().HaveCount(2);
-        }
-
-        [Fact]
-        public void Should_Return_TypesNotFromTraceDataCollector()
-        {
-            // Arrange
-            var assemblyMock = Substitute.For<Assembly>();
-            assemblyMock
-                .FullName
-                .Returns("Microsoft.VisualStudio.TraceDataCollector");
-            var assemblies = new Assembly[]
-            {
-                assemblyMock,
-            };
-
-            // Act
-            var result = _provider.GetSourceTypes(assemblies);
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeEmpty();
-        }
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
     }
 }

@@ -2,75 +2,74 @@
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.IntegrationTests.Sorting
+namespace Fluorite.Strainer.IntegrationTests.Sorting;
+
+public class DefaultSortingTests : StrainerFixtureBase
 {
-    public class DefaultSortingTests : StrainerFixtureBase
+    public DefaultSortingTests(StrainerFactory factory) : base(factory)
     {
-        public DefaultSortingTests(StrainerFactory factory) : base(factory)
-        {
 
-        }
+    }
 
-        [Fact]
-        public void DefaultSorting_Works_WithEmptyModel()
+    [Fact]
+    public void DefaultSorting_Works_WithEmptyModel()
+    {
+        // Arrange
+        var source = new[]
         {
-            // Arrange
-            var source = new[]
+            new Post
             {
-                new Post
-                {
-                    Name = "Foo",
-                },
-                new Post
-                {
-                    Name = "Bar",
-                },
-            }.AsQueryable();
-            var model = new StrainerModel();
-            var processor = Factory.CreateDefaultProcessor();
-
-            // Act
-            var result = processor.ApplySorting(model, source);
-
-            // Assert
-            result.Should().BeInAscendingOrder(e => e.Name);
-        }
-
-        [Fact]
-        public void DefaultSorting_DoesNotWork_When_NoDefaultSortingIsDefined()
-        {
-            // Arrange
-            var source = new[]
+                Name = "Foo",
+            },
+            new Post
             {
-                new Comment
-                {
-                    Text = "Foo",
-                },
-                new Comment
-                {
-                    Text = "Bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel();
+                Name = "Bar",
+            },
+        }.AsQueryable();
+        var model = new StrainerModel();
+        var processor = Factory.CreateDefaultProcessor();
 
-            // Act
-            var result = processor.ApplySorting(model, source);
+        // Act
+        var result = processor.ApplySorting(model, source);
 
-            // Assert
-            result.Should().BeEquivalentTo(source);
-            result.Should().NotBeInAscendingOrder(c => c.Text);
-        }
+        // Assert
+        result.Should().BeInAscendingOrder(e => e.Name);
+    }
 
-        private class Post
+    [Fact]
+    public void DefaultSorting_DoesNotWork_When_NoDefaultSortingIsDefined()
+    {
+        // Arrange
+        var source = new[]
         {
-            [StrainerProperty(IsDefaultSorting = true)]
-            public string Name { get; set; }
-        }
+            new Comment
+            {
+                Text = "Foo",
+            },
+            new Comment
+            {
+                Text = "Bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor();
+        var model = new StrainerModel();
 
-        private class Comment
-        {
-            public string Text { get; set; }
-        }
+        // Act
+        var result = processor.ApplySorting(model, source);
+
+        // Assert
+        result.Should().BeEquivalentTo(source);
+        result.Should().NotBeInAscendingOrder(c => c.Text);
+    }
+
+    private class Post
+    {
+        [StrainerProperty(IsDefaultSorting = true)]
+        public string Name { get; set; }
+    }
+
+    private class Comment
+    {
+        public string Text { get; set; }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Services.Modules;
 
-namespace Fluorite.Strainer.Services.Configuration
+namespace Fluorite.Strainer.Services.Configuration;
+
+public interface IStrainerModuleBuilderFactory
 {
-    public interface IStrainerModuleBuilderFactory
-    {
-        object Create(Type moduleTypeParameter, IStrainerModule strainerModule);
-    }
+    object Create(Type moduleTypeParameter, IStrainerModule strainerModule);
 }

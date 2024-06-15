@@ -1,9 +1,8 @@
-﻿namespace Fluorite.Strainer.Services.Conversion
-{
-    public interface ITypeConverter
-    {
-        bool CanConvertFrom(Type type);
+﻿namespace Fluorite.Strainer.Services.Conversion;
 
-        object ConvertFrom(object value);
-    }
+public interface ITypeConverter
+{
+    bool CanConvertFrom(Type type);
+
+    object ConvertFrom(object value);
 }

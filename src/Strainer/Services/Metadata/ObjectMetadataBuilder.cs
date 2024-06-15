@@ -2,103 +2,102 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
 {
-    public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
+    private readonly IDictionary<Type, IObjectMetadata> _objectMetadata;
+    private readonly string _defaultSortingPropertyName;
+    private readonly PropertyInfo _defaultSortingPropertyInfo;
+
+    public ObjectMetadataBuilder(
+        IDictionary<Type, IObjectMetadata> objectMetadata,
+        Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
     {
-        private readonly IDictionary<Type, IObjectMetadata> _objectMetadata;
-        private readonly string _defaultSortingPropertyName;
-        private readonly PropertyInfo _defaultSortingPropertyInfo;
-
-        public ObjectMetadataBuilder(
-            IDictionary<Type, IObjectMetadata> objectMetadata,
-            Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
+        if (defaultSortingPropertyExpression is null)
         {
-            if (defaultSortingPropertyExpression is null)
-            {
-                throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
-            }
-
-            (_defaultSortingPropertyName, _defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
-            _objectMetadata = objectMetadata ?? throw new ArgumentNullException(nameof(objectMetadata));
-
-            Save(Build());
+            throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
         }
 
-        protected bool IsDefaultSortingDescendingValue { get; set; }
+        (_defaultSortingPropertyName, _defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
+        _objectMetadata = objectMetadata ?? throw new ArgumentNullException(nameof(objectMetadata));
 
-        protected bool IsFilterableValue { get; set; }
+        Save(Build());
+    }
 
-        protected bool IsSortableValue { get; set; }
+    protected bool IsDefaultSortingDescendingValue { get; set; }
 
-        public IObjectMetadata Build()
+    protected bool IsFilterableValue { get; set; }
+
+    protected bool IsSortableValue { get; set; }
+
+    public IObjectMetadata Build()
+    {
+        return new ObjectMetadata
         {
-            return new ObjectMetadata
-            {
-                DefaultSortingPropertyInfo = _defaultSortingPropertyInfo,
-                DefaultSortingPropertyName = _defaultSortingPropertyName,
-                IsDefaultSortingDescending = IsDefaultSortingDescendingValue,
-                IsFilterable = IsFilterableValue,
-                IsSortable = IsSortableValue,
-            };
+            DefaultSortingPropertyInfo = _defaultSortingPropertyInfo,
+            DefaultSortingPropertyName = _defaultSortingPropertyName,
+            IsDefaultSortingDescending = IsDefaultSortingDescendingValue,
+            IsFilterable = IsFilterableValue,
+            IsSortable = IsSortableValue,
+        };
+    }
+
+    public IObjectMetadataBuilder<TEntity> IsFilterable()
+    {
+        IsFilterableValue = true;
+        Save(Build());
+
+        return this;
+    }
+
+    public IObjectMetadataBuilder<TEntity> IsSortable()
+    {
+        IsSortableValue = true;
+        Save(Build());
+
+        return this;
+    }
+
+    public IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending()
+    {
+        IsDefaultSortingDescendingValue = true;
+        Save(Build());
+
+        return this;
+    }
+
+    protected void Save(IObjectMetadata objectMetadata)
+    {
+        if (objectMetadata == null)
+        {
+            throw new ArgumentNullException(nameof(objectMetadata));
         }
 
-        public IObjectMetadataBuilder<TEntity> IsFilterable()
-        {
-            IsFilterableValue = true;
-            Save(Build());
+        _objectMetadata[typeof(TEntity)] = objectMetadata;
+    }
 
-            return this;
+    private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
+    {
+        if (expression == null)
+        {
+            throw new ArgumentNullException(nameof(expression));
         }
 
-        public IObjectMetadataBuilder<TEntity> IsSortable()
+        if (expression.Body is not MemberExpression body)
         {
-            IsSortableValue = true;
-            Save(Build());
-
-            return this;
+            var ubody = expression.Body as UnaryExpression;
+            body = ubody.Operand as MemberExpression;
         }
 
-        public IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending()
+        var propertyInfo = body?.Member as PropertyInfo;
+        var stack = new Stack<string>();
+        while (body != null)
         {
-            IsDefaultSortingDescendingValue = true;
-            Save(Build());
-
-            return this;
+            stack.Push(body.Member.Name);
+            body = body.Expression as MemberExpression;
         }
 
-        protected void Save(IObjectMetadata objectMetadata)
-        {
-            if (objectMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(objectMetadata));
-            }
-
-            _objectMetadata[typeof(TEntity)] = objectMetadata;
-        }
-
-        private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            if (expression.Body is not MemberExpression body)
-            {
-                var ubody = expression.Body as UnaryExpression;
-                body = ubody.Operand as MemberExpression;
-            }
-
-            var propertyInfo = body?.Member as PropertyInfo;
-            var stack = new Stack<string>();
-            while (body != null)
-            {
-                stack.Push(body.Member.Name);
-                body = body.Expression as MemberExpression;
-            }
-
-            return (string.Join(".", stack.ToArray()), propertyInfo);
-        }
+        return (string.Join(".", stack.ToArray()), propertyInfo);
     }
 }

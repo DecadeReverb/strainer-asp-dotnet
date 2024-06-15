@@ -1,102 +1,101 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
 using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public class FilterOperatorBuilder : IFilterOperatorBuilder
 {
-    public class FilterOperatorBuilder : IFilterOperatorBuilder
+    private readonly IDictionary<string, IFilterOperator> _filterOperators;
+
+    public FilterOperatorBuilder(
+        IDictionary<string, IFilterOperator> filterOperators,
+        string symbol)
     {
-        private readonly IDictionary<string, IFilterOperator> _filterOperators;
-
-        public FilterOperatorBuilder(
-            IDictionary<string, IFilterOperator> filterOperators,
-            string symbol)
+        if (string.IsNullOrWhiteSpace(symbol))
         {
-            if (string.IsNullOrWhiteSpace(symbol))
-            {
-                throw new ArgumentException(
-                    $"{nameof(symbol)} cannot be null, empty " +
-                    $"or contain only whitespace characters.",
-                    nameof(symbol));
-            }
-
-            _filterOperators = filterOperators;
-            Symbol = symbol;
-
-            Save(Build()); // Is this really needed?
+            throw new ArgumentException(
+                $"{nameof(symbol)} cannot be null, empty " +
+                $"or contain only whitespace characters.",
+                nameof(symbol));
         }
 
-        protected Func<IFilterExpressionContext, Expression> Expression { get; set; }
+        _filterOperators = filterOperators;
+        Symbol = symbol;
 
-        protected bool IsCaseInsensitive1 { get; set; }
+        Save(Build()); // Is this really needed?
+    }
 
-        protected bool IsStringBased1 { get; set; }
+    protected Func<IFilterExpressionContext, Expression> Expression { get; set; }
 
-        protected string Name { get; set; }
+    protected bool IsCaseInsensitive1 { get; set; }
 
-        protected string Symbol { get; set; }
+    protected bool IsStringBased1 { get; set; }
 
-        public IFilterOperator Build() => new FilterOperator
+    protected string Name { get; set; }
+
+    protected string Symbol { get; set; }
+
+    public IFilterOperator Build() => new FilterOperator
+    {
+        Expression = Expression,
+        IsCaseInsensitive = IsCaseInsensitive1,
+        IsStringBased = IsStringBased1,
+        Name = Name,
+        Symbol = Symbol,
+    };
+
+    public IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression)
+    {
+        Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+        Save(Build());
+
+        return this;
+    }
+
+    public IFilterOperatorBuilder HasName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
         {
-            Expression = Expression,
-            IsCaseInsensitive = IsCaseInsensitive1,
-            IsStringBased = IsStringBased1,
-            Name = Name,
-            Symbol = Symbol,
-        };
-
-        public IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression)
-        {
-            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
-            Save(Build());
-
-            return this;
+            throw new ArgumentException(
+                $"{nameof(name)} cannot be null, empty " +
+                $"or contain only whitespace characters.",
+                nameof(name));
         }
 
-        public IFilterOperatorBuilder HasName(string name)
+        Name = name;
+        Save(Build());
+
+        return this;
+    }
+
+    public IFilterOperatorBuilder IsCaseInsensitive()
+    {
+        IsCaseInsensitive1 = true;
+        Save(Build());
+
+        return this;
+    }
+
+    public IFilterOperatorBuilder IsStringBased()
+    {
+        IsStringBased1 = true;
+        Save(Build());
+
+        return this;
+    }
+
+    protected void Save(IFilterOperator filterOperator)
+    {
+        if (_filterOperators is null)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException(
-                    $"{nameof(name)} cannot be null, empty " +
-                    $"or contain only whitespace characters.",
-                    nameof(name));
-            }
-
-            Name = name;
-            Save(Build());
-
-            return this;
+            return;
         }
 
-        public IFilterOperatorBuilder IsCaseInsensitive()
+        if (filterOperator is null)
         {
-            IsCaseInsensitive1 = true;
-            Save(Build());
-
-            return this;
+            throw new ArgumentNullException(nameof(filterOperator));
         }
 
-        public IFilterOperatorBuilder IsStringBased()
-        {
-            IsStringBased1 = true;
-            Save(Build());
-
-            return this;
-        }
-
-        protected void Save(IFilterOperator filterOperator)
-        {
-            if (_filterOperators is null)
-            {
-                return;
-            }
-
-            if (filterOperator is null)
-            {
-                throw new ArgumentNullException(nameof(filterOperator));
-            }
-
-            _filterOperators[Symbol] = filterOperator;
-        }
+        _filterOperators[Symbol] = filterOperator;
     }
 }

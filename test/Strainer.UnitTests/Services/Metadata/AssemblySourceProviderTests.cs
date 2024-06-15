@@ -1,26 +1,25 @@
 ﻿using Fluorite.Strainer.Services.Metadata;
 using System.Reflection;
 
-namespace Fluorite.Strainer.UnitTests.Services.Metadata
+namespace Fluorite.Strainer.UnitTests.Services.Metadata;
+
+public class AssemblySourceProviderTests
 {
-    public class AssemblySourceProviderTests
+    [Fact]
+    public void Should_Return_CurrentAppDomainAssemblies()
     {
-        [Fact]
-        public void Should_Return_CurrentAppDomainAssemblies()
+        // Arrange
+        var assemblies = new Assembly[]
         {
-            // Arrange
-            var assemblies = new Assembly[]
-            {
-                Substitute.For<Assembly>(),
-            };
-            var provider = new AssemblySourceProvider(assemblies); ;
+            Substitute.For<Assembly>(),
+        };
+        var provider = new AssemblySourceProvider(assemblies); ;
 
-            // Act
-            var result = provider.GetAssemblies();
+        // Act
+        var result = provider.GetAssemblies();
 
-            // Assert
-            result.Should().NotBeNullOrEmpty();
-            result.Should().BeEquivalentTo(assemblies);
-        }
+        // Assert
+        result.Should().NotBeNullOrEmpty();
+        result.Should().BeEquivalentTo(assemblies);
     }
 }

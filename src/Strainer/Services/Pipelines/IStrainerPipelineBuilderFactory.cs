@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Pipelines
+﻿namespace Fluorite.Strainer.Services.Pipelines;
+
+public interface IStrainerPipelineBuilderFactory
 {
-    public interface IStrainerPipelineBuilderFactory
-    {
-        IStrainerPipelineBuilder CreateBuilder();
-    }
+    IStrainerPipelineBuilder CreateBuilder();
 }

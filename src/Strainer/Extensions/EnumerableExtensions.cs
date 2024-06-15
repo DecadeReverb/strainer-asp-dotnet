@@ -1,64 +1,63 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Fluorite.Extensions
+namespace Fluorite.Extensions;
+
+public static class EnumerableExtensions
 {
-    public static class EnumerableExtensions
+    public static IEnumerable<T> Concat<T>(
+        this IEnumerable<T> source,
+        params IEnumerable<T>[] sequences)
     {
-        public static IEnumerable<T> Concat<T>(
-            this IEnumerable<T> source,
-            params IEnumerable<T>[] sequences)
+        if (source is null)
         {
-            if (source is null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (sequences is null)
-            {
-                throw new ArgumentNullException(nameof(sequences));
-            }
-
-            return Enumerable.Concat(source, sequences.SelectMany(x => x));
+            throw new ArgumentNullException(nameof(source));
         }
 
-        public static IDictionary<TKey, TValue> Merge<TKey, TValue>(
-            this IEnumerable<KeyValuePair<TKey, TValue>> keyValuePairs)
+        if (sequences is null)
         {
-            if (keyValuePairs is null)
-            {
-                throw new ArgumentNullException(nameof(keyValuePairs));
-            }
-
-            var result = new Dictionary<TKey, TValue>();
-
-            foreach (var pair in keyValuePairs)
-            {
-                result[pair.Key] = pair.Value;
-            }
-
-            return result;
+            throw new ArgumentNullException(nameof(sequences));
         }
 
-        public static IDictionary<TKey, TValue> ToDictionary<TKey, TValue>(
-            this IEnumerable<KeyValuePair<TKey, TValue>> source)
-        {
-            if (source is null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+        return Enumerable.Concat(source, sequences.SelectMany(x => x));
+    }
 
-            return source.ToDictionary(pair => pair.Key, pair => pair.Value);
+    public static IDictionary<TKey, TValue> Merge<TKey, TValue>(
+        this IEnumerable<KeyValuePair<TKey, TValue>> keyValuePairs)
+    {
+        if (keyValuePairs is null)
+        {
+            throw new ArgumentNullException(nameof(keyValuePairs));
         }
 
-        public static IReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
-            this IEnumerable<KeyValuePair<TKey, TValue>> source)
-        {
-            if (source is null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+        var result = new Dictionary<TKey, TValue>();
 
-            return new ReadOnlyDictionary<TKey, TValue>(source.ToDictionary());
+        foreach (var pair in keyValuePairs)
+        {
+            result[pair.Key] = pair.Value;
         }
+
+        return result;
+    }
+
+    public static IDictionary<TKey, TValue> ToDictionary<TKey, TValue>(
+        this IEnumerable<KeyValuePair<TKey, TValue>> source)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        return source.ToDictionary(pair => pair.Key, pair => pair.Value);
+    }
+
+    public static IReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
+        this IEnumerable<KeyValuePair<TKey, TValue>> source)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        return new ReadOnlyDictionary<TKey, TValue>(source.ToDictionary());
     }
 }

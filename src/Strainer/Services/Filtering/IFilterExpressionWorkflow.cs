@@ -1,9 +1,8 @@
 ﻿using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public interface IFilterExpressionWorkflow
 {
-    public interface IFilterExpressionWorkflow
-    {
-        Expression Run(FilterExpressionWorkflowContext workflowContext);
-    }
+    Expression Run(FilterExpressionWorkflowContext workflowContext);
 }

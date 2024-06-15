@@ -1,39 +1,38 @@
 ﻿using Fluorite.Strainer.Services.Conversion;
 
-namespace Fluorite.Strainer.Services.Filtering.Steps
-{
-    public class ConvertFilterValueToStringStep : IConvertFilterValueToStringStep
-    {
-        private readonly IStringValueConverter _stringValueConverter;
+namespace Fluorite.Strainer.Services.Filtering.Steps;
 
-        public ConvertFilterValueToStringStep(IStringValueConverter stringValueConverter)
+public class ConvertFilterValueToStringStep : IConvertFilterValueToStringStep
+{
+    private readonly IStringValueConverter _stringValueConverter;
+
+    public ConvertFilterValueToStringStep(IStringValueConverter stringValueConverter)
+    {
+        _stringValueConverter = stringValueConverter ?? throw new ArgumentNullException(nameof(stringValueConverter));
+    }
+
+    public void Execute(FilterExpressionWorkflowContext context)
+    {
+        if (context is null)
         {
-            _stringValueConverter = stringValueConverter ?? throw new ArgumentNullException(nameof(stringValueConverter));
+            throw new ArgumentNullException(nameof(context));
         }
 
-        public void Execute(FilterExpressionWorkflowContext context)
+        if (context.Term.Operator.IsStringBased)
         {
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            return;
+        }
 
-            if (context.Term.Operator.IsStringBased)
-            {
-                return;
-            }
+        var canConvertFromString =
+               context.PropertyMetadata.PropertyInfo.PropertyType != typeof(string)
+            && context.TypeConverter.CanConvertFrom(typeof(string));
 
-            var canConvertFromString =
-                   context.PropertyMetadata.PropertyInfo.PropertyType != typeof(string)
-                && context.TypeConverter.CanConvertFrom(typeof(string));
-
-            if (canConvertFromString)
-            {
-                context.FilterTermConstant = _stringValueConverter.Convert(
-                    context.FilterTermValue,
-                    context.PropertyMetadata.PropertyInfo.PropertyType,
-                    context.TypeConverter);
-            }
+        if (canConvertFromString)
+        {
+            context.FilterTermConstant = _stringValueConverter.Convert(
+                context.FilterTermValue,
+                context.PropertyMetadata.PropertyInfo.PropertyType,
+                context.TypeConverter);
         }
     }
 }

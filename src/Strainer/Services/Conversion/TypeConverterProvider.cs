@@ -1,19 +1,18 @@
 ﻿using System.ComponentModel;
 
-namespace Fluorite.Strainer.Services.Conversion
+namespace Fluorite.Strainer.Services.Conversion;
+
+public class TypeConverterProvider : ITypeConverterProvider
 {
-    public class TypeConverterProvider : ITypeConverterProvider
+    public ITypeConverter GetTypeConverter(Type type)
     {
-        public ITypeConverter GetTypeConverter(Type type)
+        if (type is null)
         {
-            if (type is null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            var typeConverter = TypeDescriptor.GetConverter(type);
-
-            return new ComponentModelTypeConverter(typeConverter);
+            throw new ArgumentNullException(nameof(type));
         }
+
+        var typeConverter = TypeDescriptor.GetConverter(type);
+
+        return new ComponentModelTypeConverter(typeConverter);
     }
 }

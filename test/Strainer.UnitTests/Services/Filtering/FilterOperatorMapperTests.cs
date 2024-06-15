@@ -1,37 +1,36 @@
 ﻿using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Validation;
 
-namespace Fluorite.Strainer.UnitTests.Services.Filtering
+namespace Fluorite.Strainer.UnitTests.Services.Filtering;
+
+public class FilterOperatorMapperTests
 {
-    public class FilterOperatorMapperTests
+    [Fact]
+    public void Mapper_ReturnsNull_WhenNoMatchingOperatorIsFound()
     {
-        [Fact]
-        public void Mapper_ReturnsNull_WhenNoMatchingOperatorIsFound()
-        {
-            // Arrange
-            var symbol = string.Empty;
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
+        // Arrange
+        var symbol = string.Empty;
+        var validator = new FilterOperatorValidator();
+        var mapper = new FilterOperatorMapper(validator);
 
-            // Act
-            var filterOperator = mapper.Find(symbol);
+        // Act
+        var filterOperator = mapper.Find(symbol);
 
-            // Assert
-            filterOperator.Should().BeNull();
-        }
+        // Assert
+        filterOperator.Should().BeNull();
+    }
 
-        [Fact]
-        public void Mapper_IsNotEmpty()
-        {
-            // Arrange
-            var validator = new FilterOperatorValidator();
-            var mapper = new FilterOperatorMapper(validator);
+    [Fact]
+    public void Mapper_IsNotEmpty()
+    {
+        // Arrange
+        var validator = new FilterOperatorValidator();
+        var mapper = new FilterOperatorMapper(validator);
 
-            // Act
-            var filterOperatorsAmount = mapper.Count;
+        // Act
+        var filterOperatorsAmount = mapper.Count;
 
-            // Assert
-            filterOperatorsAmount.Should().BeGreaterThan(0);
-        }
+        // Assert
+        filterOperatorsAmount.Should().BeGreaterThan(0);
     }
 }

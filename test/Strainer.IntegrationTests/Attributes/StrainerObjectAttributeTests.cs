@@ -2,223 +2,222 @@
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.IntegrationTests.Attributes
+namespace Fluorite.Strainer.IntegrationTests.Attributes;
+
+public class StrainerObjectAttributeTests : StrainerFixtureBase
 {
-    public class StrainerObjectAttributeTests : StrainerFixtureBase
+    public StrainerObjectAttributeTests(StrainerFactory factory) : base(factory)
     {
-        public StrainerObjectAttributeTests(StrainerFactory factory) : base(factory)
-        {
 
-        }
+    }
 
-        [Fact]
-        public void StrainerObjectAttribute_With_TurnedOffFilters_DoesNotWork()
+    [Fact]
+    public void StrainerObjectAttribute_With_TurnedOffFilters_DoesNotWork()
+    {
+        // Arrange
+        var source = new[]
         {
-            // Arrange
-            var source = new[]
+            new EmptyTestEntity
             {
-                new EmptyTestEntity
-                {
-                    Name = "foo",
-                },
-                new EmptyTestEntity
-                {
-                    Name = "bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel
+                Name = "foo",
+            },
+            new EmptyTestEntity
             {
-                Filters = "Name==foo",
-            };
-
-            // Act
-            var result = processor.Apply(model, source);
-
-            // Assert
-            result.Should().BeEquivalentTo(source);
-        }
-
-        [Fact]
-        public void StrainerObjectAttribute_Sortable_Works()
+                Name = "bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor();
+        var model = new StrainerModel
         {
-            // Arrange
-            var source = new[]
+            Filters = "Name==foo",
+        };
+
+        // Act
+        var result = processor.Apply(model, source);
+
+        // Assert
+        result.Should().BeEquivalentTo(source);
+    }
+
+    [Fact]
+    public void StrainerObjectAttribute_Sortable_Works()
+    {
+        // Arrange
+        var source = new[]
+        {
+            new SortableTestEntity
             {
-                new SortableTestEntity
-                {
-                    Name = "foo",
-                },
-                new SortableTestEntity
-                {
-                    Name = "bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel
+                Name = "foo",
+            },
+            new SortableTestEntity
             {
-                Sorts = "Name",
-            };
-
-            // Act
-            var result = processor.ApplySorting(model, source);
-
-            // Assert
-            result.Should().BeInAscendingOrder(e => e.Name);
-        }
-
-        [Fact]
-        public void StrainerObjectAttribute_Filterable_Works()
+                Name = "bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor();
+        var model = new StrainerModel
         {
-            // Arrange
-            var source = new[]
+            Sorts = "Name",
+        };
+
+        // Act
+        var result = processor.ApplySorting(model, source);
+
+        // Assert
+        result.Should().BeInAscendingOrder(e => e.Name);
+    }
+
+    [Fact]
+    public void StrainerObjectAttribute_Filterable_Works()
+    {
+        // Arrange
+        var source = new[]
+        {
+            new FilterableTestEntity
             {
-                new FilterableTestEntity
-                {
-                    Name = "foo",
-                },
-                new FilterableTestEntity
-                {
-                    Name = "bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel
+                Name = "foo",
+            },
+            new FilterableTestEntity
             {
-                Filters = "Name==foo",
-            };
-
-            // Act
-            var result = processor.ApplyFiltering(model, source);
-
-            // Assert
-            result.Should().OnlyContain(e => e.Name == "foo");
-        }
-
-        [Fact]
-        public void StrainerObjectAttribute_FilterableAndSortable_Works()
+                Name = "bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor();
+        var model = new StrainerModel
         {
-            // Arrange
-            var source = new[]
+            Filters = "Name==foo",
+        };
+
+        // Act
+        var result = processor.ApplyFiltering(model, source);
+
+        // Assert
+        result.Should().OnlyContain(e => e.Name == "foo");
+    }
+
+    [Fact]
+    public void StrainerObjectAttribute_FilterableAndSortable_Works()
+    {
+        // Arrange
+        var source = new[]
+        {
+            new FilterableAndSortableTestEntity
             {
-                new FilterableAndSortableTestEntity
-                {
-                    Name = "fooZ",
-                },
-                new FilterableAndSortableTestEntity
-                {
-                    Name = "fooA",
-                },
-                new FilterableAndSortableTestEntity
-                {
-                    Name = "bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel
+                Name = "fooZ",
+            },
+            new FilterableAndSortableTestEntity
             {
-                Filters = "Name@=foo",
-                Sorts = "Name",
-            };
-
-            // Act
-            var result = processor.Apply(model, source);
-
-            // Assert
-            result.Should().OnlyContain(e => e.Name.Contains("foo", StringComparison.OrdinalIgnoreCase));
-            result.Should().BeInAscendingOrder(e => e.Name);
-        }
-
-        [Fact]
-        public void StrainerObjectAttribute_Sortable_Works_For_BaseProperties()
-        {
-            // Arrange
-            var source = new[]
+                Name = "fooA",
+            },
+            new FilterableAndSortableTestEntity
             {
-                new DerivedTestEntity
-                {
-                    Name = "foo",
-                },
-                new DerivedTestEntity
-                {
-                    Name = "bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel
+                Name = "bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor();
+        var model = new StrainerModel
+        {
+            Filters = "Name@=foo",
+            Sorts = "Name",
+        };
+
+        // Act
+        var result = processor.Apply(model, source);
+
+        // Assert
+        result.Should().OnlyContain(e => e.Name.Contains("foo", StringComparison.OrdinalIgnoreCase));
+        result.Should().BeInAscendingOrder(e => e.Name);
+    }
+
+    [Fact]
+    public void StrainerObjectAttribute_Sortable_Works_For_BaseProperties()
+    {
+        // Arrange
+        var source = new[]
+        {
+            new DerivedTestEntity
             {
-                Sorts = "Name",
-            };
-
-            // Act
-            var result = processor.ApplySorting(model, source);
-
-            // Assert
-            result.Should().BeInAscendingOrder(e => e.Name);
-        }
-
-        [Fact]
-        public void StrainerObjectAttribute_Filterable_Does_Not_Override_Property_Attributes()
-        {
-            // Arrange
-            var source = new[]
+                Name = "foo",
+            },
+            new DerivedTestEntity
             {
-                new ObjectAndPropertyAttributesEntity
-                {
-                    Name = "foo",
-                },
-                new ObjectAndPropertyAttributesEntity
-                {
-                    Name = "bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor();
-            var model = new StrainerModel
+                Name = "bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor();
+        var model = new StrainerModel
+        {
+            Sorts = "Name",
+        };
+
+        // Act
+        var result = processor.ApplySorting(model, source);
+
+        // Assert
+        result.Should().BeInAscendingOrder(e => e.Name);
+    }
+
+    [Fact]
+    public void StrainerObjectAttribute_Filterable_Does_Not_Override_Property_Attributes()
+    {
+        // Arrange
+        var source = new[]
+        {
+            new ObjectAndPropertyAttributesEntity
             {
-                Filters = "Name==foo",
-            };
-
-            // Act
-            var result = processor.ApplyFiltering(model, source);
-
-            // Assert
-            result.Should().OnlyContain(e => e.Name == "foo");
-        }
-
-        [StrainerObject(nameof(Name), IsFilterable = false)]
-        private class EmptyTestEntity
+                Name = "foo",
+            },
+            new ObjectAndPropertyAttributesEntity
+            {
+                Name = "bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor();
+        var model = new StrainerModel
         {
-            public string Name { get; set; }
-        }
+            Filters = "Name==foo",
+        };
 
-        private class DerivedTestEntity : SortableTestEntity
-        {
+        // Act
+        var result = processor.ApplyFiltering(model, source);
 
-        }
+        // Assert
+        result.Should().OnlyContain(e => e.Name == "foo");
+    }
 
-        [StrainerObject(nameof(Name), IsFilterable = false)]
-        private class ObjectAndPropertyAttributesEntity
-        {
-            [StrainerProperty]
-            public string Name { get; set; }
-        }
+    [StrainerObject(nameof(Name), IsFilterable = false)]
+    private class EmptyTestEntity
+    {
+        public string Name { get; set; }
+    }
 
-        [StrainerObject(nameof(Name), IsFilterable = true)]
-        private class FilterableTestEntity
-        {
-            public string Name { get; set; }
-        }
+    private class DerivedTestEntity : SortableTestEntity
+    {
 
-        [StrainerObject(nameof(Name), IsSortable = true)]
-        private class SortableTestEntity
-        {
-            public string Name { get; set; }
-        }
+    }
 
-        [StrainerObject(nameof(Name), IsFilterable = true, IsSortable = true)]
-        private class FilterableAndSortableTestEntity
-        {
-            public string Name { get; set; }
-        }
+    [StrainerObject(nameof(Name), IsFilterable = false)]
+    private class ObjectAndPropertyAttributesEntity
+    {
+        [StrainerProperty]
+        public string Name { get; set; }
+    }
+
+    [StrainerObject(nameof(Name), IsFilterable = true)]
+    private class FilterableTestEntity
+    {
+        public string Name { get; set; }
+    }
+
+    [StrainerObject(nameof(Name), IsSortable = true)]
+    private class SortableTestEntity
+    {
+        public string Name { get; set; }
+    }
+
+    [StrainerObject(nameof(Name), IsFilterable = true, IsSortable = true)]
+    private class FilterableAndSortableTestEntity
+    {
+        public string Name { get; set; }
     }
 }

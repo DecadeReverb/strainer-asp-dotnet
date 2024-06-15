@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Filtering
+﻿namespace Fluorite.Strainer.Services.Filtering;
+
+public interface IFilterOperatorMapper
 {
-    public interface IFilterOperatorMapper
-    {
-        IFilterOperatorBuilder Operator(string symbol);
-    }
+    IFilterOperatorBuilder Operator(string symbol);
 }

@@ -4,46 +4,45 @@ using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Metadata;
 using System.Collections;
 
-namespace Fluorite.Strainer.UnitTests.Services.Metadata
+namespace Fluorite.Strainer.UnitTests.Services.Metadata;
+
+public class MetadataSourceCheckerTests
 {
-    public class MetadataSourceCheckerTests
+    private readonly IStrainerOptionsProvider _strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
+    private readonly MetadataSourceChecker _checker;
+
+    public MetadataSourceCheckerTests()
     {
-        private readonly IStrainerOptionsProvider _strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
-        private readonly MetadataSourceChecker _checker;
+        _checker = new MetadataSourceChecker(_strainerOptionsProviderMock);
+    }
 
-        public MetadataSourceCheckerTests()
+    [Theory]
+    [ClassData(typeof(MetadataSourceTypeTestData))]
+    public void Should_Check_IfMetadataSourceIsEnabled(MetadataSourceType sourceType)
+    {
+        // Arrange
+        var strainerOptions = new StrainerOptions
         {
-            _checker = new MetadataSourceChecker(_strainerOptionsProviderMock);
+            MetadataSourceType = sourceType,
+        };
+        _strainerOptionsProviderMock
+            .GetStrainerOptions()
+            .Returns(strainerOptions);
+
+        // Act
+        var result = _checker.IsMetadataSourceEnabled(sourceType);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    public class MetadataSourceTypeTestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            return Enum.GetValues<MetadataSourceType>().Cast<object>().Chunk(1).GetEnumerator();
         }
 
-        [Theory]
-        [ClassData(typeof(MetadataSourceTypeTestData))]
-        public void Should_Check_IfMetadataSourceIsEnabled(MetadataSourceType sourceType)
-        {
-            // Arrange
-            var strainerOptions = new StrainerOptions
-            {
-                MetadataSourceType = sourceType,
-            };
-            _strainerOptionsProviderMock
-                .GetStrainerOptions()
-                .Returns(strainerOptions);
-
-            // Act
-            var result = _checker.IsMetadataSourceEnabled(sourceType);
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        public class MetadataSourceTypeTestData : IEnumerable<object[]>
-        {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                return Enum.GetValues<MetadataSourceType>().Cast<object>().Chunk(1).GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

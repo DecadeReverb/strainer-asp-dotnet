@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Sorting
+﻿namespace Fluorite.Strainer.Services.Sorting;
+
+public interface ISortTermValueParser
 {
-    public interface ISortTermValueParser
-    {
-        string[] GetParsedValues(string input);
-    }
+    string[] GetParsedValues(string input);
 }

@@ -1,17 +1,16 @@
 ﻿using Fluorite.Strainer.Services.Validation;
 
-namespace Fluorite.Strainer.Services.Sorting
+namespace Fluorite.Strainer.Services.Sorting;
+
+public interface ISortingContext
 {
-    public interface ISortingContext
-    {
-        ISortExpressionProvider ExpressionProvider { get; }
+    ISortExpressionProvider ExpressionProvider { get; }
 
-        ISortExpressionValidator ExpressionValidator { get; }
+    ISortExpressionValidator ExpressionValidator { get; }
 
-        ISortingWayFormatter Formatter { get; }
+    ISortingWayFormatter Formatter { get; }
 
-        ISortTermParser TermParser { get; }
+    ISortTermParser TermParser { get; }
 
-        ISortTermValueParser TermValueParser { get; }
-    }
+    ISortTermValueParser TermValueParser { get; }
 }
