@@ -126,8 +126,7 @@ public class FluentApiMetadataProvider : IMetadataProvider
 
     private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadataKeyValuePair(Type type)
     {
-        // TODO:
-        // Shouldn't property metadata override object metadata, but still be returned?
+        // TODO: Shouldn't property metadata override object metadata, but still be returned?
         // So type-wide config is set with object call, but property call overrides that for some special case?
         var propertyMetadataDictionary = _metadataProvider.GetPropertyMetadata();
         if (propertyMetadataDictionary.TryGetValue(type, out var metadatas))

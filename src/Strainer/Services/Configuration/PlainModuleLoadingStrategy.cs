@@ -20,7 +20,6 @@ public class PlainModuleLoadingStrategy : IPlainModuleLoadingStrategy, IModuleLo
     {
         Guard.Against.Null(strainerModule);
 
-        // TODO: Use factory for builder?
         var options = _strainerOptionsProvider.GetStrainerOptions();
         var builder = new StrainerModuleBuilder(_propertyInfoProvider, strainerModule, options);
 

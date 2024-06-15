@@ -8,8 +8,7 @@ public class MetadataSourceTypeProvider : IMetadataSourceTypeProvider
     {
         Guard.Against.Null(assemblies);
 
-        // TODO:
-        // Check if TraceDataCollector is still causing an issue.
+        // TODO: Check if TraceDataCollector is still causing an issue.
         return assemblies
             .Where(assembly => !assembly.FullName.StartsWith("Microsoft.VisualStudio.TraceDataCollector"))
             .SelectMany(assembly => assembly.GetTypes())
