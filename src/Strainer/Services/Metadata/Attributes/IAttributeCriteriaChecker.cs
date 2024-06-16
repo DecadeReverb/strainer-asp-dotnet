@@ -10,5 +10,11 @@ public interface IAttributeCriteriaChecker
         PropertyInfo propertyInfo,
         bool isSortableRequired,
         bool isFilterableRequired);
-    bool CheckIfPropertyAttributeIsMatching(StrainerPropertyAttribute attribute, PropertyInfo propertyInfo, bool isSortableRequired, bool isFilterableRequired, string name);
+
+    bool CheckIfPropertyAttributeIsMatching(
+        StrainerPropertyAttribute attribute,
+        PropertyInfo propertyInfo,
+        bool isSortableRequired,
+        bool isFilterableRequired,
+        string name);
 }
