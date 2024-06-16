@@ -490,6 +490,7 @@ public static class StrainerServiceCollectionExtensions
 
         services.Add<IAttributePropertyMetadataBuilder, AttributePropertyMetadataBuilder>(serviceLifetime);
         services.Add<IAttributeMetadataRetriever, AttributeMetadataRetriever>(serviceLifetime);
+        services.Add<IAttributeCriteriaChecker, AttributeCriteriaChecker>(serviceLifetime);
         services.Add<IStrainerAttributeProvider, StrainerAttributeProvider>(serviceLifetime);
         services.Add<IPropertyMetadataDictionaryProvider, PropertyMetadataDictionaryProvider>(serviceLifetime);
         services.Add<IPropertyInfoProvider, PropertyInfoProvider>(serviceLifetime);

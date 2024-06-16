@@ -10,19 +10,22 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
     private readonly IPropertyMetadataDictionaryProvider _propertyMetadataDictionaryProvider;
     private readonly IStrainerAttributeProvider _strainerAttributeProvider;
     private readonly IPropertyInfoProvider _propertyInfoProvider;
+    private readonly IAttributeCriteriaChecker _attributeCriteriaChecker;
 
     public AttributeMetadataRetriever(
         IMetadataSourceChecker metadataSourceChecker,
         IAttributePropertyMetadataBuilder attributePropertyMetadataBuilder,
         IPropertyMetadataDictionaryProvider propertyMetadataDictionaryProvider,
         IStrainerAttributeProvider strainerAttributeProvider,
-        IPropertyInfoProvider propertyInfoProvider)
+        IPropertyInfoProvider propertyInfoProvider,
+        IAttributeCriteriaChecker attributeCriteriaChecker)
     {
         _metadataSourceChecker = Guard.Against.Null(metadataSourceChecker);
         _attributePropertyMetadataBuilder = Guard.Against.Null(attributePropertyMetadataBuilder);
         _strainerAttributeProvider = Guard.Against.Null(strainerAttributeProvider);
         _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
         _propertyMetadataDictionaryProvider = Guard.Against.Null(propertyMetadataDictionaryProvider);
+        _attributeCriteriaChecker = Guard.Against.Null(attributeCriteriaChecker);
     }
 
     public IPropertyMetadata GetDefaultMetadataFromObjectAttribute(Type modelType)
@@ -75,8 +78,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         var attribute = _propertyInfoProvider
             .GetPropertyInfos(modelType)
             .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
-            .Where(attribute => attribute != null)
-            .FirstOrDefault(attribute => attribute.IsDefaultSorting);
+            .FirstOrDefault(attribute => attribute is not null && attribute.IsDefaultSorting);
 
         if (attribute != null)
         {
@@ -94,10 +96,12 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         return attribute;
     }
 
-    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromObjectAttributes(ICollection<Type> types)
+    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromObjectAttributes(
+        ICollection<Type> types)
     {
         Guard.Against.Null(types);
 
+        // TODO: Shouldn't this return empty dictionary if attribute-based metadata is disabled?
         return types
             .Select(type => new
             {
@@ -114,7 +118,8 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
             .ToReadOnly();
     }
 
-    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromPropertyAttributes(ICollection<Type> types)
+    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetMetadataDictionaryFromPropertyAttributes(
+        ICollection<Type> types)
     {
         Guard.Against.Null(types);
 
@@ -149,11 +154,13 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         {
             var attribute = _strainerAttributeProvider.GetObjectAttribute(currentType);
             var propertyInfo = _propertyInfoProvider.GetPropertyInfo(currentType, name);
+            var isMatching = _attributeCriteriaChecker.CheckIfObjectAttributeIsMatching(
+                attribute,
+                propertyInfo,
+                isSortableRequired,
+                isFilterableRequired);
 
-            if (attribute != null
-                && propertyInfo != null
-                && (!isSortableRequired || attribute.IsSortable)
-                && (!isFilterableRequired || attribute.IsFilterable))
+            if (isMatching)
             {
                 return _attributePropertyMetadataBuilder.BuildPropertyMetadata(attribute, propertyInfo);
             }
@@ -182,25 +189,22 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
 
         var keyValue = _propertyInfoProvider
             .GetPropertyInfos(modelType)
-            .Select(propertyInfo =>
+            .Select(propertyInfo => new
             {
-                var attribute = _strainerAttributeProvider.GetPropertyAttribute(propertyInfo);
-
-                return new
-                {
-                    propertyInfo,
-                    attribute,
-                };
+                propertyInfo,
+                attribute = _strainerAttributeProvider.GetPropertyAttribute(propertyInfo),
             })
-            .Where(x => x.attribute != null)
             .FirstOrDefault(x =>
             {
                 var propertyInfo = x.propertyInfo;
                 var attribute = x.attribute;
 
-                return (!isSortableRequired || attribute.IsSortable)
-                    && (!isFilterableRequired || attribute.IsFilterable)
-                    && (attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name);
+                return _attributeCriteriaChecker.CheckIfPropertyAttributeIsMatching(
+                    attribute,
+                    propertyInfo,
+                    isSortableRequired,
+                    isFilterableRequired,
+                    name);
             });
 
         return keyValue?.attribute;
@@ -246,7 +250,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
             .GetPropertyInfos(modelType)
             .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
             .Where(attribute => attribute != null)
-            .Select(attribute => (IPropertyMetadata)attribute);
+            .Cast<IPropertyMetadata>();
 
         return metadata.Any()
             ? metadata

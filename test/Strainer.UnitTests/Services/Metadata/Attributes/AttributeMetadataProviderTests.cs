@@ -73,11 +73,26 @@ public class AttributeMetadataProviderTests
     }
 
     [Fact]
-    public void Provider_Returns_DefaultMetadata()
+    public void Provider_Returns_DefaultMetadata_ForObject()
     {
         // Arrange
         _attributeMetadataRetrieverMock
             .GetDefaultMetadataFromObjectAttribute(typeof(Comment))
+            .Returns(Substitute.For<IPropertyMetadata>());
+
+        // Act
+        var result = _provider.GetDefaultMetadata<Comment>();
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Provider_Returns_DefaultMetadata_ForProperty()
+    {
+        // Arrange
+        _attributeMetadataRetrieverMock
+            .GetDefaultMetadataFromPropertyAttribute(typeof(Comment))
             .Returns(Substitute.For<IPropertyMetadata>());
 
         // Act
