@@ -32,7 +32,7 @@ public class AttributeMetadataRetrieverTests
     public void Retriever_Returns_NullDefaultMetadata_ForObject_WhenObjectAttributeMetadataIsDisabled()
     {
         // Arrange
-        var modelType = typeof(Comment);
+        var modelType = typeof(string);
 
         // Act
         var result = _retriever.GetDefaultMetadataFromObjectAttribute(modelType);
@@ -42,11 +42,41 @@ public class AttributeMetadataRetrieverTests
     }
 
     [Fact]
+    public void Retriever_Throws_WhenDefaultMetadata_ForObject_DoesNotExist()
+    {
+        // Arrange
+        var modelType = typeof(string);
+        var defaultSortingPropertyName = nameof(string.Length);
+        var objectAttribute = new StrainerObjectAttribute(defaultSortingPropertyName)
+        {
+            IsSortable = false,
+        };
+        var propertyInfo = modelType.GetProperty(defaultSortingPropertyName);
+        var defaultPropertyMetadata = new PropertyMetadata();
+
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes)
+            .Returns(true);
+        _strainerAttributeProviderMock
+            .GetObjectAttribute(modelType)
+            .Returns(objectAttribute);
+        _propertyInfoProviderMock
+            .GetPropertyInfo(modelType, objectAttribute.DefaultSortingPropertyName)
+            .ReturnsNull();
+
+        // Act
+        Action act = () => _retriever.GetDefaultMetadataFromObjectAttribute(modelType);
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
     public void Retriever_Returns_DefaultMetadata_ForObject()
     {
         // Arrange
-        var modelType = typeof(Comment);
-        var defaultSortingPropertyName = nameof(Comment.Content);
+        var modelType = typeof(string);
+        var defaultSortingPropertyName = nameof(string.Length);
         var objectAttribute = new StrainerObjectAttribute(defaultSortingPropertyName);
         var propertyInfo = modelType.GetProperty(defaultSortingPropertyName);
         var defaultPropertyMetadata = new PropertyMetadata();
@@ -76,7 +106,7 @@ public class AttributeMetadataRetrieverTests
     public void Retriever_Returns_NullDefaultMetadata_ForProperty_WhenPropertyAttributeMetadataIsDisabled()
     {
         // Arrange
-        var modelType = typeof(Post);
+        var modelType = typeof(string);
 
         // Act
         var result = _retriever.GetDefaultMetadataFromPropertyAttribute(modelType);
@@ -86,14 +116,52 @@ public class AttributeMetadataRetrieverTests
     }
 
     [Fact]
-    public void Retriever_Returns_DefaultMetadata_ForProperty()
+    public void Retriever_Throws_WhenGettingDefaultMetadata_ForProperty_ThatIsNotSortable()
     {
         // Arrange
-        var modelType = typeof(Post);
-        var defaultSortingPropertyName = nameof(Post.Title);
+        var modelType = typeof(string);
+        var propertyInfo = modelType.GetProperty(nameof(string.Length));
         var propertyAttribute = new StrainerPropertyAttribute()
         {
             IsDefaultSorting = true,
+            IsSortable = false,
+            PropertyInfo = propertyInfo,
+        };
+        var propertyInfos = new[] { propertyInfo };
+
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes)
+            .Returns(true);
+        _propertyInfoProviderMock
+            .GetPropertyInfos(modelType)
+            .Returns(propertyInfos);
+        _strainerAttributeProviderMock
+            .GetPropertyAttribute(propertyInfo)
+            .Returns(propertyAttribute);
+
+        // Act
+        Action act = () => _retriever.GetDefaultMetadataFromPropertyAttribute(modelType);
+
+        // Assert
+        act.Should().ThrowExactly<InvalidOperationException>()
+            .WithMessage(
+                $"Property * " +
+                $"is declared as {nameof(IPropertyMetadata.IsDefaultSorting)} " +
+                $"but not as {nameof(IPropertyMetadata.IsSortable)}. " +
+                $"Set the {nameof(IPropertyMetadata.IsSortable)} to true " +
+                $"in order to use the property as a default sortable property.");
+    }
+
+    [Fact]
+    public void Retriever_Returns_DefaultMetadata_ForProperty()
+    {
+        // Arrange
+        var modelType = typeof(string);
+        var defaultSortingPropertyName = nameof(string.Length);
+        var propertyAttribute = new StrainerPropertyAttribute()
+        {
+            IsDefaultSorting = true,
+            IsSortable = true,
         };
         var propertyInfo = modelType.GetProperty(defaultSortingPropertyName);
         var propertyInfos = new[] { propertyInfo };
@@ -120,10 +188,10 @@ public class AttributeMetadataRetrieverTests
     public void Retriever_Returns_MetadataDictionary_FromObjects()
     {
         // Arrange
-        var validType = typeof(Comment);
-        var invalidType = typeof(Post);
+        var validType = typeof(string);
+        var invalidType = typeof(object);
         var types = new[] { validType, invalidType };
-        var defaultSortingPropertyName = nameof(Comment.Content);
+        var defaultSortingPropertyName = nameof(string.Length);
         var objectAttribute = new StrainerObjectAttribute(defaultSortingPropertyName);
         var propertyMetadata = new PropertyMetadata();
         var metadataDictionary = new Dictionary<string, IPropertyMetadata>
@@ -154,10 +222,10 @@ public class AttributeMetadataRetrieverTests
     public void Retriever_Returns_MetadataDictionary_FromProperties()
     {
         // Arrange
-        var validType = typeof(Comment);
-        var invalidType = typeof(Post);
+        var validType = typeof(string);
+        var invalidType = typeof(object);
         var types = new[] { validType, invalidType };
-        var defaultSortingPropertyName = nameof(Comment.Content);
+        var defaultSortingPropertyName = nameof(string.Length);
         var propertyMetadata = new PropertyMetadata();
         var metadataDictionary = new Dictionary<string, IPropertyMetadata>
         {
@@ -178,17 +246,5 @@ public class AttributeMetadataRetrieverTests
         result.Should().NotBeNullOrEmpty();
         result.Keys.Should().BeEquivalentTo(new[] { validType });
         result.Values.Single().Should().BeSameAs(metadataDictionary);
-    }
-
-    [StrainerObject(nameof(Content))]
-    private class Comment
-    {
-        public string Content { get; set; }
-    }
-
-    private class Post
-    {
-        [StrainerProperty(IsDefaultSorting = true)]
-        public string Title { get; set; }
     }
 }
