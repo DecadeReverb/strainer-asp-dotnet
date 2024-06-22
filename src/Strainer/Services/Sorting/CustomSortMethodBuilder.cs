@@ -9,10 +9,10 @@ public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity
     private readonly IDictionary<Type, IDictionary<string, ICustomSortMethod>> _customMethods;
 
     public CustomSortMethodBuilder(
-        IDictionary<Type, IDictionary<string, ICustomSortMethod>> customFilterMethodsDictionary,
+        IDictionary<Type, IDictionary<string, ICustomSortMethod>> customSortMethodsDictionary,
         string name)
     {
-        _customMethods = Guard.Against.Null(customFilterMethodsDictionary);
+        _customMethods = Guard.Against.Null(customSortMethodsDictionary);
         Name = Guard.Against.NullOrWhiteSpace(name);
     }
 
