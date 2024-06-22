@@ -17,7 +17,7 @@ public interface ICustomSortMethod<T> : ICustomSortMethod
     Expression<Func<T, object>> Expression { get; }
 
     /// <summary>
-    /// Gets the function used for custom sorting.
+    /// Gets the provider for function used for custom sorting.
     /// </summary>
     Func<ISortTerm, Expression<Func<T, object>>> SortTermExpression { get; }
 }
