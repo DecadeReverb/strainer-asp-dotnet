@@ -18,8 +18,8 @@ public class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
     }
 
     /// <summary>
-    /// Gets or sets a function leading to <see cref="System.Linq.Expressions.Expression"/>
-    /// associated to current operator.
+    /// Gets or sets a func providing an <see cref="System.Linq.Expressions.Expression"/>
+    /// with filter operator applied when supplied a <see cref="IFilterExpressionContext"/>.
     /// </summary>
     public Func<IFilterExpressionContext, Expression> Expression { get; set;  }
 

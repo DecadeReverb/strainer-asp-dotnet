@@ -8,8 +8,8 @@ namespace Fluorite.Strainer.Models.Filtering.Operators;
 public interface IFilterOperator
 {
     /// <summary>
-    /// Gets a function leading to <see cref="System.Linq.Expressions.Expression"/>
-    /// associated to current operator.
+    /// Gets a func providing an <see cref="System.Linq.Expressions.Expression"/>
+    /// with filter operator applied when supplied a <see cref="IFilterExpressionContext"/>.
     /// </summary>
     Func<IFilterExpressionContext, Expression> Expression { get; }
 

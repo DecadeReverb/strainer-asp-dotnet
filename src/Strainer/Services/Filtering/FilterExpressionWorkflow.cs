@@ -3,8 +3,7 @@
 namespace Fluorite.Strainer.Services.Filtering;
 
 /// <summary>
-/// Represents a workflow, that when provided with context
-/// with produces a filtering expression.
+/// Represents a workflow, that when provided with context produces a filtering expression.
 /// </summary>
 public class FilterExpressionWorkflow : IFilterExpressionWorkflow
 {
@@ -22,6 +21,9 @@ public class FilterExpressionWorkflow : IFilterExpressionWorkflow
     }
 
     /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="workflowContext"/> is <see langword="null"/>.
+    /// </exception>
     public Expression Run(FilterExpressionWorkflowContext workflowContext)
     {
         Guard.Against.Null(workflowContext);
