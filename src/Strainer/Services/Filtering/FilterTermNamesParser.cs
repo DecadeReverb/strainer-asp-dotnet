@@ -13,7 +13,7 @@ public class FilterTermNamesParser : IFilterTermNamesParser
             return new List<string>();
         }
 
-        return Regex.Split(input, EscapedPipePattern)
+        return Regex.Split(input, EscapedPipePattern, RegexOptions.None, TimeSpan.FromMilliseconds(100))
             .Select(filterName => filterName.Trim())
             .Where(filterName => !string.IsNullOrWhiteSpace(filterName))
             .ToList();

@@ -32,20 +32,22 @@ public class FilterTermParser : IFilterTermParser
             return new List<IFilterTerm>();
         }
 
-        var list = new List<IFilterTerm>();
-        foreach (var filter in Regex.Split(input, EscapedCommaPattern))
+        var terms = new List<IFilterTerm>();
+        var inputParts = Regex.Split(input, EscapedCommaPattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+        foreach (var filterPart in inputParts)
         {
-            if (string.IsNullOrWhiteSpace(filter))
+            if (string.IsNullOrWhiteSpace(filterPart))
             {
                 continue;
             }
 
-            string filterTermInput = filter;
+            string filterTermInput = filterPart;
 
-            if (filter.StartsWith("("))
+            if (filterPart.StartsWith("("))
             {
-                var filterOperatorAndValue = ParseFilterOperatorAndValue(filter);
-                var subfilters = ParseSubfilters(filter, filterOperatorAndValue);
+                var filterOperatorAndValue = ParseFilterOperatorAndValue(filterPart);
+                var subfilters = ParseSubfilters(filterPart, filterOperatorAndValue);
                 filterTermInput = subfilters + filterOperatorAndValue;
             }
 
@@ -55,10 +57,10 @@ public class FilterTermParser : IFilterTermParser
                 continue;
             }
 
-            list.Add(filterTerm);
+            terms.Add(filterTerm);
         }
 
-        return list;
+        return terms;
     }
 
     private IFilterTerm ParseFilterTerm(string input)

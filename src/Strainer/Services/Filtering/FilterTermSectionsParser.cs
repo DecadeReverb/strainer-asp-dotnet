@@ -23,7 +23,7 @@ public class FilterTermSectionsParser : IFilterTermSectionsParser
             .OrderByDescending(s => s.Length)
             .ToArray();
         var splitPattern = string.Join("|", symbols.Select(s => $"({Regex.Escape(s)})"));
-        var substrings = Regex.Split(input, splitPattern);
+        var substrings = Regex.Split(input, splitPattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
         if (substrings.Length <= 1)
         {
