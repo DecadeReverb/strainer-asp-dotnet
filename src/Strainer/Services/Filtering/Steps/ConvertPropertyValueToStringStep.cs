@@ -14,7 +14,7 @@ public class ConvertPropertyValueToStringStep : IConvertPropertyValueToStringSte
             {
                 context.PropertyValue = Expression.Call(
                     context.PropertyValue,
-                    typeof(object).GetMethod(nameof(object.ToString)));
+                    typeof(object).GetMethod(nameof(ToString)));
             }
         }
     }
