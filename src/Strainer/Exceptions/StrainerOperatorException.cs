@@ -4,9 +4,9 @@ using System.Runtime.Serialization;
 
 namespace Fluorite.Strainer.Exceptions;
 
-public class StrainerUnsupportedOperatorException : StrainerException
+public class StrainerOperatorException : StrainerException
 {
-    public StrainerUnsupportedOperatorException(
+    public StrainerOperatorException(
         IFilterOperator filterOperator,
         PropertyInfo propertyInfo,
         object value)
@@ -16,7 +16,7 @@ public class StrainerUnsupportedOperatorException : StrainerException
         Value = value;
     }
 
-    public StrainerUnsupportedOperatorException(
+    public StrainerOperatorException(
         string message,
         IFilterOperator filterOperator,
         PropertyInfo propertyInfo,
@@ -28,7 +28,7 @@ public class StrainerUnsupportedOperatorException : StrainerException
         Value = value;
     }
 
-    public StrainerUnsupportedOperatorException(
+    public StrainerOperatorException(
         string message,
         Exception innerException,
         IFilterOperator filterOperator,
@@ -41,7 +41,7 @@ public class StrainerUnsupportedOperatorException : StrainerException
         Value = value;
     }
 
-    protected StrainerUnsupportedOperatorException(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected StrainerOperatorException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
 
     }

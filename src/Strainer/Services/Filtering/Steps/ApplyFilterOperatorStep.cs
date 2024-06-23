@@ -19,7 +19,7 @@ public class ApplyFilterOperatorStep : IApplyFilterOperatorStep
         {
             var metadata = context.PropertyMetadata;
 
-            throw new StrainerUnsupportedOperatorException(
+            throw new StrainerOperatorException(
                 $"Failed to use operator '{context.Term.Operator}' " +
                 $"for filter value '{context.FilterTermValue}' on property " +
                 $"'{metadata.PropertyInfo.DeclaringType.FullName}.{metadata.PropertyInfo.Name}' " +

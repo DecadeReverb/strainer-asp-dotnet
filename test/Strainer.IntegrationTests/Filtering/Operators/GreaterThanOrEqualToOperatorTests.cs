@@ -91,7 +91,7 @@ public class GreaterThanOrEqualToOperatorTests : StrainerFixtureBase
         };
 
         // Act & Assert
-        Assert.Throws<StrainerUnsupportedOperatorException>(() => processor.ApplyFiltering(model, source));
+        Assert.Throws<StrainerOperatorException>(() => processor.ApplyFiltering(model, source));
     }
 
     [Fact]
