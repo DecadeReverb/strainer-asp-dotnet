@@ -17,39 +17,36 @@ public class FilterTermSectionsParser : IFilterTermSectionsParser
     {
         Guard.Against.Null(input);
 
+        // Order by longest operator to ensure we first try to match the longest ones
+        // as shorter operators are contained within longer ones and would be matched
+        // first, but only partially, leaving out the rest of operator.
         var symbols = _filterOperatorsConfigurationProvider
             .GetFilterOperators()
             .Keys
             .OrderByDescending(s => s.Length)
             .ToArray();
+        if (!symbols.Any())
+        {
+            throw new InvalidOperationException("No filter operators found.");
+        }
+
         var splitPattern = string.Join("|", symbols.Select(s => $"({Regex.Escape(s)})"));
         var substrings = Regex.Split(input, splitPattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
-        if (substrings.Length <= 1)
+        return substrings.Length switch
         {
-            return new FilterTermSections
+            <= 2 => new FilterTermSections
             {
                 Names = substrings.FirstOrDefault(),
                 OperatorSymbol = string.Empty,
                 Values = string.Empty,
-            };
-        }
-
-        if (substrings.Length >= 3)
-        {
-            return new FilterTermSections
+            },
+            >= 3 => new FilterTermSections
             {
                 Names = substrings[0],
                 OperatorSymbol = substrings[1],
                 Values = substrings[2],
-            };
-        }
-
-        return new FilterTermSections
-        {
-            Names = string.Empty,
-            OperatorSymbol = string.Empty,
-            Values = string.Empty,
+            },
         };
     }
 }
