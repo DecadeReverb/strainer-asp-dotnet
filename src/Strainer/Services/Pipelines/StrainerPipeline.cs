@@ -21,15 +21,8 @@ public class StrainerPipeline : IStrainerPipeline
 
     public IQueryable<T> Run<T>(IStrainerModel model, IQueryable<T> source)
     {
-        if (model is null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        Guard.Against.Null(model);
+        Guard.Against.Null(source);
 
         var options = _strainerOptionsProvider.GetStrainerOptions();
         var result = source;

@@ -21,7 +21,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     public FilterOperatorMapper(IFilterOperatorValidator validator)
     {
         _filterOperators = DefaultOperators.ToDictionary();
-        _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        _validator = Guard.Against.Null(validator);
 
         _validator.Validate(_filterOperators.Values);
     }
@@ -32,10 +32,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
 
     public IFilterOperator Find(string symbol)
     {
-        if (symbol == null)
-        {
-            throw new ArgumentNullException(nameof(symbol));
-        }
+        Guard.Against.Null(symbol);
 
         _filterOperators.TryGetValue(symbol, out var filterOperator);
 
