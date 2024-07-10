@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Fluorite.Extensions;
 
@@ -10,7 +9,7 @@ public static class StringExtensions
         {
             null => throw new ArgumentNullException(nameof(input)),
             "" => input,
-            _ => input.First().ToString().ToUpper() + input.Substring(1),
+            _ => input[..1].ToString().ToUpper() + input[1..],
         };
 
 }
