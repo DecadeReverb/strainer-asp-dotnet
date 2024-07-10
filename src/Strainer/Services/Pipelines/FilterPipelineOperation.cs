@@ -54,7 +54,7 @@ public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipeli
 
                 try
                 {
-                    if (metadata != null)
+                    if (metadata is not null)
                     {
                         termExpression = _filterExpressionProvider.GetExpression(metadata, filterTerm, parameterExpression, termExpression);
                     }
@@ -78,21 +78,20 @@ public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipeli
                 }
             }
 
-            if (termExpression == null)
+            if (termExpression is not null)
             {
-                continue;
+                if (outerExpression is null)
+                {
+                    outerExpression = termExpression;
+                }
+                else
+                {
+                    outerExpression = Expression.And(outerExpression, termExpression);
+                }
             }
-
-            if (outerExpression == null)
-            {
-                outerExpression = termExpression;
-                continue;
-            }
-
-            outerExpression = Expression.And(outerExpression, termExpression);
         }
 
-        if (outerExpression == null)
+        if (outerExpression is null)
         {
             return source;
         }
