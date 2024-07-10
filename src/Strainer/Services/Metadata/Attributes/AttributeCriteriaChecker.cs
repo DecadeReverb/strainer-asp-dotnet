@@ -39,6 +39,6 @@ public class AttributeCriteriaChecker : IAttributeCriteriaChecker
             && propertyInfo != null
             && (!isSortableRequired || attribute.IsSortable)
             && (!isFilterableRequired || attribute.IsFilterable)
-            && (attribute.DisplayName ?? attribute.Name ?? propertyInfo.Name).Equals(name);
+            && string.Equals(attribute.DisplayName ?? attribute.Name, name);
     }
 }
