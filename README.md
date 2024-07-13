@@ -132,6 +132,8 @@ or just call only particular processing method:
 var result = _strainerProcessor.ApplyPagination(strainerModel, source);
 ```
 
+#### Counting before pagination
+
 This is especially useful when you want to count the items in the resulting collection before pagination is applied:
 
 ```cs
@@ -327,8 +329,7 @@ Strainer model is based on four properties:
 
 * You can use backslashes (`\`) to escape commas and pipes (`|`) within value fields to enable conditional filtering;
 * You can have spaces anywhere except **within** `{Name}` or `{Operator}` fields;
-* If you need to look at the data before applying pagination (e.g. get total count), use the optional parameters on `Apply` to defer pagination or explicitly call `ApplyPagination()` after manually counting resulted collection (an [example](https://github.com/Biarity/Sieve/issues/34));
-* Here's a good example on how to work with [enumerables](https://github.com/Biarity/Sieve/issues/2);
+* If you need to look at the data before applying pagination (e.g. get total count), use the optional parameters on `Apply` to defer pagination or explicitly call `ApplyPagination()` after manually counting resulted collection (an [example](#counting-before-pagination));
 * Another example on [how to do OR logic using pipes (`|`)](https://github.com/Biarity/Sieve/issues/8).
 
 ## Creating your own model
@@ -396,12 +397,18 @@ public override void Load(IStrainerModuleBuilder<Post> builder)
 ```cs
 public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddCustomSortMethod("Popularity")
-        .HasFunction(p => p.LikeCount);
+    builder
+        .AddCustomSortMethod("Popularity")
+        .HasFunction(term =>
+        {
+            return term.IsDescending
+                ? (p => p.LikeCount)
+                : (p => p.CommentCount);
+        });
 }
 ```
 
-Notice how conditional ordering is being performed depending on whether context's `IsSubsequent` property is `true`. That's because Strainer supports subsequent sorting (by multiple properties) with no exception for custom sorting. You can chain them all together.
+Notice how conditional ordering is being performed depending on term's `IsDescending` property.
 
 ## Filter operators
 
