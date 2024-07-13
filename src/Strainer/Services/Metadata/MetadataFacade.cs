@@ -1,5 +1,5 @@
-﻿using Fluorite.Strainer.Models.Metadata;
-using System.Collections.ObjectModel;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Models.Metadata;
 
 namespace Fluorite.Strainer.Services.Metadata;
 
@@ -14,19 +14,9 @@ public class MetadataFacade : IMetadataFacade
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
     {
-        var metadata = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
+        var defaultValue = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>().ToReadOnly();
 
-        foreach (var provider in _metadataProviders)
-        {
-            var current = provider.GetAllPropertyMetadata();
-
-            if (current != null)
-            {
-                return current;
-            }
-        }
-
-        return new ReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>(metadata);
+        return GetFirstNotNullResultFromProviders(p => p.GetAllPropertyMetadata(), defaultValue);
     }
 
     public IPropertyMetadata GetDefaultMetadata<TEntity>()
@@ -38,17 +28,7 @@ public class MetadataFacade : IMetadataFacade
     {
         Guard.Against.Null(modelType);
 
-        foreach (var provider in _metadataProviders)
-        {
-            var metadata = provider.GetDefaultMetadata(modelType);
-
-            if (metadata != null)
-            {
-                return metadata;
-            }
-        }
-
-        return null;
+        return GetFirstNotNullResultFromProviders(p => p.GetDefaultMetadata(modelType), defaultValue: null);
     }
 
     public IPropertyMetadata GetMetadata<TEntity>(
@@ -68,17 +48,9 @@ public class MetadataFacade : IMetadataFacade
         Guard.Against.Null(modelType);
         Guard.Against.NullOrWhiteSpace(name);
 
-        foreach (var provider in _metadataProviders)
-        {
-            var metadata = provider.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name);
-
-            if (metadata != null)
-            {
-                return metadata;
-            }
-        }
-
-        return null;
+        return GetFirstNotNullResultFromProviders(
+            p => p.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name),
+            defaultValue: null);
     }
 
     public IEnumerable<IPropertyMetadata> GetMetadatas<TEntity>()
@@ -90,16 +62,21 @@ public class MetadataFacade : IMetadataFacade
     {
         Guard.Against.Null(modelType);
 
+        return GetFirstNotNullResultFromProviders(p => p.GetPropertyMetadatas(modelType), defaultValue: null);
+    }
+
+    private TResult GetFirstNotNullResultFromProviders<TResult>(Func<IMetadataProvider, TResult> resultFunc, TResult defaultValue)
+        where TResult : class
+    {
         foreach (var provider in _metadataProviders)
         {
-            var metadatas = provider.GetPropertyMetadatas(modelType);
-
-            if (metadatas != null)
+            var result = resultFunc.Invoke(provider);
+            if (result != null)
             {
-                return metadatas;
+                return result;
             }
         }
 
-        return null;
+        return defaultValue;
     }
 }
