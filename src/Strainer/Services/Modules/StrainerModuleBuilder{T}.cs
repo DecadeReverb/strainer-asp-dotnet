@@ -171,6 +171,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
         }
 
         return new ObjectMetadataBuilder<T>(
+            PropertyInfoProvider,
             Module.ObjectMetadata,
             defaultSortingPropertyExpression);
     }

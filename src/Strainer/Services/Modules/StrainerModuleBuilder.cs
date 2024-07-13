@@ -183,7 +183,10 @@ public class StrainerModuleBuilder : IStrainerModuleBuilder
                 $"be able to use it.");
         }
 
-        return new ObjectMetadataBuilder<TEntity>(Module.ObjectMetadata, defaultSortingPropertyExpression);
+        return new ObjectMetadataBuilder<TEntity>(
+            PropertyInfoProvider,
+            Module.ObjectMetadata,
+            defaultSortingPropertyExpression);
     }
 
     /// <summary>

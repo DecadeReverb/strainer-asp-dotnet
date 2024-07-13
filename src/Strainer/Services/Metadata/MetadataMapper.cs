@@ -85,7 +85,10 @@ public class MetadataMapper : IMetadataMapper
                 $"be able to use it.");
         }
 
-        return new ObjectMetadataBuilder<TEntity>(ObjectMetadata, defaultSortingPropertyExpression);
+        return new ObjectMetadataBuilder<TEntity>(
+            _propertyInfoProvider,
+            ObjectMetadata,
+            defaultSortingPropertyExpression);
     }
 
     public IPropertyMetadataBuilder<TEntity> Property<TEntity>(Expression<Func<TEntity, object>> propertyExpression)

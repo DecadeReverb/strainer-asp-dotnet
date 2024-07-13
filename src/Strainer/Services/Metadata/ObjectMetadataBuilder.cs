@@ -11,15 +11,16 @@ public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
     private readonly PropertyInfo _defaultSortingPropertyInfo;
 
     public ObjectMetadataBuilder(
+        IPropertyInfoProvider propertyInfoProvider,
         IDictionary<Type, IObjectMetadata> objectMetadata,
         Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
     {
+        Guard.Against.Null(propertyInfoProvider);
         Guard.Against.Null(objectMetadata);
         Guard.Against.Null(defaultSortingPropertyExpression);
 
-        (_defaultSortingPropertyName, _defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
+        (_defaultSortingPropertyInfo, _defaultSortingPropertyName) = propertyInfoProvider.GetPropertyInfoAndFullName(defaultSortingPropertyExpression);
         _objectMetadata = objectMetadata;
-
         Save(Build());
     }
 
@@ -68,24 +69,5 @@ public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
     protected void Save(IObjectMetadata objectMetadata)
     {
         _objectMetadata[typeof(TEntity)] = Guard.Against.Null(objectMetadata);
-    }
-
-    private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
-    {
-        if (expression.Body is not MemberExpression body)
-        {
-            var ubody = expression.Body as UnaryExpression;
-            body = ubody.Operand as MemberExpression;
-        }
-
-        var propertyInfo = body?.Member as PropertyInfo;
-        var stack = new Stack<string>();
-        while (body != null)
-        {
-            stack.Push(body.Member.Name);
-            body = body.Expression as MemberExpression;
-        }
-
-        return (string.Join(".", stack.ToArray()), propertyInfo);
     }
 }
