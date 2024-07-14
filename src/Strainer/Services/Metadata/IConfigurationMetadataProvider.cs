@@ -10,12 +10,12 @@ public interface IConfigurationMetadataProvider
     IReadOnlyDictionary<Type, IPropertyMetadata> GetDefaultMetadata();
 
     /// <summary>
-    /// Gets the object property dictionary.
-    /// </summary>
-    IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetPropertyMetadata();
-
-    /// <summary>
     /// Gets the object metadata dictionary.
     /// </summary>
     IReadOnlyDictionary<Type, IObjectMetadata> GetObjectMetadata();
+
+    /// <summary>
+    /// Gets the object property dictionary.
+    /// </summary>
+    IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetPropertyMetadata();
 }

@@ -22,16 +22,6 @@ public class ConfigurationMetadataProvider : IConfigurationMetadataProvider
     }
 
     /// <summary>
-    /// Gets the object property dictionary.
-    /// </summary>
-    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetPropertyMetadata()
-    {
-        return _strainerConfigurationProvider
-            .GetStrainerConfiguration()
-            .PropertyMetadata;
-    }
-
-    /// <summary>
     /// Gets the object metadata dictionary.
     /// </summary>
     public IReadOnlyDictionary<Type, IObjectMetadata> GetObjectMetadata()
@@ -39,5 +29,15 @@ public class ConfigurationMetadataProvider : IConfigurationMetadataProvider
         return _strainerConfigurationProvider
             .GetStrainerConfiguration()
             .ObjectMetadata;
+    }
+
+    /// <summary>
+    /// Gets the object property dictionary.
+    /// </summary>
+    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetPropertyMetadata()
+    {
+        return _strainerConfigurationProvider
+            .GetStrainerConfiguration()
+            .PropertyMetadata;
     }
 }
