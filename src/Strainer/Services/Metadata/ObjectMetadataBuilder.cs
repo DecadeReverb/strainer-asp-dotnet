@@ -58,6 +58,14 @@ public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
         return this;
     }
 
+    public IObjectMetadataBuilder<TEntity> IsDefaultSortingAscending()
+    {
+        IsDefaultSortingDescendingValue = false;
+        Save(Build());
+
+        return this;
+    }
+
     public IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending()
     {
         IsDefaultSortingDescendingValue = true;

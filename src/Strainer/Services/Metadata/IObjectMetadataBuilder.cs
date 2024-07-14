@@ -16,5 +16,7 @@ public interface IObjectMetadataBuilder<TEntity>
 
     IObjectMetadataBuilder<TEntity> IsSortable();
 
+    IObjectMetadataBuilder<TEntity> IsDefaultSortingAscending();
+
     IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending();
 }
