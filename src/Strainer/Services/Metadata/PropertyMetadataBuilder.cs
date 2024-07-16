@@ -72,6 +72,10 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
         Guard.Against.NullOrWhiteSpace(displayName);
 
         DisplayName = displayName;
+
+        // As alternative display name is now used, entry under old name needs to be removed to avoid duplication.
+        _propertyMetadata[typeof(TEntity)].Remove(PropertyInfo.Name);
+
         Save(Build());
 
         return this;
