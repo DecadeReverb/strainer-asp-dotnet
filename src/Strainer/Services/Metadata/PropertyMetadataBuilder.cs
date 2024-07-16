@@ -44,7 +44,7 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
             DisplayName = DisplayName,
             IsDefaultSorting = IsDefaultSorting,
             IsDefaultSortingDescending = IsDefaultSortingDescending,
-            IsFilterable = IsSortableValue,
+            IsFilterable = IsFilterableValue,
             IsSortable = IsSortableValue,
             Name = FullName,
             PropertyInfo = PropertyInfo,
@@ -53,7 +53,7 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
 
     public virtual IPropertyMetadataBuilder<TEntity> IsFilterable()
     {
-        IsSortableValue = true;
+        IsFilterableValue = true;
         Save(Build());
 
         return this;
