@@ -374,13 +374,13 @@ public override void Load(IStrainerModuleBuilder<Post> builder)
 }
 ```
 
-With such configuration, requests with `Filters` set to `Author.Name==John_Doe` will tell Strainer to filter to posts with post author name being exactly _"John Doe"_.
+With such configuration, requests with `Filters` set to `Author.Name==John Doe` will tell Strainer to filter to posts with author name being exactly _"John Doe"_.
 
 Notice how nested property name is not just `Name` but it's constructed using full property path resulting in `Author.Name` (unless explicitly configured).
 
 ## Custom methods
 
-In order to add custom sort or filter methods, override appropriate mapping method in your .
+In order to add custom sort or filter methods, use dedicated methods from Strainer module builder.
 
 #### Custom filter methods
 
@@ -408,7 +408,7 @@ public override void Load(IStrainerModuleBuilder<Post> builder)
 }
 ```
 
-Notice how conditional ordering is being performed depending on term's `IsDescending` property.
+Notice how conditional ordering is being performed depending on term's `IsDescending` property. This condition will be evaluated during runtime.
 
 ## Filter operators
 
