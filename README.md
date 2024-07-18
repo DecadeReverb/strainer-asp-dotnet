@@ -128,7 +128,7 @@ var result = _strainerProcessor.Apply(
 
 or just call only particular processing method:
 
-```
+```cs
 var result = _strainerProcessor.ApplyPagination(strainerModel, source);
 ```
 
@@ -261,7 +261,7 @@ public SampleStrainerModule : StrainerModule<Post>
 
 Equivalent configuration for marking all `Post` properties as filterable and sortable:
 
-```C#
+```cs
 [StrainerObject(nameof(Title))]
 public class Post
 {
@@ -269,7 +269,7 @@ public class Post
 }
 ```
 
-```C#
+```cs
 public class PostStrainerModule : StrainerModule<Post>
 {
     public override void Load(IStrainerModuleBuilder<Post> builder)
@@ -467,7 +467,7 @@ In order to perform your own sorting way determination and formatting, implement
 
 Then, add your custom formatter in `Startup` **after** adding Strainer:
 
-```
+```cs
 services.AddStrainer();
 services.AddScoped<ISortingWayFormatter, CustomSortingWayFormatter>();
 ```
