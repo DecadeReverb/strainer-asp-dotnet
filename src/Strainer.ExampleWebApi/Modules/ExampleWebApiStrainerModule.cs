@@ -1,4 +1,5 @@
 ﻿using Fluorite.Strainer.ExampleWebApi.Entities;
+using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,5 +31,7 @@ public class ExampleWebApiStrainerModule : StrainerModule<Post>
             .IsFilterable()
             .IsSortable()
             .IsDefaultSort(isDescending: true);
+
+        builder.RemoveBuiltInFilterOperator(symbol: FilterOperatorSymbols.DoesNotEndWithCaseInsensitive);
     }
 }

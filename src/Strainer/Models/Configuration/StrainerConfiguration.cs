@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models.Filtering;
+﻿using Fluorite.Strainer.Collections;
+using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
@@ -19,6 +20,7 @@ public class StrainerConfiguration : IStrainerConfiguration
         IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> customSortMethods,
         IReadOnlyDictionary<Type, IPropertyMetadata> defaultMetadata,
         IReadOnlyDictionary<string, IFilterOperator> filterOperators,
+        IReadOnlySet<string> excludedBuiltInFilterOperators,
         IReadOnlyDictionary<Type, IObjectMetadata> objectMetadata,
         IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadata)
     {
@@ -26,6 +28,7 @@ public class StrainerConfiguration : IStrainerConfiguration
         CustomSortMethods = Guard.Against.Null(customSortMethods);
         DefaultMetadata = Guard.Against.Null(defaultMetadata);
         FilterOperators = Guard.Against.Null(filterOperators);
+        ExcludedBuiltInFilterOperators = Guard.Against.Null(excludedBuiltInFilterOperators);
         ObjectMetadata = Guard.Against.Null(objectMetadata);
         PropertyMetadata = Guard.Against.Null(propertyMetadata);
     }
@@ -49,6 +52,11 @@ public class StrainerConfiguration : IStrainerConfiguration
     /// Gets the object filter operator dictionary.
     /// </summary>
     public IReadOnlyDictionary<string, IFilterOperator> FilterOperators { get; }
+
+    /// <summary>
+    /// Gets a set of built-in filter operator symbols excluded from configuration.
+    /// </summary>
+    public IReadOnlySet<string> ExcludedBuiltInFilterOperators { get; }
 
     /// <summary>
     /// Gets the object metadata dictionary.

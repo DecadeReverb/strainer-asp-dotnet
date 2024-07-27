@@ -24,7 +24,7 @@ public static class DictionaryExtensions
         return resultDictionary;
     }
 
-    public static IReadOnlyDictionary<TKey, TValue> ToReadOnly<TKey, TValue>(
+    public static ReadOnlyDictionary<TKey, TValue> ToReadOnly<TKey, TValue>(
         this IDictionary<TKey, TValue> source)
     {
         Guard.Against.Null(source);

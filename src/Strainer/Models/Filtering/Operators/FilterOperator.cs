@@ -7,7 +7,7 @@ namespace Fluorite.Strainer.Models.Filtering.Operators;
 /// Provides information about filtering operator.
 /// </summary>
 [DebuggerDisplay("\\{{" + nameof(Symbol) + ",nq} {" + nameof(Name) + ",nq}\\}")]
-public class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
+public class FilterOperator : IFilterOperator
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="FilterOperator"/> class.
@@ -46,61 +46,6 @@ public class FilterOperator : IFilterOperator, IEquatable<FilterOperator>
     /// Gets or sets a <see cref="string"/> representation of the operator.
     /// </summary>
     public string Symbol { get; set; }
-
-    public static bool operator ==(FilterOperator operator1, FilterOperator operator2)
-    {
-        return EqualityComparer<FilterOperator>.Default.Equals(operator1, operator2);
-    }
-
-    public static bool operator !=(FilterOperator operator1, FilterOperator operator2)
-    {
-        return !(operator1 == operator2);
-    }
-
-    /// <summary>
-    /// Checks if current instance of <see cref="FilterOperator"/>
-    /// is equal to other <see cref="object"/> instance.
-    /// </summary>
-    /// <param name="obj">
-    /// Other <see cref="object"/> instance.
-    /// </param>
-    /// <returns>
-    /// <see langword="true"/> if provided other <see cref="object"/>
-    /// instance is equal to the current one; otherwise <see langword="false"/>.
-    /// </returns>
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as FilterOperator);
-    }
-
-    /// <summary>
-    /// Checks if current instance of <see cref="FilterOperator"/> is equal
-    /// to other <see cref="FilterOperator"/> instance.
-    /// </summary>
-    /// <param name="other">
-    /// Other <see cref="FilterOperator"/> instance.
-    /// </param>
-    /// <returns>
-    /// <see langword="true"/> if provided other <see cref="FilterOperator"/>
-    /// instance is equal to the current one; otherwise <see langword="false"/>.
-    /// </returns>
-    public bool Equals(FilterOperator other)
-    {
-        return other != null
-            && Symbol.Equals(other.Symbol, StringComparison.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// Gets <see cref="int"/> hash code representation of current
-    /// <see cref="FilterOperator"/>.
-    /// </summary>
-    /// <returns>
-    /// A hash code for the current <see cref="FilterOperator"/>.
-    /// </returns>
-    public override int GetHashCode()
-    {
-        return -1758840423 + EqualityComparer<string>.Default.GetHashCode(Symbol);
-    }
 
     /// <summary>
     /// Returns a <see cref="string"/> that represents the current <see cref="FilterOperator"/>.

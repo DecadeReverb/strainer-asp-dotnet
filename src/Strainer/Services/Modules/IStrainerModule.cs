@@ -31,6 +31,11 @@ public interface IStrainerModule
     IDictionary<string, IFilterOperator> FilterOperators { get; }
 
     /// <summary>
+    /// Gets a set of built-in filter operator symbols to be excluded from final configuration.
+    /// </summary>
+    ISet<string> ExcludedBuiltInFilterOperators { get; }
+
+    /// <summary>
     /// Gets the object metadata dictionary.
     /// </summary>
     IDictionary<Type, IObjectMetadata> ObjectMetadata { get; }

@@ -456,6 +456,15 @@ public override void Load(IStrainerModuleBuilder<Post> builder)
 }
 ```
 
+or remove some of built-in filter operators that you find redundant:
+
+```cs
+public override void Load(IStrainerModuleBuilder<Post> builder)
+{
+    builder.RemoveBuiltInFilterOperator(symbol: FilterOperatorSymbols.DoesNotEndWithCaseInsensitive);
+}
+```
+
 ## Sorting way formatting
 
 In order to determine sorting way Strainer uses `ISortingWayFormatter` service with its default implementation `DescendingPrefixSortingWayFormatter`. It checks against the presence of a prefix indicating a descending sorting way, specifically a dash `-`. For example:

@@ -1,16 +1,12 @@
 ﻿using Fluorite.Extensions;
 using Fluorite.Strainer.Models.Filtering.Operators;
-using Fluorite.Strainer.Services.Validation;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.Services.Filtering;
 
-public class FilterOperatorMapper : IFilterOperatorMapper
+public static class FilterOperatorMapper
 {
-    private readonly IDictionary<string, IFilterOperator> _filterOperators;
-    private readonly IFilterOperatorValidator _validator;
-
     static FilterOperatorMapper()
     {
         DefaultOperators = new ReadOnlyDictionary<string, IFilterOperator>(
@@ -18,39 +14,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                 .ToDictionary(filterOperator => filterOperator.Symbol, filterOperator => filterOperator));
     }
 
-    public FilterOperatorMapper(IFilterOperatorValidator validator)
-    {
-        _filterOperators = DefaultOperators.ToDictionary();
-        _validator = Guard.Against.Null(validator);
-
-        _validator.Validate(_filterOperators.Values);
-    }
-
     public static IReadOnlyDictionary<string, IFilterOperator> DefaultOperators { get; }
-
-    public int Count => _filterOperators.Count;
-
-    public IFilterOperator Find(string symbol)
-    {
-        Guard.Against.Null(symbol);
-
-        _filterOperators.TryGetValue(symbol, out var filterOperator);
-
-        return filterOperator;
-    }
-
-    public IFilterOperatorBuilder Operator(string symbol)
-    {
-        if (string.IsNullOrWhiteSpace(symbol))
-        {
-            throw new ArgumentException(
-                $"{nameof(symbol)} cannot be null, empty " +
-                $"or contain only whitespace characters.",
-                nameof(symbol));
-        }
-
-        return new FilterOperatorBuilder(_filterOperators, symbol);
-    }
 
     private static IFilterOperator[] GetDefaultFilterOperators()
     {
@@ -70,11 +34,11 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: "==")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.EqualsSymbol)
                 .HasName("equal")
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
                 .Build(),
-            new FilterOperatorBuilder(symbol: "!=")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotEqual)
                 .HasName("does not equal")
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
                 .Build(),
@@ -85,11 +49,11 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: "<")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.LessThan)
                 .HasName("less than")
                 .HasExpression((context) => Expression.LessThan(context.PropertyValue, context.FilterValue))
                 .Build(),
-            new FilterOperatorBuilder(symbol: "<=")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.LessThanOrEqualTo)
                 .HasName("less than or equal to")
                 .HasExpression((context) => Expression.LessThanOrEqual(context.PropertyValue, context.FilterValue))
                 .Build(),
@@ -100,11 +64,11 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: ">")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.GreaterThan)
                 .HasName("greater than")
                 .HasExpression((context) => Expression.GreaterThan(context.PropertyValue, context.FilterValue))
                 .Build(),
-            new FilterOperatorBuilder(symbol: ">=")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.GreaterThanOrEqualTo)
                 .HasName("greater than or equal to")
                 .HasExpression((context) => Expression.GreaterThanOrEqual(context.PropertyValue, context.FilterValue))
                 .Build(),
@@ -115,7 +79,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: "@=")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.Contains)
                 .HasName("contains")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Call(
@@ -123,7 +87,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }),
                     context.FilterValue))
                 .Build(),
-            new FilterOperatorBuilder(symbol: "_=")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.StartsWith)
                 .HasName("starts with")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Call(
@@ -131,7 +95,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
                     context.FilterValue))
                 .Build(),
-            new FilterOperatorBuilder(symbol: "=_")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.EndsWith)
                 .HasName("ends with")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Call(
@@ -146,7 +110,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: "!@=")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotContain)
                 .HasName("does not contain")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Not(Expression.Call(
@@ -154,7 +118,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }),
                     context.FilterValue)))
                 .Build(),
-            new FilterOperatorBuilder(symbol: "!_=")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotStartWith)
                 .HasName("does not start with")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Not(Expression.Call(
@@ -162,7 +126,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }),
                     context.FilterValue)))
                 .Build(),
-            new FilterOperatorBuilder(symbol: "!=_")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotEndWith)
                 .HasName("does not end with")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Not(Expression.Call(
@@ -177,13 +141,13 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: "==*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.EqualsCaseInsensitive)
                 .HasName("equal (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Equal(context.FilterValue, context.PropertyValue))
                 .IsCaseInsensitive()
                 .Build(),
-            new FilterOperatorBuilder(symbol: "!=*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotEqualCaseInsensitive)
                 .HasName("does not equal (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.NotEqual(context.FilterValue, context.PropertyValue))
@@ -196,7 +160,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: "@=*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.ContainsCaseInsensitive)
                 .HasName("contains (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Call(
@@ -205,7 +169,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     context.FilterValue))
                 .IsCaseInsensitive()
                 .Build(),
-            new FilterOperatorBuilder(symbol: "_=*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.StartsWithCaseInsensitive)
                 .HasName("starts with (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Call(
@@ -214,7 +178,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     context.FilterValue))
                 .IsCaseInsensitive()
                 .Build(),
-            new FilterOperatorBuilder(symbol: "=_*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.EndsWithCaseInsensitive)
                 .HasName("ends with (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Call(
@@ -230,7 +194,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
     {
         return new List<IFilterOperator>
         {
-            new FilterOperatorBuilder(symbol: "!@=*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotContainCaseInsensitive)
                 .HasName("does not contain (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Not(Expression.Call(
@@ -239,7 +203,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     context.FilterValue)))
                 .IsCaseInsensitive()
                 .Build(),
-            new FilterOperatorBuilder(symbol: "!_=*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotStartWithCaseInsensitive)
                 .HasName("does not start with (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Not(Expression.Call(
@@ -248,7 +212,7 @@ public class FilterOperatorMapper : IFilterOperatorMapper
                     context.FilterValue)))
                 .IsCaseInsensitive()
                 .Build(),
-            new FilterOperatorBuilder(symbol: "!=_*")
+            new FilterOperatorBuilder(symbol: FilterOperatorSymbols.DoesNotEndWithCaseInsensitive)
                 .HasName("does not end with (case insensitive)")
                 .IsStringBased()
                 .HasExpression((context) => Expression.Not(Expression.Call(

@@ -34,7 +34,8 @@ public class StrainerConfigurationFactory : IStrainerConfigurationFactory
             .WithPropertyMetadata(modules)
             .WithDefaultMetadata(modules)
             .WithObjectMetadata(modules)
-            .WithFilterOperators(modules)
+            .WithCustomFilterOperators(modules)
+            .WithoutBuiltInFilterOperators(modules)
             .WithCustomFilterMethods(modules)
             .WithCustomSortMethods(modules)
             .Build();

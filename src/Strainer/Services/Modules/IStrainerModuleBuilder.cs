@@ -88,4 +88,15 @@ public interface IStrainerModuleBuilder
     /// </returns>
     IPropertyMetadataBuilder<TEntity> AddProperty<TEntity>(
         Expression<Func<TEntity, object>> propertyExpression);
+
+    /// <summary>
+    /// Removes a filter operator.
+    /// </summary>
+    /// <param name="symbol">
+    /// The symbol for the filter operator.
+    /// </param>
+    /// <returns>
+    /// A builder instance for further configuration of Strainer module.
+    /// </returns>
+    IStrainerModuleBuilder RemoveBuiltInFilterOperator(string symbol);
 }

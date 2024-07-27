@@ -448,7 +448,6 @@ public static class StrainerServiceCollectionExtensions
         }
 
         services.Add<IFilterExpressionProvider, FilterExpressionProvider>(serviceLifetime);
-        services.Add<IFilterOperatorMapper, FilterOperatorMapper>(serviceLifetime);
         services.Add<IFilterOperatorParser, FilterOperatorParser>(serviceLifetime);
         services.Add<IFilterOperatorValidator, FilterOperatorValidator>(serviceLifetime);
         services.Add<IFilterTermNamesParser, FilterTermNamesParser>(serviceLifetime);

@@ -13,9 +13,11 @@ public interface IStrainerConfigurationBuilder
 
     IStrainerConfigurationBuilder WithDefaultMetadata(ICollection<IStrainerModule> modules);
 
-    IStrainerConfigurationBuilder WithFilterOperators(ICollection<IStrainerModule> modules);
+    IStrainerConfigurationBuilder WithCustomFilterOperators(ICollection<IStrainerModule> modules);
 
     IStrainerConfigurationBuilder WithObjectMetadata(ICollection<IStrainerModule> modules);
 
     IStrainerConfigurationBuilder WithPropertyMetadata(ICollection<IStrainerModule> modules);
+
+    IStrainerConfigurationBuilder WithoutBuiltInFilterOperators(ICollection<IStrainerModule> modules);
 }

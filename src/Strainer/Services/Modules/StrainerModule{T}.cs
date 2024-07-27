@@ -23,6 +23,7 @@ public abstract class StrainerModule<T> : IStrainerModule<T>, IStrainerModule
         CustomSortMethods = new Dictionary<Type, IDictionary<string, ICustomSortMethod>>();
         DefaultMetadata = new Dictionary<Type, IPropertyMetadata>();
         FilterOperators = new Dictionary<string, IFilterOperator>();
+        ExcludedBuiltInFilterOperators = new HashSet<string>();
         ObjectMetadata = new Dictionary<Type, IObjectMetadata>();
         PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
     }
@@ -46,6 +47,11 @@ public abstract class StrainerModule<T> : IStrainerModule<T>, IStrainerModule
     /// Gets the object filter operator dictionary.
     /// </summary>
     public IDictionary<string, IFilterOperator> FilterOperators { get; }
+
+    /// <summary>
+    /// Gets a set of built-in filter operator symbols to be excluded from final configuration.
+    /// </summary>
+    public ISet<string> ExcludedBuiltInFilterOperators { get; }
 
     /// <summary>
     /// Gets the object metadata dictionary.

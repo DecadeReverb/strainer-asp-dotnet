@@ -1,4 +1,6 @@
-﻿using Fluorite.Strainer.Models.Filtering.Operators;
+﻿using Fluorite.Strainer.Collections;
+using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Services.Filtering;
 
 namespace Fluorite.Strainer.Services.Validation;
 
@@ -29,7 +31,7 @@ public class FilterOperatorValidator : IFilterOperatorValidator
         }
     }
 
-    public void Validate(IEnumerable<IFilterOperator> filterOperators)
+    public void Validate(IEnumerable<IFilterOperator> filterOperators, IReadOnlySet<string> excludedBuiltInFilterOperators)
     {
         Guard.Against.Null(filterOperators);
 
@@ -41,6 +43,15 @@ public class FilterOperatorValidator : IFilterOperatorValidator
         foreach (var @operator in filterOperators)
         {
             Validate(@operator);
+
+            if (excludedBuiltInFilterOperators.Contains(@operator.Symbol)
+                && FilterOperatorMapper.DefaultOperators.TryGetValue(@operator.Symbol, out var builtInOperator)
+                && ReferenceEquals(builtInOperator, @operator))
+            {
+                throw new InvalidOperationException(
+                    $"Excluded built-in filter operator symbol {@operator.Symbol} detected in configuration values. " +
+                    $"Please ensure that no such filter operators are supplied when marking them as excluded.");
+            }
         }
 
         var duplicatedSymbols = filterOperators

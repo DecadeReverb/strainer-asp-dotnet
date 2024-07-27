@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models.Filtering;
+﻿using Fluorite.Strainer.Collections;
+using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
@@ -30,6 +31,11 @@ public interface IStrainerConfiguration
     /// Gets the object filter operator dictionary.
     /// </summary>
     IReadOnlyDictionary<string, IFilterOperator> FilterOperators { get; }
+
+    /// <summary>
+    /// Gets a set of built-in filter operator symbols excluded from configuration.
+    /// </summary>
+    IReadOnlySet<string> ExcludedBuiltInFilterOperators { get; }
 
     /// <summary>
     /// Gets the object property dictionary.

@@ -1,6 +1,7 @@
 ﻿using Fluorite.Extensions.DependencyInjection;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
+using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -58,13 +59,73 @@ public class StrainerFactory : IDisposable
         return serviceProvider.GetRequiredService<IStrainerProcessor>();
     }
 
-    public void Dispose()
+    public IStrainerConfigurationProvider CreateDefaultConfigurationProvider<TModule>()
+        where TModule : class, IStrainerModule
     {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        return CreateDefaultConfigurationProvider(typeof(TModule));
     }
 
-    protected IStrainerContext CreateDefaultContext(
+    public IStrainerConfigurationProvider CreateDefaultConfigurationProvider(params Type[] strainerModuleTypes)
+    {
+        return CreateDefaultConfigurationProvider(o => { }, strainerModuleTypes);
+    }
+
+    public IStrainerConfigurationProvider CreateDefaultConfigurationProvider<TModule>(Action<StrainerOptions> options)
+        where TModule : class, IStrainerModule
+    {
+        return CreateDefaultConfigurationProvider(options, typeof(TModule));
+    }
+
+    public IStrainerConfigurationProvider CreateDefaultConfigurationProvider(Action<StrainerOptions> options, params Type[] strainerModuleTypes)
+    {
+        return CreateDefaultConfigurationProvider(options, s => { }, strainerModuleTypes);
+    }
+
+    public IStrainerConfigurationProvider CreateDefaultConfigurationProvider<TModule>(Action<StrainerOptions> options, Action<IServiceCollection> services)
+        where TModule : class, IStrainerModule
+    {
+        return CreateDefaultConfigurationProvider(options, services, typeof(TModule));
+    }
+
+    public IStrainerConfigurationProvider CreateDefaultConfigurationProvider(
+        Action<StrainerOptions> options,
+        Action<IServiceCollection> services,
+        params Type[] strainerModuleTypes)
+    {
+        var serviceProvider = BuildStrainerServiceProvider(options, services, strainerModuleTypes);
+
+        return serviceProvider.GetRequiredService<IStrainerConfigurationProvider>();
+    }
+
+    public IStrainerContext CreateDefaultContext<TModule>()
+        where TModule : class, IStrainerModule
+    {
+        return CreateDefaultContext(typeof(TModule));
+    }
+
+    public IStrainerContext CreateDefaultContext(params Type[] strainerModuleTypes)
+    {
+        return CreateDefaultContext(o => { }, strainerModuleTypes);
+    }
+
+    public IStrainerContext CreateDefaultContext<TModule>(Action<StrainerOptions> options)
+        where TModule : class, IStrainerModule
+    {
+        return CreateDefaultContext(options, typeof(TModule));
+    }
+
+    public IStrainerContext CreateDefaultContext(Action<StrainerOptions> options, params Type[] strainerModuleTypes)
+    {
+        return CreateDefaultContext(options, s => { }, strainerModuleTypes);
+    }
+
+    public IStrainerContext CreateDefaultContext<TModule>(Action<StrainerOptions> options, Action<IServiceCollection> services)
+        where TModule : class, IStrainerModule
+    {
+        return CreateDefaultContext(options, services, typeof(TModule));
+    }
+
+    public IStrainerContext CreateDefaultContext(
         Action<StrainerOptions> options,
         Action<IServiceCollection> services,
         params Type[] strainerModuleTypes)
@@ -72,6 +133,12 @@ public class StrainerFactory : IDisposable
         var serviceProvider = BuildStrainerServiceProvider(options, services, strainerModuleTypes);
 
         return serviceProvider.GetRequiredService<IStrainerContext>();
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 
     protected virtual void Dispose(bool disposing)

@@ -231,4 +231,28 @@ public class StrainerModuleBuilder : IStrainerModuleBuilder
 
         return new PropertyMetadataBuilder<TEntity>(Module.PropertyMetadata, Module.DefaultMetadata, propertyInfo, fullName);
     }
+
+    /// <summary>
+    /// Marks a built-in filter operator to be excluded from final configuration.
+    /// </summary>
+    /// <param name="symbol">
+    /// The symbol for the filter operator.
+    /// </param>
+    /// <returns>
+    /// A builder instance for further configuration of Strainer module.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="symbol"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="symbol"/> is empty or whitespace.
+    /// </exception>
+    public IStrainerModuleBuilder RemoveBuiltInFilterOperator(string symbol)
+    {
+        Guard.Against.NullOrWhiteSpace(symbol);
+
+        Module.ExcludedBuiltInFilterOperators.Add(symbol);
+
+        return this;
+    }
 }

@@ -34,7 +34,7 @@ public class StrainerConfigurationValidator : IStrainerConfigurationValidator
 
         try
         {
-            _filterOperatorValidator.Validate(strainerConfiguration.FilterOperators.Values);
+            _filterOperatorValidator.Validate(strainerConfiguration.FilterOperators.Values, strainerConfiguration.ExcludedBuiltInFilterOperators);
             _sortExpressionValidator.Validate(strainerConfiguration.PropertyMetadata);
         }
         catch (Exception exception)

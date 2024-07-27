@@ -14,7 +14,7 @@ public static class EnumerableExtensions
         return Enumerable.Concat(source, sequences.SelectMany(x => x));
     }
 
-    public static IDictionary<TKey, TValue> Merge<TKey, TValue>(
+    public static Dictionary<TKey, TValue> Merge<TKey, TValue>(
         this IEnumerable<KeyValuePair<TKey, TValue>> keyValuePairs)
     {
         Guard.Against.Null(keyValuePairs);
@@ -23,13 +23,13 @@ public static class EnumerableExtensions
 
         foreach (var pair in keyValuePairs)
         {
-            result[pair.Key] = pair.Value;
+            result.Add(pair.Key, pair.Value);
         }
 
         return result;
     }
 
-    public static IDictionary<TKey, TValue> ToDictionary<TKey, TValue>(
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(
         this IEnumerable<KeyValuePair<TKey, TValue>> source)
     {
         Guard.Against.Null(source);
@@ -37,7 +37,7 @@ public static class EnumerableExtensions
         return source.ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
-    public static IReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
+    public static ReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
         this IEnumerable<KeyValuePair<TKey, TValue>> source)
     {
         Guard.Against.Null(source);
