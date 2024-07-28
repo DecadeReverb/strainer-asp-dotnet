@@ -19,20 +19,7 @@ public class PropertyInfoProvider : IPropertyInfoProvider
         return type.GetProperty(name, _bindingFlags);
     }
 
-    /// <summary>
-    /// Gets the <see cref="PropertyInfo"/> and property full name
-    /// (for nested property paths).
-    /// </summary>
-    /// <typeparam name="T">
-    /// The base type expression is based on.
-    /// </typeparam>
-    /// <param name="expression">
-    /// The lamda expression leading to property.
-    /// </param>
-    /// <returns>
-    /// A tuple of <see cref="PropertyInfo"/> and <see cref="string"/>
-    /// full property name.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="expression"/> is <see langword="null"/>.
     /// </exception>

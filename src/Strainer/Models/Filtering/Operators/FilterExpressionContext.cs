@@ -29,13 +29,9 @@ public class FilterExpressionContext : IFilterExpressionContext
         PropertyValue = Guard.Against.Null(propertyValue);
     }
 
-    /// <summary>
-    /// Gets the expression for filter value being processed.
-    /// </summary>
+    /// <inheritdoc/>
     public Expression FilterValue { get; }
 
-    /// <summary>
-    /// Gets the expression for property value access.
-    /// </summary>
+    /// <inheritdoc/>
     public Expression PropertyValue { get; }
 }

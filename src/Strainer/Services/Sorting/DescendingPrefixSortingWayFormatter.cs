@@ -24,18 +24,7 @@ public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
 
     }
 
-    /// <summary>
-    /// Applies formatting to input value according to specified sorting way.
-    /// </summary>
-    /// <param name="input">
-    /// The sorting value to be formatted.
-    /// </param>
-    /// <param name="sortingWay">
-    /// The sorting way which format will be applied upon the input.
-    /// </param>
-    /// <returns>
-    /// A formatted value.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="input"/> is <see langword="null" />.
     /// </exception>
@@ -63,19 +52,7 @@ public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
             : input;
     }
 
-    /// <summary>
-    /// Gets the sorting way based on input.
-    /// <para/>
-    /// </summary>
-    /// <param name="input">
-    /// The value to check for sorting way.
-    /// </param>
-    /// <returns>
-    /// <see cref="SortingWay.Ascending"/> if the input is formatted in
-    /// ascending way; <see cref="SortingWay.Descending"/> if the input
-    /// is formatted in descending way; <see cref="SortingWay.Unknown"/>
-    /// if the sorting way cannot be established (e.g. the input was empty).
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="input"/> is <see langword="null" />.
     /// </exception>
@@ -96,18 +73,7 @@ public class DescendingPrefixSortingWayFormatter : ISortingWayFormatter
         return SortingWay.Ascending;
     }
 
-    /// <summary>
-    /// Removes sorting way formatting from provided input value.
-    /// </summary>
-    /// <param name="input">
-    /// The input value to be unformatted.
-    /// </param>
-    /// <param name="sortingWay">
-    /// The sorting way of which format will be removed from the input.
-    /// </param>
-    /// <returns>
-    /// An unformatted value.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="input"/> is <see langword="null"/>.
     /// </exception>

@@ -12,9 +12,7 @@ public class ConfigurationFilterOperatorsProvider : IConfigurationFilterOperator
         _strainerConfigurationProvider = Guard.Against.Null(strainerConfigurationProvider);
     }
 
-    /// <summary>
-    /// Gets the object filter operator dictionary.
-    /// </summary>w
+    /// <inheritdoc/>
     public IReadOnlyDictionary<string, IFilterOperator> GetFilterOperators()
     {
         return _strainerConfigurationProvider

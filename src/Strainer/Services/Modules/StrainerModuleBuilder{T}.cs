@@ -49,9 +49,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
         Options = Guard.Against.Null(strainerOptions);
     }
 
-    /// <summary>
-    /// Gets the <see cref="StrainerOptions"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public StrainerOptions Options { get; }
 
     /// <summary>
@@ -64,15 +62,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
     /// </summary>
     protected IPropertyInfoProvider PropertyInfoProvider { get; }
 
-    /// <summary>
-    /// Adds custom filtering method.
-    /// </summary>
-    /// <param name="name">
-    /// The name for custom filtering method.
-    /// </param>
-    /// <returns>
-    /// A builder instance for further configuration of custom filtering method.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">
     /// <paramref name="name"/> is <see langword="null"/>, empty or
     /// contains only whitespace characters.
@@ -86,15 +76,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
             name);
     }
 
-    /// <summary>
-    /// Adds custom sorting method.
-    /// </summary>
-    /// <param name="name">
-    /// The name for custom sorting method.
-    /// </param>
-    /// <returns>
-    /// A builder instance for further configuration of custom sorting method.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">
     /// <paramref name="name"/> is <see langword="null"/>, empty or
     /// contains only whitespace characters.
@@ -108,15 +90,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
             name);
     }
 
-    /// <summary>
-    /// Adds filter operator.
-    /// </summary>
-    /// <param name="symbol">
-    /// The symbol for the filter operator.
-    /// </param>
-    /// <returns>
-    /// A builder instance for further configuration of filter operator.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">
     /// <paramref name="symbol"/> is <see langword="null"/>, empty or
     /// contains only whitespace characters.
@@ -138,18 +112,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
         return new FilterOperatorBuilder(Module.FilterOperators, symbol);
     }
 
-    /// <summary>
-    /// Registers object metadata.
-    /// </summary>
-    /// <param name="defaultSortingPropertyExpression">
-    /// An expression leading to a property marking default sorting.
-    /// <para/>
-    /// Default sorting property acts as a fallback when no other sorting
-    /// information is available.
-    /// </param>
-    /// <returns>
-    /// A builder instance for further configuration of object metadata.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">
     /// <paramref name="defaultSortingPropertyExpression"/> is <see langword="null"/>.
     /// </exception>
@@ -176,15 +139,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
             defaultSortingPropertyExpression);
     }
 
-    /// <summary>
-    /// Registers property metadata.
-    /// </summary>
-    /// <param name="propertyExpression">
-    /// An expression leading to a property.
-    /// </param>
-    /// <returns>
-    /// A builder instance for further configuration of property metadata.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">
     /// <paramref name="propertyExpression"/> is <see langword="null"/>.
     /// </exception>
@@ -214,15 +169,7 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
             fullName);
     }
 
-    /// <summary>
-    /// Removes a filter operator.
-    /// </summary>
-    /// <param name="symbol">
-    /// The symbol for the filter operator.
-    /// </param>
-    /// <returns>
-    /// A builder instance for further configuration of Strainer module.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="symbol"/> is <see langword="null"/>.
     /// </exception>

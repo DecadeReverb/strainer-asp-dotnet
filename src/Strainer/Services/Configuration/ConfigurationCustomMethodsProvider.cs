@@ -25,9 +25,7 @@ public class ConfigurationCustomMethodsProvider : IConfigurationCustomMethodsPro
         _strainerConfigurationProvider = Guard.Against.Null(strainerConfigurationProvider);
     }
 
-    /// <summary>
-    /// Gets the object custom filter methods dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> GetCustomFilterMethods()
     {
         return _strainerConfigurationProvider
@@ -35,9 +33,7 @@ public class ConfigurationCustomMethodsProvider : IConfigurationCustomMethodsPro
             .CustomFilterMethods;
     }
 
-    /// <summary>
-    /// Gets the object custom sorting methods dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> GetCustomSortMethods()
     {
         return _strainerConfigurationProvider

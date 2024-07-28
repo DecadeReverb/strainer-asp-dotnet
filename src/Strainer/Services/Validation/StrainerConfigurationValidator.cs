@@ -16,12 +16,7 @@ public class StrainerConfigurationValidator : IStrainerConfigurationValidator
         _sortExpressionValidator = Guard.Against.Null(sortExpressionValidator);
     }
 
-    /// <summary>
-    /// Validates an instance of Strainer configuration.
-    /// </summary>
-    /// <param name="strainerConfiguration">
-    /// The instance of <see cref="IStrainerConfiguration"/> to validate.
-    /// </param>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="strainerConfiguration"/> is <see langword="null"/>.
     /// </exception>

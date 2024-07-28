@@ -23,8 +23,6 @@ public class StrainerConfigurationProvider : IStrainerConfigurationProvider
         _strainerConfiguration = Guard.Against.Null(strainerConfiguration);
     }
 
-    /// <summary>
-    /// Gets the Stariner configuration.
-    /// </summary>
+    /// <inheritdoc/>
     public IStrainerConfiguration GetStrainerConfiguration() => _strainerConfiguration;
 }

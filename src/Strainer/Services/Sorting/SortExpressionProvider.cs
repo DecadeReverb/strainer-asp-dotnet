@@ -87,19 +87,7 @@ public class SortExpressionProvider : ISortExpressionProvider
         };
     }
 
-    /// <summary>
-    /// Gets a list of <see cref="ISortExpression{TEntity}"/> from
-    /// list of sort terms used to associate names from <see cref="IMetadataMapper"/>.
-    /// </summary>
-    /// <typeparam name="TEntity">
-    /// The type of entity for which the expression is for.
-    /// </typeparam>
-    /// <param name="sortTerms">
-    /// A list of property info paired with sort terms.
-    /// </param>
-    /// <returns>
-    /// A list of <see cref="ISortExpression{TEntity}"/>.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="sortTerms"/> is <see langword="null"/>.
     /// </exception>

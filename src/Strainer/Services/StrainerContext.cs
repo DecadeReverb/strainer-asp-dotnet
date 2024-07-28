@@ -31,33 +31,21 @@ public class StrainerContext : IStrainerContext
         Options = Guard.Against.Null(optionsProvider).GetStrainerOptions();
     }
 
-    /// <summary>
-    /// Gets the custom methods provider.
-    /// </summary>
+    /// <inheritdoc/>
     public IConfigurationCustomMethodsProvider CustomMethods { get; }
 
-    /// <summary>
-    /// Gets the filtering context.
-    /// </summary>
+    /// <inheritdoc/>
     public IFilterContext Filter { get; }
 
-    /// <summary>
-    /// Gets the property metadata provider.
-    /// </summary>
+    /// <inheritdoc/>
     public IMetadataFacade Metadata { get; }
 
-    /// <summary>
-    /// Gets the Strainer options.
-    /// </summary>
+    /// <inheritdoc/>
     public StrainerOptions Options { get; }
 
-    /// <summary>
-    /// Gets the sorting context.
-    /// </summary>
+    /// <inheritdoc/>
     public ISortingContext Sorting { get; }
 
-    /// <summary>
-    /// Gets the pipeline context.
-    /// </summary>
+    /// <inheritdoc/>
     public IPipelineContext Pipeline { get; }
 }

@@ -27,11 +27,6 @@ public class AspNetCoreStrainerOptionsProvider : IStrainerOptionsProvider
         _options = Guard.Against.Null(options);
     }
 
-    /// <summary>
-    /// Gets the <see cref="StrainerOptions"/>.
-    /// </summary>
-    /// <returns>
-    /// An instance of <see cref="StrainerOptions"/>.
-    /// </returns>
+    /// <inheritdoc/>
     public StrainerOptions GetStrainerOptions() => _options.Value;
 }

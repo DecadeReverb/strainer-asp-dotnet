@@ -11,8 +11,6 @@ public class CustomSortMethod : ICustomSortMethod
 
     }
 
-    /// <summary>
-    /// Gets or sets the custom method name.
-    /// </summary>
+    /// <inheritdoc/>
     public string Name { get; set; }
 }

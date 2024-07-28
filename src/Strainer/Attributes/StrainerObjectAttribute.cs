@@ -48,9 +48,7 @@ public class StrainerObjectAttribute : Attribute, IObjectMetadata
         IsDefaultSortingDescending = isDefaultSortingDescending;
     }
 
-    /// <summary>
-    /// Gets a property name being default sorting property for marked object.
-    /// </summary>
+    /// <inheritdoc/>
     public string DefaultSortingPropertyName { get; }
 
     /// <summary>

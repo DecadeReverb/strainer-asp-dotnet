@@ -28,39 +28,25 @@ public abstract class StrainerModule<T> : IStrainerModule<T>, IStrainerModule
         PropertyMetadata = new Dictionary<Type, IDictionary<string, IPropertyMetadata>>();
     }
 
-    /// <summary>
-    /// Gets the object custom filter methods dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IDictionary<Type, IDictionary<string, ICustomFilterMethod>> CustomFilterMethods { get; }
 
-    /// <summary>
-    /// Gets the object custom sorting methods dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IDictionary<Type, IDictionary<string, ICustomSortMethod>> CustomSortMethods { get; }
 
-    /// <summary>
-    /// Gets the object default dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IDictionary<Type, IPropertyMetadata> DefaultMetadata { get; }
 
-    /// <summary>
-    /// Gets the object filter operator dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IDictionary<string, IFilterOperator> FilterOperators { get; }
 
-    /// <summary>
-    /// Gets a set of built-in filter operator symbols to be excluded from final configuration.
-    /// </summary>
+    /// <inheritdoc/>
     public ISet<string> ExcludedBuiltInFilterOperators { get; }
 
-    /// <summary>
-    /// Gets the object metadata dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IDictionary<Type, IObjectMetadata> ObjectMetadata { get; }
 
-    /// <summary>
-    /// Gets the object property dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IDictionary<Type, IDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
 
     /// <summary>
@@ -73,14 +59,7 @@ public abstract class StrainerModule<T> : IStrainerModule<T>, IStrainerModule
     /// </param>
     public abstract void Load(IStrainerModuleBuilder<T> builder);
 
-    /// <summary>
-    /// Loads configuration in module.
-    /// <para/>
-    /// Override this method to specify configuration for this module.
-    /// </summary>
-    /// <param name="builder">
-    /// The Strainer Module builder.
-    /// </param>
+    /// <inheritdoc/>
     public void Load(IStrainerModuleBuilder builder)
     {
         Guard.Against.Null(builder);

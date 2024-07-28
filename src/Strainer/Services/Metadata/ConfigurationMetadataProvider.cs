@@ -11,9 +11,7 @@ public class ConfigurationMetadataProvider : IConfigurationMetadataProvider
         _strainerConfigurationProvider = Guard.Against.Null(strainerConfigurationProvider);
     }
 
-    /// <summary>
-    /// Gets the object default dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IPropertyMetadata> GetDefaultMetadata()
     {
         return _strainerConfigurationProvider
@@ -21,9 +19,7 @@ public class ConfigurationMetadataProvider : IConfigurationMetadataProvider
             .DefaultMetadata;
     }
 
-    /// <summary>
-    /// Gets the object metadata dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IObjectMetadata> GetObjectMetadata()
     {
         return _strainerConfigurationProvider
@@ -31,9 +27,7 @@ public class ConfigurationMetadataProvider : IConfigurationMetadataProvider
             .ObjectMetadata;
     }
 
-    /// <summary>
-    /// Gets the object property dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetPropertyMetadata()
     {
         return _strainerConfigurationProvider

@@ -20,9 +20,7 @@ public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
         Values = new List<string>();
     }
 
-    /// <summary>
-    /// Gets the original input, based on which current filter term was created.
-    /// </summary>
+    /// <inheritdoc/>
     public string Input { get; }
 
     /// <summary>

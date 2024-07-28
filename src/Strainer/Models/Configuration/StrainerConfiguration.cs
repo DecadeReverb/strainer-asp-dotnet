@@ -33,38 +33,24 @@ public class StrainerConfiguration : IStrainerConfiguration
         PropertyMetadata = Guard.Against.Null(propertyMetadata);
     }
 
-    /// <summary>
-    /// Gets the object custom filter methods dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>> CustomFilterMethods { get; }
 
-    /// <summary>
-    /// Gets the object custom sorting methods dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>> CustomSortMethods { get; }
 
-    /// <summary>
-    /// Gets the object default dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IPropertyMetadata> DefaultMetadata { get; }
 
-    /// <summary>
-    /// Gets the object filter operator dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<string, IFilterOperator> FilterOperators { get; }
 
-    /// <summary>
-    /// Gets a set of built-in filter operator symbols excluded from configuration.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlySet<string> ExcludedBuiltInFilterOperators { get; }
 
-    /// <summary>
-    /// Gets the object metadata dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IObjectMetadata> ObjectMetadata { get; }
 
-    /// <summary>
-    /// Gets the object property dictionary.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> PropertyMetadata { get; }
 }
