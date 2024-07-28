@@ -21,12 +21,12 @@ public class CustomSortMethod<T> : CustomSortMethod, ICustomSortMethod<T>
     }
 
     /// <summary>
-    /// Gets or sets the function used for custom sorting.
+    /// Gets or sets the expression used for custom sorting.
     /// </summary>
     public Expression<Func<T, object>> Expression { get; set; }
 
     /// <summary>
-    /// Gets or sets the function used for custom sorting.
+    /// Gets or sets the provider of expression used for custom sorting.
     /// </summary>
-    public Func<ISortTerm, Expression<Func<T, object>>> SortTermExpression { get; set; }
+    public Func<ISortTerm, Expression<Func<T, object>>> ExpressionProvider { get; set; }
 }

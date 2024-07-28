@@ -10,5 +10,5 @@ public interface ICustomSortMethodBuilder<TEntity>
 
     ICustomSortMethodBuilder<TEntity> HasFunction(Expression<Func<TEntity, object>> expression);
 
-    ICustomSortMethodBuilder<TEntity> HasFunction(Func<ISortTerm, Expression<Func<TEntity, object>>> sortTermExpression);
+    ICustomSortMethodBuilder<TEntity> HasFunction(Func<ISortTerm, Expression<Func<TEntity, object>>> expressionProvider);
 }

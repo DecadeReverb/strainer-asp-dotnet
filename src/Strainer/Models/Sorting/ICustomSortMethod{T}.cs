@@ -12,12 +12,12 @@ namespace Fluorite.Strainer.Models.Sorting;
 public interface ICustomSortMethod<T> : ICustomSortMethod
 {
     /// <summary>
-    /// Gets the function used for custom sorting.
+    /// Gets the expression used for custom sorting.
     /// </summary>
     Expression<Func<T, object>> Expression { get; }
 
     /// <summary>
-    /// Gets the provider for function used for custom sorting.
+    /// Gets the provider of expression used for custom sorting.
     /// </summary>
-    Func<ISortTerm, Expression<Func<T, object>>> SortTermExpression { get; }
+    Func<ISortTerm, Expression<Func<T, object>>> ExpressionProvider { get; }
 }

@@ -21,7 +21,7 @@ public class CustomSortMethodBuilderTests
         result.Should().NotBeNull();
         result.Expression.Should().NotBeNull();
         result.Name.Should().Be(name);
-        result.SortTermExpression.Should().BeNull();
+        result.ExpressionProvider.Should().BeNull();
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class CustomSortMethodBuilderTests
         result.Should().NotBeNull();
         result.Expression.Should().BeNull();
         result.Name.Should().Be(name);
-        result.SortTermExpression.Should().NotBeNull();
+        result.ExpressionProvider.Should().NotBeNull();
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class CustomSortMethodBuilderTests
         result.Should().NotBeNull();
         result.Expression.Should().NotBeNull();
         result.Name.Should().Be(name);
-        result.SortTermExpression.Should().BeNull();
+        result.ExpressionProvider.Should().BeNull();
     }
 
     private class Post

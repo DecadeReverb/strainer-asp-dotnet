@@ -32,6 +32,7 @@ public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
         sortExpression = new SortExpression<T>
         {
             Expression = expression,
+            IsDefault = false,
             IsDescending = sortTerm.IsDescending,
             IsSubsequent = isSubsequent,
         };
@@ -41,8 +42,8 @@ public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
 
     private Expression<Func<T, object>> GetExpression<T>(ISortTerm sortTerm, ICustomSortMethod<T> customSortMethod)
     {
-        return customSortMethod.SortTermExpression != null
-            ? customSortMethod.SortTermExpression(sortTerm)
+        return customSortMethod.ExpressionProvider != null
+            ? customSortMethod.ExpressionProvider(sortTerm)
             : customSortMethod.Expression;
     }
 

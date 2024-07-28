@@ -18,7 +18,7 @@ public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity
 
     protected Expression<Func<TEntity, object>> Expression { get; set; }
 
-    protected Func<ISortTerm, Expression<Func<TEntity, object>>> SortTermExpression { get; set; }
+    protected Func<ISortTerm, Expression<Func<TEntity, object>>> ExpressionProvider { get; set; }
 
     protected string Name { get; set; }
 
@@ -26,23 +26,23 @@ public class CustomSortMethodBuilder<TEntity> : ICustomSortMethodBuilder<TEntity
     {
         Expression = Expression,
         Name = Name,
-        SortTermExpression = SortTermExpression,
+        ExpressionProvider = ExpressionProvider,
     };
 
     public ICustomSortMethodBuilder<TEntity> HasFunction(
         Expression<Func<TEntity, object>> expression)
     {
         Expression = Guard.Against.Null(expression);
-        SortTermExpression = null;
+        ExpressionProvider = null;
 
         Save(Build());
 
         return this;
     }
 
-    public ICustomSortMethodBuilder<TEntity> HasFunction(Func<ISortTerm, Expression<Func<TEntity, object>>> sortTermExpression)
+    public ICustomSortMethodBuilder<TEntity> HasFunction(Func<ISortTerm, Expression<Func<TEntity, object>>> expressionProvider)
     {
-        SortTermExpression = Guard.Against.Null(sortTermExpression);
+        ExpressionProvider = Guard.Against.Null(expressionProvider);
         Expression = null;
 
         Save(Build());
