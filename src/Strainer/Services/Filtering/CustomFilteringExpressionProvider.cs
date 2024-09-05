@@ -22,30 +22,21 @@ public class CustomFilteringExpressionProvider : ICustomFilteringExpressionProvi
         Guard.Against.Null(filterTerm);
         Guard.Against.Null(filterTermName);
 
-        if (!TryGetCustomMethod<T>(filterTermName, out var customMethod))
+        var customFilterMethods = _configurationCustomMethodsProvider.GetCustomFilterMethods();
+        if (customFilterMethods.TryGetValue(typeof(T), out var typeCustomFilterMethods)
+            && typeCustomFilterMethods.TryGetValue(filterTermName, out var customMethod))
         {
-            expression = null;
+            var customFilterMethod = customMethod as ICustomFilterMethod<T>;
 
-            return false;
+            expression = customFilterMethod.FilterTermExpression is not null
+                ? customFilterMethod.FilterTermExpression(filterTerm)
+                : customFilterMethod.Expression;
+
+            return true;
         }
 
-        expression = GetExpression(filterTerm, customMethod as ICustomFilterMethod<T>);
+        expression = null;
 
-        return true;
-    }
-
-    private bool TryGetCustomMethod<T>(string filterTermName, out ICustomFilterMethod customMethod)
-    {
-        customMethod = null;
-
-        return _configurationCustomMethodsProvider.GetCustomFilterMethods().TryGetValue(typeof(T), out var typeCustomFilterMethods)
-            && typeCustomFilterMethods.TryGetValue(filterTermName, out customMethod);
-    }
-
-    private Expression<Func<T, bool>> GetExpression<T>(IFilterTerm filterTerm, ICustomFilterMethod<T> customFilterMethod)
-    {
-        return customFilterMethod.FilterTermExpression is not null
-            ? customFilterMethod.FilterTermExpression(filterTerm)
-            : customFilterMethod.Expression;
+        return false;
     }
 }
