@@ -162,7 +162,7 @@ public class FilterExpressionProviderTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeOfType<BinaryExpression>();
+        result.Should().BeAssignableTo<BinaryExpression>();
         result.Should().BeEquivalentTo(Expression.Or(innerExpression, expression));
     }
 
