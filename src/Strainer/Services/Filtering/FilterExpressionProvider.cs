@@ -28,38 +28,40 @@ public class FilterExpressionProvider : IFilterExpressionProvider
         Guard.Against.Null(filterTerm);
         Guard.Against.Null(parameterExpression);
 
-        if (filterTerm.Values == null)
+        if (filterTerm.Values == null || !filterTerm.Values.Any())
         {
             return null;
         }
 
-        var typeConverter = _typeConverterProvider.GetTypeConverter(metadata.PropertyInfo.PropertyType);
-        var workflow = _filterExpressionWorkflowBuilder.BuildDefaultWorkflow();
-
-        Expression propertyValueExpresssion = parameterExpression;
-
-        foreach (var part in metadata.Name.Split('.'))
+        var nameParts = metadata.Name.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+        if (!nameParts.Any())
         {
-            propertyValueExpresssion = Expression.PropertyOrField(propertyValueExpresssion, part);
+            throw new ArgumentException("Metadata name must not be empty.", nameof(metadata));
+        }
+
+        MemberExpression propertyExpresssion = null;
+
+        foreach (var part in nameParts)
+        {
+            propertyExpresssion = Expression.PropertyOrField((Expression)propertyExpresssion ?? parameterExpression, part);
         }
 
         return CreateInnerExpression(
             metadata,
             filterTerm,
             innerExpression,
-            propertyValueExpresssion,
-            workflow,
-            typeConverter);
+            propertyExpresssion);
     }
 
     private Expression CreateInnerExpression(
         IPropertyMetadata metadata,
         IFilterTerm filterTerm,
         Expression innerExpression,
-        Expression propertyValue,
-        IFilterExpressionWorkflow workflow,
-        ITypeConverter typeConverter)
+        MemberExpression propertyExpression)
     {
+        var typeConverter = _typeConverterProvider.GetTypeConverter(metadata.PropertyInfo.PropertyType);
+        var workflow = _filterExpressionWorkflowBuilder.BuildDefaultWorkflow();
+
         foreach (var filterTermValue in filterTerm.Values)
         {
             var context = new FilterExpressionWorkflowContext
@@ -68,7 +70,7 @@ public class FilterExpressionProvider : IFilterExpressionProvider
                 FilterTermValue = filterTermValue,
                 FinalExpression = null,
                 PropertyMetadata = metadata,
-                PropertyValue = propertyValue,
+                PropertyValue = propertyExpression,
                 Term = filterTerm,
                 TypeConverter = typeConverter,
             };
