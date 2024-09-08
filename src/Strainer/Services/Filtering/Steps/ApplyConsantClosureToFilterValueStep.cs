@@ -12,6 +12,14 @@ public class ApplyConsantClosureToFilterValueStep : IApplyConsantClosureToFilter
             ? typeof(string)
             : context.PropertyMetadata.PropertyInfo.PropertyType;
 
+        if (context.FilterTermConstant.GetType() != constantClosureType)
+        {
+            throw new InvalidOperationException(
+                "Cannot get a closure over constant using wrong type. " +
+                $"Give value is of {context.FilterTermConstant.GetType().Name} type while expected target type " +
+                $"is of {constantClosureType.Name} type.");
+        }
+
         context.FinalExpression = GetClosureOverConstant(
             context.FilterTermConstant,
             constantClosureType);
