@@ -210,7 +210,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         return keyValue?.attribute;
     }
 
-    public IEnumerable<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType)
+    public IReadOnlyList<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType)
     {
         Guard.Against.Null(modelType);
 
@@ -227,7 +227,9 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
             if (attribute != null)
             {
                 return _propertyInfoProvider.GetPropertyInfos(currentType)
-                    .Select(propertyInfo => _attributePropertyMetadataBuilder.BuildPropertyMetadata(attribute, propertyInfo));
+                    .Select(propertyInfo => _attributePropertyMetadataBuilder.BuildPropertyMetadata(attribute, propertyInfo))
+                    .ToList()
+                    .AsReadOnly();
             }
 
             currentType = currentType.BaseType;
@@ -237,7 +239,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         return null;
     }
 
-    public IEnumerable<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType)
+    public IReadOnlyList<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType)
     {
         Guard.Against.Null(modelType);
 
@@ -250,7 +252,9 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
             .GetPropertyInfos(modelType)
             .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
             .Where(attribute => attribute != null)
-            .Cast<IPropertyMetadata>();
+            .Cast<IPropertyMetadata>()
+            .ToList()
+            .AsReadOnly();
 
         return metadata.Any()
             ? metadata

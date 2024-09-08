@@ -14,9 +14,8 @@ public class MetadataFacade : IMetadataFacade
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata()
     {
-        var defaultValue = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>().ToReadOnly();
-
-        return GetFirstNotNullResultFromProviders(p => p.GetAllPropertyMetadata(), defaultValue);
+        return GetFirstNotNullResultFromProviders(p => p.GetAllPropertyMetadata())
+            ?? new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>().ToReadOnly();
     }
 
     public IPropertyMetadata GetDefaultMetadata<TEntity>()
@@ -28,7 +27,7 @@ public class MetadataFacade : IMetadataFacade
     {
         Guard.Against.Null(modelType);
 
-        return GetFirstNotNullResultFromProviders(p => p.GetDefaultMetadata(modelType), defaultValue: null);
+        return GetFirstNotNullResultFromProviders(p => p.GetDefaultMetadata(modelType));
     }
 
     public IPropertyMetadata GetMetadata<TEntity>(
@@ -49,8 +48,7 @@ public class MetadataFacade : IMetadataFacade
         Guard.Against.NullOrWhiteSpace(name);
 
         return GetFirstNotNullResultFromProviders(
-            p => p.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name),
-            defaultValue: null);
+            p => p.GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name));
     }
 
     public IEnumerable<IPropertyMetadata> GetMetadatas<TEntity>()
@@ -62,10 +60,10 @@ public class MetadataFacade : IMetadataFacade
     {
         Guard.Against.Null(modelType);
 
-        return GetFirstNotNullResultFromProviders(p => p.GetPropertyMetadatas(modelType), defaultValue: null);
+        return GetFirstNotNullResultFromProviders(p => p.GetPropertyMetadatas(modelType));
     }
 
-    private TResult GetFirstNotNullResultFromProviders<TResult>(Func<IMetadataProvider, TResult> resultFunc, TResult defaultValue)
+    private TResult GetFirstNotNullResultFromProviders<TResult>(Func<IMetadataProvider, TResult> resultFunc)
         where TResult : class
     {
         foreach (var provider in _metadataProviders)
@@ -77,6 +75,6 @@ public class MetadataFacade : IMetadataFacade
             }
         }
 
-        return defaultValue;
+        return default;
     }
 }

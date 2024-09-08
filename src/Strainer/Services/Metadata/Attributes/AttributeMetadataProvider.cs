@@ -8,18 +8,15 @@ public class AttributeMetadataProvider : IMetadataProvider
     private readonly IMetadataSourceTypeProvider _metadataSourceTypeProvider;
     private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProvider;
     private readonly IAttributeMetadataRetriever _attributeMetadataRetriever;
-    private readonly IStrainerAttributeProvider _strainerAttributeProvider;
 
     public AttributeMetadataProvider(
         IMetadataSourceTypeProvider metadataSourceTypeProvider,
         IMetadataAssemblySourceProvider metadataAssemblySourceProvider,
-        IAttributeMetadataRetriever attributeMetadataRetriever,
-        IStrainerAttributeProvider strainerAttributeProvider)
+        IAttributeMetadataRetriever attributeMetadataRetriever)
     {
         _metadataSourceTypeProvider = Guard.Against.Null(metadataSourceTypeProvider);
         _metadataAssemblySourceProvider = Guard.Against.Null(metadataAssemblySourceProvider);
         _attributeMetadataRetriever = Guard.Against.Null(attributeMetadataRetriever);
-        _strainerAttributeProvider = Guard.Against.Null(strainerAttributeProvider);
     }
 
     public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
@@ -74,18 +71,16 @@ public class AttributeMetadataProvider : IMetadataProvider
         return propertyMetadata;
     }
 
-    public IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
+    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
     {
         return GetPropertyMetadatas(typeof(TEntity));
     }
 
-    public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
+    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
     {
         Guard.Against.Null(modelType);
 
-        var propertyMetadatas = _attributeMetadataRetriever.GetMetadataFromPropertyAttribute(modelType);
-        propertyMetadatas ??= _attributeMetadataRetriever.GetMetadataFromObjectAttribute(modelType);
-
-        return propertyMetadatas;
+        return _attributeMetadataRetriever.GetMetadataFromPropertyAttribute(modelType)
+            ?? _attributeMetadataRetriever.GetMetadataFromObjectAttribute(modelType);
     }
 }

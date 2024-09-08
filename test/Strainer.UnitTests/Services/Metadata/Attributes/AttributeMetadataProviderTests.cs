@@ -3,7 +3,6 @@ using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Metadata.Attributes;
 using NSubstitute.ReturnsExtensions;
-using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes;
 
@@ -12,7 +11,6 @@ public class AttributeMetadataProviderTests
     private readonly IMetadataSourceTypeProvider _metadataSourceTypeProviderMock = Substitute.For<IMetadataSourceTypeProvider>();
     private readonly IMetadataAssemblySourceProvider _metadataAssemblySourceProviderMock = Substitute.For<IMetadataAssemblySourceProvider>();
     private readonly IAttributeMetadataRetriever _attributeMetadataRetrieverMock = Substitute.For<IAttributeMetadataRetriever>();
-    private readonly IStrainerAttributeProvider _strainerObjectAttributeProviderMock = Substitute.For<IStrainerAttributeProvider>();
 
     private readonly AttributeMetadataProvider _provider;
 
@@ -21,8 +19,7 @@ public class AttributeMetadataProviderTests
         _provider = new AttributeMetadataProvider(
             _metadataSourceTypeProviderMock,
             _metadataAssemblySourceProviderMock,
-            _attributeMetadataRetrieverMock,
-            _strainerObjectAttributeProviderMock);
+            _attributeMetadataRetrieverMock);
     }
 
     [Fact]

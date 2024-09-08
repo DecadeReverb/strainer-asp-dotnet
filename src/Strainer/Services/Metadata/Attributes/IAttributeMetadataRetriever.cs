@@ -16,7 +16,7 @@ public interface IAttributeMetadataRetriever
 
     IPropertyMetadata GetMetadataFromPropertyAttribute(Type modelType, bool isSortableRequired, bool isFilterableRequired, string name);
 
-    IEnumerable<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType);
+    IReadOnlyList<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType);
 
-    IEnumerable<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType);
+    IReadOnlyList<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType);
 }

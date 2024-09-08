@@ -21,7 +21,7 @@ public interface IMetadataProvider
         bool isFilterableRequired,
         string name);
 
-    IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>();
+    IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas<TEntity>();
 
-    IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType);
+    IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas(Type modelType);
 }

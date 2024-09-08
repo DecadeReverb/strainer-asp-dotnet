@@ -104,21 +104,46 @@ public class FluentApiMetadataProvider : IMetadataProvider
             return propertyMetadata;
         }
 
+        if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
+        {
+            if (((isFilterableRequired && objectMetadata.IsFilterable) || (!isFilterableRequired))
+                && ((isSortableRequired && objectMetadata.IsSortable) || (!isSortableRequired)))
+            {
+                var propertyInfo = _propertyInfoProvider.GetPropertyInfo(modelType, name);
+                if (propertyInfo is not null)
+                {
+                    return _propertyMetadataBuilder.BuildPropertyMetadataFromPropertyInfo(objectMetadata, propertyInfo);
+                }
+            }
+        }
+
         return null;
     }
 
-    public IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
+    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
     {
         return GetPropertyMetadatas(typeof(TEntity));
     }
 
-    public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
+    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
     {
         Guard.Against.Null(modelType);
 
+        if (!IsFluentApiEnabled())
+        {
+            return null;
+        }
+
         if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var metadatas))
         {
-            return metadatas.Values;
+            return metadatas.Values.ToList().AsReadOnly();
+        }
+
+        if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
+        {
+            return _propertyInfoProvider.GetPropertyInfos(modelType)
+                .Select(p => _propertyMetadataBuilder.BuildPropertyMetadataFromPropertyInfo(objectMetadata, p))
+                .ToList();
         }
 
         return null;
