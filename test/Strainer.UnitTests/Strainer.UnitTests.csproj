@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
+    <TargetFramework>net8</TargetFramework>
     <AssemblyName>Fluorite.Strainer.UnitTests</AssemblyName>
     <RootNamespace>Fluorite.Strainer.UnitTests</RootNamespace>
     <IsPackable>false</IsPackable>
