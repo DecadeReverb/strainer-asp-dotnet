@@ -166,8 +166,17 @@ public class FluentApiMetadataProviderTests
         metadata.Should().BeSameAs(propertyMetadata);
     }
 
-    [Fact]
-    public void GetPropertyMetadata_Returns_PropertyMetadata_When_MarkedAsSortable()
+    [Theory]
+    [InlineData(false, false, false, false)]
+    [InlineData(false, false, true, false)]
+    [InlineData(false, false, false, true)]
+    [InlineData(false, false, true, true)]
+    [InlineData(true, false, true, false)]
+    [InlineData(true, false, true, true)]
+    [InlineData(false, true, false, true)]
+    [InlineData(false, true, true, true)]
+    [InlineData(true, true, true, true)]
+    public void GetPropertyMetadata_Returns_PropertyMetadata_WhenMatching(bool isFilterableRequired, bool isSortableRequired, bool isFilterable, bool isSortable)
     {
         // Arrange
         _optionsProviderMock
@@ -176,8 +185,8 @@ public class FluentApiMetadataProviderTests
         var propertyMetadata = new PropertyMetadata
         {
             Name = nameof(Post.Id),
-            IsFilterable = true,
-            IsSortable = true,
+            IsFilterable = isFilterable,
+            IsSortable = isSortable,
         };
         var postMetadataDictionary = new Dictionary<string, IPropertyMetadata>
         {
@@ -194,13 +203,56 @@ public class FluentApiMetadataProviderTests
         // Act
         var metadata = _provider.GetPropertyMetadata(
             typeof(Post),
-            isSortableRequired: true,
-            isFilterableRequired: true,
+            isSortableRequired,
+            isFilterableRequired,
             name: nameof(Post.Id));
 
         // Assert
         metadata.Should().NotBeNull();
         metadata.Should().BeSameAs(propertyMetadata);
+    }
+
+    [Theory]
+    [InlineData(false, true, false, false)]
+    [InlineData(false, true, true, false)]
+    [InlineData(true, false, false, false)]
+    [InlineData(true, false, false, true)]
+    [InlineData(true, true, false, false)]
+    [InlineData(true, true, true, false)]
+    [InlineData(true, true, false, true)]
+    public void GetPropertyMetadata_Returns_Null_WhenNotMatching(bool isFilterableRequired, bool isSortableRequired, bool isFilterable, bool isSortable)
+    {
+        // Arrange
+        _optionsProviderMock
+            .GetStrainerOptions()
+            .Returns(new StrainerOptions());
+        var propertyMetadata = new PropertyMetadata
+        {
+            Name = nameof(Post.Id),
+            IsFilterable = isFilterable,
+            IsSortable = isSortable,
+        };
+        var postMetadataDictionary = new Dictionary<string, IPropertyMetadata>
+        {
+            { nameof(Post.Id), propertyMetadata }
+        };
+        var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
+        {
+            { typeof(Post), postMetadataDictionary },
+        };
+        _configurationMetadataProviderMock
+            .GetPropertyMetadata()
+            .Returns(propertyMetadataDictionary);
+
+        // Act
+        var metadata = _provider.GetPropertyMetadata(
+            typeof(Post),
+            isSortableRequired,
+            isFilterableRequired,
+            name: nameof(Post.Id));
+
+        // Assert
+        metadata.Should().BeNull();
     }
 
     [Theory]
@@ -253,6 +305,55 @@ public class FluentApiMetadataProviderTests
         // Assert
         metadata.Should().NotBeNull();
         metadata.Should().BeSameAs(propertyMetadata);
+    }
+
+    [Theory]
+    [InlineData(true, false, false, false)]
+    [InlineData(true, false, false, true)]
+    [InlineData(false, true, false, false)]
+    [InlineData(false, true, true, false)]
+    [InlineData(true, true, false, false)]
+    [InlineData(true, true, true, false)]
+    [InlineData(true, true, false, true)]
+    public void GetPropertyMetadata_Returns_NullObjectMetadata_WhenNotMatching(bool isSortableRequired, bool isFilterableRequired, bool isSortable, bool isFilterable)
+    {
+        // Arrange
+        var name = nameof(Post.Id);
+        _optionsProviderMock
+            .GetStrainerOptions()
+            .Returns(new StrainerOptions());
+        var objectMetadata = Substitute.For<IObjectMetadata>();
+        objectMetadata.IsFilterable.Returns(isFilterable);
+        objectMetadata.IsSortable.Returns(isSortable);
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        var propertyInfo = Substitute.For<PropertyInfo>();
+        var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>();
+        var objectMetadataDictionary = new Dictionary<Type, IObjectMetadata>
+        {
+            { typeof(Post), objectMetadata },
+        };
+        _configurationMetadataProviderMock
+            .GetPropertyMetadata()
+            .Returns(propertyMetadataDictionary);
+        _configurationMetadataProviderMock
+            .GetObjectMetadata()
+            .Returns(objectMetadataDictionary);
+        _propertyInfoProviderMock
+            .GetPropertyInfo(typeof(Post), name)
+            .Returns(propertyInfo);
+        _propertyMetadataBuilderMock
+            .BuildPropertyMetadataFromPropertyInfo(objectMetadata, propertyInfo)
+            .Returns(propertyMetadata);
+
+        // Act
+        var metadata = _provider.GetPropertyMetadata(
+            typeof(Post),
+            isSortableRequired,
+            isFilterableRequired,
+            name);
+
+        // Assert
+        metadata.Should().BeNull();
     }
 
     [Theory]
