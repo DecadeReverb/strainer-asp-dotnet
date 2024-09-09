@@ -41,11 +41,6 @@ public class FluentApiMetadataProvider : IMetadataProvider
             .ToReadOnly();
     }
 
-    public IPropertyMetadata GetDefaultMetadata<TEntity>()
-    {
-        return GetDefaultMetadata(typeof(TEntity));
-    }
-
     public IPropertyMetadata GetDefaultMetadata(Type modelType)
     {
         Guard.Against.Null(modelType);
@@ -66,14 +61,6 @@ public class FluentApiMetadataProvider : IMetadataProvider
         }
 
         return propertyMetadata;
-    }
-
-    public IPropertyMetadata GetPropertyMetadata<TEntity>(
-        bool isSortableRequired,
-        bool isFilterableRequired,
-        string name)
-    {
-        return GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
     }
 
     public IPropertyMetadata GetPropertyMetadata(
@@ -118,11 +105,6 @@ public class FluentApiMetadataProvider : IMetadataProvider
         }
 
         return null;
-    }
-
-    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
-    {
-        return GetPropertyMetadatas(typeof(TEntity));
     }
 
     public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas(Type modelType)

@@ -78,7 +78,7 @@ public class AttributeMetadataProviderTests
             .Returns(Substitute.For<IPropertyMetadata>());
 
         // Act
-        var result = _provider.GetDefaultMetadata<Comment>();
+        var result = _provider.GetDefaultMetadata(typeof(Comment));
 
         // Assert
         result.Should().NotBeNull();
@@ -93,7 +93,7 @@ public class AttributeMetadataProviderTests
             .Returns(Substitute.For<IPropertyMetadata>());
 
         // Act
-        var result = _provider.GetDefaultMetadata<Comment>();
+        var result = _provider.GetDefaultMetadata(typeof(Comment));
 
         // Assert
         result.Should().NotBeNull();
@@ -113,7 +113,8 @@ public class AttributeMetadataProviderTests
             .ReturnsNull();
 
         // Act
-        var result = _provider.GetPropertyMetadata<Post>(
+        var result = _provider.GetPropertyMetadata(
+            typeof(Post),
             isSortableRequired: true,
             isFilterableRequired: true,
             name);
@@ -138,7 +139,8 @@ public class AttributeMetadataProviderTests
             .Returns(propertyMetadata);
 
         // Act
-        var result = _provider.GetPropertyMetadata<Post>(
+        var result = _provider.GetPropertyMetadata(
+            typeof(Post),
             isSortableRequired: true,
             isFilterableRequired: true,
             name: nameof(Post.Title));
@@ -169,7 +171,8 @@ public class AttributeMetadataProviderTests
             .Returns(propertyMetadata);
 
         // Act
-        var result = _provider.GetPropertyMetadata<Comment>(
+        var result = _provider.GetPropertyMetadata(
+            typeof(Comment),
             isSortableRequired: true,
             isFilterableRequired: true,
             name: nameof(Comment.Id));

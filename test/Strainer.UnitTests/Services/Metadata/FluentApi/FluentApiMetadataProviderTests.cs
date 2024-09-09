@@ -41,7 +41,7 @@ public class FluentApiMetadataProviderTests
             .Returns(new Dictionary<Type, IObjectMetadata>());
 
         // Act
-        var metadata = _provider.GetDefaultMetadata<Post>();
+        var metadata = _provider.GetDefaultMetadata(typeof(Post));
 
         // Assert
         metadata.Should().BeNull();
@@ -71,7 +71,7 @@ public class FluentApiMetadataProviderTests
             .Returns(propertyMetadata);
 
         // Act
-        var metadata = _provider.GetDefaultMetadata<Post>();
+        var metadata = _provider.GetDefaultMetadata(typeof(Post));
 
         // Assert
         metadata.Should().NotBeNull();
@@ -101,7 +101,7 @@ public class FluentApiMetadataProviderTests
             .Returns(defaultMetadataDictionary);
 
         // Act
-        var metadata = _provider.GetDefaultMetadata<Post>();
+        var metadata = _provider.GetDefaultMetadata(typeof(Post));
 
         // Assert
         metadata.Should().NotBeNull();
@@ -121,7 +121,8 @@ public class FluentApiMetadataProviderTests
             .Returns(propertyMetadata);
 
         // Act
-        var metadata = _provider.GetPropertyMetadata<Post>(
+        var metadata = _provider.GetPropertyMetadata(
+            typeof(Post),
             isSortableRequired: false,
             isFilterableRequired: false,
             name: nameof(Post.Id));
@@ -154,7 +155,8 @@ public class FluentApiMetadataProviderTests
             .Returns(propertyMetadataDictionary);
 
         // Act
-        var metadata = _provider.GetPropertyMetadata<Post>(
+        var metadata = _provider.GetPropertyMetadata(
+            typeof(Post),
             isSortableRequired: false,
             isFilterableRequired: false,
             name: nameof(Post.Id));
@@ -190,7 +192,8 @@ public class FluentApiMetadataProviderTests
             .Returns(propertyMetadataDictionary);
 
         // Act
-        var metadata = _provider.GetPropertyMetadata<Post>(
+        var metadata = _provider.GetPropertyMetadata(
+            typeof(Post),
             isSortableRequired: true,
             isFilterableRequired: true,
             name: nameof(Post.Id));
@@ -241,7 +244,8 @@ public class FluentApiMetadataProviderTests
             .Returns(propertyMetadata);
 
         // Act
-        var metadata = _provider.GetPropertyMetadata<Post>(
+        var metadata = _provider.GetPropertyMetadata(
+            typeof(Post),
             isSortableRequired,
             isFilterableRequired,
             name);
@@ -280,7 +284,8 @@ public class FluentApiMetadataProviderTests
             .Returns(objectMetadataDictionary);
 
         // Act
-        var metadata = _provider.GetPropertyMetadata<Post>(
+        var metadata = _provider.GetPropertyMetadata(
+            typeof(Post),
             isSortableRequired,
             isFilterableRequired,
             name);
@@ -336,7 +341,7 @@ public class FluentApiMetadataProviderTests
             .Returns(new StrainerOptions());
 
         // Act
-        var metadatas = _provider.GetPropertyMetadatas<Post>();
+        var metadatas = _provider.GetPropertyMetadatas(typeof(Post));
 
         // Assert
         metadatas.Should().BeNull();
@@ -358,7 +363,7 @@ public class FluentApiMetadataProviderTests
             .Returns(propertyMetadataDictionary);
 
         // Act
-        var metadatas = _provider.GetPropertyMetadatas<Post>();
+        var metadatas = _provider.GetPropertyMetadatas(typeof(Post));
 
         // Assert
         metadatas.Should().NotBeNull();
@@ -395,7 +400,7 @@ public class FluentApiMetadataProviderTests
             .Returns(propertyMetadata);
 
         // Act
-        var metadatas = _provider.GetPropertyMetadatas<Post>();
+        var metadatas = _provider.GetPropertyMetadatas(typeof(Post));
 
         // Assert
         metadatas.Should().NotBeNullOrEmpty();

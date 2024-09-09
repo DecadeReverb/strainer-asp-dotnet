@@ -25,7 +25,7 @@ public class ServiceCollectionExtensionsTests
             .Single();
 
         // Act
-        var metadatas = fluentApiMetadataProvider.GetPropertyMetadatas<Post>();
+        var metadatas = fluentApiMetadataProvider.GetPropertyMetadatas(typeof(Post));
 
         // Assert
         metadatas.Should().NotBeNullOrEmpty();
@@ -46,7 +46,7 @@ public class ServiceCollectionExtensionsTests
             .Single();
 
         // Act
-        var metadata = fluentApiMetadataProvider.GetDefaultMetadata<Comment>();
+        var metadata = fluentApiMetadataProvider.GetDefaultMetadata(typeof(Comment));
 
         // Assert
         metadata.Should().NotBeNull();

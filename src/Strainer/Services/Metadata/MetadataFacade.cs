@@ -20,7 +20,7 @@ public class MetadataFacade : IMetadataFacade
 
     public IPropertyMetadata GetDefaultMetadata<TEntity>()
     {
-        return GetDefaultMetadata(typeof(TEntity));
+        return GetFirstNotNullResultFromProviders(p => p.GetDefaultMetadata(typeof(TEntity)));
     }
 
     public IPropertyMetadata GetDefaultMetadata(Type modelType)
@@ -35,7 +35,10 @@ public class MetadataFacade : IMetadataFacade
         bool isFilterableRequired,
         string name)
     {
-        return GetMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
+        Guard.Against.NullOrWhiteSpace(name);
+
+        return GetFirstNotNullResultFromProviders(
+            p => p.GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name));
     }
 
     public IPropertyMetadata GetMetadata(
@@ -53,7 +56,7 @@ public class MetadataFacade : IMetadataFacade
 
     public IEnumerable<IPropertyMetadata> GetMetadatas<TEntity>()
     {
-        return GetMetadatas(typeof(TEntity));
+        return GetFirstNotNullResultFromProviders(p => p.GetPropertyMetadatas(typeof(TEntity)));
     }
 
     public IEnumerable<IPropertyMetadata> GetMetadatas(Type modelType)

@@ -31,11 +31,6 @@ public class AttributeMetadataProvider : IMetadataProvider
             .ToReadOnly();
     }
 
-    public IPropertyMetadata GetDefaultMetadata<TEntity>()
-    {
-        return GetDefaultMetadata(typeof(TEntity));
-    }
-
     public IPropertyMetadata GetDefaultMetadata(Type modelType)
     {
         Guard.Against.Null(modelType);
@@ -44,16 +39,6 @@ public class AttributeMetadataProvider : IMetadataProvider
         propertyMetadata ??= _attributeMetadataRetriever.GetDefaultMetadataFromObjectAttribute(modelType);
 
         return propertyMetadata;
-    }
-
-    public IPropertyMetadata GetPropertyMetadata<TEntity>(
-        bool isSortableRequired,
-        bool isFilterableRequired,
-        string name)
-    {
-        Guard.Against.NullOrWhiteSpace(name);
-
-        return GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
     }
 
     public IPropertyMetadata GetPropertyMetadata(
@@ -69,11 +54,6 @@ public class AttributeMetadataProvider : IMetadataProvider
         propertyMetadata ??= _attributeMetadataRetriever.GetMetadataFromObjectAttribute(modelType, isSortableRequired, isFilterableRequired, name);
 
         return propertyMetadata;
-    }
-
-    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
-    {
-        return GetPropertyMetadatas(typeof(TEntity));
     }
 
     public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
