@@ -14,11 +14,14 @@ public class AppDomainAssemblySourceProviderTests
     [Fact]
     public void Should_Return_CurrentAppDomainAssemblies()
     {
+        // Arrange
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
         // Act
         var result = _provider.GetAssemblies();
 
         // Assert
         result.Should().NotBeNullOrEmpty();
-        result.Should().BeEquivalentTo(AppDomain.CurrentDomain.GetAssemblies());
+        result.Should().BeEquivalentTo(assemblies);
     }
 }

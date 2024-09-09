@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Attributes;
 using Fluorite.Strainer.Services.Metadata.Attributes;
+using NSubstitute.ReturnsExtensions;
 using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes;
@@ -71,7 +72,7 @@ public class StrainerAttributeProviderTests
         var propertyAttribute = new StrainerPropertyAttribute();
         var propertyInfoMock = Substitute.For<PropertyInfo>();
         propertyInfoMock
-            .GetCustomAttributes(typeof(StrainerPropertyAttribute), false)
+            .GetCustomAttributes(Arg.Is(typeof(StrainerPropertyAttribute)), Arg.Is(false))
             .Returns(new[] { propertyAttribute });
 
         // Act
@@ -88,6 +89,9 @@ public class StrainerAttributeProviderTests
     {
         // Arrange
         var propertyInfoMock = Substitute.For<PropertyInfo>();
+        propertyInfoMock
+            .GetCustomAttributes(Arg.Is(typeof(StrainerPropertyAttribute)), Arg.Is(false))
+            .ReturnsNull();
 
         // Act
         var result = _provider.GetPropertyAttribute(propertyInfoMock);
