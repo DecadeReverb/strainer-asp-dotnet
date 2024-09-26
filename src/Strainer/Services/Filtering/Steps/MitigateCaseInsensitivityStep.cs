@@ -23,13 +23,11 @@ public class MitigateCaseInsensitivityStep : IMitigateCaseInsensitivityStep
         {
             context.PropertyValue = Expression.Call(
                 context.PropertyValue,
-                typeof(string).GetMethods()
-                    .First(m => m.Name == nameof(string.ToUpper) && m.GetParameters().Length == 0));
+                typeof(string).GetMethod(nameof(string.ToUpper), Array.Empty<Type>()));
 
             context.FinalExpression = Expression.Call(
                 context.FinalExpression,
-                typeof(string).GetMethods()
-                    .First(m => m.Name == nameof(string.ToUpper) && m.GetParameters().Length == 0));
+                typeof(string).GetMethod(nameof(string.ToUpper), Array.Empty<Type>()));
         }
     }
 }
