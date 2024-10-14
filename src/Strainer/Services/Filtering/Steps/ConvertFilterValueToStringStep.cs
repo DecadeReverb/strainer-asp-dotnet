@@ -24,7 +24,7 @@ public class ConvertFilterValueToStringStep : IConvertFilterValueToStringStep
                context.PropertyMetadata.PropertyInfo.PropertyType != typeof(string)
             && context.TypeConverter.CanConvertFrom(typeof(string));
 
-        if (canConvertFromString)
+        if (canConvertFromString == true)
         {
             context.FilterTermConstant = _stringValueConverter.Convert(
                 context.FilterTermValue,

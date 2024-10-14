@@ -24,7 +24,7 @@ public class ChangeTypeOfFilterValueStep : IChangeTypeOfFilterValueStep
                context.PropertyMetadata.PropertyInfo.PropertyType != typeof(string)
             && context.TypeConverter.CanConvertFrom(typeof(string));
 
-        if (!canConvertFromString)
+        if (canConvertFromString == false)
         {
             context.FilterTermConstant = _typeChanger.ChangeType(
                 context.FilterTermValue,
