@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Conversion
+﻿namespace Fluorite.Strainer.Services.Conversion;
+
+public interface ITypeConverterProvider
 {
-    public interface ITypeConverterProvider
-    {
-        ITypeConverter GetTypeConverter(Type type);
-    }
+    ITypeConverter GetTypeConverter(Type type);
 }

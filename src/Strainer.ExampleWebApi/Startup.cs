@@ -8,52 +8,51 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
-namespace Fluorite.Strainer.ExampleWebApi
+namespace Fluorite.Strainer.ExampleWebApi;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        Configuration = configuration;
+    }
 
-        public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc(options => options.EnableEndpointRouting = false)
-                .AddControllersAsServices()
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.Formatting = Formatting.Indented;
-                });
-
-            services.AddDbContext<ApplicationDbContext>(options =>
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddMvc(options => options.EnableEndpointRouting = false)
+            .AddControllersAsServices()
+            .AddNewtonsoftJson(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.Formatting = Formatting.Indented;
             });
 
-            services.AddSwaggerGenWithDefaultOptions();
-            services.AddStrainer(
-                Configuration.GetSection("Strainer"),
-                new[] { typeof(Startup).Assembly });
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        services.AddDbContext<ApplicationDbContext>(options =>
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+        });
 
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Strainer example API");
-                options.RoutePrefix = string.Empty;
-            });
-            app.UseMvc();
+        services.AddSwaggerGenWithDefaultOptions();
+        services.AddStrainer(
+            Configuration.GetSection("Strainer"),
+            new[] { typeof(Startup).Assembly });
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
         }
+
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Strainer example API");
+            options.RoutePrefix = string.Empty;
+        });
+        app.UseMvc();
     }
 }

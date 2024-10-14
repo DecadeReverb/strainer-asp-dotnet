@@ -3,47 +3,40 @@ using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services.Configuration;
 using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public class CustomFilteringExpressionProvider : ICustomFilteringExpressionProvider
 {
-    public class CustomFilteringExpressionProvider : ICustomFilteringExpressionProvider
+    private readonly IConfigurationCustomMethodsProvider _configurationCustomMethodsProvider;
+
+    public CustomFilteringExpressionProvider(IConfigurationCustomMethodsProvider configurationCustomMethodsProvider)
     {
-        private readonly IConfigurationCustomMethodsProvider _configurationCustomMethodsProvider;
+        _configurationCustomMethodsProvider = Guard.Against.Null(configurationCustomMethodsProvider);
+    }
 
-        public CustomFilteringExpressionProvider(IConfigurationCustomMethodsProvider configurationCustomMethodsProvider)
+    public bool TryGetCustomExpression<T>(
+        IFilterTerm filterTerm,
+        string filterTermName,
+        out Expression<Func<T, bool>> expression)
+    {
+        Guard.Against.Null(filterTerm);
+        Guard.Against.Null(filterTermName);
+
+        var customFilterMethods = _configurationCustomMethodsProvider.GetCustomFilterMethods();
+        if (customFilterMethods.TryGetValue(typeof(T), out var typeCustomFilterMethods)
+            && typeCustomFilterMethods.TryGetValue(filterTermName, out var customMethod))
         {
-            _configurationCustomMethodsProvider = configurationCustomMethodsProvider;
-        }
+            var customFilterMethod = customMethod as ICustomFilterMethod<T>;
 
-        public bool TryGetCustomExpression<T>(
-            IFilterTerm filterTerm,
-            string filterTermName,
-            out Expression<Func<T, bool>> expression)
-        {
-            if (!TryGetCustomMethod<T>(filterTermName, out var customMethod))
-            {
-                expression = null;
-
-                return false;
-            }
-
-            expression = GetExpression(filterTerm, customMethod as ICustomFilterMethod<T>);
+            expression = customFilterMethod.FilterTermExpression is not null
+                ? customFilterMethod.FilterTermExpression(filterTerm)
+                : customFilterMethod.Expression;
 
             return true;
         }
 
-        private bool TryGetCustomMethod<T>(string filterTermName, out ICustomFilterMethod customMethod)
-        {
-            customMethod = null;
+        expression = null;
 
-            return _configurationCustomMethodsProvider.GetCustomFilterMethods().TryGetValue(typeof(T), out var typeCustomFilterMethods)
-                && typeCustomFilterMethods.TryGetValue(filterTermName, out customMethod);
-        }
-
-        private Expression<Func<T, bool>> GetExpression<T>(IFilterTerm filterTerm, ICustomFilterMethod<T> customFilterMethod)
-        {
-            return customFilterMethod.FilterTermExpression is not null
-                ? customFilterMethod.FilterTermExpression(filterTerm)
-                : customFilterMethod.Expression;
-        }
+        return false;
     }
 }

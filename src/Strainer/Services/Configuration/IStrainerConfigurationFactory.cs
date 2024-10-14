@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Models.Configuration;
 
-namespace Fluorite.Strainer.Services.Configuration
+namespace Fluorite.Strainer.Services.Configuration;
+
+public interface IStrainerConfigurationFactory
 {
-    public interface IStrainerConfigurationFactory
-    {
-        IStrainerConfiguration Create(IReadOnlyCollection<Type> moduleTypes);
-    }
+    IStrainerConfiguration Create(IReadOnlyCollection<Type> moduleTypes);
 }

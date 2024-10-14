@@ -2,25 +2,24 @@
 using Fluorite.Strainer.Services.Sorting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Fluorite.Strainer.IntegrationTests.Fixtures
+namespace Fluorite.Strainer.IntegrationTests.Fixtures;
+
+public static class StrainerFactoryExtensions
 {
-    public static class StrainerFactoryExtensions
+    public static IStrainerProcessor CreateProcessorWithSortingWayFormatter<TFormatter>(
+        this StrainerFactory factory)
+        where TFormatter : class, ISortingWayFormatter, new()
     {
-        public static IStrainerProcessor CreateProcessorWithSortingWayFormatter<TFormatter>(
-            this StrainerFactory factory)
-            where TFormatter : class, ISortingWayFormatter, new()
+        var customSortingWayFormatter = new TFormatter();
+
+        return factory.CreateProcessor(services =>
         {
-            var customSortingWayFormatter = new TFormatter();
+            var formatter = new ServiceDescriptor(
+                typeof(ISortingWayFormatter),
+                typeof(TFormatter),
+                StrainerFactory.ServicesLifetime);
 
-            return factory.CreateProcessor(services =>
-            {
-                var formatter = new ServiceDescriptor(
-                    typeof(ISortingWayFormatter),
-                    typeof(TFormatter),
-                    StrainerFactory.ServicesLifetime);
-
-                services.Add(formatter);
-            });
-        }
+            services.Add(formatter);
+        });
     }
 }

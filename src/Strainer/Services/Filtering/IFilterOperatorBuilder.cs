@@ -1,18 +1,17 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
 using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public interface IFilterOperatorBuilder
 {
-    public interface IFilterOperatorBuilder
-    {
-        IFilterOperator Build();
+    IFilterOperator Build();
 
-        IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression);
+    IFilterOperatorBuilder HasExpression(Func<IFilterExpressionContext, Expression> expression);
 
-        IFilterOperatorBuilder HasName(string name);
+    IFilterOperatorBuilder HasName(string name);
 
-        IFilterOperatorBuilder IsCaseInsensitive();
+    IFilterOperatorBuilder IsCaseInsensitive();
 
-        IFilterOperatorBuilder IsStringBased();
-    }
+    IFilterOperatorBuilder IsStringBased();
 }

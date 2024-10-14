@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
 
-namespace Fluorite.Strainer.Services.Validation
+namespace Fluorite.Strainer.Services.Validation;
+
+public interface ISortExpressionValidator
 {
-    public interface ISortExpressionValidator
-    {
-        void Validate(IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadata);
-    }
+    void Validate(IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> propertyMetadata);
 }

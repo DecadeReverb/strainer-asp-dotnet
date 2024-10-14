@@ -1,22 +1,21 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+public class MetadataSourceChecker : IMetadataSourceChecker
 {
-    public class MetadataSourceChecker : IMetadataSourceChecker
+    private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+
+    public MetadataSourceChecker(IStrainerOptionsProvider strainerOptionsProvider)
     {
-        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
+    }
 
-        public MetadataSourceChecker(IStrainerOptionsProvider strainerOptionsProvider)
-        {
-            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
-        }
-
-        public bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
-        {
-            return _strainerOptionsProvider
-                .GetStrainerOptions()
-                .MetadataSourceType
-                .HasFlag(metadataSourceType);
-        }
+    public bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
+    {
+        return _strainerOptionsProvider
+            .GetStrainerOptions()
+            .MetadataSourceType
+            .HasFlag(metadataSourceType);
     }
 }

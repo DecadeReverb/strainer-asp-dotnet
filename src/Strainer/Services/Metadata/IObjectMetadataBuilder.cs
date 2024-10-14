@@ -1,21 +1,22 @@
 ﻿using Fluorite.Strainer.Models.Metadata;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+public interface IObjectMetadataBuilder<TEntity>
 {
-    public interface IObjectMetadataBuilder<TEntity>
-    {
-        /// <summary>
-        /// Builds the object metadata.
-        /// </summary>
-        /// <returns>
-        /// An instance of <see cref="IObjectMetadata"/>.
-        /// </returns>
-        IObjectMetadata Build();
+    /// <summary>
+    /// Builds the object metadata.
+    /// </summary>
+    /// <returns>
+    /// An instance of <see cref="IObjectMetadata"/>.
+    /// </returns>
+    IObjectMetadata Build();
 
-        IObjectMetadataBuilder<TEntity> IsFilterable();
+    IObjectMetadataBuilder<TEntity> IsFilterable();
 
-        IObjectMetadataBuilder<TEntity> IsSortable();
+    IObjectMetadataBuilder<TEntity> IsSortable();
 
-        IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending();
-    }
+    IObjectMetadataBuilder<TEntity> IsDefaultSortingAscending();
+
+    IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending();
 }

@@ -2,59 +2,58 @@
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.IntegrationTests.Filtering
+namespace Fluorite.Strainer.IntegrationTests.Filtering;
+
+public class NestedFilteringTests : StrainerFixtureBase
 {
-    public class NestedFilteringTests : StrainerFixtureBase
+    public NestedFilteringTests(StrainerFactory factory) : base(factory)
     {
-        public NestedFilteringTests(StrainerFactory factory) : base(factory)
-        {
 
-        }
+    }
 
-        [Fact]
-        public void NestedFilteringWorks()
+    [Fact]
+    public void NestedFilteringWorks()
+    {
+        // Arrange
+        var posts = new Post[]
         {
-            // Arrange
-            var posts = new Post[]
+            new Post
             {
-                new Post
+                Comment = new Comment
                 {
-                    Comment = new Comment
-                    {
-                        Text = "Nice!"
-                    },
+                    Text = "Nice!"
                 },
-                new Post
-                {
-                    Comment = new Comment
-                    {
-                        Text = "Good job!",
-                    },
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
+            },
+            new Post
             {
-                Filters = "Comment.Text==Nice!",
-            };
-            var processor = Factory.CreateDefaultProcessor();
-
-            // Act
-            var result = processor.ApplyFiltering(model, posts);
-
-            // Assert
-            result.Should().Contain(p => p.Comment.Text == "Nice!");
-        }
-
-        [StrainerObject(nameof(Comment))]
-        private class Post
+                Comment = new Comment
+                {
+                    Text = "Good job!",
+                },
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
         {
-            public Comment Comment { get; set; }
-        }
+            Filters = "Comment.Text==Nice!",
+        };
+        var processor = Factory.CreateDefaultProcessor();
 
-        [StrainerObject(nameof(Text))]
-        private class Comment
-        {
-            public string Text { get; set; }
-        }
+        // Act
+        var result = processor.ApplyFiltering(model, posts);
+
+        // Assert
+        result.Should().Contain(p => p.Comment.Text == "Nice!");
+    }
+
+    [StrainerObject(nameof(Comment))]
+    private class Post
+    {
+        public Comment Comment { get; set; }
+    }
+
+    [StrainerObject(nameof(Text))]
+    private class Comment
+    {
+        public string Text { get; set; }
     }
 }

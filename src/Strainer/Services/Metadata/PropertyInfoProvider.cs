@@ -1,93 +1,66 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+/// <summary>
+/// Provides <see cref="PropertyInfo"/> and full member name when supplied
+/// with an <see cref="Expression{TDelegate}"/>.
+/// </summary>
+public class PropertyInfoProvider : IPropertyInfoProvider
 {
-    /// <summary>
-    /// Provides <see cref="PropertyInfo"/> and full member name when supplied
-    /// with an <see cref="Expression{TDelegate}"/>.
-    /// </summary>
-    public class PropertyInfoProvider : IPropertyInfoProvider
+    private readonly BindingFlags _bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+
+    public PropertyInfo GetPropertyInfo(Type type, string name)
     {
-        private readonly BindingFlags _bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+        Guard.Against.Null(type);
+        Guard.Against.NullOrWhiteSpace(name);
 
-        public PropertyInfo GetPropertyInfo(Type type, string name)
+        return type.GetProperty(name, _bindingFlags);
+    }
+
+    /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="expression"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="expression"/> is invalid expression,
+    /// not leading to a readable property.
+    /// </exception>
+    public (PropertyInfo PropertyInfo, string FullName) GetPropertyInfoAndFullName<T>(Expression<Func<T, object>> expression)
+    {
+        Guard.Against.Null(expression);
+
+        if (expression.Body is not MemberExpression body)
         {
-            if (type is null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
-            }
-
-            return type.GetProperty(name, _bindingFlags);
+            var ubody = expression.Body as UnaryExpression;
+            body = ubody?.Operand as MemberExpression;
         }
 
-        /// <summary>
-        /// Gets the <see cref="PropertyInfo"/> and property full name
-        /// (for nested property paths).
-        /// </summary>
-        /// <typeparam name="T">
-        /// The base type expression is based on.
-        /// </typeparam>
-        /// <param name="expression">
-        /// The lamda expression leading to property.
-        /// </param>
-        /// <returns>
-        /// A tuple of <see cref="PropertyInfo"/> and <see cref="string"/>
-        /// full property name.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="expression"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="expression"/> is invalid expression,
-        /// not leading to a readable property.
-        /// </exception>
-        public (PropertyInfo PropertyInfo, string FullName) GetPropertyInfoAndFullName<T>(Expression<Func<T, object>> expression)
+        if (body?.Member is not PropertyInfo propertyInfo)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            if (expression.Body is not MemberExpression body)
-            {
-                var ubody = expression.Body as UnaryExpression;
-                body = ubody?.Operand as MemberExpression;
-            }
-
-            if (body?.Member is not PropertyInfo propertyInfo)
-            {
-                throw new ArgumentException(
-                    $"Expression for '{nameof(T)}' {expression} " +
-                    $"is not a valid expression leading to a readable property.");
-            }
-
-            var stack = new Stack<string>();
-
-            while (body != null)
-            {
-                stack.Push(body.Member.Name);
-                body = body.Expression as MemberExpression;
-            }
-
-            var fullName = string.Join(".", stack.ToArray());
-
-            return (propertyInfo, fullName);
+            throw new ArgumentException(
+                $"Expression for '{nameof(T)}' {expression} " +
+                $"is not a valid expression leading to a readable property.");
         }
 
-        public PropertyInfo[] GetPropertyInfos(Type type)
-        {
-            if (type is null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+        var stack = new Stack<string>();
 
-            return type.GetProperties(_bindingFlags);
+        while (body != null)
+        {
+            stack.Push(body.Member.Name);
+            body = body.Expression as MemberExpression;
         }
+
+        var fullName = string.Join(".", stack.ToArray());
+
+        return (propertyInfo, fullName);
+    }
+
+    public PropertyInfo[] GetPropertyInfos(Type type)
+    {
+        Guard.Against.Null(type);
+
+        return type.GetProperties(_bindingFlags);
     }
 }

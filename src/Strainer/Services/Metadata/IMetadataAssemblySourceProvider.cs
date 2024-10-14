@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+public interface IMetadataAssemblySourceProvider
 {
-    public interface IMetadataAssemblySourceProvider
-    {
-        Assembly[] GetAssemblies();
-    }
+    Assembly[] GetAssemblies();
 }

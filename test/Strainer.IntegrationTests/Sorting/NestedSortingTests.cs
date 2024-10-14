@@ -2,109 +2,108 @@
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Modules;
 
-namespace Fluorite.Strainer.IntegrationTests.Sorting
+namespace Fluorite.Strainer.IntegrationTests.Sorting;
+
+public class NestedSortingTests : StrainerFixtureBase
 {
-    public class NestedSortingTests : StrainerFixtureBase
+    public NestedSortingTests(StrainerFactory factory) : base(factory)
     {
-        public NestedSortingTests(StrainerFactory factory) : base(factory)
-        {
 
-        }
+    }
 
-        [Fact]
-        public void NestedSortsWorks_For_Int()
+    [Fact]
+    public void NestedSortsWorks_For_Int()
+    {
+        // Arrange
+        var posts = new Post[]
         {
-            // Arrange
-            var posts = new Post[]
+            new Post
             {
-                new Post
+                Comment = new Comment
                 {
-                    Comment = new Comment
-                    {
-                        Id = 34,
-                    },
+                    Id = 34,
                 },
-                new Post
+            },
+            new Post
+            {
+                Comment = new Comment
                 {
-                    Comment = new Comment
-                    {
-                        Id = 11,
-                    },
+                    Id = 11,
                 },
-            }.AsQueryable();
-            var model = new StrainerModel()
-            {
-                Sorts = "Comment.Id",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.ApplySorting(model, posts);
-
-            // Assert
-            result.Should().BeInAscendingOrder(p => p.Comment.Id);
-        }
-
-        [Fact]
-        public void NestedSortsWorks_For_String()
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
         {
-            // Arrange
-            var posts = new Post[]
+            Sorts = "Comment.Id",
+        };
+        var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
+
+        // Act
+        var result = processor.ApplySorting(model, posts);
+
+        // Assert
+        result.Should().BeInAscendingOrder(p => p.Comment.Id);
+    }
+
+    [Fact]
+    public void NestedSortsWorks_For_String()
+    {
+        // Arrange
+        var posts = new Post[]
+        {
+            new Post
             {
-                new Post
+                Comment = new Comment
                 {
-                    Comment = new Comment
-                    {
-                        Text = "Nice!",
-                    },
+                    Text = "Nice!",
                 },
-                new Post
+            },
+            new Post
+            {
+                Comment = new Comment
                 {
-                    Comment = new Comment
-                    {
-                        Text = "Good job!",
-                    },
+                    Text = "Good job!",
                 },
-            }.AsQueryable();
-            var model = new StrainerModel()
-            {
-                Sorts = "Comment.Text",
-            };
-            var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
-
-            // Act
-            var result = processor.ApplySorting(model, posts);
-
-            // Assert
-            result.Should().BeInAscendingOrder(p => p.Comment.Text);
-        }
-
-        private class TestStrainerModule : StrainerModule
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
         {
-            public override void Load(IStrainerModuleBuilder strainerModuleBuilder)
-            {
-                strainerModuleBuilder
-                    .AddProperty<Post>(p => p.Comment.Id)
-                    .IsSortable()
-                    .IsDefaultSort();
-                strainerModuleBuilder
-                    .AddProperty<Post>(p => p.Comment.Text)
-                    .IsSortable();
-            }
-        }
+            Sorts = "Comment.Text",
+        };
+        var processor = Factory.CreateDefaultProcessor<TestStrainerModule>();
 
-        private class Post
+        // Act
+        var result = processor.ApplySorting(model, posts);
+
+        // Assert
+        result.Should().BeInAscendingOrder(p => p.Comment.Text);
+    }
+
+    private class TestStrainerModule : StrainerModule
+    {
+        public override void Load(IStrainerModuleBuilder strainerModuleBuilder)
         {
-            public Comment Comment { get; set; }
-
-            public int Id { get; set; }
+            strainerModuleBuilder
+                .AddProperty<Post>(p => p.Comment.Id)
+                .IsSortable()
+                .IsDefaultSort();
+            strainerModuleBuilder
+                .AddProperty<Post>(p => p.Comment.Text)
+                .IsSortable();
         }
+    }
 
-        private class Comment
-        {
-            public int Id { get; set; }
+    private class Post
+    {
+        public Comment Comment { get; set; }
 
-            public string Text { get; set; }
-        }
+        public int Id { get; set; }
+    }
+
+    private class Comment
+    {
+        public int Id { get; set; }
+
+        public string Text { get; set; }
     }
 }

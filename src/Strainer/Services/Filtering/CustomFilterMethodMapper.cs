@@ -1,47 +1,37 @@
 ﻿using Fluorite.Strainer.Models.Filtering;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public class CustomFilterMethodMapper : ICustomFilterMethodMapper
 {
-    public class CustomFilterMethodMapper : ICustomFilterMethodMapper
+    public CustomFilterMethodMapper()
     {
-        public CustomFilterMethodMapper()
+        Methods = new Dictionary<Type, IDictionary<string, ICustomFilterMethod>>();
+    }
+
+    public IDictionary<Type, IDictionary<string, ICustomFilterMethod>> Methods { get; }
+
+    public void AddMap<TEntity>(ICustomFilterMethod<TEntity> customMethod)
+    {
+        Guard.Against.Null(customMethod);
+
+        if (!Methods.ContainsKey(typeof(TEntity)))
         {
-            Methods = new Dictionary<Type, IDictionary<string, ICustomFilterMethod>>();
+            Methods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
         }
 
-        public IDictionary<Type, IDictionary<string, ICustomFilterMethod>> Methods { get; }
+        Methods[typeof(TEntity)][customMethod.Name] = customMethod;
+    }
 
-        public void AddMap<TEntity>(ICustomFilterMethod<TEntity> customMethod)
+    public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
+    {
+        Guard.Against.NullOrWhiteSpace(name);
+
+        if (!Methods.ContainsKey(typeof(TEntity)))
         {
-            if (customMethod == null)
-            {
-                throw new ArgumentNullException(nameof(customMethod));
-            }
-
-            if (!Methods.ContainsKey(typeof(TEntity)))
-            {
-                Methods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
-            }
-
-            Methods[typeof(TEntity)][customMethod.Name] = customMethod;
+            Methods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
         }
 
-        public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException(
-                    $"{nameof(name)} cannot be null, empty " +
-                    $"or contain only whitespace characters.",
-                    nameof(name));
-            }
-
-            if (!Methods.ContainsKey(typeof(TEntity)))
-            {
-                Methods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
-            }
-
-            return new CustomFilterMethodBuilder<TEntity>(Methods, name);
-        }
+        return new CustomFilterMethodBuilder<TEntity>(Methods, name);
     }
 }

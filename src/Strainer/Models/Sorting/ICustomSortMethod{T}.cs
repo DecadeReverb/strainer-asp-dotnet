@@ -1,24 +1,23 @@
 ﻿using Fluorite.Strainer.Models.Sorting.Terms;
 using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Models.Sorting
+namespace Fluorite.Strainer.Models.Sorting;
+
+/// <summary>
+/// Represents custom sort method.
+/// </summary>
+/// <typeparam name="T">
+/// The type of entity processed by the custom method.
+/// </typeparam>
+public interface ICustomSortMethod<T> : ICustomSortMethod
 {
     /// <summary>
-    /// Represents custom sort method.
+    /// Gets the expression used for custom sorting.
     /// </summary>
-    /// <typeparam name="T">
-    /// The type of entity processed by the custom method.
-    /// </typeparam>
-    public interface ICustomSortMethod<T> : ICustomSortMethod
-    {
-        /// <summary>
-        /// Gets the function used for custom sorting.
-        /// </summary>
-        Expression<Func<T, object>> Expression { get; }
+    Expression<Func<T, object>> Expression { get; }
 
-        /// <summary>
-        /// Gets the function used for custom sorting.
-        /// </summary>
-        Func<ISortTerm, Expression<Func<T, object>>> SortTermExpression { get; }
-    }
+    /// <summary>
+    /// Gets the provider of expression used for custom sorting.
+    /// </summary>
+    Func<ISortTerm, Expression<Func<T, object>>> ExpressionProvider { get; }
 }

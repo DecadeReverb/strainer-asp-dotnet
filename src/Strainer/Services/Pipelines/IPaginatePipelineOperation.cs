@@ -1,6 +1,5 @@
-﻿namespace Fluorite.Strainer.Services.Pipelines
+﻿namespace Fluorite.Strainer.Services.Pipelines;
+
+public interface IPaginatePipelineOperation : IStrainerPipelineOperation
 {
-    public interface IPaginatePipelineOperation : IStrainerPipelineOperation
-    {
-    }
 }

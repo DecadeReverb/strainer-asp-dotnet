@@ -2,56 +2,41 @@
 using Fluorite.Strainer.Models.Metadata;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata.Attributes
+namespace Fluorite.Strainer.Services.Metadata.Attributes;
+
+public class AttributePropertyMetadataBuilder : IAttributePropertyMetadataBuilder
 {
-    public class AttributePropertyMetadataBuilder : IAttributePropertyMetadataBuilder
+    public IPropertyMetadata BuildDefaultPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
     {
-        public IPropertyMetadata BuildDefaultPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
+        Guard.Against.Null(attribute);
+        Guard.Against.Null(propertyInfo);
+
+        return new PropertyMetadata
         {
-            if (attribute is null)
-            {
-                throw new ArgumentNullException(nameof(attribute));
-            }
+            IsDefaultSorting = true,
+            IsDefaultSortingDescending = attribute.IsDefaultSortingDescending,
+            IsFilterable = attribute.IsFilterable,
+            IsSortable = attribute.IsSortable,
+            Name = propertyInfo.Name,
+            PropertyInfo = propertyInfo,
+        };
+    }
 
-            if (propertyInfo is null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+    public IPropertyMetadata BuildPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
+    {
+        Guard.Against.Null(attribute);
+        Guard.Against.Null(propertyInfo);
 
-            return new PropertyMetadata
-            {
-                IsDefaultSorting = true,
-                IsDefaultSortingDescending = attribute.IsDefaultSortingDescending,
-                IsFilterable = attribute.IsFilterable,
-                IsSortable = attribute.IsSortable,
-                Name = propertyInfo.Name,
-                PropertyInfo = propertyInfo,
-            };
-        }
+        var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
 
-        public IPropertyMetadata BuildPropertyMetadata(StrainerObjectAttribute attribute, PropertyInfo propertyInfo)
+        return new PropertyMetadata
         {
-            if (attribute is null)
-            {
-                throw new ArgumentNullException(nameof(attribute));
-            }
-
-            if (propertyInfo is null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
-            var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
-
-            return new PropertyMetadata
-            {
-                IsDefaultSorting = isDefaultSorting,
-                IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
-                IsFilterable = attribute.IsFilterable,
-                IsSortable = attribute.IsSortable,
-                Name = propertyInfo.Name,
-                PropertyInfo = propertyInfo,
-            };
-        }
+            IsDefaultSorting = isDefaultSorting,
+            IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
+            IsFilterable = attribute.IsFilterable,
+            IsSortable = attribute.IsSortable,
+            Name = propertyInfo.Name,
+            PropertyInfo = propertyInfo,
+        };
     }
 }

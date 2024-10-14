@@ -2,51 +2,50 @@
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators;
+
+public class ContainsCaseInsensitiveOperatorTests : StrainerFixtureBase
 {
-    public class ContainsCaseInsensitiveOperatorTests : StrainerFixtureBase
+    public ContainsCaseInsensitiveOperatorTests(StrainerFactory factory) : base(factory)
     {
-        public ContainsCaseInsensitiveOperatorTests(StrainerFactory factory) : base(factory)
-        {
 
-        }
+    }
 
-        [Fact]
-        public void ContainsCanBeCaseInsensitive()
+    [Fact]
+    public void ContainsCanBeCaseInsensitive()
+    {
+        // Arrange
+        var queryable = new List<Post>
         {
-            // Arrange
-            var queryable = new List<Post>
+            new Post
             {
-                new Post
-                {
-                    Title = "Nice rock album.",
-                },
-                new Post
-                {
-                    Title = "A long time ago.",
-                },
-                new Post
-                {
-                    Title = "The end."
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
+                Title = "Nice rock album.",
+            },
+            new Post
             {
-                Filters = "Title@=*a"
-            };
-            var processor = Factory.CreateDefaultProcessor();
-
-            // Act
-            var result = processor.Apply(model, queryable);
-
-            // Assert
-            result.Should().OnlyContain(p => p.Title.Contains("a", StringComparison.OrdinalIgnoreCase));
-        }
-
-        private class Post
+                Title = "A long time ago.",
+            },
+            new Post
+            {
+                Title = "The end."
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
         {
-            [StrainerProperty]
-            public string Title { get; set; }
-        }
+            Filters = "Title@=*a"
+        };
+        var processor = Factory.CreateDefaultProcessor();
+
+        // Act
+        var result = processor.Apply(model, queryable);
+
+        // Assert
+        result.Should().OnlyContain(p => p.Title.Contains("a", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private class Post
+    {
+        [StrainerProperty]
+        public string Title { get; set; }
     }
 }

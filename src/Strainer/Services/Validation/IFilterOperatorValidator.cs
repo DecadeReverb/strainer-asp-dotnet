@@ -1,11 +1,11 @@
-﻿using Fluorite.Strainer.Models.Filtering.Operators;
+﻿using Fluorite.Strainer.Collections;
+using Fluorite.Strainer.Models.Filtering.Operators;
 
-namespace Fluorite.Strainer.Services.Validation
+namespace Fluorite.Strainer.Services.Validation;
+
+public interface IFilterOperatorValidator
 {
-    public interface IFilterOperatorValidator
-    {
-        void Validate(IFilterOperator filterOperator);
+    void Validate(IFilterOperator filterOperator);
 
-        void Validate(IEnumerable<IFilterOperator> filterOperators);
-    }
+    void Validate(IEnumerable<IFilterOperator> filterOperators, IReadOnlySet<string> excludedBuiltInFilterOperators);
 }

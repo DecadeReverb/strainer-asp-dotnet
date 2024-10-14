@@ -1,12 +1,11 @@
 ﻿using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+public class AppDomainAssemblySourceProvider : IMetadataAssemblySourceProvider
 {
-    public class AppDomainAssemblySourceProvider : IMetadataAssemblySourceProvider
+    public Assembly[] GetAssemblies()
     {
-        public Assembly[] GetAssemblies()
-        {
-            return AppDomain.CurrentDomain.GetAssemblies();
-        }
+        return AppDomain.CurrentDomain.GetAssemblies();
     }
 }

@@ -2,99 +2,97 @@
 using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Configuration;
-using Moq;
 
-namespace Fluorite.Strainer.UnitTests.Services.Configuration
+namespace Fluorite.Strainer.UnitTests.Services.Configuration;
+
+public class ConfigurationCustomMethodsProviderTests
 {
-    public class ConfigurationCustomMethodsProviderTests
+    private readonly IStrainerConfigurationProvider _strainerConfigurationProviderMock = Substitute.For<IStrainerConfigurationProvider>();
+
+    private readonly ConfigurationCustomMethodsProvider _provider;
+
+    public ConfigurationCustomMethodsProviderTests()
     {
-        private readonly Mock<IStrainerConfigurationProvider> _strainerConfigurationProviderMock = new();
+        _provider = new ConfigurationCustomMethodsProvider(_strainerConfigurationProviderMock);
+    }
 
-        private readonly ConfigurationCustomMethodsProvider _provider;
+    [Fact]
+    public void Should_Throw_ForNullConfigurationProvider()
+    {
+        // Act
+        Action act = () => _ = new ConfigurationCustomMethodsProvider(strainerConfigurationProvider: null);
 
-        public ConfigurationCustomMethodsProviderTests()
+        // Assert
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Should_Return_CustomFilterMethods()
+    {
+        // Arrange
+        var customFilterMethods = new Dictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>
         {
-            _provider = new ConfigurationCustomMethodsProvider(_strainerConfigurationProviderMock.Object);
-        }
-
-        [Fact]
-        public void Should_Throw_ForNullConfigurationProvider()
-        {
-            // Act
-            Action act = () => _ = new ConfigurationCustomMethodsProvider(strainerConfigurationProvider: null);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void Should_Return_CustomFilterMethods()
-        {
-            // Arrange
-            var customFilterMethods = new Dictionary<Type, IReadOnlyDictionary<string, ICustomFilterMethod>>
             {
+                typeof(object),
+                new Dictionary<string, ICustomFilterMethod>
                 {
-                    typeof(object),
-                    new Dictionary<string, ICustomFilterMethod>
                     {
-                        {
-                            "foo",
-                            Mock.Of<ICustomFilterMethod>()
-                        }
+                        "foo",
+                        Substitute.For<ICustomFilterMethod>()
                     }
                 }
-            };
+            }
+        };
 
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
-            strainerConfigurationMock
-                .SetupGet(x => x.CustomFilterMethods)
-                .Returns(customFilterMethods);
+        var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
+        strainerConfigurationMock
+            .CustomFilterMethods
+            .Returns(customFilterMethods);
 
-            _strainerConfigurationProviderMock
-                .Setup(x => x.GetStrainerConfiguration())
-                .Returns(strainerConfigurationMock.Object);
+        _strainerConfigurationProviderMock
+            .GetStrainerConfiguration()
+            .Returns(strainerConfigurationMock);
 
-            // Act
-            var result = _provider.GetCustomFilterMethods();
+        // Act
+        var result = _provider.GetCustomFilterMethods();
 
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeSameAs(customFilterMethods);
-        }
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeSameAs(customFilterMethods);
+    }
 
-        [Fact]
-        public void Should_Return_CustomSortMethods()
+    [Fact]
+    public void Should_Return_CustomSortMethods()
+    {
+        // Arrange
+        var customSortMethods = new Dictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>
         {
-            // Arrange
-            var customSortMethods = new Dictionary<Type, IReadOnlyDictionary<string, ICustomSortMethod>>
             {
+                typeof(object),
+                new Dictionary<string, ICustomSortMethod>
                 {
-                    typeof(object),
-                    new Dictionary<string, ICustomSortMethod>
                     {
-                        {
-                            "foo",
-                            Mock.Of<ICustomSortMethod>()
-                        }
+                        "foo",
+                        Substitute.For<ICustomSortMethod>()
                     }
                 }
-            };
+            }
+        };
 
-            var strainerConfigurationMock = new Mock<IStrainerConfiguration>();
-            strainerConfigurationMock
-                .SetupGet(x => x.CustomSortMethods)
-                .Returns(customSortMethods);
+        var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
+        strainerConfigurationMock
+            .CustomSortMethods
+            .Returns(customSortMethods);
 
-            _strainerConfigurationProviderMock
-                .Setup(x => x.GetStrainerConfiguration())
-                .Returns(strainerConfigurationMock.Object);
+        _strainerConfigurationProviderMock
+            .GetStrainerConfiguration()
+            .Returns(strainerConfigurationMock);
 
-            // Act
-            var result = _provider.GetCustomSortMethods();
+        // Act
+        var result = _provider.GetCustomSortMethods();
 
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeSameAs(customSortMethods);
-        }
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeSameAs(customSortMethods);
     }
 }

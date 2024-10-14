@@ -3,75 +3,74 @@ using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services.Sorting;
 
-namespace Fluorite.Strainer.IntegrationTests.Sorting
+namespace Fluorite.Strainer.IntegrationTests.Sorting;
+
+public class SuffixSortingWayFormatterTests : StrainerFixtureBase
 {
-    public class SuffixSortingWayFormatterTests : StrainerFixtureBase
+    public SuffixSortingWayFormatterTests(StrainerFactory factory) : base(factory)
     {
-        public SuffixSortingWayFormatterTests(StrainerFactory factory) : base(factory)
+
+    }
+
+    [Fact]
+    public void CustomSortingWayFormatter_Works_ForAscendingSorting()
+    {
+        // Arrange
+        var source = new[]
         {
-
-        }
-
-        [Fact]
-        public void CustomSortingWayFormatter_Works_ForAscendingSorting()
+            new Post
+            {
+                Name = "foo",
+            },
+            new Post
+            {
+                Name = "bar",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateProcessorWithSortingWayFormatter<SuffixSortingWayFormatter>();
+        var model = new StrainerModel
         {
-            // Arrange
-            var source = new[]
-            {
-                new Post
-                {
-                    Name = "foo",
-                },
-                new Post
-                {
-                    Name = "bar",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateProcessorWithSortingWayFormatter<SuffixSortingWayFormatter>();
-            var model = new StrainerModel
-            {
-                Sorts = $"{nameof(Post.Name)}{SuffixSortingWayFormatter.AscendingSuffix}",
-            };
+            Sorts = $"{nameof(Post.Name)}{SuffixSortingWayFormatter.AscendingSuffix}",
+        };
 
-            // Act
-            var result = processor.ApplySorting(model, source);
+        // Act
+        var result = processor.ApplySorting(model, source);
 
-            // Assert
-            result.Should().BeInAscendingOrder(e => e.Name);
-        }
+        // Assert
+        result.Should().BeInAscendingOrder(e => e.Name);
+    }
 
-        [Fact]
-        public void CustomSortingWayFormatter_Works_ForDescendingSorting()
+    [Fact]
+    public void CustomSortingWayFormatter_Works_ForDescendingSorting()
+    {
+        // Arrange
+        var source = new[]
         {
-            // Arrange
-            var source = new[]
+            new Post
             {
-                new Post
-                {
-                    Name = "bar",
-                },
-                new Post
-                {
-                    Name = "foo",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateProcessorWithSortingWayFormatter<SuffixSortingWayFormatter>();
-            var model = new StrainerModel
+                Name = "bar",
+            },
+            new Post
             {
-                Sorts = $"{nameof(Post.Name)}{SuffixSortingWayFormatter.DescendingSuffix}",
-            };
-
-            // Act
-            var result = processor.ApplySorting(model, source);
-
-            // Assert
-            result.Should().BeInDescendingOrder(e => e.Name);
-        }
-
-        private class Post
+                Name = "foo",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateProcessorWithSortingWayFormatter<SuffixSortingWayFormatter>();
+        var model = new StrainerModel
         {
-            [StrainerProperty(IsDefaultSorting = true)]
-            public string Name { get; set; }
-        }
+            Sorts = $"{nameof(Post.Name)}{SuffixSortingWayFormatter.DescendingSuffix}",
+        };
+
+        // Act
+        var result = processor.ApplySorting(model, source);
+
+        // Assert
+        result.Should().BeInDescendingOrder(e => e.Name);
+    }
+
+    private class Post
+    {
+        [StrainerProperty(IsDefaultSorting = true)]
+        public string Name { get; set; }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Services.Metadata;
 
-namespace Fluorite.Strainer.Services.Sorting
+namespace Fluorite.Strainer.Services.Sorting;
+
+public interface ISortPropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity>
 {
-    public interface ISortPropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity>
-    {
-        ISortPropertyMetadataBuilder<TEntity> IsDefaultSort(bool isDescending = false);
-    }
+    ISortPropertyMetadataBuilder<TEntity> IsDefaultSort(bool isDescending = false);
 }

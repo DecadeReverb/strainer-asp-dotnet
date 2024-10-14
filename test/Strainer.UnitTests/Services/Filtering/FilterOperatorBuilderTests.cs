@@ -2,37 +2,36 @@
 using Fluorite.Strainer.Services.Filtering;
 using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.UnitTests.Services.Filtering
+namespace Fluorite.Strainer.UnitTests.Services.Filtering;
+
+public class FilterOperatorBuilderTests
 {
-    public class FilterOperatorBuilderTests
+    [Fact]
+    public void Builder_Adds_Operator_WithSymbol()
     {
-        [Fact]
-        public void Builder_Adds_Operator_WithSymbol()
-        {
-            // Arrange
-            var filterOperators = new Dictionary<string, IFilterOperator>();
+        // Arrange
+        var filterOperators = new Dictionary<string, IFilterOperator>();
 
-            // Act
-            new FilterOperatorBuilder(filterOperators, symbol: "===");
+        // Act
+        new FilterOperatorBuilder(filterOperators, symbol: "===");
 
-            // Assert
-            filterOperators.Keys.Should().Contain("===");
-        }
+        // Assert
+        filterOperators.Keys.Should().Contain("===");
+    }
 
-        [Fact]
-        public void Builder_Adds_Operator_WithSymbol_And_Expression()
-        {
-            // Arrange
-            var filterOperators = new Dictionary<string, IFilterOperator>();
+    [Fact]
+    public void Builder_Adds_Operator_WithSymbol_And_Expression()
+    {
+        // Arrange
+        var filterOperators = new Dictionary<string, IFilterOperator>();
 
-            // Act
-            var filterOperator = new FilterOperatorBuilder(filterOperators, symbol: "===")
-                .HasExpression(context => Expression.Empty())
-                .Build();
+        // Act
+        var filterOperator = new FilterOperatorBuilder(filterOperators, symbol: "===")
+            .HasExpression(context => Expression.Empty())
+            .Build();
 
-            // Assert
-            filterOperators.Keys.Should().Contain("===");
-            filterOperators.Values.Should().Contain(f => f.Expression == filterOperator.Expression);
-        }
+        // Assert
+        filterOperators.Keys.Should().Contain("===");
+        filterOperators.Values.Should().Contain(f => f.Expression == filterOperator.Expression);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Services.Modules;
 
-namespace Fluorite.Strainer.Services.Configuration
+namespace Fluorite.Strainer.Services.Configuration;
+
+public interface IModuleLoadingStrategySelector
 {
-    public interface IModuleLoadingStrategySelector
-    {
-        IModuleLoadingStrategy Select(IStrainerModule strainerModule);
-    }
+    IModuleLoadingStrategy Select(IStrainerModule strainerModule);
 }

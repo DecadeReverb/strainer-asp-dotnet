@@ -1,87 +1,86 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Services;
 using Fluorite.Strainer.Services.Pagination;
-using Moq;
 
-namespace Fluorite.Strainer.UnitTests.Services.Pagination
+namespace Fluorite.Strainer.UnitTests.Services.Pagination;
+
+public class PageSizeEvaluatorTests
 {
-    public class PageSizeEvaluatorTests
+    private readonly IStrainerOptionsProvider _strainerOptionsProviderMock = Substitute.For<IStrainerOptionsProvider>();
+
+    private readonly PageSizeEvaluator _evaluator;
+
+    public PageSizeEvaluatorTests()
     {
-        private readonly Mock<IStrainerOptionsProvider> _strainerOptionsProviderMock = new();
-        private readonly PageSizeEvaluator _evaluator;
+        _evaluator = new PageSizeEvaluator(_strainerOptionsProviderMock);
+    }
 
-        public PageSizeEvaluatorTests()
+    [Fact]
+    public void Should_Throw_ForNullOptionsProvider()
+    {
+        // Arrange & Act
+        Action act = () => new PageSizeEvaluator(strainerOptionsProvider: null);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Should_Throw_ForNullStrainerModel()
+    {
+        // Arrange & Act
+        Action act = () => _evaluator.Evaluate(model: null);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(23)]
+    [InlineData(50)]
+    public void Should_Return_PageSize(int? pageSize)
+    {
+        // Arrange
+        var model = new StrainerModel
         {
-            _evaluator = new PageSizeEvaluator(_strainerOptionsProviderMock.Object);
-        }
+            PageSize = pageSize,
+        };
 
-        [Fact]
-        public void Should_Throw_ForNullOptionsProvider()
+        _strainerOptionsProviderMock
+            .GetStrainerOptions()
+            .Returns(new StrainerOptions());
+
+        // Act
+        var result = _evaluator.Evaluate(model);
+
+        // Assert
+        result.Should().Be(pageSize.Value);
+    }
+
+    [Fact]
+    public void Should_Return_DefaultPageSize_WhenModelPageSizeIsNull()
+    {
+        // Arrange
+        var model = new StrainerModel
         {
-            // Arrange & Act
-            Action act = () => new PageSizeEvaluator(strainerOptionsProvider: null);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void Should_Throw_ForNullStrainerModel()
+            PageSize = null,
+        };
+        var defaultPageSize = 23;
+        var strainerOptions = new StrainerOptions
         {
-            // Arrange & Act
-            Action act = () => _evaluator.Evaluate(model: null);
+            DefaultPageSize = defaultPageSize,
+        };
 
-            // Assert
-            act.Should().ThrowExactly<ArgumentNullException>();
-        }
+        _strainerOptionsProviderMock
+            .GetStrainerOptions()
+            .Returns(strainerOptions);
 
-        [Theory]
-        [InlineData(-1)]
-        [InlineData(0)]
-        [InlineData(23)]
-        [InlineData(50)]
-        public void Should_Return_PageSize(int? pageSize)
-        {
-            // Arrange
-            var model = new StrainerModel
-            {
-                PageSize = pageSize,
-            };
+        // Act
+        var result = _evaluator.Evaluate(model);
 
-            _strainerOptionsProviderMock
-                .Setup(x => x.GetStrainerOptions())
-                .Returns(new StrainerOptions());
-
-            // Act
-            var result = _evaluator.Evaluate(model);
-
-            // Assert
-            result.Should().Be(pageSize.Value);
-        }
-
-        [Fact]
-        public void Should_Return_DefaultPageSize_WhenModelPageSizeIsNull()
-        {
-            // Arrange
-            var model = new StrainerModel
-            {
-                PageSize = null,
-            };
-            var defaultPageSize = 23;
-            var strainerOptions = new StrainerOptions
-            {
-                DefaultPageSize = defaultPageSize,
-            };
-
-            _strainerOptionsProviderMock
-                .Setup(x => x.GetStrainerOptions())
-                .Returns(strainerOptions);
-
-            // Act
-            var result = _evaluator.Evaluate(model);
-
-            // Assert
-            result.Should().Be(defaultPageSize);
-        }
+        // Assert
+        result.Should().Be(defaultPageSize);
     }
 }

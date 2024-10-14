@@ -2,149 +2,148 @@
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.IntegrationTests.Filtering
+namespace Fluorite.Strainer.IntegrationTests.Filtering;
+
+public class ConditionalFilteringTests : StrainerFixtureBase
 {
-    public class ConditionalFilteringTests : StrainerFixtureBase
+    public ConditionalFilteringTests(StrainerFactory factory) : base(factory)
     {
-        public ConditionalFilteringTests(StrainerFactory factory) : base(factory)
+
+    }
+
+    [Fact]
+    public void OrValueFiltering_Works()
+    {
+        // Arrange
+        var posts = new Post[]
         {
-
-        }
-
-        [Fact]
-        public void OrValueFiltering_Works()
+            new Post
+            {
+                Title = "How not to die?",
+            },
+            new Post
+            {
+                Title = "Why Java programmers can't C#",
+            },
+            new Post
+            {
+                Title = "When the dinner will be ready?"
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
         {
-            // Arrange
-            var posts = new Post[]
-            {
-                new Post
-                {
-                    Title = "How not to die?",
-                },
-                new Post
-                {
-                    Title = "Why Java programmers can't C#",
-                },
-                new Post
-                {
-                    Title = "When the dinner will be ready?"
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
-            {
-                Filters = "Title_=How|Why",
-            };
-            var processor = Factory.CreateDefaultProcessor();
+            Filters = "Title_=How|Why",
+        };
+        var processor = Factory.CreateDefaultProcessor();
 
-            // Act
-            var result = processor.Apply(model, posts);
+        // Act
+        var result = processor.Apply(model, posts);
 
-            // Assert
-            result.Should().OnlyContain(p => p.Title.StartsWith("How") || p.Title.StartsWith("Why"));
-        }
+        // Assert
+        result.Should().OnlyContain(p => p.Title.StartsWith("How") || p.Title.StartsWith("Why"));
+    }
 
-        [Fact]
-        public void OrValueFiltering_WithBraces_Work()
+    [Fact]
+    public void OrValueFiltering_WithBraces_Work()
+    {
+        // Arrange
+        var posts = new Post[]
         {
-            // Arrange
-            var posts = new Post[]
+            new Post
             {
-                new Post
-                {
-                    Title = ":)",
-                },
-                new Post
-                {
-                    Title = "(YES/NO)",
-                },
-                new Post
-                {
-                    Title = "",
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
+                Title = ":)",
+            },
+            new Post
             {
-                Filters = "Title@=(|)",
-            };
-            var processor = Factory.CreateDefaultProcessor();
-
-            // Act
-            var result = processor.Apply(model, posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.Title.Contains("(") || p.Title.Contains(")"));
-        }
-
-        [Fact]
-        public void OrName_FilteringWorks()
+                Title = "(YES/NO)",
+            },
+            new Post
+            {
+                Title = "",
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
         {
-            // Arrange
-            var posts = new Post[]
-            {
-                new Post
-                {
-                    Id = 20,
-                },
-                new Post
-                {
-                    CommentCount = 20,
-                },
-                new Post
-                {
-                    LikeCount = 20,
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
-            {
-                Filters = "(CommentCount|LikeCount)==20",
-            };
-            var processor = Factory.CreateDefaultProcessor();
+            Filters = "Title@=(|)",
+        };
+        var processor = Factory.CreateDefaultProcessor();
 
-            // Act
-            var result = processor.Apply(model, posts);
+        // Act
+        var result = processor.Apply(model, posts);
 
-            // Assert
-            result.Should().OnlyContain(p => p.CommentCount == 20 || p.LikeCount == 20);
-        }
+        // Assert
+        result.Should().OnlyContain(p => p.Title.Contains("(") || p.Title.Contains(")"));
+    }
 
-        [Fact]
-        public void OrName_Works_With_EmptyNameBeingIgnored()
+    [Fact]
+    public void OrName_FilteringWorks()
+    {
+        // Arrange
+        var posts = new Post[]
         {
-            // Arrange
-            var posts = new Post[]
+            new Post
             {
-                new Post
-                {
-                    CommentCount = 20,
-                },
-                new Post
-                {
-                    LikeCount = 20,
-                },
-            }.AsQueryable();
-            var model = new StrainerModel()
+                Id = 20,
+            },
+            new Post
             {
-                Filters = "(CommentCount|)==20",
-            };
-            var processor = Factory.CreateDefaultProcessor();
-
-            // Act
-            var result = processor.Apply(model, posts);
-
-            // Assert
-            result.Should().OnlyContain(p => p.CommentCount == 20);
-        }
-
-        [StrainerObject(nameof(Id))]
-        private class Post
+                CommentCount = 20,
+            },
+            new Post
+            {
+                LikeCount = 20,
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
         {
-            public int CommentCount { get; set; }
+            Filters = "(CommentCount|LikeCount)==20",
+        };
+        var processor = Factory.CreateDefaultProcessor();
 
-            public int Id { get; set; }
+        // Act
+        var result = processor.Apply(model, posts);
 
-            public int LikeCount { get; set; }
+        // Assert
+        result.Should().OnlyContain(p => p.CommentCount == 20 || p.LikeCount == 20);
+    }
 
-            public string Title { get; set; }
-        }
+    [Fact]
+    public void OrName_Works_With_EmptyNameBeingIgnored()
+    {
+        // Arrange
+        var posts = new Post[]
+        {
+            new Post
+            {
+                CommentCount = 20,
+            },
+            new Post
+            {
+                LikeCount = 20,
+            },
+        }.AsQueryable();
+        var model = new StrainerModel()
+        {
+            Filters = "(CommentCount|)==20",
+        };
+        var processor = Factory.CreateDefaultProcessor();
+
+        // Act
+        var result = processor.Apply(model, posts);
+
+        // Assert
+        result.Should().OnlyContain(p => p.CommentCount == 20);
+    }
+
+    [StrainerObject(nameof(Id))]
+    private class Post
+    {
+        public int CommentCount { get; set; }
+
+        public int Id { get; set; }
+
+        public int LikeCount { get; set; }
+
+        public string Title { get; set; }
     }
 }

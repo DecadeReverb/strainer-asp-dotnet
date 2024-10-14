@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Conversion
+﻿namespace Fluorite.Strainer.Services.Conversion;
+
+public interface IStringValueConverter
 {
-    public interface IStringValueConverter
-    {
-        object Convert(string value, Type targetType, ITypeConverter typeConverter);
-    }
+    object Convert(string value, Type targetType, ITypeConverter typeConverter);
 }

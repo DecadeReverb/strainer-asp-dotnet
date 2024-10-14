@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.Services.Pagination
+namespace Fluorite.Strainer.Services.Pagination;
+
+public interface IPageSizeEvaluator
 {
-    public interface IPageSizeEvaluator
-    {
-        int Evaluate(IStrainerModel model);
-    }
+    int Evaluate(IStrainerModel model);
 }

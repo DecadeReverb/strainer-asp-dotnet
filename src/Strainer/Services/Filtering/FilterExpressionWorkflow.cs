@@ -1,29 +1,38 @@
 ﻿using System.Linq.Expressions;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+/// <summary>
+/// Represents a workflow, that when provided with context produces a filtering expression.
+/// </summary>
+public class FilterExpressionWorkflow : IFilterExpressionWorkflow
 {
-    public class FilterExpressionWorkflow : IFilterExpressionWorkflow
+    private readonly IReadOnlyCollection<IFilterExpressionWorkflowStep> _steps;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilterExpressionWorkflow"/> class.
+    /// </summary>
+    /// <param name="steps">
+    /// The workflow steps being its basis.
+    /// </param>
+    public FilterExpressionWorkflow(IReadOnlyCollection<IFilterExpressionWorkflowStep> steps)
     {
-        private readonly IReadOnlyCollection<IFilterExpressionWorkflowStep> _steps;
+        _steps = Guard.Against.Null(steps);
+    }
 
-        public FilterExpressionWorkflow(IReadOnlyCollection<IFilterExpressionWorkflowStep> steps)
+    /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="workflowContext"/> is <see langword="null"/>.
+    /// </exception>
+    public Expression Run(FilterExpressionWorkflowContext workflowContext)
+    {
+        Guard.Against.Null(workflowContext);
+
+        foreach (var step in _steps)
         {
-            _steps = steps ?? throw new ArgumentNullException(nameof(steps));
+            step.Execute(workflowContext);
         }
 
-        public Expression Run(FilterExpressionWorkflowContext workflowContext)
-        {
-            if (workflowContext is null)
-            {
-                throw new ArgumentNullException(nameof(workflowContext));
-            }
-
-            foreach (var step in _steps)
-            {
-                step.Execute(workflowContext);
-            }
-
-            return workflowContext.FinalExpression;
-        }
+        return workflowContext.FinalExpression;
     }
 }

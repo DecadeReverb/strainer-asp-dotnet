@@ -1,40 +1,34 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Fluorite.Extensions
+namespace Fluorite.Extensions;
+
+public static class DictionaryExtensions
 {
-    public static class DictionaryExtensions
+    public static Dictionary<TKey, TValue> MergeLeft<TKey, TValue>(
+        this IReadOnlyDictionary<TKey, TValue> source,
+        params IReadOnlyDictionary<TKey, TValue>[] others)
     {
-        public static Dictionary<TKey, TValue> MergeLeft<TKey, TValue>(
-            this IReadOnlyDictionary<TKey, TValue> source,
-            params IReadOnlyDictionary<TKey, TValue>[] others)
+        Guard.Against.Null(source);
+        Guard.Against.Null(others);
+
+        var resultDictionary = new Dictionary<TKey, TValue>();
+
+        foreach (var dictionary in new[] { source }.Concat(others))
         {
-            if (source is null)
+            foreach (var pair in dictionary)
             {
-                throw new ArgumentNullException(nameof(source));
+                resultDictionary[pair.Key] = pair.Value;
             }
-
-            var resultDictionary = new Dictionary<TKey, TValue>();
-
-            foreach (var dictionary in new[] { source }.Concat(others))
-            {
-                foreach (var pair in dictionary)
-                {
-                    resultDictionary[pair.Key] = pair.Value;
-                }
-            }
-
-            return resultDictionary;
         }
 
-        public static IReadOnlyDictionary<TKey, TValue> ToReadOnly<TKey, TValue>(
-            this IDictionary<TKey, TValue> source)
-        {
-            if (source is null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+        return resultDictionary;
+    }
 
-            return new ReadOnlyDictionary<TKey, TValue>(source);
-        }
+    public static ReadOnlyDictionary<TKey, TValue> ToReadOnly<TKey, TValue>(
+        this IDictionary<TKey, TValue> source)
+    {
+        Guard.Against.Null(source);
+
+        return new ReadOnlyDictionary<TKey, TValue>(source);
     }
 }

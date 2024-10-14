@@ -1,17 +1,11 @@
-﻿namespace Fluorite.Strainer.Services.Pipelines
+﻿namespace Fluorite.Strainer.Services.Pipelines;
+
+public class PipelineContext : IPipelineContext
 {
-    public class PipelineContext : IPipelineContext
+    public PipelineContext(IStrainerPipelineBuilderFactory strainerPipelineBuilderFactory)
     {
-        public PipelineContext(IStrainerPipelineBuilderFactory strainerPipelineBuilderFactory)
-        {
-            if (strainerPipelineBuilderFactory == null)
-            {
-                throw new ArgumentException(nameof(strainerPipelineBuilderFactory));
-            }
-
-            BuilderFactory = strainerPipelineBuilderFactory;
-        }
-
-        public IStrainerPipelineBuilderFactory BuilderFactory { get; }
+        BuilderFactory = Guard.Against.Null(strainerPipelineBuilderFactory);
     }
+
+    public IStrainerPipelineBuilderFactory BuilderFactory { get; }
 }

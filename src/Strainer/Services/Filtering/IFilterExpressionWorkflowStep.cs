@@ -1,7 +1,6 @@
-﻿namespace Fluorite.Strainer.Services.Filtering
+﻿namespace Fluorite.Strainer.Services.Filtering;
+
+public interface IFilterExpressionWorkflowStep
 {
-    public interface IFilterExpressionWorkflowStep
-    {
-        void Execute(FilterExpressionWorkflowContext context);
-    }
+    void Execute(FilterExpressionWorkflowContext context);
 }

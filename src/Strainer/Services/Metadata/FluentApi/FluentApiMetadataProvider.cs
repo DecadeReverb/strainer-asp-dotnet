@@ -2,169 +2,166 @@
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Configuration;
 
-namespace Fluorite.Strainer.Services.Metadata.FluentApi
+namespace Fluorite.Strainer.Services.Metadata.FluentApi;
+
+public class FluentApiMetadataProvider : IMetadataProvider
 {
-    public class FluentApiMetadataProvider : IMetadataProvider
+    private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+    private readonly IConfigurationMetadataProvider _metadataProvider;
+    private readonly IFluentApiPropertyMetadataBuilder _propertyMetadataBuilder;
+    private readonly IPropertyInfoProvider _propertyInfoProvider;
+
+    public FluentApiMetadataProvider(
+        IStrainerOptionsProvider strainerOptionsProvider,
+        IConfigurationMetadataProvider metadataProvider,
+        IPropertyInfoProvider propertyInfoProvider,
+        IFluentApiPropertyMetadataBuilder propertyMetadataBuilder)
     {
-        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
-        private readonly IConfigurationMetadataProvider _metadataProvider;
-        private readonly IFluentApiPropertyMetadataBuilder _propertyMetadataBuilder;
-        private readonly IPropertyInfoProvider _propertyInfoProvider;
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
+        _metadataProvider = Guard.Against.Null(metadataProvider);
+        _propertyInfoProvider = Guard.Against.Null(propertyInfoProvider);
+        _propertyMetadataBuilder = Guard.Against.Null(propertyMetadataBuilder);
+    }
 
-        public FluentApiMetadataProvider(
-            IStrainerOptionsProvider strainerOptionsProvider,
-            IConfigurationMetadataProvider metadataProvider,
-            IPropertyInfoProvider propertyInfoProvider,
-            IFluentApiPropertyMetadataBuilder propertyMetadataBuilder)
+    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
+    {
+        if (!IsFluentApiEnabled())
         {
-            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
-            _metadataProvider = metadataProvider ?? throw new ArgumentNullException(nameof(metadataProvider));
-            _propertyInfoProvider = propertyInfoProvider ?? throw new ArgumentNullException(nameof(propertyInfoProvider));
-            _propertyMetadataBuilder = propertyMetadataBuilder ?? throw new ArgumentNullException(nameof(propertyMetadataBuilder));
+            return null;
         }
 
-        public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
+        var objectMetadata = _metadataProvider.GetObjectMetadata();
+
+        return _metadataProvider
+            .GetPropertyMetadata()
+            .Keys
+            .Union(objectMetadata.Keys)
+            .Select(type => (type, BuildMetadataKeyValuePair(type)))
+            .ToDictionary(tuple => tuple.type, tuple => tuple.Item2)
+            .ToReadOnly();
+    }
+
+    public IPropertyMetadata GetDefaultMetadata(Type modelType)
+    {
+        Guard.Against.Null(modelType);
+
+        if (!IsFluentApiEnabled())
         {
-            if (!IsFluentApiEnabled())
-            {
-                return null;
-            }
-
-            var objectMetadata = _metadataProvider.GetObjectMetadata();
-
-            return _metadataProvider
-                .GetPropertyMetadata()
-                .Keys
-                .Union(objectMetadata.Keys)
-                .Select(type => (type, BuildMetadataKeyValuePair(type)))
-                .ToDictionary(tuple => tuple.type, tuple => tuple.Item2)
-                .ToReadOnly();
+            return null;
         }
 
-        public IPropertyMetadata GetDefaultMetadata<TEntity>()
+        _metadataProvider.GetDefaultMetadata().TryGetValue(modelType, out var propertyMetadata);
+
+        if (propertyMetadata == null)
         {
-            return GetDefaultMetadata(typeof(TEntity));
+            if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
+            {
+                propertyMetadata = _propertyMetadataBuilder.BuildPropertyMetadata(objectMetadata);
+            }
         }
 
-        public IPropertyMetadata GetDefaultMetadata(Type modelType)
+        return propertyMetadata;
+    }
+
+    public IPropertyMetadata GetPropertyMetadata(
+        Type modelType,
+        bool isSortableRequired,
+        bool isFilterableRequired,
+        string name)
+    {
+        Guard.Against.Null(modelType);
+        Guard.Against.NullOrWhiteSpace(name);
+
+        if (!IsFluentApiEnabled())
         {
-            if (modelType is null)
-            {
-                throw new ArgumentNullException(nameof(modelType));
-            }
+            return null;
+        }
 
-            if (!IsFluentApiEnabled())
-            {
-                return null;
-            }
-
-            _metadataProvider.GetDefaultMetadata().TryGetValue(modelType, out var propertyMetadata);
-
-            if (propertyMetadata == null)
-            {
-                if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
+        if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var propertyMetadatas))
+        {
+            var propertyMetadata = propertyMetadatas
+                .Where(pair =>
                 {
-                    propertyMetadata = _propertyMetadataBuilder.BuildPropertyMetadata(objectMetadata);
-                }
-            }
+                    return pair.Key.Equals(name)
+                        && (!isSortableRequired || pair.Value.IsSortable)
+                        && (!isFilterableRequired || pair.Value.IsFilterable);
+                })
+                .FirstOrDefault().Value;
 
             return propertyMetadata;
         }
 
-        public IPropertyMetadata GetPropertyMetadata<TEntity>(
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
+        if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
         {
-            return GetPropertyMetadata(typeof(TEntity), isSortableRequired, isFilterableRequired, name);
+            if (((isFilterableRequired && objectMetadata.IsFilterable) || (!isFilterableRequired))
+                && ((isSortableRequired && objectMetadata.IsSortable) || (!isSortableRequired)))
+            {
+                var propertyInfo = _propertyInfoProvider.GetPropertyInfo(modelType, name);
+                if (propertyInfo is not null)
+                {
+                    return _propertyMetadataBuilder.BuildPropertyMetadataFromPropertyInfo(objectMetadata, propertyInfo);
+                }
+            }
         }
 
-        public IPropertyMetadata GetPropertyMetadata(
-            Type modelType,
-            bool isSortableRequired,
-            bool isFilterableRequired,
-            string name)
+        return null;
+    }
+
+    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
+    {
+        Guard.Against.Null(modelType);
+
+        if (!IsFluentApiEnabled())
         {
-            if (modelType is null)
-            {
-                throw new ArgumentNullException(nameof(modelType));
-            }
-
-            if (!IsFluentApiEnabled())
-            {
-                return null;
-            }
-
-            if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var propertyMetadatas))
-            {
-                var propertyMetadata = propertyMetadatas
-                    .Where(pair =>
-                    {
-                        return pair.Key.Equals(name)
-                            && (!isSortableRequired || pair.Value.IsSortable)
-                            && (!isFilterableRequired || pair.Value.IsFilterable);
-                    })
-                    .FirstOrDefault().Value;
-
-                return propertyMetadata;
-            }
-
             return null;
         }
 
-        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas<TEntity>()
+        if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var metadatas))
         {
-            return GetPropertyMetadatas(typeof(TEntity));
+            return metadatas.Values.ToList().AsReadOnly();
         }
 
-        public IEnumerable<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
+        if (_metadataProvider.GetObjectMetadata().TryGetValue(modelType, out var objectMetadata))
         {
-            if (modelType is null)
-            {
-                throw new ArgumentNullException(nameof(modelType));
-            }
-
-            if (_metadataProvider.GetPropertyMetadata().TryGetValue(modelType, out var metadatas))
-            {
-                return metadatas.Values;
-            }
-
-            return null;
+            return _propertyInfoProvider.GetPropertyInfos(modelType)
+                .Select(p => _propertyMetadataBuilder.BuildPropertyMetadataFromPropertyInfo(objectMetadata, p))
+                .ToList();
         }
 
-        private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadataKeyValuePair(Type type)
+        return null;
+    }
+
+    private IReadOnlyDictionary<string, IPropertyMetadata> BuildMetadataKeyValuePair(Type type)
+    {
+        // TODO: Shouldn't property metadata override object metadata, but still be returned?
+        // So type-wide config is set with object call, but property call overrides that for some special case?
+        var propertyMetadataDictionary = _metadataProvider.GetPropertyMetadata();
+        if (propertyMetadataDictionary.TryGetValue(type, out var metadatas))
         {
-            // TODO:
-            // Shouldn't property metadata override object metadata, but still be returned?
-            // So type-wide config is set with object call, but property call overrides that for some special case?
-            var propertyMetadataDictionary = _metadataProvider.GetPropertyMetadata();
-            if (propertyMetadataDictionary.TryGetValue(type, out var metadatas))
-            {
-                return metadatas;
-            }
-
-            var objectMetadata = _metadataProvider.GetObjectMetadata()[type];
-
-            return GetPropertyMetadatasFromObjectMetadata(type, objectMetadata);
+            return metadatas;
         }
 
-        private IReadOnlyDictionary<string, IPropertyMetadata> GetPropertyMetadatasFromObjectMetadata(Type type, IObjectMetadata objectMetadata)
-        {
-            return _propertyInfoProvider
-                .GetPropertyInfos(type)
-                .Select(propertyInfo => _propertyMetadataBuilder.BuildPropertyMetadataFromPropertyInfo(objectMetadata, propertyInfo))
-                .ToDictionary(p => p.Name, p => p)
-                .ToReadOnlyDictionary();
-        }
+        var objectMetadata = _metadataProvider.GetObjectMetadata()[type];
 
-        private bool IsFluentApiEnabled() => IsMetadataSourceEnabled(MetadataSourceType.FluentApi);
+        return GetPropertyMetadatasFromObjectMetadata(type, objectMetadata);
+    }
 
-        private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
-        {
-            return _strainerOptionsProvider
-                .GetStrainerOptions()
-                .MetadataSourceType
-                .HasFlag(metadataSourceType);
-        }
+    private IReadOnlyDictionary<string, IPropertyMetadata> GetPropertyMetadatasFromObjectMetadata(Type type, IObjectMetadata objectMetadata)
+    {
+        return _propertyInfoProvider
+            .GetPropertyInfos(type)
+            .Select(propertyInfo => _propertyMetadataBuilder.BuildPropertyMetadataFromPropertyInfo(objectMetadata, propertyInfo))
+            .ToDictionary(p => p.Name, p => p)
+            .ToReadOnlyDictionary();
+    }
+
+    private bool IsFluentApiEnabled() => IsMetadataSourceEnabled(MetadataSourceType.FluentApi);
+
+    private bool IsMetadataSourceEnabled(MetadataSourceType metadataSourceType)
+    {
+        return _strainerOptionsProvider
+            .GetStrainerOptions()
+            .MetadataSourceType
+            .HasFlag(metadataSourceType);
     }
 }

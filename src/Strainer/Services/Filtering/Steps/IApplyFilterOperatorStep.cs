@@ -1,6 +1,5 @@
-﻿namespace Fluorite.Strainer.Services.Filtering.Steps
+﻿namespace Fluorite.Strainer.Services.Filtering.Steps;
+
+public interface IApplyFilterOperatorStep : IFilterExpressionWorkflowStep
 {
-    public interface IApplyFilterOperatorStep : IFilterExpressionWorkflowStep
-    {
-    }
 }

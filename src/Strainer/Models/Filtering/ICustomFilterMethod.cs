@@ -1,10 +1,9 @@
-﻿namespace Fluorite.Strainer.Models.Filtering
+﻿namespace Fluorite.Strainer.Models.Filtering;
+
+public interface ICustomFilterMethod
 {
-    public interface ICustomFilterMethod
-    {
-        /// <summary>
-        /// Gets the custom method name.
-        /// </summary>
-        string Name { get; }
-    }
+    /// <summary>
+    /// Gets the custom method name.
+    /// </summary>
+    string Name { get; }
 }

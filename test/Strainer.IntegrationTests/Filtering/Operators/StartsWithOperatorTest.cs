@@ -2,122 +2,121 @@
 using Fluorite.Strainer.IntegrationTests.Fixtures;
 using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators
+namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators;
+
+public class StartsWithOperatorTests : StrainerFixtureBase
 {
-    public class StartsWithOperatorTests : StrainerFixtureBase
+    public StartsWithOperatorTests(StrainerFactory factory) : base(factory)
     {
-        public StartsWithOperatorTests(StrainerFactory factory) : base(factory)
+
+    }
+
+    [Fact]
+    public void StartsWith_Works_When_CaseSensivity_IsDisabled()
+    {
+        // Arrange
+        var source = new[]
         {
-
-        }
-
-        [Fact]
-        public void StartsWith_Works_When_CaseSensivity_IsDisabled()
+            new Comment
+            {
+                Text = "foo",
+            },
+            new Comment
+            {
+                Text = "bar",
+            },
+            new Comment
+            {
+                Text = "FOO",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor(options =>
         {
-            // Arrange
-            var source = new[]
-            {
-                new Comment
-                {
-                    Text = "foo",
-                },
-                new Comment
-                {
-                    Text = "bar",
-                },
-                new Comment
-                {
-                    Text = "FOO",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options =>
-            {
-                options.IsCaseInsensitiveForValues = true;
-                options.ThrowExceptions = true;
-            });
-            var model = new StrainerModel
-            {
-                Filters = "Text_=f",
-            };
-
-            // Act
-            var result = processor.ApplyFiltering(model, source);
-
-            // Assert
-            result.Should().OnlyContain(c => c.Text.StartsWith("f", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [Fact]
-        public void StartsWith_Works_When_CaseSensivity_IsEnabled()
+            options.IsCaseInsensitiveForValues = true;
+            options.ThrowExceptions = true;
+        });
+        var model = new StrainerModel
         {
-            // Arrange
-            var source = new[]
-            {
-                new Comment
-                {
-                    Text = "foo",
-                },
-                new Comment
-                {
-                    Text = "bar",
-                },
-                new Comment
-                {
-                    Text = "FOO",
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
-            var model = new StrainerModel
-            {
-                Filters = "Text_=f",
-            };
+            Filters = "Text_=f",
+        };
 
-            // Act
-            var result = processor.ApplyFiltering(model, source);
+        // Act
+        var result = processor.ApplyFiltering(model, source);
 
-            // Assert
-            result.Should().OnlyContain(c => c.Text.StartsWith("f", StringComparison.Ordinal));
-        }
+        // Assert
+        result.Should().OnlyContain(c => c.Text.StartsWith("f", StringComparison.OrdinalIgnoreCase));
+    }
 
-        [Fact]
-        public void StartsWith_Works_For_NonStringValues()
+    [Fact]
+    public void StartsWith_Works_When_CaseSensivity_IsEnabled()
+    {
+        // Arrange
+        var source = new[]
         {
-            // Arrange
-            var source = new[]
+            new Comment
             {
-                new Comment
-                {
-                    LikeCount = 20,
-                },
-                new Comment
-                {
-                    LikeCount = 10,
-                },
-                new Comment
-                {
-                    LikeCount = 50,
-                },
-            }.AsQueryable();
-            var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
-            var model = new StrainerModel
+                Text = "foo",
+            },
+            new Comment
             {
-                Filters = "LikeCount_=2",
-            };
-
-            // Act
-            var result = processor.ApplyFiltering(model, source);
-
-            // Assert
-            result.Should().OnlyContain(c => c.LikeCount.ToString().StartsWith("2", StringComparison.Ordinal));
-        }
-
-        private class Comment
+                Text = "bar",
+            },
+            new Comment
+            {
+                Text = "FOO",
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
+        var model = new StrainerModel
         {
-            [StrainerProperty]
-            public int LikeCount { get; set; }
+            Filters = "Text_=f",
+        };
 
-            [StrainerProperty]
-            public string Text { get; set; }
-        }
+        // Act
+        var result = processor.ApplyFiltering(model, source);
+
+        // Assert
+        result.Should().OnlyContain(c => c.Text.StartsWith("f", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void StartsWith_Works_For_NonStringValues()
+    {
+        // Arrange
+        var source = new[]
+        {
+            new Comment
+            {
+                LikeCount = 20,
+            },
+            new Comment
+            {
+                LikeCount = 10,
+            },
+            new Comment
+            {
+                LikeCount = 50,
+            },
+        }.AsQueryable();
+        var processor = Factory.CreateDefaultProcessor(options => options.ThrowExceptions = true);
+        var model = new StrainerModel
+        {
+            Filters = "LikeCount_=2",
+        };
+
+        // Act
+        var result = processor.ApplyFiltering(model, source);
+
+        // Assert
+        result.Should().OnlyContain(c => c.LikeCount.ToString().StartsWith("2", StringComparison.Ordinal));
+    }
+
+    private class Comment
+    {
+        [StrainerProperty]
+        public int LikeCount { get; set; }
+
+        [StrainerProperty]
+        public string Text { get; set; }
     }
 }

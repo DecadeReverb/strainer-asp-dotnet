@@ -1,21 +1,20 @@
-﻿namespace Fluorite.Strainer.Models.Filtering.Terms
+﻿namespace Fluorite.Strainer.Models.Filtering.Terms;
+
+/// <summary>
+/// Represents different sections of partially parsed filter term.
+/// </summary>
+public class FilterTermSections
 {
     /// <summary>
-    /// Represents different sections of partially parsed filter term.
+    /// Initializes a new instance of the <see cref="FilterTermSections"/> class.
     /// </summary>
-    public class FilterTermSections
+    public FilterTermSections()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FilterTermSections"/> class.
-        /// </summary>
-        public FilterTermSections()
-        {
-        }
-
-        public string Names { get; set; }
-
-        public string OperatorSymbol { get; set; }
-
-        public string Values { get; set; }
     }
+
+    public string Names { get; set; }
+
+    public string OperatorSymbol { get; set; }
+
+    public string Values { get; set; }
 }

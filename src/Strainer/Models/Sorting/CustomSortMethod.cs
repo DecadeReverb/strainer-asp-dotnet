@@ -1,19 +1,16 @@
-﻿namespace Fluorite.Strainer.Models.Sorting
+﻿namespace Fluorite.Strainer.Models.Sorting;
+
+public class CustomSortMethod : ICustomSortMethod
 {
-    public class CustomSortMethod : ICustomSortMethod
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CustomSortMethod"/>
+    /// class.
+    /// </summary>
+    public CustomSortMethod()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CustomSortMethod"/>
-        /// class.
-        /// </summary>
-        public CustomSortMethod()
-        {
 
-        }
-
-        /// <summary>
-        /// Gets or sets the custom method name.
-        /// </summary>
-        public string Name { get; set; }
     }
+
+    /// <inheritdoc/>
+    public string Name { get; set; }
 }

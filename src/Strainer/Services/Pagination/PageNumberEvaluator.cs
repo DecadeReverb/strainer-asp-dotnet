@@ -1,26 +1,22 @@
 ﻿using Fluorite.Strainer.Models;
 
-namespace Fluorite.Strainer.Services.Pagination
+namespace Fluorite.Strainer.Services.Pagination;
+
+public class PageNumberEvaluator : IPageNumberEvaluator
 {
-    public class PageNumberEvaluator : IPageNumberEvaluator
+    private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+
+    public PageNumberEvaluator(IStrainerOptionsProvider strainerOptionsProvider)
     {
-        private readonly IStrainerOptionsProvider _strainerOptionsProvider;
+        _strainerOptionsProvider = Guard.Against.Null(strainerOptionsProvider);
+    }
 
-        public PageNumberEvaluator(IStrainerOptionsProvider strainerOptionsProvider)
-        {
-            _strainerOptionsProvider = strainerOptionsProvider ?? throw new ArgumentNullException(nameof(strainerOptionsProvider));
-        }
+    public int Evaluate(IStrainerModel model)
+    {
+        Guard.Against.Null(model);
 
-        public int Evaluate(IStrainerModel model)
-        {
-            if (model is null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
+        var options = _strainerOptionsProvider.GetStrainerOptions();
 
-            var options = _strainerOptionsProvider.GetStrainerOptions();
-
-            return model.Page ?? options.DefaultPageNumber;
-        }
+        return model.Page ?? options.DefaultPageNumber;
     }
 }

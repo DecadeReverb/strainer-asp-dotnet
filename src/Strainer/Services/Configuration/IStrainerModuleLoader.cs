@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Services.Modules;
 
-namespace Fluorite.Strainer.Services.Configuration
+namespace Fluorite.Strainer.Services.Configuration;
+
+public interface IStrainerModuleLoader
 {
-    public interface IStrainerModuleLoader
-    {
-        void Load(IStrainerModule strainerModule);
-    }
+    void Load(IStrainerModule strainerModule);
 }

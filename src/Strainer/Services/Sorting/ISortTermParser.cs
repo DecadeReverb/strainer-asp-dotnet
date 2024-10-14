@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Models.Sorting.Terms;
 
-namespace Fluorite.Strainer.Services.Sorting
+namespace Fluorite.Strainer.Services.Sorting;
+
+public interface ISortTermParser
 {
-    public interface ISortTermParser
-    {
-        IList<ISortTerm> GetParsedTerms(string input);
-    }
+    IList<ISortTerm> GetParsedTerms(string input);
 }

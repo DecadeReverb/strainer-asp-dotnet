@@ -1,9 +1,8 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Terms;
 
-namespace Fluorite.Strainer.Services.Filtering
+namespace Fluorite.Strainer.Services.Filtering;
+
+public interface IFilterTermSectionsParser
 {
-    public interface IFilterTermSectionsParser
-    {
-        FilterTermSections Parse(string input);
-    }
+    FilterTermSections Parse(string input);
 }

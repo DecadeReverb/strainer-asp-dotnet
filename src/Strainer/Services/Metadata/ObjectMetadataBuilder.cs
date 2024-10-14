@@ -2,103 +2,80 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Fluorite.Strainer.Services.Metadata
+namespace Fluorite.Strainer.Services.Metadata;
+
+public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
 {
-    public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
+    private readonly IDictionary<Type, IObjectMetadata> _objectMetadata;
+    private readonly string _defaultSortingPropertyName;
+    private readonly PropertyInfo _defaultSortingPropertyInfo;
+
+    public ObjectMetadataBuilder(
+        IPropertyInfoProvider propertyInfoProvider,
+        IDictionary<Type, IObjectMetadata> objectMetadata,
+        Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
     {
-        private readonly IDictionary<Type, IObjectMetadata> _objectMetadata;
-        private readonly string _defaultSortingPropertyName;
-        private readonly PropertyInfo _defaultSortingPropertyInfo;
+        Guard.Against.Null(propertyInfoProvider);
+        Guard.Against.Null(objectMetadata);
+        Guard.Against.Null(defaultSortingPropertyExpression);
 
-        public ObjectMetadataBuilder(
-            IDictionary<Type, IObjectMetadata> objectMetadata,
-            Expression<Func<TEntity, object>> defaultSortingPropertyExpression)
+        (_defaultSortingPropertyInfo, _defaultSortingPropertyName) = propertyInfoProvider.GetPropertyInfoAndFullName(defaultSortingPropertyExpression);
+        _objectMetadata = objectMetadata;
+        Save(Build());
+    }
+
+    protected bool IsDefaultSortingDescendingValue { get; set; }
+
+    protected bool IsFilterableValue { get; set; }
+
+    protected bool IsSortableValue { get; set; }
+
+    public IObjectMetadata Build()
+    {
+        return new ObjectMetadata
         {
-            if (defaultSortingPropertyExpression is null)
-            {
-                throw new ArgumentNullException(nameof(defaultSortingPropertyExpression));
-            }
+            DefaultSortingPropertyInfo = _defaultSortingPropertyInfo,
+            DefaultSortingPropertyName = _defaultSortingPropertyName,
+            IsDefaultSortingDescending = IsDefaultSortingDescendingValue,
+            IsFilterable = IsFilterableValue,
+            IsSortable = IsSortableValue,
+        };
+    }
 
-            (_defaultSortingPropertyName, _defaultSortingPropertyInfo) = GetPropertyInfo(defaultSortingPropertyExpression);
-            _objectMetadata = objectMetadata ?? throw new ArgumentNullException(nameof(objectMetadata));
+    public IObjectMetadataBuilder<TEntity> IsFilterable()
+    {
+        IsFilterableValue = true;
+        Save(Build());
 
-            Save(Build());
-        }
+        return this;
+    }
 
-        protected bool IsDefaultSortingDescendingValue { get; set; }
+    public IObjectMetadataBuilder<TEntity> IsSortable()
+    {
+        IsSortableValue = true;
+        Save(Build());
 
-        protected bool IsFilterableValue { get; set; }
+        return this;
+    }
 
-        protected bool IsSortableValue { get; set; }
+    public IObjectMetadataBuilder<TEntity> IsDefaultSortingAscending()
+    {
+        IsDefaultSortingDescendingValue = false;
+        Save(Build());
 
-        public IObjectMetadata Build()
-        {
-            return new ObjectMetadata
-            {
-                DefaultSortingPropertyInfo = _defaultSortingPropertyInfo,
-                DefaultSortingPropertyName = _defaultSortingPropertyName,
-                IsDefaultSortingDescending = IsDefaultSortingDescendingValue,
-                IsFilterable = IsFilterableValue,
-                IsSortable = IsSortableValue,
-            };
-        }
+        return this;
+    }
 
-        public IObjectMetadataBuilder<TEntity> IsFilterable()
-        {
-            IsFilterableValue = true;
-            Save(Build());
+    public IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending()
+    {
+        IsDefaultSortingDescendingValue = true;
+        Save(Build());
 
-            return this;
-        }
+        return this;
+    }
 
-        public IObjectMetadataBuilder<TEntity> IsSortable()
-        {
-            IsSortableValue = true;
-            Save(Build());
-
-            return this;
-        }
-
-        public IObjectMetadataBuilder<TEntity> IsDefaultSortingDescending()
-        {
-            IsDefaultSortingDescendingValue = true;
-            Save(Build());
-
-            return this;
-        }
-
-        protected void Save(IObjectMetadata objectMetadata)
-        {
-            if (objectMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(objectMetadata));
-            }
-
-            _objectMetadata[typeof(TEntity)] = objectMetadata;
-        }
-
-        private (string, PropertyInfo) GetPropertyInfo(Expression<Func<TEntity, object>> expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            if (expression.Body is not MemberExpression body)
-            {
-                var ubody = expression.Body as UnaryExpression;
-                body = ubody.Operand as MemberExpression;
-            }
-
-            var propertyInfo = body?.Member as PropertyInfo;
-            var stack = new Stack<string>();
-            while (body != null)
-            {
-                stack.Push(body.Member.Name);
-                body = body.Expression as MemberExpression;
-            }
-
-            return (string.Join(".", stack.ToArray()), propertyInfo);
-        }
+    protected void Save(IObjectMetadata objectMetadata)
+    {
+        _objectMetadata[typeof(TEntity)] = Guard.Against.Null(objectMetadata);
     }
 }
