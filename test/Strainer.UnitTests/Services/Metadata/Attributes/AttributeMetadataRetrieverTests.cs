@@ -3,6 +3,7 @@ using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Metadata.Attributes;
 using NSubstitute.ReturnsExtensions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes;
 
@@ -252,5 +253,143 @@ public class AttributeMetadataRetrieverTests
         result.Should().NotBeNullOrEmpty();
         result.Keys.Should().BeEquivalentTo(new[] { validType });
         result.Values.Single().Should().BeSameAs(metadataDictionary);
+    }
+
+    [Fact]
+    public void Retriever_Returns_NullPropertyMetadata_WhenAttributeMetadataSourceIsDisabled()
+    {
+        // Arrange
+        var name = "foo";
+        var isSortableRequired = false;
+        var isFilterableRequired = false;
+
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes)
+            .Returns(false);
+
+        // Act
+        var result = _retriever.GetMetadataFromPropertyAttribute(typeof(string), isSortableRequired, isFilterableRequired, name);
+
+        // Assert
+        result.Should().BeNull();
+
+        _metadataSourceCheckerMock
+            .Received(1)
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes);
+    }
+
+    [Fact]
+    public void Retriever_Returns_NullPropertyMetadata_When_PropertyInfoProvider_ReturnsNoResults()
+    {
+        // Arrange
+        var name = "foo";
+        var isSortableRequired = false;
+        var isFilterableRequired = false;
+
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes)
+            .Returns(true);
+        _propertyInfoProviderMock
+            .GetPropertyInfos(typeof(string))
+            .Returns(Array.Empty<PropertyInfo>());
+
+        // Act
+        var result = _retriever.GetMetadataFromPropertyAttribute(typeof(string), isSortableRequired, isFilterableRequired, name);
+
+        // Assert
+        result.Should().BeNull();
+
+        _metadataSourceCheckerMock
+            .Received(1)
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes);
+    }
+
+    [Fact]
+    public void Retriever_Returns_NullPropertyMetadata_When_CriteriaCheckerMatchesNoResults()
+    {
+        // Arrange
+        var name = "foo";
+        var isSortableRequired = false;
+        var isFilterableRequired = false;
+        var propertyInfoMock = Substitute.For<PropertyInfo>();
+        var propertyInfos = new[] { propertyInfoMock };
+        var attributeMock = Substitute.For<StrainerPropertyAttribute>();
+
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes)
+            .Returns(true);
+        _propertyInfoProviderMock
+            .GetPropertyInfos(typeof(string))
+            .Returns(propertyInfos);
+        _strainerAttributeProviderMock
+            .GetPropertyAttribute(propertyInfoMock)
+            .Returns(attributeMock);
+        _attributeCriteriaCheckerMock
+            .CheckIfPropertyAttributeIsMatching(attributeMock, propertyInfoMock, isSortableRequired, isFilterableRequired, name)
+            .Returns(false);
+
+        // Act
+        var result = _retriever.GetMetadataFromPropertyAttribute(typeof(string), isSortableRequired, isFilterableRequired, name);
+
+        // Assert
+        result.Should().BeNull();
+
+        _metadataSourceCheckerMock
+            .Received(1)
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes);
+        _propertyInfoProviderMock
+            .Received(1)
+            .GetPropertyInfos(typeof(string));
+        _strainerAttributeProviderMock
+            .Received(1)
+            .GetPropertyAttribute(propertyInfoMock);
+        _attributeCriteriaCheckerMock
+            .Received(1)
+            .CheckIfPropertyAttributeIsMatching(attributeMock, propertyInfoMock, isSortableRequired, isFilterableRequired, name);
+    }
+
+    [Fact]
+    public void Retriever_Returns_PropertyMetadata()
+    {
+        // Arrange
+        var name = "foo";
+        var isSortableRequired = false;
+        var isFilterableRequired = false;
+        var propertyInfoMock = Substitute.For<PropertyInfo>();
+        var propertyInfos = new[] { propertyInfoMock };
+        var attributeMock = Substitute.For<StrainerPropertyAttribute>();
+
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes)
+            .Returns(true);
+        _propertyInfoProviderMock
+            .GetPropertyInfos(typeof(string))
+            .Returns(propertyInfos);
+        _strainerAttributeProviderMock
+            .GetPropertyAttribute(propertyInfoMock)
+            .Returns(attributeMock);
+        _attributeCriteriaCheckerMock
+            .CheckIfPropertyAttributeIsMatching(attributeMock, propertyInfoMock, isSortableRequired, isFilterableRequired, name)
+            .Returns(true);
+
+        // Act
+        var result = _retriever.GetMetadataFromPropertyAttribute(typeof(string), isSortableRequired, isFilterableRequired, name);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeSameAs(attributeMock);
+
+        _metadataSourceCheckerMock
+            .Received(1)
+            .IsMetadataSourceEnabled(MetadataSourceType.PropertyAttributes);
+        _propertyInfoProviderMock
+            .Received(1)
+            .GetPropertyInfos(typeof(string));
+        _strainerAttributeProviderMock
+            .Received(1)
+            .GetPropertyAttribute(propertyInfoMock);
+        _attributeCriteriaCheckerMock
+            .Received(1)
+            .CheckIfPropertyAttributeIsMatching(attributeMock, propertyInfoMock, isSortableRequired, isFilterableRequired, name);
     }
 }
