@@ -208,6 +208,9 @@ public class AttributeMetadataRetrieverTests
         _propertyMetadataDictionaryProviderMock
             .GetMetadata(validType, objectAttribute)
             .Returns(metadataDictionary);
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes)
+            .Returns(true);
 
         // Act
         var result = _retriever.GetMetadataDictionaryFromObjectAttributes(types);
@@ -238,6 +241,9 @@ public class AttributeMetadataRetrieverTests
         _propertyMetadataDictionaryProviderMock
             .GetMetadata(invalidType)
             .Returns(new Dictionary<string, IPropertyMetadata>());
+        _metadataSourceCheckerMock
+            .IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes)
+            .Returns(true);
 
         // Act
         var result = _retriever.GetMetadataDictionaryFromPropertyAttributes(types);

@@ -101,7 +101,11 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
     {
         Guard.Against.Null(types);
 
-        // TODO: Shouldn't this return empty dictionary if attribute-based metadata is disabled?
+        if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
+        {
+            return new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>().ToReadOnly();
+        }
+
         return types
             .Select(type => new
             {
@@ -122,6 +126,11 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         ICollection<Type> types)
     {
         Guard.Against.Null(types);
+
+        if (!IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes))
+        {
+            return new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>().ToReadOnly();
+        }
 
         return types
             .Select(type => new
