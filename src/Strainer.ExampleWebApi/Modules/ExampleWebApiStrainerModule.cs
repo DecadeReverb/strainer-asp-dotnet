@@ -11,17 +11,23 @@ public class ExampleWebApiStrainerModule : StrainerModule<Post>
 {
     public override void Load(IStrainerModuleBuilder<Post> builder)
     {
-        builder.AddCustomFilterMethod("IsNew")
-            .HasFunction(p => EF.Functions.DateDiffDay(DateTime.UtcNow, p.DateCreated) < 7);
+        builder.AddCustomFilterMethod(b => b
+            .HasName("IsNew")
+            .HasFunction(p => EF.Functions.DateDiffDay(DateTime.UtcNow, p.DateCreated) < 7)
+            .Build());
 
-        builder.AddCustomSortMethod("Popularity")
-            .HasFunction(p => p.LikeCount);
+        builder.AddCustomSortMethod(b => b
+            .HasName("Popularity")
+            .HasFunction(p => p.LikeCount)
+            .Build());
 
-        builder.AddFilterOperator(symbol: "%")
+        builder.AddFilterOperator(b => b
+            .HasSymbol("%")
             .HasName("modulo equal zero")
             .HasExpression((context) => Expression.Equal(
                 Expression.Modulo(context.PropertyValue, context.FilterValue),
-                Expression.Constant(0)));
+                Expression.Constant(0)))
+            .Build());
 
         builder.AddProperty(p => p.Comments.Count)
             .IsFilterable()

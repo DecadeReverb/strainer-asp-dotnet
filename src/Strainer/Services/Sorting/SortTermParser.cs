@@ -19,7 +19,7 @@ public class SortTermParser : ISortTermParser
         _sortTermValueParser = Guard.Against.Null(sortTermValueParser);
     }
 
-    public IList<ISortTerm> GetParsedTerms(string input)
+    public IList<ISortTerm> GetParsedTerms(string? input)
     {
         if (string.IsNullOrEmpty(input))
         {
@@ -48,11 +48,11 @@ public class SortTermParser : ISortTermParser
                 sortingWay = options.DefaultSortingWay;
             }
 
-            var sortTerm = new SortTerm()
+            var name = _formatter.Unformat(value, sortingWay);
+            var sortTerm = new SortTerm(name)
             {
                 Input = value,
                 IsDescending = sortingWay == SortingWay.Descending,
-                Name = _formatter.Unformat(value, sortingWay),
             };
 
             if (!terms.Any(s => s.Name == sortTerm.Name))

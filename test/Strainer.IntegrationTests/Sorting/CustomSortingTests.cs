@@ -17,19 +17,19 @@ public class CustomSortingTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 LikeCount = 0,
                 CommentCount = 0,
                 DateCreated = DateTime.UtcNow.AddDays(-2),
             },
-            new Post
+            new()
             {
                 LikeCount = 2,
                 CommentCount = 0,
                 DateCreated = DateTime.UtcNow.AddDays(-2),
             },
-            new Post
+            new()
             {
                 LikeCount = 0,
                 CommentCount = 2,
@@ -65,13 +65,15 @@ public class CustomSortingTests : StrainerFixtureBase
         public override void Load(IStrainerModuleBuilder<Post> builder)
         {
             builder
-                .AddCustomSortMethod("Popularity")
+                .AddCustomSortMethod(b => b
+                .HasName("Popularity")
                 .HasFunction(term =>
                 {
                     return term.IsDescending
                         ? (p => p.LikeCount)
                         : (p => p.CommentCount);
-                });
+                })
+                .Build());
         }
     }
 }

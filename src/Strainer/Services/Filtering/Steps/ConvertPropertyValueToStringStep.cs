@@ -7,6 +7,10 @@ public class ConvertPropertyValueToStringStep : IConvertPropertyValueToStringSte
     public void Execute(FilterExpressionWorkflowContext context)
     {
         Guard.Against.Null(context);
+        Guard.Against.Null(context.Term);
+        Guard.Against.Null(context.Term.Operator);
+        Guard.Against.Null(context.PropertyMetadata);
+        Guard.Against.Null(context.PropertyMetadata.PropertyInfo);
 
         if (context.Term.Operator.IsStringBased)
         {

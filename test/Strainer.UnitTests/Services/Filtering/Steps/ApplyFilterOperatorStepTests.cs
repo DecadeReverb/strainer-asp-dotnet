@@ -6,6 +6,7 @@ using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Filtering.Steps;
 using NSubstitute.ExceptionExtensions;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering.Steps;
 
@@ -26,6 +27,7 @@ public class ApplyFilterOperatorStepTests
         {
             FinalExpression = Expression.Constant("foo"),
             PropertyValue = Expression.Constant("bar"),
+            FilterTermValue = "test",
         };
         var finalExpression = Expression.Constant("lorem ipsum");
         var funcMock = Substitute.For<Func<IFilterExpressionContext, Expression>>();
@@ -43,6 +45,12 @@ public class ApplyFilterOperatorStepTests
             .Operator
             .Returns(filterOperator);
         context.Term = filterTerm;
+        var propertyInfo = Substitute.For<PropertyInfo>();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata
+            .PropertyInfo
+            .Returns(propertyInfo);
+        context.PropertyMetadata = propertyMetadata;
 
         // Act
         _step.Execute(context);

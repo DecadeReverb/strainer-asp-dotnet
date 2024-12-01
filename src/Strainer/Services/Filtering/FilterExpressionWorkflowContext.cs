@@ -10,17 +10,17 @@ namespace Fluorite.Strainer.Services.Filtering;
 /// </summary>
 public class FilterExpressionWorkflowContext
 {
-    public object FilterTermConstant { get; set; }
+    public object? FilterTermConstant { get; set; }
 
-    public string FilterTermValue { get; set; }
+    public string? FilterTermValue { get; set; }
 
-    public Expression FinalExpression { get; set; }
+    public Expression? FinalExpression { get; set; }
 
-    public IPropertyMetadata PropertyMetadata { get; set; }
+    public IPropertyMetadata? PropertyMetadata { get; set; }
 
-    public Expression PropertyValue { get; set; }
+    public Expression? PropertyValue { get; set; }
 
-    public IFilterTerm Term { get; set; }
+    public IFilterTerm? Term { get; set; }
 
-    public ITypeConverter TypeConverter { get; set; }
+    public ITypeConverter? TypeConverter { get; set; }
 }

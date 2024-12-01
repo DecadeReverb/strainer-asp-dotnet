@@ -8,6 +8,13 @@ public class ApplyFilterOperatorStep : IApplyFilterOperatorStep
     public void Execute(FilterExpressionWorkflowContext context)
     {
         Guard.Against.Null(context);
+        Guard.Against.Null(context.FinalExpression);
+        Guard.Against.Null(context.PropertyValue);
+        Guard.Against.Null(context.Term);
+        Guard.Against.Null(context.Term.Operator);
+        Guard.Against.Null(context.PropertyMetadata);
+        Guard.Against.Null(context.PropertyMetadata.PropertyInfo);
+        Guard.Against.Null(context.FilterTermValue);
 
         var filterOperatorContext = new FilterExpressionContext(context.FinalExpression, context.PropertyValue);
 

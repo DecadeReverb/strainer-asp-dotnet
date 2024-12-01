@@ -6,7 +6,7 @@ namespace Fluorite.Strainer.UnitTests.Services.Metadata.Attributes;
 
 public class AttributeCriteriaCheckerTests
 {
-    public readonly AttributeCriteriaChecker _checker = new();
+    private readonly AttributeCriteriaChecker _checker = new();
 
     [Fact]
     public void ObjectChecking_Should_Return_False_When_AttributeIsNull()

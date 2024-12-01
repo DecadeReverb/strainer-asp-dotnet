@@ -59,7 +59,7 @@ public class StrainerModuleFactoryTests
 
     private class UnconstructableStrainerModule : StrainerModule
     {
-        public UnconstructableStrainerModule(object _)
+        public UnconstructableStrainerModule(object arg)
         {
         }
 

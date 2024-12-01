@@ -6,16 +6,16 @@ public interface IMetadataFacade
 {
     IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllMetadata();
 
-    IPropertyMetadata GetDefaultMetadata<TEntity>();
+    IPropertyMetadata? GetDefaultMetadata<TEntity>();
 
-    IPropertyMetadata GetDefaultMetadata(Type modelType);
+    IPropertyMetadata? GetDefaultMetadata(Type modelType);
 
-    IPropertyMetadata GetMetadata<TEntity>(
+    IPropertyMetadata? GetMetadata<TEntity>(
         bool isSortableRequired,
         bool isFilterableRequired,
         string name);
 
-    IPropertyMetadata GetMetadata(
+    IPropertyMetadata? GetMetadata(
         Type modelType,
         bool isSortableRequired,
         bool isFilterableRequired,

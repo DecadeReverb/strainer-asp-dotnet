@@ -45,7 +45,7 @@ public class FilterPipelineOperationTests
             .Returns(new StrainerOptions());
         _filterTermParser
             .GetParsedTerms(model.Filters)
-            .Returns(new List<IFilterTerm>());
+            .Returns([]);
 
         // Act
         var result = _operation.Execute(model, source);
@@ -68,7 +68,7 @@ public class FilterPipelineOperationTests
         };
         var filterTermName = "name";
         var filterTerm = Substitute.For<IFilterTerm>();
-        filterTerm.Names.Returns(new[] { filterTermName });
+        filterTerm.Names.Returns([filterTermName]);
         var terms = new List<IFilterTerm>
         {
             filterTerm,
@@ -109,7 +109,7 @@ public class FilterPipelineOperationTests
         };
         var filterTermName = "name";
         var filterTerm = Substitute.For<IFilterTerm>();
-        filterTerm.Names.Returns(new[] { filterTermName });
+        filterTerm.Names.Returns([filterTermName]);
         var terms = new List<IFilterTerm>
         {
             filterTerm,
@@ -155,7 +155,7 @@ public class FilterPipelineOperationTests
         };
         var filterTermName = "name";
         var filterTerm = Substitute.For<IFilterTerm>();
-        filterTerm.Names.Returns(new[] { filterTermName });
+        filterTerm.Names.Returns([filterTermName]);
         var terms = new List<IFilterTerm>
         {
             filterTerm,
@@ -194,7 +194,7 @@ public class FilterPipelineOperationTests
         };
         var filterTermName = "name";
         var filterTerm = Substitute.For<IFilterTerm>();
-        filterTerm.Names.Returns(new[] { filterTermName });
+        filterTerm.Names.Returns([filterTermName]);
         var terms = new List<IFilterTerm>
         {
             filterTerm,
@@ -233,7 +233,7 @@ public class FilterPipelineOperationTests
         };
         var filterTermName = "name";
         var filterTerm = Substitute.For<IFilterTerm>();
-        filterTerm.Names.Returns(new[] { filterTermName });
+        filterTerm.Names.Returns([filterTermName]);
         var terms = new List<IFilterTerm>
         {
             filterTerm,
@@ -251,7 +251,8 @@ public class FilterPipelineOperationTests
             .Returns((IPropertyMetadata)null);
         _customFilteringExpressionProvider
             .TryGetCustomExpression(filterTerm, filterTermName, out Arg.Any<Expression<Func<string, bool>>>())
-            .Returns(x => {
+            .Returns(x =>
+            {
                 x[2] = customExpression;
                 return true;
             });
@@ -282,7 +283,7 @@ public class FilterPipelineOperationTests
         var filterTermName1 = "name";
         var filterTermName2 = "second-name";
         var filterTerm = Substitute.For<IFilterTerm>();
-        filterTerm.Names.Returns(new[] { filterTermName1, filterTermName2 });
+        filterTerm.Names.Returns([filterTermName1, filterTermName2]);
         var terms = new List<IFilterTerm>
         {
             filterTerm,

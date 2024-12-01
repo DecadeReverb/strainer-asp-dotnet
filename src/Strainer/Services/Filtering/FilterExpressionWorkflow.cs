@@ -33,6 +33,6 @@ public class FilterExpressionWorkflow : IFilterExpressionWorkflow
             step.Execute(workflowContext);
         }
 
-        return workflowContext.FinalExpression;
+        return workflowContext.FinalExpression!;
     }
 }

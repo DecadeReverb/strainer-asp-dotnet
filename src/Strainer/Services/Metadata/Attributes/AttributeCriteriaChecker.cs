@@ -6,8 +6,8 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes;
 public class AttributeCriteriaChecker : IAttributeCriteriaChecker
 {
     public bool CheckIfObjectAttributeIsMatching(
-        StrainerObjectAttribute attribute,
-        PropertyInfo propertyInfo,
+        StrainerObjectAttribute? attribute,
+        PropertyInfo? propertyInfo,
         bool isSortableRequired,
         bool isFilterableRequired)
     {
@@ -23,8 +23,8 @@ public class AttributeCriteriaChecker : IAttributeCriteriaChecker
     }
 
     public bool CheckIfPropertyAttributeIsMatching(
-        StrainerPropertyAttribute attribute,
-        PropertyInfo propertyInfo,
+        StrainerPropertyAttribute? attribute,
+        PropertyInfo? propertyInfo,
         bool isSortableRequired,
         bool isFilterableRequired,
         string name)

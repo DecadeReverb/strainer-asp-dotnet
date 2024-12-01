@@ -31,7 +31,12 @@ public class PropertyInfoProvider : IPropertyInfoProvider
     {
         Guard.Against.Null(expression);
 
-        if (expression.Body is not MemberExpression body)
+        MemberExpression? body;
+        if (expression.Body is MemberExpression)
+        {
+            body = expression.Body as MemberExpression;
+        }
+        else
         {
             var ubody = expression.Body as UnaryExpression;
             body = ubody?.Operand as MemberExpression;

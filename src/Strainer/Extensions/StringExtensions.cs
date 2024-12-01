@@ -1,6 +1,4 @@
-﻿using Fluorite.Strainer.Services;
-
-namespace Fluorite.Extensions;
+﻿namespace Fluorite.Extensions;
 
 /// <summary>
 /// Provides extension methods for <see cref="string"/>.

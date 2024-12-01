@@ -9,14 +9,17 @@ public class FluentApiPropertyMetadataBuilder : IFluentApiPropertyMetadataBuilde
     {
         Guard.Against.Null(objectMetadata);
 
-        return new PropertyMetadata
+        if (objectMetadata.DefaultSortingPropertyInfo is null)
+        {
+            throw new ArgumentException("Missing PropertyInfo in passed object metadata.", nameof(objectMetadata));
+        }
+
+        return new PropertyMetadata(objectMetadata.DefaultSortingPropertyName, objectMetadata.DefaultSortingPropertyInfo)
         {
             IsDefaultSorting = true,
             IsDefaultSortingDescending = objectMetadata.IsDefaultSortingDescending,
             IsFilterable = objectMetadata.IsFilterable,
             IsSortable = objectMetadata.IsSortable,
-            Name = objectMetadata.DefaultSortingPropertyName,
-            PropertyInfo = objectMetadata.DefaultSortingPropertyInfo,
         };
     }
 
@@ -28,14 +31,12 @@ public class FluentApiPropertyMetadataBuilder : IFluentApiPropertyMetadataBuilde
         var isDefaultSorting = objectMetadata.DefaultSortingPropertyInfo == propertyInfo;
         var isDefaultSortingAscending = isDefaultSorting && objectMetadata.IsDefaultSortingDescending;
 
-        return new PropertyMetadata
+        return new PropertyMetadata(propertyInfo.Name, propertyInfo)
         {
             IsFilterable = objectMetadata.IsFilterable,
             IsSortable = objectMetadata.IsSortable,
-            Name = propertyInfo.Name,
             IsDefaultSorting = isDefaultSorting,
             IsDefaultSortingDescending = isDefaultSortingAscending,
-            PropertyInfo = propertyInfo,
         };
     }
 }

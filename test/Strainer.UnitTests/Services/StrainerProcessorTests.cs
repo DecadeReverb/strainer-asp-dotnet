@@ -246,11 +246,6 @@ public class StrainerProcessorTests
         pipelineBuilderMock.Received(1).Paginate();
     }
 
-    private class Post
-    {
-        public string Title { get; set; }
-    }
-
     private IQueryable<Post> GetSourceQueryable()
     {
         return Enumerable.Range(1, 20)
@@ -259,5 +254,10 @@ public class StrainerProcessorTests
                 Title = $"Post {x}",
             })
             .AsQueryable();
+    }
+
+    private class Post
+    {
+        public string Title { get; set; }
     }
 }

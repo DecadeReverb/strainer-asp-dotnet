@@ -1,11 +1,13 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace Fluorite.Strainer.Services.Modules;
 
@@ -64,52 +66,71 @@ public class StrainerModuleBuilder<T> : IStrainerModuleBuilder<T>
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">
-    /// <paramref name="name"/> is <see langword="null"/>, empty or
-    /// contains only whitespace characters.
+    /// <paramref name="buildingDelegate"/> is <see langword="null"/>.
     /// </exception>
-    public ICustomFilterMethodBuilder<T> AddCustomFilterMethod(string name)
+    public IStrainerModuleBuilder<T> AddCustomFilterMethod(Func<ICustomFilterMethodBuilder<T>, ICustomFilterMethod<T>> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(name);
+        Guard.Against.Null(buildingDelegate);
 
-        return new CustomFilterMethodBuilder<T>(
-            Module.CustomFilterMethods,
-            name);
+        var builder = new CustomFilterMethodBuilder<T>();
+        var customMethod = buildingDelegate.Invoke(builder);
+
+        if (!Module.CustomFilterMethods.ContainsKey(typeof(T)))
+        {
+            Module.CustomFilterMethods[typeof(T)] = new Dictionary<string, ICustomFilterMethod>();
+        }
+
+        Module.CustomFilterMethods[typeof(T)][customMethod.Name] = customMethod;
+
+        return this;
     }
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">
-    /// <paramref name="name"/> is <see langword="null"/>, empty or
-    /// contains only whitespace characters.
+    /// <paramref name="buildingDelegate"/> is <see langword="null"/>.
     /// </exception>
-    public ICustomSortMethodBuilder<T> AddCustomSortMethod(string name)
+    public IStrainerModuleBuilder<T> AddCustomSortMethod(
+        Func<ICustomSortMethodBuilder<T>, ICustomSortMethod<T>> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(name);
+        Guard.Against.Null(buildingDelegate);
 
-        return new CustomSortMethodBuilder<T>(
-            Module.CustomSortMethods,
-            name);
+        var builder = new CustomSortMethodBuilder<T>();
+        var customMethod = buildingDelegate.Invoke(builder);
+
+        if (!Module.CustomSortMethods.ContainsKey(typeof(T)))
+        {
+            Module.CustomSortMethods[typeof(T)] = new Dictionary<string, ICustomSortMethod>();
+        }
+
+        Module.CustomSortMethods[typeof(T)][customMethod.Name] = customMethod;
+
+        return this;
     }
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">
-    /// <paramref name="symbol"/> is <see langword="null"/>, empty or
-    /// contains only whitespace characters.
+    /// <paramref name="buildingDelegate"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    /// <paramref name="symbol"/> is used by already defined filter operator.
+    /// <paramref name="buildingDelegate"/> is used by already defined filter operator.
     /// </exception>
-    public IFilterOperatorBuilder AddFilterOperator(string symbol)
+    public IStrainerModuleBuilder<T> AddFilterOperator(Func<IFilterOperatorBuilder, IFilterOperator> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(symbol);
+        Guard.Against.Null(buildingDelegate);
 
-        if (Module.FilterOperators.Keys.Contains(symbol))
+        var builder = new FilterOperatorBuilder();
+        var filterOperator = buildingDelegate.Invoke(builder);
+
+        if (Module.FilterOperators.Keys.Contains(filterOperator.Symbol))
         {
             throw new InvalidOperationException(
-                $"There is an already existing operator with a symbol {symbol}. " +
+                $"There is an already existing operator with a symbol {filterOperator.Symbol}. " +
                 $"Please, choose a different symbol.");
         }
 
-        return new FilterOperatorBuilder(Module.FilterOperators, symbol);
+        Module.FilterOperators.Add(filterOperator.Symbol, filterOperator);
+
+        return this;
     }
 
     /// <inheritdoc/>

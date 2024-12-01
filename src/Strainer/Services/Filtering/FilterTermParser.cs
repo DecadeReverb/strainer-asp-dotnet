@@ -25,7 +25,7 @@ public class FilterTermParser : IFilterTermParser
         _termSectionsParser = Guard.Against.Null(termSectionsParser);
     }
 
-    public IList<IFilterTerm> GetParsedTerms(string input)
+    public IList<IFilterTerm> GetParsedTerms(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))
         {
@@ -63,7 +63,7 @@ public class FilterTermParser : IFilterTermParser
         return terms;
     }
 
-    private IFilterTerm ParseFilterTerm(string input)
+    private IFilterTerm? ParseFilterTerm(string input)
     {
         var sections = _termSectionsParser.Parse(input);
         var names = _namesParser.Parse(sections.Names);
@@ -79,8 +79,8 @@ public class FilterTermParser : IFilterTermParser
         return new FilterTerm(input)
         {
             Names = names,
-            Values = values,
             Operator = operatorParsed,
+            Values = values,
         };
     }
 

@@ -61,7 +61,7 @@ public class FluentApiMetadataProviderTests
         var objectMetadata = Substitute.For<IObjectMetadata>();
         var objectMetadataDictionary = new Dictionary<Type, IObjectMetadata>
         {
-            { typeof(Post), objectMetadata }
+            { typeof(Post), objectMetadata },
         };
         _configurationMetadataProviderMock
             .GetObjectMetadata()
@@ -85,16 +85,10 @@ public class FluentApiMetadataProviderTests
         _optionsProviderMock
             .GetStrainerOptions()
             .Returns(new StrainerOptions());
-        var propertyMetadata = new PropertyMetadata
-        {
-            IsDefaultSorting = true,
-            IsFilterable = true,
-            Name = nameof(Post.Id),
-            PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
-        };
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
         var defaultMetadataDictionary = new Dictionary<Type, IPropertyMetadata>
         {
-            { typeof(Post), propertyMetadata }
+            { typeof(Post), propertyMetadata },
         };
         _configurationMetadataProviderMock
             .GetDefaultMetadata()
@@ -138,13 +132,10 @@ public class FluentApiMetadataProviderTests
         _optionsProviderMock
             .GetStrainerOptions()
             .Returns(new StrainerOptions());
-        var propertyMetadata = new PropertyMetadata
-        {
-            Name = nameof(Post.Id),
-        };
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
         var postMetadataDictionary = new Dictionary<string, IPropertyMetadata>
         {
-            { nameof(Post.Id), propertyMetadata }
+            { nameof(Post.Id), propertyMetadata },
         };
         var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
         {
@@ -182,15 +173,12 @@ public class FluentApiMetadataProviderTests
         _optionsProviderMock
             .GetStrainerOptions()
             .Returns(new StrainerOptions());
-        var propertyMetadata = new PropertyMetadata
-        {
-            Name = nameof(Post.Id),
-            IsFilterable = isFilterable,
-            IsSortable = isSortable,
-        };
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata.IsFilterable.Returns(isFilterable);
+        propertyMetadata.IsSortable.Returns(isSortable);
         var postMetadataDictionary = new Dictionary<string, IPropertyMetadata>
         {
-            { nameof(Post.Id), propertyMetadata }
+            { nameof(Post.Id), propertyMetadata },
         };
         var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
         {
@@ -226,15 +214,12 @@ public class FluentApiMetadataProviderTests
         _optionsProviderMock
             .GetStrainerOptions()
             .Returns(new StrainerOptions());
-        var propertyMetadata = new PropertyMetadata
-        {
-            Name = nameof(Post.Id),
-            IsFilterable = isFilterable,
-            IsSortable = isSortable,
-        };
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata.IsFilterable.Returns(isFilterable);
+        propertyMetadata.IsSortable.Returns(isSortable);
         var postMetadataDictionary = new Dictionary<string, IPropertyMetadata>
         {
-            { nameof(Post.Id), propertyMetadata }
+            { nameof(Post.Id), propertyMetadata },
         };
         var propertyMetadataDictionary = new Dictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>
         {
@@ -505,7 +490,7 @@ public class FluentApiMetadataProviderTests
 
         // Assert
         metadatas.Should().NotBeNullOrEmpty();
-        metadatas.Should().BeEquivalentTo(new[] { propertyMetadata });
+        metadatas.Should().BeEquivalentTo([propertyMetadata]);
     }
 
     private class Post

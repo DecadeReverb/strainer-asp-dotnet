@@ -32,11 +32,8 @@ public class ObjectMetadataBuilder<TEntity> : IObjectMetadataBuilder<TEntity>
 
     public IObjectMetadata Build()
     {
-        return new ObjectMetadata
+        return new ObjectMetadata(_defaultSortingPropertyName, IsDefaultSortingDescendingValue, _defaultSortingPropertyInfo)
         {
-            DefaultSortingPropertyInfo = _defaultSortingPropertyInfo,
-            DefaultSortingPropertyName = _defaultSortingPropertyName,
-            IsDefaultSortingDescending = IsDefaultSortingDescendingValue,
             IsFilterable = IsFilterableValue,
             IsSortable = IsSortableValue,
         };

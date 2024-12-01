@@ -11,6 +11,8 @@ public interface IFilterOperatorBuilder
 
     IFilterOperatorBuilder HasName(string name);
 
+    IFilterOperatorBuilder HasSymbol(string symbol);
+
     IFilterOperatorBuilder IsCaseInsensitive();
 
     IFilterOperatorBuilder IsStringBased();

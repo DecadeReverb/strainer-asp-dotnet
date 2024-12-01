@@ -10,7 +10,7 @@ namespace Fluorite.Strainer.ExampleWebApi.Data;
 /// </summary>
 public static class DatabaseInitializer
 {
-    private static readonly Random _random = new Random();
+    private static readonly Random _random = new();
 
     /// <summary>
     /// Creates the database if it does not exists and seeds it with

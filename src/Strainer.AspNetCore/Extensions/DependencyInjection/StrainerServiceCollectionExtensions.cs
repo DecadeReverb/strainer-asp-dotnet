@@ -455,7 +455,6 @@ public static class StrainerServiceCollectionExtensions
         services.Add<IFilterTermSectionsParser, FilterTermSectionsParser>(serviceLifetime);
         services.Add<IFilterTermParser, FilterTermParser>(serviceLifetime);
         services.Add<ICustomFilteringExpressionProvider, CustomFilteringExpressionProvider>(serviceLifetime);
-        services.Add<ICustomFilterMethodMapper, CustomFilterMethodMapper>(serviceLifetime);
         services.Add<IFilterExpressionWorkflowBuilder, FilterExpressionWorkflowBuilder>(serviceLifetime);
         services.Add<IConvertPropertyValueToStringStep, ConvertPropertyValueToStringStep>(serviceLifetime);
         services.Add<IConvertFilterValueToStringStep, ConvertFilterValueToStringStep>(serviceLifetime);
@@ -472,7 +471,6 @@ public static class StrainerServiceCollectionExtensions
         services.Add<ISortTermParser, SortTermParser>(serviceLifetime);
         services.Add<ISortingApplier, SortingApplier>(serviceLifetime);
         services.Add<ICustomSortingExpressionProvider, CustomSortingExpressionProvider>(serviceLifetime);
-        services.Add<ICustomSortMethodMapper, CustomSortMethodMapper>(serviceLifetime);
         services.Add<ISortingContext, SortingContext>(serviceLifetime);
         services.Add<IPipelineContext, PipelineContext>(serviceLifetime);
 

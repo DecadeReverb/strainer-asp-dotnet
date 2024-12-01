@@ -17,7 +17,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddStrainer(new[] { typeof(PropertyTestModule) });
+        services.AddStrainer([typeof(PropertyTestModule)]);
         using var serviceProvider = services.BuildServiceProvider();
         var metadataProviders = serviceProvider.GetRequiredService<IEnumerable<IMetadataProvider>>();
         var fluentApiMetadataProvider = metadataProviders
@@ -30,7 +30,7 @@ public class ServiceCollectionExtensionsTests
         // Assert
         metadatas.Should().NotBeNullOrEmpty();
         metadatas.Should().HaveSameCount(typeof(Post).GetProperties());
-        metadatas.First().Name.Should().Be(nameof(Post.Id));
+        metadatas[0].Name.Should().Be(nameof(Post.Id));
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddStrainer(new[] { typeof(PropertyTestModule) });
+        services.AddStrainer([typeof(PropertyTestModule)]);
         using var serviceProvider = services.BuildServiceProvider();
         var metadataProviders = serviceProvider.GetRequiredService<IEnumerable<IMetadataProvider>>();
         var fluentApiMetadataProvider = metadataProviders
@@ -58,7 +58,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddStrainer(new[] { typeof(PropertyTestModule) });
+        services.AddStrainer([typeof(PropertyTestModule)]);
         using var serviceProvider = services.BuildServiceProvider();
         var filterOperatorsProvider = serviceProvider.GetRequiredService<IConfigurationFilterOperatorsProvider>();
 
@@ -75,7 +75,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddStrainer(new[] { typeof(PropertyTestModule) });
+        services.AddStrainer([typeof(PropertyTestModule)]);
         using var serviceProvider = services.BuildServiceProvider();
         var customMethodsProvider = serviceProvider.GetRequiredService<IConfigurationCustomMethodsProvider>();
 
@@ -92,7 +92,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddStrainer(new[] { typeof(PropertyTestModule) });
+        services.AddStrainer([typeof(PropertyTestModule)]);
         using var serviceProvider = services.BuildServiceProvider();
         var customMethodsProvider = serviceProvider.GetRequiredService<IConfigurationCustomMethodsProvider>();
 
@@ -160,15 +160,21 @@ public class ServiceCollectionExtensionsTests
                 .IsFilterable()
                 .IsSortable();
 
-            builder.AddFilterOperator(symbol: "###")
+            builder.AddFilterOperator(b => b
+                .HasSymbol("###")
                 .HasName("hash")
-                .HasExpression(context => Expression.Constant(true));
+                .HasExpression(context => Expression.Constant(true))
+                .Build());
 
-            builder.AddCustomFilterMethod<Post>("TestCustomFilterMethod")
-                .HasFunction(post => post.Id == 1);
+            builder.AddCustomFilterMethod<Post>(b => b
+                .HasName("TestCustomFilterMethod")
+                .HasFunction(post => post.Id == 1)
+                .Build());
 
-            builder.AddCustomSortMethod<Post>("TestCustomSortMethod")
-                .HasFunction(post => post.Id);
+            builder.AddCustomSortMethod<Post>(b => b
+                .HasName("TestCustomSortMethod")
+                .HasFunction(post => post.Id)
+                .Build());
         }
     }
 }

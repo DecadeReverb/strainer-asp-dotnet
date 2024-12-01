@@ -5,7 +5,7 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes;
 
 public interface IStrainerAttributeProvider
 {
-    StrainerPropertyAttribute GetPropertyAttribute(PropertyInfo propertyInfo);
+    StrainerPropertyAttribute? GetPropertyAttribute(PropertyInfo propertyInfo);
 
-    StrainerObjectAttribute GetObjectAttribute(Type type);
+    StrainerObjectAttribute? GetObjectAttribute(Type type);
 }

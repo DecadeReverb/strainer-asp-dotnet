@@ -36,5 +36,5 @@ public interface IObjectMetadata
     /// <summary>
     /// Gets the <see cref="PropertyInfo"/> for default sorting property.
     /// </summary>
-    PropertyInfo DefaultSortingPropertyInfo { get; }
+    PropertyInfo? DefaultSortingPropertyInfo { get; }
 }

@@ -47,7 +47,7 @@ public class FilterExpressionProviderTests
         var filterTerm = Substitute.For<IFilterTerm>();
         var parameterExpression = Expression.Parameter(typeof(Post), "p");
 
-        filterTerm.Values.Returns(new List<string>());
+        filterTerm.Values.Returns([]);
 
         // Act
         var result = _provider.GetExpression(metadata, filterTerm, parameterExpression, innerExpression: null);
@@ -67,7 +67,7 @@ public class FilterExpressionProviderTests
         var filterTerm = Substitute.For<IFilterTerm>();
         var parameterExpression = Expression.Parameter(typeof(Post), "p");
 
-        filterTerm.Values.Returns(new[] { "foo"});
+        filterTerm.Values.Returns(["foo"]);
         metadata.Name.Returns(name);
 
         // Act
@@ -93,7 +93,7 @@ public class FilterExpressionProviderTests
         var value = "foo";
         var name = nameof(Post.Title);
 
-        filterTerm.Values.Returns(new List<string> { value});
+        filterTerm.Values.Returns([value]);
         propertyInfoMock.PropertyType.Returns(modelType);
         metadata.Name.Returns(name);
         metadata.PropertyInfo.Returns(propertyInfoMock);
@@ -137,7 +137,7 @@ public class FilterExpressionProviderTests
         var value = "foo";
         var name = nameof(Post.Title);
 
-        filterTerm.Values.Returns(new List<string> { value });
+        filterTerm.Values.Returns([value]);
         propertyInfoMock.PropertyType.Returns(modelType);
         metadata.Name.Returns(name);
         metadata.PropertyInfo.Returns(propertyInfoMock);

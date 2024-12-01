@@ -7,31 +7,26 @@ namespace Fluorite.Strainer.UnitTests.Services.Filtering;
 public class FilterOperatorBuilderTests
 {
     [Fact]
-    public void Builder_Adds_Operator_WithSymbol()
-    {
-        // Arrange
-        var filterOperators = new Dictionary<string, IFilterOperator>();
-
-        // Act
-        new FilterOperatorBuilder(filterOperators, symbol: "===");
-
-        // Assert
-        filterOperators.Keys.Should().Contain("===");
-    }
-
-    [Fact]
     public void Builder_Adds_Operator_WithSymbol_And_Expression()
     {
         // Arrange
-        var filterOperators = new Dictionary<string, IFilterOperator>();
+        var symbol = "===";
+        var name = "test";
+        var expression = Expression.Empty();
 
         // Act
-        var filterOperator = new FilterOperatorBuilder(filterOperators, symbol: "===")
-            .HasExpression(context => Expression.Empty())
+        var filterOperator = new FilterOperatorBuilder(symbol)
+            .HasName(name)
+            .HasExpression(_ => expression)
             .Build();
 
         // Assert
-        filterOperators.Keys.Should().Contain("===");
-        filterOperators.Values.Should().Contain(f => f.Expression == filterOperator.Expression);
+        filterOperator.Should().NotBeNull();
+        filterOperator.Symbol.Should().Be(symbol);
+        filterOperator.Name.Should().Be(name);
+        filterOperator.IsCaseInsensitive.Should().BeFalse();
+        filterOperator.IsStringBased.Should().BeFalse();
+        filterOperator.Expression.Should().NotBeNull();
+        filterOperator.Expression.Invoke(Substitute.For<IFilterExpressionContext>()).Should().BeSameAs(expression);
     }
 }

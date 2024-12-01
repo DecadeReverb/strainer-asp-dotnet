@@ -14,10 +14,10 @@ public interface ICustomSortMethod<T> : ICustomSortMethod
     /// <summary>
     /// Gets the expression used for custom sorting.
     /// </summary>
-    Expression<Func<T, object>> Expression { get; }
+    Expression<Func<T, object>>? Expression { get; }
 
     /// <summary>
     /// Gets the provider of expression used for custom sorting.
     /// </summary>
-    Func<ISortTerm, Expression<Func<T, object>>> ExpressionProvider { get; }
+    Func<ISortTerm, Expression<Func<T, object>>>? ExpressionProvider { get; }
 }

@@ -6,35 +6,42 @@ namespace Fluorite.Strainer.Services.Filtering;
 
 public class CustomFilterMethodBuilder<TEntity> : ICustomFilterMethodBuilder<TEntity>
 {
-    private readonly IDictionary<Type, IDictionary<string, ICustomFilterMethod>> _customMethods;
-
-    public CustomFilterMethodBuilder(
-        IDictionary<Type, IDictionary<string, ICustomFilterMethod>> customFilterMethodsDictionary,
-        string name)
+    public CustomFilterMethodBuilder()
     {
-        _customMethods = Guard.Against.Null(customFilterMethodsDictionary);
+    }
+
+    public CustomFilterMethodBuilder(string name)
+    {
         Name = Guard.Against.NullOrWhiteSpace(name);
     }
 
-    protected Expression<Func<TEntity, bool>> Expression { get; set; }
+    protected Expression<Func<TEntity, bool>>? Expression { get; set; }
 
-    protected Func<IFilterTerm, Expression<Func<TEntity, bool>>> FilterTermExpression { get; set; }
+    protected Func<IFilterTerm, Expression<Func<TEntity, bool>>>? FilterTermExpression { get; set; }
 
-    protected string Name { get; set; }
+    protected string? Name { get; set; }
 
-    public ICustomFilterMethod<TEntity> Build() => new CustomFilterMethod<TEntity>
+    public ICustomFilterMethod<TEntity> Build()
     {
-        Expression = Expression,
-        FilterTermExpression = FilterTermExpression,
-        Name = Name,
-    };
+        Guard.Against.NullOrWhiteSpace(Name);
 
-    public ICustomFilterMethodBuilder<TEntity> HasFunction(
-        Expression<Func<TEntity, bool>> expression)
+        if (FilterTermExpression is null)
+        {
+            Guard.Against.Null(Expression);
+
+            return new CustomFilterMethod<TEntity>(Name, Expression);
+        }
+        else
+        {
+            Guard.Against.Null(FilterTermExpression);
+
+            return new CustomFilterMethod<TEntity>(Name, FilterTermExpression);
+        }
+    }
+
+    public ICustomFilterMethodBuilder<TEntity> HasFunction(Expression<Func<TEntity, bool>> expression)
     {
         Expression = Guard.Against.Null(expression);
-
-        Save(Build());
 
         return this;
     }
@@ -44,20 +51,13 @@ public class CustomFilterMethodBuilder<TEntity> : ICustomFilterMethodBuilder<TEn
     {
         FilterTermExpression = Guard.Against.Null(filterTermExpression);
 
-        Save(Build());
-
         return this;
     }
 
-    protected void Save(ICustomFilterMethod<TEntity> customFilterMethod)
+    public ICustomFilterMethodBuilder<TEntity> HasName(string name)
     {
-        Guard.Against.Null(customFilterMethod);
+        Name = Guard.Against.NullOrWhiteSpace(name);
 
-        if (!_customMethods.ContainsKey(typeof(TEntity)))
-        {
-            _customMethods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
-        }
-
-        _customMethods[typeof(TEntity)][customFilterMethod.Name] = customFilterMethod;
+        return this;
     }
 }

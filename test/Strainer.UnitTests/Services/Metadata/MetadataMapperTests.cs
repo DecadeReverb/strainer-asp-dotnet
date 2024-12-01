@@ -18,11 +18,8 @@ public class MetadataMapperTests
             .Returns(new StrainerOptions());
         var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
         var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
-        var metadata = new PropertyMetadata()
-        {
-            Name = nameof(Post.Id),
-            PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
-        };
+        var propertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
+        var metadata = new PropertyMetadata(propertyInfo.Name, propertyInfo);
 
         // Act
         mapper.AddPropertyMetadata<Post>(metadata);
@@ -44,16 +41,11 @@ public class MetadataMapperTests
             .Returns(new StrainerOptions());
         var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
         var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
-        var firstMetadata = new PropertyMetadata()
-        {
-            Name = "first",
-            PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
-        };
-        var secondMetadata = new PropertyMetadata()
+        var propertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
+        var firstMetadata = new PropertyMetadata("first", propertyInfo);
+        var secondMetadata = new PropertyMetadata("second", propertyInfo)
         {
             IsFilterable = true,
-            Name = "second",
-            PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
         };
 
         // Act
@@ -79,11 +71,8 @@ public class MetadataMapperTests
             .Returns(new StrainerOptions());
         var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
         var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
-        var metadata = new PropertyMetadata()
-        {
-            Name = nameof(Post.Id),
-            PropertyInfo = typeof(Post).GetProperty(nameof(Post.Id)),
-        };
+        var propertyInfo = typeof(Post).GetProperty(nameof(Post.Id));
+        var metadata = new PropertyMetadata(propertyInfo.Name, propertyInfo);
 
         // Act
         mapper.AddPropertyMetadata<Post>(metadata);
@@ -145,7 +134,7 @@ public class MetadataMapperTests
 
         // Assert
         mapper.ObjectMetadata.Should().NotBeEmpty();
-        mapper.ObjectMetadata.Keys.Should().BeEquivalentTo(new[] { modelType });
+        mapper.ObjectMetadata.Keys.Should().BeEquivalentTo([modelType]);
         mapper.ObjectMetadata[modelType].Should().BeSameAs(objectMetadata);
     }
 
@@ -174,18 +163,23 @@ public class MetadataMapperTests
         optionsProvider
             .GetStrainerOptions()
             .Returns(new StrainerOptions());
+        var defaultSortingPropertyName = nameof(Post.Id);
+        var defaultSortingPropertyInfo = typeof(Post).GetProperty(defaultSortingPropertyName);
+        Expression<Func<Post, object>> defaultSortingPropertyExpression = b => b.Id;
         var propertyInfoProviderMock = Substitute.For<IPropertyInfoProvider>();
+        propertyInfoProviderMock
+            .GetPropertyInfoAndFullName(defaultSortingPropertyExpression)
+            .Returns((defaultSortingPropertyInfo, defaultSortingPropertyName));
         var mapper = new MetadataMapper(optionsProvider, propertyInfoProviderMock);
-        Expression<Func<Post, object>> expression = x => x.Id;
 
         // Act
-        var builder = mapper.Object(expression);
+        var builder = mapper.Object(defaultSortingPropertyExpression);
 
         // Assert
         builder.Should().NotBeNull();
 
         mapper.ObjectMetadata.Should().NotBeEmpty();
-        mapper.ObjectMetadata.Keys.Should().BeEquivalentTo(new[] { modelType });
+        mapper.ObjectMetadata.Keys.Should().BeEquivalentTo([modelType]);
         mapper.ObjectMetadata[modelType].Should().NotBeNull();
     }
 

@@ -17,7 +17,7 @@ public class StrainerModuleFactory : IStrainerModuleFactory
 
         try
         {
-            return Activator.CreateInstance(moduleType) as IStrainerModule;
+            return (IStrainerModule)Activator.CreateInstance(moduleType);
         }
         catch (Exception exception)
         {

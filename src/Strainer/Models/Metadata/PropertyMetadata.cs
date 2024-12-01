@@ -12,15 +12,22 @@ public class PropertyMetadata : IPropertyMetadata, IEquatable<PropertyMetadata>
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyMetadata"/> class.
     /// </summary>
-    public PropertyMetadata()
+    /// <param name="name">
+    /// The property name.
+    /// </param>
+    /// <param name="propertyInfo">
+    /// The property info instance for the property.
+    /// </param>
+    public PropertyMetadata(string name, PropertyInfo propertyInfo)
     {
-
+        Name = Guard.Against.NullOrWhiteSpace(name);
+        PropertyInfo = Guard.Against.Null(propertyInfo);
     }
 
     /// <summary>
     /// Gets or sets the display name of the property.
     /// </summary>
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether related
@@ -51,15 +58,15 @@ public class PropertyMetadata : IPropertyMetadata, IEquatable<PropertyMetadata>
     public bool IsSortable { get; set; }
 
     /// <summary>
-    /// Gets or sets the name under which property was marked.
+    /// Gets the name under which property was marked.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; }
 
     /// <summary>
-    /// Gets or sets the <see cref="System.Reflection.PropertyInfo"/> for related
+    /// Gets the <see cref="System.Reflection.PropertyInfo"/> for related
     /// property.
     /// </summary>
-    public PropertyInfo PropertyInfo { get; set; }
+    public PropertyInfo PropertyInfo { get; }
 
     public static bool operator ==(PropertyMetadata metadata1, PropertyMetadata metadata2)
     {
@@ -98,9 +105,9 @@ public class PropertyMetadata : IPropertyMetadata, IEquatable<PropertyMetadata>
     /// <see langword="true"/> if provided other <see cref="PropertyMetadata"/>
     /// instance is equal to the current one; otherwise <see langword="false"/>.
     /// </returns>
-    public bool Equals(PropertyMetadata other)
+    public bool Equals(PropertyMetadata? other)
     {
-        return other != null &&
+        return other is not null &&
                DisplayName == other.DisplayName &&
                IsDefaultSorting == other.IsDefaultSorting &&
                IsDefaultSortingDescending == other.IsDefaultSortingDescending &&
@@ -120,7 +127,7 @@ public class PropertyMetadata : IPropertyMetadata, IEquatable<PropertyMetadata>
     public override int GetHashCode()
     {
         var hashCode = -1500598692;
-        hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(DisplayName);
+        hashCode = (hashCode * -1521134295) + EqualityComparer<string?>.Default.GetHashCode(DisplayName);
         hashCode = (hashCode * -1521134295) + IsDefaultSorting.GetHashCode();
         hashCode = (hashCode * -1521134295) + IsDefaultSortingDescending.GetHashCode();
         hashCode = (hashCode * -1521134295) + IsFilterable.GetHashCode();

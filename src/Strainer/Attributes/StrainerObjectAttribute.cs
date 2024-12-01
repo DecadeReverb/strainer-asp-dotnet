@@ -78,5 +78,5 @@ public class StrainerObjectAttribute : Attribute, IObjectMetadata
     /// <summary>
     /// Gets or sets the <see cref="PropertyInfo"/> for default sorting property.
     /// </summary>
-    public PropertyInfo DefaultSortingPropertyInfo { get; set; }
+    public PropertyInfo? DefaultSortingPropertyInfo { get; set; }
 }

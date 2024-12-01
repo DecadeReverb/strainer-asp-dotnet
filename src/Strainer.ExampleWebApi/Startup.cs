@@ -37,7 +37,7 @@ public class Startup
         services.AddSwaggerGenWithDefaultOptions();
         services.AddStrainer(
             Configuration.GetSection("Strainer"),
-            new[] { typeof(Startup).Assembly });
+            [typeof(Startup).Assembly]);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

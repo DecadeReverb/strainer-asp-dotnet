@@ -2,5 +2,5 @@
 
 public interface IFilterTermNamesParser
 {
-    IList<string> Parse(string input);
+    IList<string> Parse(string? input);
 }

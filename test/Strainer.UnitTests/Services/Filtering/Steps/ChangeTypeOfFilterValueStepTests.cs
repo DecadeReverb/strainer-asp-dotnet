@@ -28,9 +28,16 @@ public class ChangeTypeOfFilterValueStepTests
         filterOperator.IsStringBased.Returns(true);
         var term = Substitute.For<IFilterTerm>();
         term.Operator.Returns(filterOperator);
+        var propertyInfo = Substitute.For<PropertyInfo>();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata.PropertyInfo.Returns(propertyInfo);
+        var typeConverter = Substitute.For<ITypeConverter>();
         var context = new FilterExpressionWorkflowContext
         {
             Term = term,
+            PropertyMetadata = propertyMetadata,
+            TypeConverter = typeConverter,
+            FilterTermValue = "test",
         };
 
         // Act
@@ -56,11 +63,13 @@ public class ChangeTypeOfFilterValueStepTests
         propertyInfo.PropertyType.Returns(propertyType);
         var propertyMetadata = Substitute.For<IPropertyMetadata>();
         propertyMetadata.PropertyInfo.Returns(propertyInfo);
+        var typeConverter = Substitute.For<ITypeConverter>();
         var context = new FilterExpressionWorkflowContext
         {
             FilterTermValue = filterValue,
             PropertyMetadata = propertyMetadata,
             Term = term,
+            TypeConverter = typeConverter,
         };
         var typeChangingResult = Expression.Constant("bar");
         _typeChangeMock
@@ -139,6 +148,7 @@ public class ChangeTypeOfFilterValueStepTests
             PropertyMetadata = propertyMetadata,
             Term = term,
             TypeConverter = typeConverter,
+            FilterTermValue = "test",
         };
 
         // Act

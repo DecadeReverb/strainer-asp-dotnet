@@ -14,6 +14,12 @@ public class ConvertFilterValueToStringStep : IConvertFilterValueToStringStep
     public void Execute(FilterExpressionWorkflowContext context)
     {
         Guard.Against.Null(context);
+        Guard.Against.Null(context.Term);
+        Guard.Against.Null(context.Term.Operator);
+        Guard.Against.Null(context.PropertyMetadata);
+        Guard.Against.Null(context.PropertyMetadata.PropertyInfo);
+        Guard.Against.Null(context.TypeConverter);
+        Guard.Against.Null(context.FilterTermValue);
 
         if (context.Term.Operator.IsStringBased)
         {

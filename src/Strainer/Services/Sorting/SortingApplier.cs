@@ -43,6 +43,12 @@ public class SortingApplier : ISortingApplier
 
             if (metadata != null)
             {
+                if (metadata.PropertyInfo is null)
+                {
+                    throw new StrainerException(
+                        $"Metadata for {metadata.Name} has been found but contains null PropertyInfo.");
+                }
+
                 var sortExpression = _sortExpressionProvider.GetExpression<T>(metadata.PropertyInfo, sortTerm, isSubsequent);
                 if (sortExpression != null)
                 {
@@ -62,7 +68,7 @@ public class SortingApplier : ISortingApplier
                     }
                     else
                     {
-                        sortedSource = sortedSource.OrderWithSortExpression(sortExpression);
+                        sortedSource = sortedSource.OrderWithSortExpression(sortExpression!);
                         isSortingApplied = true;
                     }
                 }

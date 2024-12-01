@@ -9,7 +9,7 @@ public interface IStrainerModel
     /// <summary>
     /// Gets the filter parameters.
     /// </summary>
-    string Filters { get; }
+    string? Filters { get; }
 
     /// <summary>
     /// Gets the page number.
@@ -24,5 +24,5 @@ public interface IStrainerModel
     /// <summary>
     /// Gets the sorting parameters.
     /// </summary>
-    string Sorts { get; }
+    string? Sorts { get; }
 }

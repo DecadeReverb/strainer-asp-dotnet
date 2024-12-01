@@ -8,7 +8,7 @@ public interface ISortTerm
     /// <summary>
     /// Gets the original input, based on which current sort term was created.
     /// </summary>
-    string Input { get; }
+    string? Input { get; }
 
     /// <summary>
     /// Gets a value indicating whether current sorting

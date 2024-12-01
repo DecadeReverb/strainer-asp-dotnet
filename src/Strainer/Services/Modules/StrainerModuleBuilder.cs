@@ -1,5 +1,6 @@
 ﻿using Fluorite.Strainer.Models;
 using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
@@ -62,58 +63,72 @@ public class StrainerModuleBuilder : IStrainerModuleBuilder
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">
-    /// <paramref name="name"/> is <see langword="null"/>, empty or
-    /// contains only whitespace characters.
+    /// <paramref name="buildingDelegate"/> is <see langword="null"/>.
     /// </exception>
-    public ICustomFilterMethodBuilder<TEntity> AddCustomFilterMethod<TEntity>(string name)
+    public IStrainerModuleBuilder AddCustomFilterMethod<TEntity>(
+        Func<ICustomFilterMethodBuilder<TEntity>, ICustomFilterMethod<TEntity>> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(name);
+        Guard.Against.Null(buildingDelegate);
+
+        var builder = new CustomFilterMethodBuilder<TEntity>();
+        var customMethod = buildingDelegate.Invoke(builder);
 
         if (!Module.CustomFilterMethods.ContainsKey(typeof(TEntity)))
         {
             Module.CustomFilterMethods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
         }
 
-        return new CustomFilterMethodBuilder<TEntity>(Module.CustomFilterMethods, name);
+        Module.CustomFilterMethods[typeof(TEntity)][customMethod.Name] = customMethod;
+
+        return this;
     }
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">
-    /// <paramref name="name"/> is <see langword="null"/>, empty or
-    /// contains only whitespace characters.
+    /// <paramref name="buildingDelegate"/> is <see langword="null"/>.
     /// </exception>
-    public ICustomSortMethodBuilder<TEntity> AddCustomSortMethod<TEntity>(string name)
+    public IStrainerModuleBuilder AddCustomSortMethod<TEntity>(
+        Func<ICustomSortMethodBuilder<TEntity>, ICustomSortMethod<TEntity>> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(name);
+        Guard.Against.Null(buildingDelegate);
+
+        var builder = new CustomSortMethodBuilder<TEntity>();
+        var customMethod = buildingDelegate.Invoke(builder);
 
         if (!Module.CustomSortMethods.ContainsKey(typeof(TEntity)))
         {
             Module.CustomSortMethods[typeof(TEntity)] = new Dictionary<string, ICustomSortMethod>();
         }
 
-        return new CustomSortMethodBuilder<TEntity>(Module.CustomSortMethods, name);
+        Module.CustomSortMethods[typeof(TEntity)][customMethod.Name] = customMethod;
+
+        return this;
     }
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">
-    /// <paramref name="symbol"/> is <see langword="null"/>, empty or
-    /// contains only whitespace characters.
+    /// <paramref name="buildingDelegate"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    /// <paramref name="symbol"/> is used by already defined filter operator.
+    /// <paramref name="buildingDelegate"/> is used by already defined filter operator.
     /// </exception>
-    public IFilterOperatorBuilder AddFilterOperator(string symbol)
+    public IStrainerModuleBuilder AddFilterOperator(Func<IFilterOperatorBuilder, IFilterOperator> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(symbol);
+        Guard.Against.Null(buildingDelegate);
 
-        if (Module.FilterOperators.Keys.Contains(symbol))
+        var builder = new FilterOperatorBuilder();
+        var filterOperator = buildingDelegate.Invoke(builder);
+
+        if (Module.FilterOperators.Keys.Contains(filterOperator.Symbol))
         {
             throw new InvalidOperationException(
-                $"There is an already existing operator with a symbol {symbol}. " +
+                $"There is an already existing operator with a symbol {filterOperator.Symbol}. " +
                 $"Please, choose a different symbol.");
         }
 
-        return new FilterOperatorBuilder(Module.FilterOperators, symbol);
+        Module.FilterOperators.Add(filterOperator.Symbol, filterOperator);
+
+        return this;
     }
 
     /// <inheritdoc/>

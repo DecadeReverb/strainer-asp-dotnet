@@ -8,5 +8,5 @@ public interface ICustomFilteringExpressionProvider
     public bool TryGetCustomExpression<T>(
         IFilterTerm filterTerm,
         string filterTermName,
-        out Expression<Func<T, bool>> expression);
+        out Expression<Func<T, bool>>? expression);
 }

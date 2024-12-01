@@ -127,12 +127,7 @@ public class AttributeMetadataProviderTests
     public void Provider_Returns_PropertyMetadata_FromStrainerAttribute()
     {
         // Arrange
-        var propertyMetadata = new PropertyMetadata
-        {
-            Name = nameof(Post.Title),
-            IsFilterable = true,
-            IsSortable = true,
-        };
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
 
         _attributeMetadataRetrieverMock
             .GetMetadataFromPropertyAttribute(typeof(Post), true, true, nameof(Post.Title))
@@ -147,21 +142,14 @@ public class AttributeMetadataProviderTests
 
         // Assert
         result.Should().NotBeNull();
-        result.IsFilterable.Should().BeTrue();
-        result.IsSortable.Should().BeTrue();
-        result.Name.Should().Be(nameof(Post.Title));
+        result.Should().BeSameAs(propertyMetadata);
     }
 
     [Fact]
     public void Provider_Returns_PropertyMetadata_FromStrainerObjectAttribute()
     {
         // Arrange
-        var propertyMetadata = new PropertyMetadata
-        {
-            IsFilterable = true,
-            IsSortable = true,
-            Name = nameof(Comment.Id),
-        };
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
 
         _attributeMetadataRetrieverMock
             .GetMetadataFromPropertyAttribute(typeof(Comment), true, true, nameof(Comment.Id))
@@ -179,9 +167,7 @@ public class AttributeMetadataProviderTests
 
         // Assert
         result.Should().NotBeNull();
-        result.IsFilterable.Should().BeTrue();
-        result.IsSortable.Should().BeTrue();
-        result.Name.Should().Be(nameof(Comment.Id));
+        result.Should().BeSameAs(propertyMetadata);
     }
 
     [Fact]

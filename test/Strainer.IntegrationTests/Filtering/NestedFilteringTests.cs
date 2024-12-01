@@ -17,14 +17,14 @@ public class NestedFilteringTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 Comment = new Comment
                 {
-                    Text = "Nice!"
+                    Text = "Nice!",
                 },
             },
-            new Post
+            new()
             {
                 Comment = new Comment
                 {

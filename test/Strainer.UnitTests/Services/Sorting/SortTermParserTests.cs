@@ -42,7 +42,7 @@ public class SortTermParserTests
 
         _sortTermValueParserMock
             .GetParsedValues(input)
-            .Returns(Array.Empty<string>());
+            .Returns([]);
 
         // Act
         var sortTermList = _parser.GetParsedTerms(input);
@@ -63,7 +63,7 @@ public class SortTermParserTests
 
         _sortTermValueParserMock
             .GetParsedValues(input)
-            .Returns(new[] { parsedInput });
+            .Returns([parsedInput]);
         _sortingWayFormatterMock
             .GetSortingWay(parsedInput)
             .Returns(sortingWay);

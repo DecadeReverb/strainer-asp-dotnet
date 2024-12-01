@@ -13,14 +13,14 @@ public class SortExpression<T> : SortExpression, ISortExpression<T>, ISortExpres
     /// <summary>
     /// Initializes a new instance of the <see cref="SortExpression{TEntity}"/> class.
     /// </summary>
-    public SortExpression()
+    public SortExpression(Expression<Func<T, object>> expression)
     {
-
+        Expression = Guard.Against.Null(expression);
     }
 
     /// <summary>
-    /// Gets or sets an expression which can be used as a functor argument
+    /// Gets an expression which can be used as a functor argument
     /// for ordering functions.
     /// </summary>
-    public Expression<Func<T, object>> Expression { get; set; }
+    public Expression<Func<T, object>> Expression { get; }
 }

@@ -6,13 +6,13 @@ public class CustomFilterMethod : ICustomFilterMethod
     /// Initializes a new instance of the <see cref="CustomFilterMethod"/>
     /// class.
     /// </summary>
-    public CustomFilterMethod()
+    public CustomFilterMethod(string name)
     {
-
+        Name = Guard.Against.NullOrWhiteSpace(name);
     }
 
     /// <summary>
-    /// Gets or sets the custom method name.
+    /// Gets the custom method name.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; }
 }

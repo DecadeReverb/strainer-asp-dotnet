@@ -387,8 +387,10 @@ In order to add custom sort or filter methods, use dedicated methods from Strain
 ```cs
 public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddCustomFilterMethod("IsPopular")
-        .HasFunction(p => p.LikeCount < 10);
+    builder.AddCustomFilterMethod(b => b
+        .HasName("IsPopular")
+        .HasFunction(p => p.LikeCount < 10)
+        .Build());
 }
 ```
 
@@ -398,13 +400,15 @@ public override void Load(IStrainerModuleBuilder<Post> builder)
 public override void Load(IStrainerModuleBuilder<Post> builder)
 {
     builder
-        .AddCustomSortMethod("Popularity")
+        .AddCustomSortMethod(b => b
+        .HasName("Popularity")
         .HasFunction(term =>
         {
             return term.IsDescending
                 ? (p => p.LikeCount)
                 : (p => p.CommentCount);
-        });
+        })
+        .Build());
 }
 ```
 
@@ -448,11 +452,13 @@ Same manner as marking properties you can add new filter operators:
 ```cs
 public override void Load(IStrainerModuleBuilder<Post> builder)
 {
-    builder.AddFilterOperator(symbol: "%")
+    builder.AddFilterOperator(b => b
+        .HasSymbol("%")
         .HasName("modulo equal zero")
         .HasExpression((context) => Expression.Equal(
             Expression.Modulo(context.PropertyValue, context.FilterValue),
-            Expression.Constant(0)));
+            Expression.Constant(0)))
+        .Build());
 }
 ```
 

@@ -54,16 +54,12 @@ public class SortExpressionValidatorTests
     {
         // Arrange
         var type = typeof(Version);
-        var metadata1 = new PropertyMetadata
-        {
-            IsDefaultSorting = true,
-            Name = "foo",
-        };
-        var metadata2 = new PropertyMetadata
-        {
-            IsDefaultSorting = true,
-            Name = "bar",
-        };
+        var metadata1 = Substitute.For<IPropertyMetadata>();
+        metadata1.Name.Returns("foo");
+        metadata1.IsDefaultSorting.Returns(true);
+        var metadata2 = Substitute.For<IPropertyMetadata>();
+        metadata2.Name.Returns("bar");
+        metadata2.IsDefaultSorting.Returns(true);
         var innerMetadata = new Dictionary<string, IPropertyMetadata>
         {
             { metadata1.Name, metadata1 },

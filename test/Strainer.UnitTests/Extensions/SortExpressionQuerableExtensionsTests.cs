@@ -23,7 +23,7 @@ public class SortExpressionQuerableExtensionsTests
     {
         // Arrange
         IQueryable<object> source = null;
-        var sortExpression = new SortExpression<object>();
+        var sortExpression = new SortExpression<object>(x => x);
 
         // Act
         Action action = () => source.OrderWithSortExpression(sortExpression);
@@ -39,9 +39,8 @@ public class SortExpressionQuerableExtensionsTests
     {
         // Arrange
         var source = new[] { 4, 1, 3 }.AsQueryable();
-        var sortExpression = new SortExpression<int>
+        var sortExpression = new SortExpression<int>(x => x)
         {
-            Expression = x => x,
             IsDescending = descending,
         };
 
@@ -69,9 +68,8 @@ public class SortExpressionQuerableExtensionsTests
     {
         // Arrange
         var source = new[] { "foo", "ba", "bb" }.AsQueryable().OrderByDescending(x => x.Length);
-        var sortExpression = new SortExpression<string>
+        var sortExpression = new SortExpression<string>(x => x.Count(y => y == 'b'))
         {
-            Expression = x => x.Count(y => y == 'b'),
             IsDescending = descending,
             IsSubsequent = true,
         };

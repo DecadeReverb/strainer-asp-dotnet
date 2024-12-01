@@ -10,7 +10,7 @@ public interface IPropertyMetadata
     /// <summary>
     /// Gets the display name of the property.
     /// </summary>
-    string DisplayName { get; }
+    string? DisplayName { get; }
 
     /// <summary>
     /// Gets a value indicating whether related
@@ -49,5 +49,5 @@ public interface IPropertyMetadata
     /// Gets the <see cref="System.Reflection.PropertyInfo"/> for related
     /// property.
     /// </summary>
-    PropertyInfo PropertyInfo { get; }
+    PropertyInfo? PropertyInfo { get; }
 }

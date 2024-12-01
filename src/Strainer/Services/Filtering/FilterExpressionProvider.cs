@@ -18,11 +18,11 @@ public class FilterExpressionProvider : IFilterExpressionProvider
         _filterExpressionWorkflowBuilder = Guard.Against.Null(filterExpressionWorkflowBuilder);
     }
 
-    public Expression GetExpression(
+    public Expression? GetExpression(
         IPropertyMetadata metadata,
         IFilterTerm filterTerm,
         ParameterExpression parameterExpression,
-        Expression innerExpression)
+        Expression? innerExpression)
     {
         Guard.Against.Null(metadata);
         Guard.Against.Null(filterTerm);
@@ -39,11 +39,11 @@ public class FilterExpressionProvider : IFilterExpressionProvider
             throw new ArgumentException("Metadata name must not be empty.", nameof(metadata));
         }
 
-        MemberExpression propertyExpresssion = null;
+        MemberExpression? propertyExpresssion = null;
 
         foreach (var part in nameParts)
         {
-            propertyExpresssion = Expression.PropertyOrField((Expression)propertyExpresssion ?? parameterExpression, part);
+            propertyExpresssion = Expression.PropertyOrField((Expression?)propertyExpresssion ?? parameterExpression, part);
         }
 
         return CreateInnerExpression(
@@ -53,13 +53,13 @@ public class FilterExpressionProvider : IFilterExpressionProvider
             propertyExpresssion);
     }
 
-    private Expression CreateInnerExpression(
+    private Expression? CreateInnerExpression(
         IPropertyMetadata metadata,
         IFilterTerm filterTerm,
-        Expression innerExpression,
-        MemberExpression propertyExpression)
+        Expression? innerExpression,
+        MemberExpression? propertyExpression)
     {
-        var typeConverter = _typeConverterProvider.GetTypeConverter(metadata.PropertyInfo.PropertyType);
+        var typeConverter = _typeConverterProvider.GetTypeConverter(metadata.PropertyInfo!.PropertyType);
         var workflow = _filterExpressionWorkflowBuilder.BuildDefaultWorkflow();
 
         foreach (var filterTermValue in filterTerm.Values)

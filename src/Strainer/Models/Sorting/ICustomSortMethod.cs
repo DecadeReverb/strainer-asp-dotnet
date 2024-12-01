@@ -3,7 +3,7 @@
 public interface ICustomSortMethod
 {
     /// <summary>
-    /// Gets or sets the custom method name.
+    /// Gets the custom method name.
     /// </summary>
-    string Name { get; set; }
+    string Name { get; }
 }

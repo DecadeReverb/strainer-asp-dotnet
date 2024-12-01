@@ -26,7 +26,7 @@ public class ConfigurationMetadataProviderTests
         var strainerModuleMock = Substitute.For<IStrainerModule>();
         strainerModuleMock.DefaultMetadata.Returns(defaultMetadata);
         var configuration = new StrainerConfigurationBuilder()
-            .WithDefaultMetadata(new [] { strainerModuleMock })
+            .WithDefaultMetadata([strainerModuleMock])
             .Build();
         _strainerConfigurationProviderMock
             .GetStrainerConfiguration()
@@ -56,7 +56,7 @@ public class ConfigurationMetadataProviderTests
         var strainerModuleMock = Substitute.For<IStrainerModule>();
         strainerModuleMock.ObjectMetadata.Returns(objectMetadata);
         var configuration = new StrainerConfigurationBuilder()
-            .WithObjectMetadata(new[] { strainerModuleMock })
+            .WithObjectMetadata([strainerModuleMock])
             .Build();
         _strainerConfigurationProviderMock
             .GetStrainerConfiguration()
@@ -89,7 +89,7 @@ public class ConfigurationMetadataProviderTests
         var strainerModuleMock = Substitute.For<IStrainerModule>();
         strainerModuleMock.PropertyMetadata.Returns(propertyMetadata);
         var configuration = new StrainerConfigurationBuilder()
-            .WithPropertyMetadata(new[] { strainerModuleMock })
+            .WithPropertyMetadata([strainerModuleMock])
             .Build();
         _strainerConfigurationProviderMock
             .GetStrainerConfiguration()

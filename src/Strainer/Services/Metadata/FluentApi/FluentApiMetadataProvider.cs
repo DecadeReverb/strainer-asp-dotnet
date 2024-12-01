@@ -23,7 +23,7 @@ public class FluentApiMetadataProvider : IMetadataProvider
         _propertyMetadataBuilder = Guard.Against.Null(propertyMetadataBuilder);
     }
 
-    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>> GetAllPropertyMetadata()
+    public IReadOnlyDictionary<Type, IReadOnlyDictionary<string, IPropertyMetadata>>? GetAllPropertyMetadata()
     {
         if (!IsFluentApiEnabled())
         {
@@ -41,7 +41,7 @@ public class FluentApiMetadataProvider : IMetadataProvider
             .ToReadOnly();
     }
 
-    public IPropertyMetadata GetDefaultMetadata(Type modelType)
+    public IPropertyMetadata? GetDefaultMetadata(Type modelType)
     {
         Guard.Against.Null(modelType);
 
@@ -63,7 +63,7 @@ public class FluentApiMetadataProvider : IMetadataProvider
         return propertyMetadata;
     }
 
-    public IPropertyMetadata GetPropertyMetadata(
+    public IPropertyMetadata? GetPropertyMetadata(
         Type modelType,
         bool isSortableRequired,
         bool isFilterableRequired,
@@ -107,7 +107,7 @@ public class FluentApiMetadataProvider : IMetadataProvider
         return null;
     }
 
-    public IReadOnlyList<IPropertyMetadata> GetPropertyMetadatas(Type modelType)
+    public IReadOnlyList<IPropertyMetadata>? GetPropertyMetadatas(Type modelType)
     {
         Guard.Against.Null(modelType);
 

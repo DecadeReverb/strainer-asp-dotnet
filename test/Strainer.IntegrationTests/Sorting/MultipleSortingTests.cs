@@ -36,7 +36,7 @@ public class MultipleSortingTests : StrainerFixtureBase
         }.AsQueryable();
         var model = new StrainerModel()
         {
-            Sorts = "-IsDraft,-LikeCount"
+            Sorts = "-IsDraft,-LikeCount",
         };
         var processor = Factory.CreateDefaultProcessor(opt =>
         {

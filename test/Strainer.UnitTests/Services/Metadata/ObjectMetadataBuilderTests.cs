@@ -28,7 +28,7 @@ public class ObjectMetadataBuilderTests
         // Assert
         objectMetadata.Should().NotBeEmpty();
         objectMetadata.Should().HaveCount(1);
-        objectMetadata.Keys.Should().BeEquivalentTo(new[] { typeof(Blog) });
+        objectMetadata.Keys.Should().BeEquivalentTo([typeof(Blog)]);
         objectMetadata.Values.First().DefaultSortingPropertyName.Should().Be(defaultSortingPropertyName);
         objectMetadata.Values.First().DefaultSortingPropertyInfo.Should().BeSameAs(defaultSortingPropertyInfo);
         objectMetadata.Values.First().IsDefaultSortingDescending.Should().BeFalse();
@@ -59,7 +59,7 @@ public class ObjectMetadataBuilderTests
         // Assert
         objectMetadata.Should().NotBeEmpty();
         objectMetadata.Should().HaveCount(1);
-        objectMetadata.Keys.Should().BeEquivalentTo(new[] { typeof(Blog) });
+        objectMetadata.Keys.Should().BeEquivalentTo([typeof(Blog)]);
         objectMetadata.Values.First().DefaultSortingPropertyName.Should().Be(defaultSortingPropertyName);
         objectMetadata.Values.First().DefaultSortingPropertyInfo.Should().BeSameAs(defaultSortingPropertyInfo);
         objectMetadata.Values.First().IsDefaultSortingDescending.Should().BeFalse();
@@ -90,7 +90,7 @@ public class ObjectMetadataBuilderTests
         // Assert
         objectMetadata.Should().NotBeEmpty();
         objectMetadata.Should().HaveCount(1);
-        objectMetadata.Keys.Should().BeEquivalentTo(new[] { typeof(Blog) });
+        objectMetadata.Keys.Should().BeEquivalentTo([typeof(Blog)]);
         objectMetadata.Values.First().DefaultSortingPropertyName.Should().Be(defaultSortingPropertyName);
         objectMetadata.Values.First().DefaultSortingPropertyInfo.Should().BeSameAs(defaultSortingPropertyInfo);
         objectMetadata.Values.First().IsDefaultSortingDescending.Should().BeFalse();
@@ -121,7 +121,7 @@ public class ObjectMetadataBuilderTests
         // Assert
         objectMetadata.Should().NotBeEmpty();
         objectMetadata.Should().HaveCount(1);
-        objectMetadata.Keys.Should().BeEquivalentTo(new[] { typeof(Blog) });
+        objectMetadata.Keys.Should().BeEquivalentTo([typeof(Blog)]);
         objectMetadata.Values.First().DefaultSortingPropertyName.Should().Be(defaultSortingPropertyName);
         objectMetadata.Values.First().DefaultSortingPropertyInfo.Should().BeSameAs(defaultSortingPropertyInfo);
         objectMetadata.Values.First().IsDefaultSortingDescending.Should().BeFalse();
@@ -152,7 +152,7 @@ public class ObjectMetadataBuilderTests
         // Assert
         objectMetadata.Should().NotBeEmpty();
         objectMetadata.Should().HaveCount(1);
-        objectMetadata.Keys.Should().BeEquivalentTo(new[] { typeof(Blog) });
+        objectMetadata.Keys.Should().BeEquivalentTo([typeof(Blog)]);
         objectMetadata.Values.First().DefaultSortingPropertyName.Should().Be(defaultSortingPropertyName);
         objectMetadata.Values.First().DefaultSortingPropertyInfo.Should().BeSameAs(defaultSortingPropertyInfo);
         objectMetadata.Values.First().IsDefaultSortingDescending.Should().BeTrue();

@@ -17,22 +17,22 @@ public class NotContainsOperatorTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 Title = "Nice rock album.",
             },
-            new Post
+            new()
             {
                 Title = "A long time ago.",
             },
-            new Post
+            new()
             {
-                Title = "The end."
+                Title = "The end.",
             },
         }.AsQueryable();
         var model = new StrainerModel()
         {
-            Filters = "Title!@=a"
+            Filters = "Title!@=a",
         };
         var processor = Factory.CreateDefaultProcessor();
 

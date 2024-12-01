@@ -5,6 +5,7 @@ using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Filtering.Steps;
 using NSubstitute.ReceivedExtensions;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering.Steps;
 
@@ -29,8 +30,14 @@ public class ConvertPropertyValueToStringStepTests
         term
             .Operator
             .Returns(filterOperator);
+        var propertyInfo = Substitute.For<PropertyInfo>();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata
+            .PropertyInfo
+            .Returns(propertyInfo);
         var context = new FilterExpressionWorkflowContext
         {
+            PropertyMetadata = propertyMetadata,
             Term = term,
         };
 

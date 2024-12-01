@@ -1,10 +1,10 @@
-﻿using Fluorite.Strainer.Models.Filtering;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Models.Filtering;
 using Fluorite.Strainer.Models.Filtering.Terms;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Filtering;
-using Fluorite.Extensions;
-using System.Linq.Expressions;
 using NSubstitute.ReturnsExtensions;
+using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering;
 

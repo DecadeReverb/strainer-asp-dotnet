@@ -13,7 +13,7 @@ public class AssemblySourceProviderTests
         {
             Substitute.For<Assembly>(),
         };
-        var provider = new AssemblySourceProvider(assemblies); ;
+        var provider = new AssemblySourceProvider(assemblies);
 
         // Act
         var result = provider.GetAssemblies();

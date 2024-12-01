@@ -14,7 +14,7 @@ public class ApplyConsantClosureToFilterValueStepTests
 
     public ApplyConsantClosureToFilterValueStepTests()
     {
-        _step = new ();
+        _step = new();
     }
 
     [Fact]
@@ -26,10 +26,14 @@ public class ApplyConsantClosureToFilterValueStepTests
         operatorMock.IsStringBased.Returns(true);
         var filterTermMock = Substitute.For<IFilterTerm>();
         filterTermMock.Operator.Returns(operatorMock);
+        var propertyInfo = Substitute.For<PropertyInfo>();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata.PropertyInfo.Returns(propertyInfo);
         var context = new FilterExpressionWorkflowContext
         {
             FilterTermConstant = value,
             Term = filterTermMock,
+            PropertyMetadata = propertyMetadata,
         };
 
         // Act
@@ -79,10 +83,14 @@ public class ApplyConsantClosureToFilterValueStepTests
         operatorMock.IsStringBased.Returns(true);
         var filterTermMock = Substitute.For<IFilterTerm>();
         filterTermMock.Operator.Returns(operatorMock);
+        var propertyInfo = Substitute.For<PropertyInfo>();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata.PropertyInfo.Returns(propertyInfo);
         var context = new FilterExpressionWorkflowContext
         {
             FilterTermConstant = value,
             Term = filterTermMock,
+            PropertyMetadata = propertyMetadata,
         };
 
         // Act

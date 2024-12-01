@@ -24,7 +24,7 @@ public class PropertyMetadataBuilderTests
 
         // Assert
         propertyMetadata.Should().NotBeEmpty();
-        propertyMetadata.Keys.Should().BeEquivalentTo(new[] { type });
+        propertyMetadata.Keys.Should().BeEquivalentTo([type]);
         propertyMetadata[type].Should().NotBeNullOrEmpty();
         propertyMetadata[type].Keys.Should().BeEquivalentTo(propertyName);
         propertyMetadata[type][propertyName].DisplayName.Should().BeNull();
@@ -56,7 +56,7 @@ public class PropertyMetadataBuilderTests
 
         // Assert
         propertyMetadata.Should().NotBeEmpty();
-        propertyMetadata.Keys.Should().BeEquivalentTo(new[] { type });
+        propertyMetadata.Keys.Should().BeEquivalentTo([type]);
         propertyMetadata[type].Should().NotBeNullOrEmpty();
         propertyMetadata[type].Keys.Should().BeEquivalentTo(propertyName);
         propertyMetadata[type][propertyName].DisplayName.Should().BeNull();
@@ -88,7 +88,7 @@ public class PropertyMetadataBuilderTests
 
         // Assert
         propertyMetadata.Should().NotBeEmpty();
-        propertyMetadata.Keys.Should().BeEquivalentTo(new[] { type });
+        propertyMetadata.Keys.Should().BeEquivalentTo([type]);
         propertyMetadata[type].Should().NotBeNullOrEmpty();
         propertyMetadata[type].Keys.Should().BeEquivalentTo(propertyName);
         propertyMetadata[type][propertyName].DisplayName.Should().BeNull();
@@ -123,7 +123,7 @@ public class PropertyMetadataBuilderTests
 
         // Assert
         propertyMetadata.Should().NotBeEmpty();
-        propertyMetadata.Keys.Should().BeEquivalentTo(new[] { type });
+        propertyMetadata.Keys.Should().BeEquivalentTo([type]);
         propertyMetadata[type].Should().NotBeNullOrEmpty();
         propertyMetadata[type].Keys.Should().BeEquivalentTo(displayName);
         propertyMetadata[type][displayName].DisplayName.Should().Be(displayName);

@@ -1,4 +1,5 @@
-﻿using Fluorite.Strainer.Models.Sorting;
+﻿using Fluorite.Strainer.Exceptions;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Metadata;
 using System.Linq.Expressions;
@@ -25,7 +26,7 @@ public class SortExpressionProvider : ISortExpressionProvider
         _metadataProvidersFacade = Guard.Against.Null(metadataProvidersFacade);
     }
 
-    public ISortExpression<TEntity> GetDefaultExpression<TEntity>()
+    public ISortExpression<TEntity>? GetDefaultExpression<TEntity>()
     {
         var propertyMetadata = _metadataProvidersFacade.GetDefaultMetadata<TEntity>();
 
@@ -34,16 +35,22 @@ public class SortExpressionProvider : ISortExpressionProvider
             return null;
         }
 
-        var sortTerm = new SortTerm
+        if (propertyMetadata.PropertyInfo is null)
+        {
+            throw new StrainerException(
+                $"Metadata for {propertyMetadata.Name} has been found but contains null PropertyInfo.");
+        }
+
+        var name = propertyMetadata.DisplayName ?? propertyMetadata.Name;
+        var sortTerm = new SortTerm(name)
         {
             IsDescending = propertyMetadata.IsDefaultSortingDescending,
-            Name = propertyMetadata.DisplayName ?? propertyMetadata.Name,
         };
 
         return GetExpression<TEntity>(propertyMetadata.PropertyInfo, sortTerm, isSubsequent: false);
     }
 
-    public ISortExpression<TEntity> GetExpression<TEntity>(
+    public ISortExpression<TEntity>? GetExpression<TEntity>(
         PropertyInfo propertyInfo,
         ISortTerm sortTerm,
         bool isSubsequent)
@@ -78,9 +85,8 @@ public class SortExpressionProvider : ISortExpressionProvider
         var conversion = Expression.Convert(propertyAccess, typeof(object));
         var orderExpression = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
 
-        return new SortExpression<TEntity>
+        return new SortExpression<TEntity>(orderExpression)
         {
-            Expression = orderExpression,
             IsDefault = metadata.IsDefaultSorting,
             IsDescending = sortTerm.IsDescending,
             IsSubsequent = isSubsequent,

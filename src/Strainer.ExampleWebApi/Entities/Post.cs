@@ -5,11 +5,11 @@ using System.Collections.Generic;
 namespace Fluorite.Strainer.ExampleWebApi.Entities;
 
 [StrainerObject(nameof(Id))]
-	public class Post
+public class Post
 {
     public Post()
     {
-        Comments = new List<Comment>();
+        Comments = [];
     }
 
     public int? CategoryId { get; set; }

@@ -26,7 +26,8 @@ public class PropertyMetadataDictionaryProvider : IPropertyMetadataDictionaryPro
 
         return _propertyInfoProvider.GetPropertyInfos(type)
             .Select(propertyInfo => _strainerAttributeProvider.GetPropertyAttribute(propertyInfo))
-            .Where(attribute => attribute != null)
+            .Where(attribute => attribute is not null)
+            .Select(attribute => attribute!)
             .ToDictionary(attribute => attribute.Name, attribute => (IPropertyMetadata)attribute)
             .ToReadOnly();
     }

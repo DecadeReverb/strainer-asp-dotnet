@@ -10,7 +10,7 @@ public class AttributePropertyMetadataBuilderTests
 
     public AttributePropertyMetadataBuilderTests()
     {
-        _builder = new ();
+        _builder = new();
     }
 
     [Fact]

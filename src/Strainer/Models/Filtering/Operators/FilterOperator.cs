@@ -12,16 +12,18 @@ public class FilterOperator : IFilterOperator
     /// <summary>
     /// Initializes a new instance of the <see cref="FilterOperator"/> class.
     /// </summary>
-    public FilterOperator()
+    public FilterOperator(string name, string symbol, Func<IFilterExpressionContext, Expression> expression)
     {
-
+        Name = Guard.Against.NullOrWhiteSpace(name);
+        Symbol = Guard.Against.NullOrWhiteSpace(symbol);
+        Expression = Guard.Against.Null(expression);
     }
 
     /// <summary>
-    /// Gets or sets a func providing an <see cref="System.Linq.Expressions.Expression"/>
+    /// Gets a func providing an <see cref="System.Linq.Expressions.Expression"/>
     /// with filter operator applied when supplied a <see cref="IFilterExpressionContext"/>.
     /// </summary>
-    public Func<IFilterExpressionContext, Expression> Expression { get; set;  }
+    public Func<IFilterExpressionContext, Expression> Expression { get; }
 
     /// <summary>
     /// Gets or sets a value indicating whether current
@@ -38,14 +40,14 @@ public class FilterOperator : IFilterOperator
     public bool IsStringBased { get; set; }
 
     /// <summary>
-    /// Gets or sets the operator name.
+    /// Gets the operator name.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; }
 
     /// <summary>
-    /// Gets or sets a <see cref="string"/> representation of the operator.
+    /// Gets a <see cref="string"/> representation of the operator.
     /// </summary>
-    public string Symbol { get; set; }
+    public string Symbol { get; }
 
     /// <summary>
     /// Returns a <see cref="string"/> that represents the current <see cref="FilterOperator"/>.
