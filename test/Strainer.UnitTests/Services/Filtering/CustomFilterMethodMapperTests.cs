@@ -9,11 +9,7 @@ public class CustomFilterMethodMapperTests
     public void Mapper_Adds_NewCustomMethod()
     {
         // Arrange
-        var customFilterMethod = new CustomFilterMethod<Uri>
-        {
-            Expression = (uri) => uri.Port == 443,
-            Name = "HTTPS",
-        };
+        var customFilterMethod = new CustomFilterMethod<Uri>(name: "HTTPS", (uri) => uri.Port == 443);
         var mapper = new CustomFilterMethodMapper();
 
         // Act

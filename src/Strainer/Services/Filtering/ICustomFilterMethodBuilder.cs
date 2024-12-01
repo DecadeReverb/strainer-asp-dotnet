@@ -11,4 +11,6 @@ public interface ICustomFilterMethodBuilder<TEntity>
     ICustomFilterMethodBuilder<TEntity> HasFunction(Expression<Func<TEntity, bool>> expression);
 
     ICustomFilterMethodBuilder<TEntity> HasFunction(Func<IFilterTerm, Expression<Func<TEntity, bool>>> filterTermExpression);
+
+    ICustomFilterMethodBuilder<TEntity> HasName(string name);
 }

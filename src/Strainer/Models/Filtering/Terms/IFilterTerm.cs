@@ -20,7 +20,7 @@ public interface IFilterTerm
     /// <summary>
     /// Gets the filter operator.
     /// </summary>
-    IFilterOperator Operator { get; }
+    IFilterOperator? Operator { get; }
 
     /// <summary>
     /// Gets the list of values.

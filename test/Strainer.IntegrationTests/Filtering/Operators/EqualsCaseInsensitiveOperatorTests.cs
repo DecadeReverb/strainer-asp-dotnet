@@ -4,9 +4,9 @@ using Fluorite.Strainer.Models;
 
 namespace Fluorite.Strainer.IntegrationTests.Filtering.Operators;
 
-public class EqualsCaseInsensitiveTests : StrainerFixtureBase
+public class EqualsCaseInsensitiveOperatorTests : StrainerFixtureBase
 {
-    public EqualsCaseInsensitiveTests(StrainerFactory factory) : base(factory)
+    public EqualsCaseInsensitiveOperatorTests(StrainerFactory factory) : base(factory)
     {
 
     }

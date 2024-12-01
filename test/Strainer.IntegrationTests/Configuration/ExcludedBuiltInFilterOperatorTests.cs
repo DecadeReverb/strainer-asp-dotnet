@@ -79,9 +79,11 @@ public class ExcludedBuiltInFilterOperatorTests : StrainerFixtureBase
         {
             builder.RemoveBuiltInFilterOperator(SymbolToRemove);
 
-            builder.AddFilterOperator(SymbolToRemove)
+            builder.AddFilterOperator(b => b
+                .HasSymbol(SymbolToRemove)
                 .HasName("custom operator")
-                .HasExpression(_ => Expression.Constant(true));
+                .HasExpression(_ => Expression.Constant(true))
+                .Build());
         }
     }
 
@@ -89,9 +91,11 @@ public class ExcludedBuiltInFilterOperatorTests : StrainerFixtureBase
     {
         public override void Load(IStrainerModuleBuilder builder)
         {
-            builder.AddFilterOperator(SymbolToRemove)
+            builder.AddFilterOperator(b => b
+                .HasSymbol(SymbolToRemove)
                 .HasName("custom operator")
-                .HasExpression(_ => Expression.Constant(true));
+                .HasExpression(_ => Expression.Constant(true))
+                .Build());
         }
     }
 }

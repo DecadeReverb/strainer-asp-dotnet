@@ -40,11 +40,11 @@ public class FilterPipelineOperation : IFilterPipelineOperation, IStrainerPipeli
             return source;
         }
 
-        Expression outerExpression = null;
+        Expression? outerExpression = null;
         var parameterExpression = Expression.Parameter(typeof(T), "e");
         foreach (var filterTerm in parsedTerms)
         {
-            Expression termExpression = null;
+            Expression? termExpression = null;
             foreach (var filterTermName in filterTerm.Names)
             {
                 var metadata = _metadataFacade.GetMetadata<T>(

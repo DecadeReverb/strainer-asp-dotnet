@@ -128,8 +128,10 @@ public class ApplicationStrainerModule : StrainerModule<Post>
 {
     public override void Load(IStrainerModuleBuilder<Post> builder)
     {
-            builder.AddCustomSortMethod("Popularity")
-                .HasFunction(p => p.LikeCount);
+        builder.AddCustomSortMethod(b => b
+            .HasName("Popularity")
+            .HasFunction(p => p.LikeCount)
+            .Build());
     }
 }
 ```

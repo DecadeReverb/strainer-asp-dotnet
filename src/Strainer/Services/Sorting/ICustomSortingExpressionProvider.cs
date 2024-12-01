@@ -8,5 +8,5 @@ public interface ICustomSortingExpressionProvider
     bool TryGetCustomExpression<T>(
         ISortTerm sortTerm,
         bool isSubsequent,
-        out ISortExpression<T> sortExpression);
+        out ISortExpression<T>? sortExpression);
 }

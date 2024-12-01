@@ -2,6 +2,7 @@
 
 namespace Fluorite.Strainer.Services.Sorting;
 
+// TODO: What for is this mapper? It is not used anywhere.
 public class CustomSortMethodMapper : ICustomSortMethodMapper
 {
     public CustomSortMethodMapper()
@@ -23,15 +24,18 @@ public class CustomSortMethodMapper : ICustomSortMethodMapper
         Methods[typeof(TEntity)][sortMethod.Name] = sortMethod;
     }
 
-    public ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
+    public void CustomMethod<TEntity>(Func<ICustomSortMethodBuilder<TEntity>, ICustomSortMethod<TEntity>> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(name);
+        Guard.Against.Null(buildingDelegate);
+
+        var builder = new CustomSortMethodBuilder<TEntity>();
+        var customMethod = buildingDelegate.Invoke(builder);
 
         if (!Methods.ContainsKey(typeof(TEntity)))
         {
             Methods[typeof(TEntity)] = new Dictionary<string, ICustomSortMethod>();
         }
 
-        return new CustomSortMethodBuilder<TEntity>(Methods, name);
+        Methods[typeof(TEntity)][customMethod.Name] = customMethod;
     }
 }

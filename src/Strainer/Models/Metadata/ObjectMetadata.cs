@@ -11,22 +11,27 @@ public class ObjectMetadata : IObjectMetadata
     /// <summary>
     /// Initializes a new instance of the <see cref="ObjectMetadata"/> class.
     /// </summary>
-    public ObjectMetadata()
+    public ObjectMetadata(
+        string defaultSortingPropertyName,
+        bool isDefaultSortingDescending,
+        PropertyInfo defaultSortingPropertyInfo)
     {
-
+        DefaultSortingPropertyName = Guard.Against.NullOrWhiteSpace(defaultSortingPropertyName);
+        IsDefaultSortingDescending = isDefaultSortingDescending;
+        DefaultSortingPropertyInfo = Guard.Against.Null(defaultSortingPropertyInfo);
     }
 
     /// <summary>
-    /// Gets or sets a property name being default sorting property
+    /// Gets a property name being default sorting property
     /// for marked object.
     /// </summary>
-    public string DefaultSortingPropertyName { get; set; }
+    public string DefaultSortingPropertyName { get; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether default
+    /// Gets a value indicating whether default
     /// sorting way for marked object is descending.
     /// </summary>
-    public bool IsDefaultSortingDescending { get; set; }
+    public bool IsDefaultSortingDescending { get; }
 
     /// <summary>
     /// Gets or sets a value indicating whether related
@@ -41,7 +46,7 @@ public class ObjectMetadata : IObjectMetadata
     public bool IsSortable { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="PropertyInfo"/> for default sorting property.
+    /// Gets the <see cref="PropertyInfo"/> for default sorting property.
     /// </summary>
-    public PropertyInfo DefaultSortingPropertyInfo { get; set;  }
+    public PropertyInfo DefaultSortingPropertyInfo { get; }
 }

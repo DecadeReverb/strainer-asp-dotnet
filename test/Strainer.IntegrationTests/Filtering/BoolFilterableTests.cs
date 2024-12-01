@@ -17,18 +17,18 @@ public class BoolFilterableTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 IsDraft = true,
             },
-            new Post
+            new()
             {
                 IsDraft = false,
             },
         }.AsQueryable();
         var model = new StrainerModel()
         {
-            Filters = "IsDraft==false"
+            Filters = "IsDraft==false",
         };
         var processor = Factory.CreateDefaultProcessor();
 

@@ -17,7 +17,7 @@ public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
     public bool TryGetCustomExpression<T>(
         ISortTerm sortTerm,
         bool isSubsequent,
-        out ISortExpression<T> sortExpression)
+        out ISortExpression<T>? sortExpression)
     {
         Guard.Against.Null(sortTerm);
 
@@ -28,10 +28,9 @@ public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
             return false;
         }
 
-        var expression = GetExpression(sortTerm, customMethod as ICustomSortMethod<T>);
-        sortExpression = new SortExpression<T>
+        var expression = GetExpression(sortTerm, (ICustomSortMethod<T>)customMethod!);
+        sortExpression = new SortExpression<T>(expression)
         {
-            Expression = expression,
             IsDefault = false,
             IsDescending = sortTerm.IsDescending,
             IsSubsequent = isSubsequent,
@@ -44,10 +43,10 @@ public class CustomSortingExpressionProvider : ICustomSortingExpressionProvider
     {
         return customSortMethod.ExpressionProvider != null
             ? customSortMethod.ExpressionProvider(sortTerm)
-            : customSortMethod.Expression;
+            : customSortMethod.Expression!;
     }
 
-    private bool TryGetCustomSortingMethod<T>(ISortTerm sortTerm, out ICustomSortMethod customMethod)
+    private bool TryGetCustomSortingMethod<T>(ISortTerm sortTerm, out ICustomSortMethod? customMethod)
     {
         customMethod = null;
 

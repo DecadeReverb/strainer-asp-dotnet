@@ -119,21 +119,6 @@ public class GreaterThanOrEqualToOperatorTests : StrainerFixtureBase
         Assert.Throws<StrainerConversionException>(() => processor.ApplyFiltering(model, source));
     }
 
-    private class Comment
-    {
-        [StrainerProperty]
-        public int LikeCount { get; set; }
-
-        [StrainerProperty]
-        public Point Point { get; set; }
-
-        [StrainerProperty]
-        public string Text { get; set; }
-
-        [StrainerProperty]
-        public DateTime DateTime { get; set; }
-    }
-
     private readonly struct Point
     {
         public Point(int value) => Value = value;
@@ -149,5 +134,20 @@ public class GreaterThanOrEqualToOperatorTests : StrainerFixtureBase
         {
             return point1.Value > point2.Value;
         }
+    }
+
+    private class Comment
+    {
+        [StrainerProperty]
+        public int LikeCount { get; set; }
+
+        [StrainerProperty]
+        public Point Point { get; set; }
+
+        [StrainerProperty]
+        public string Text { get; set; }
+
+        [StrainerProperty]
+        public DateTime DateTime { get; set; }
     }
 }

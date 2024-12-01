@@ -13,15 +13,18 @@ public class SortTerm : ISortTerm, IEquatable<SortTerm>
     /// <summary>
     /// Initializes a new instance of the <see cref="SortTerm"/> class.
     /// </summary>
-    public SortTerm()
+    /// <param name="name">
+    /// The name within sorting term.
+    /// </param>
+    public SortTerm(string name)
     {
-
+        Name = Guard.Against.NullOrWhiteSpace(name);
     }
 
     /// <summary>
     /// Gets or sets the original input, based on which current sort term was created.
     /// </summary>
-    public string Input { get; set; }
+    public string? Input { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether current sorting
@@ -30,9 +33,9 @@ public class SortTerm : ISortTerm, IEquatable<SortTerm>
     public bool IsDescending { get; set; }
 
     /// <summary>
-    /// Gets or sets the name of sorting method.
+    /// Gets the name within sorting term.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; }
 
     public static bool operator ==(SortTerm term1, SortTerm term2)
     {
@@ -71,9 +74,9 @@ public class SortTerm : ISortTerm, IEquatable<SortTerm>
     /// <see langword="true"/> if provided other <see cref="SortTerm"/>
     /// instance is equal to the current one; otherwise <see langword="false"/>.
     /// </returns>
-    public bool Equals(SortTerm other)
+    public bool Equals(SortTerm? other)
     {
-        return other != null &&
+        return other is not null &&
                IsDescending == other.IsDescending &&
                Name == other.Name;
     }

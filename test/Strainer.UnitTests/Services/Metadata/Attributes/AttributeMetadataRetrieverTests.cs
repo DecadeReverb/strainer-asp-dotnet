@@ -53,7 +53,6 @@ public class AttributeMetadataRetrieverTests
             IsSortable = false,
         };
         var propertyInfo = modelType.GetProperty(defaultSortingPropertyName);
-        var defaultPropertyMetadata = new PropertyMetadata();
 
         _metadataSourceCheckerMock
             .IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes)
@@ -80,7 +79,7 @@ public class AttributeMetadataRetrieverTests
         var defaultSortingPropertyName = nameof(string.Length);
         var objectAttribute = new StrainerObjectAttribute(defaultSortingPropertyName);
         var propertyInfo = modelType.GetProperty(defaultSortingPropertyName);
-        var defaultPropertyMetadata = new PropertyMetadata();
+        var defaultPropertyMetadata = Substitute.For<IPropertyMetadata>();
 
         _metadataSourceCheckerMock
             .IsMetadataSourceEnabled(MetadataSourceType.ObjectAttributes)
@@ -194,7 +193,7 @@ public class AttributeMetadataRetrieverTests
         var types = new[] { validType, invalidType };
         var defaultSortingPropertyName = nameof(string.Length);
         var objectAttribute = new StrainerObjectAttribute(defaultSortingPropertyName);
-        var propertyMetadata = new PropertyMetadata();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
         var metadataDictionary = new Dictionary<string, IPropertyMetadata>
         {
             [defaultSortingPropertyName] = propertyMetadata,
@@ -218,7 +217,7 @@ public class AttributeMetadataRetrieverTests
 
         // Assert
         result.Should().NotBeNullOrEmpty();
-        result.Keys.Should().BeEquivalentTo(new[] { validType });
+        result.Keys.Should().BeEquivalentTo([validType]);
         result.Values.Single().Should().BeSameAs(metadataDictionary);
     }
 
@@ -230,7 +229,7 @@ public class AttributeMetadataRetrieverTests
         var invalidType = typeof(object);
         var types = new[] { validType, invalidType };
         var defaultSortingPropertyName = nameof(string.Length);
-        var propertyMetadata = new PropertyMetadata();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
         var metadataDictionary = new Dictionary<string, IPropertyMetadata>
         {
             [defaultSortingPropertyName] = propertyMetadata,
@@ -251,7 +250,7 @@ public class AttributeMetadataRetrieverTests
 
         // Assert
         result.Should().NotBeNullOrEmpty();
-        result.Keys.Should().BeEquivalentTo(new[] { validType });
+        result.Keys.Should().BeEquivalentTo([validType]);
         result.Values.Single().Should().BeSameAs(metadataDictionary);
     }
 
@@ -291,7 +290,7 @@ public class AttributeMetadataRetrieverTests
             .Returns(true);
         _propertyInfoProviderMock
             .GetPropertyInfos(typeof(string))
-            .Returns(Array.Empty<PropertyInfo>());
+            .Returns([]);
 
         // Act
         var result = _retriever.GetMetadataFromPropertyAttribute(typeof(string), isSortableRequired, isFilterableRequired, name);

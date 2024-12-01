@@ -20,7 +20,7 @@ public class StrainerPropertyAttribute : Attribute, IPropertyMetadata
     /// <summary>
     /// Gets or sets the display name for related property.
     /// </summary>
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether related
@@ -61,11 +61,11 @@ public class StrainerPropertyAttribute : Attribute, IPropertyMetadata
     /// <summary>
     /// Gets the real name of related property.
     /// </summary>
-    public string Name => PropertyInfo?.Name;
+    public string Name => PropertyInfo!.Name;
 
     /// <summary>
     /// Gets or sets the <see cref="System.Reflection.PropertyInfo"/> for
     /// related property.
     /// </summary>
-    public PropertyInfo PropertyInfo { get; set; }
+    public PropertyInfo? PropertyInfo { get; set; }
 }

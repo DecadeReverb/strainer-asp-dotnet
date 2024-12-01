@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Fluorite.Strainer.Exceptions;
+﻿namespace Fluorite.Strainer.Exceptions;
 
 public class StrainerConversionException : StrainerException
 {
@@ -20,10 +18,6 @@ public class StrainerConversionException : StrainerException
     {
         Value = value;
         TargetedType = Guard.Against.Null(targetedType);
-    }
-
-    protected StrainerConversionException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
     }
 
     public Type TargetedType { get; set; }

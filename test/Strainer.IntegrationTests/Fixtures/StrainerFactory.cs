@@ -17,7 +17,7 @@ public class StrainerFactory : IDisposable
 
     public StrainerFactory()
     {
-        _serviceProviders = new ();
+        _serviceProviders = [];
     }
 
     public IStrainerProcessor CreateDefaultProcessor<TModule>()

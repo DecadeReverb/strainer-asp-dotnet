@@ -11,13 +11,12 @@ public class StrainerModel : IStrainerModel
     /// </summary>
     public StrainerModel()
     {
-
     }
 
     /// <summary>
     /// Gets or sets the filters.
     /// </summary>
-    public virtual string Filters { get; set; }
+    public virtual string? Filters { get; set; }
 
     /// <summary>
     /// Gets or sets the page number.
@@ -32,5 +31,5 @@ public class StrainerModel : IStrainerModel
     /// <summary>
     /// Gets or sets the sortings.
     /// </summary>
-    public virtual string Sorts { get; set; }
+    public virtual string? Sorts { get; set; }
 }

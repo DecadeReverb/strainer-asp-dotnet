@@ -17,11 +17,11 @@ public class CustomFilteringTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 LikeCount = 100,
             },
-            new Post
+            new()
             {
                 LikeCount = 101,
             },
@@ -45,11 +45,11 @@ public class CustomFilteringTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 Title = "Foo",
             },
-            new Post
+            new()
             {
                 Title = "Equals in C# is \'==\'.",
             },
@@ -73,12 +73,12 @@ public class CustomFilteringTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 CommentCount = 10,
                 LikeCount = 200,
             },
-            new Post
+            new()
             {
                 CommentCount = 0,
                 LikeCount = 200,
@@ -104,12 +104,12 @@ public class CustomFilteringTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 CommentCount = 0,
                 LikeCount = 200,
             },
-            new Post
+            new()
             {
                 CommentCount = 2,
                 LikeCount = 200,
@@ -134,12 +134,12 @@ public class CustomFilteringTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 LikeCount = 150,
                 DateCreated = DateTime.UtcNow.AddDays(-7),
             },
-            new Post
+            new()
             {
                 LikeCount = 200,
                 DateCreated = DateTime.UtcNow,
@@ -199,14 +199,20 @@ public class CustomFilteringTests : StrainerFixtureBase
                 .IsDefaultSort();
 
             builder
-                .AddCustomFilterMethod<Post>("HasInTitleFilterOperator")
-                .HasFunction(term => p => p.Title.Contains(term.Operator.Symbol));
+                .AddCustomFilterMethod<Post>(b => b
+                    .HasName("HasInTitleFilterOperator")
+                    .HasFunction(term => p => p.Title.Contains(term.Operator.Symbol))
+                    .Build());
             builder
-                .AddCustomFilterMethod<Post>("IsNew")
-                .HasFunction(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2));
+                .AddCustomFilterMethod<Post>(b => b
+                    .HasName("IsNew")
+                    .HasFunction(c => c.DateCreated > DateTimeOffset.UtcNow.AddDays(-2))
+                    .Build());
             builder
-                .AddCustomFilterMethod<Post>("IsPopular")
-                .HasFunction(p => p.LikeCount > 100);
+                .AddCustomFilterMethod<Post>(b => b
+                    .HasName("IsPopular")
+                    .HasFunction(p => p.LikeCount > 100)
+                    .Build());
         }
     }
 }

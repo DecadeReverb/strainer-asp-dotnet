@@ -28,7 +28,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         _attributeCriteriaChecker = Guard.Against.Null(attributeCriteriaChecker);
     }
 
-    public IPropertyMetadata GetDefaultMetadataFromObjectAttribute(Type modelType)
+    public IPropertyMetadata? GetDefaultMetadataFromObjectAttribute(Type modelType)
     {
         Guard.Against.Null(modelType);
 
@@ -66,7 +66,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         return null;
     }
 
-    public IPropertyMetadata GetDefaultMetadataFromPropertyAttribute(Type modelType)
+    public IPropertyMetadata? GetDefaultMetadataFromPropertyAttribute(Type modelType)
     {
         Guard.Against.Null(modelType);
 
@@ -85,7 +85,8 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
             if (!attribute.IsSortable)
             {
                 throw new InvalidOperationException(
-                    $"Property {attribute.PropertyInfo.Name} on {attribute.PropertyInfo.DeclaringType.FullName} " +
+                    $"Property {attribute.PropertyInfo?.Name ?? attribute.Name} " +
+                    $"on {attribute.PropertyInfo?.DeclaringType?.FullName} " +
                     $"is declared as {nameof(IPropertyMetadata.IsDefaultSorting)} " +
                     $"but not as {nameof(IPropertyMetadata.IsSortable)}. " +
                     $"Set the {nameof(IPropertyMetadata.IsSortable)} to true " +
@@ -116,7 +117,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
             .Select(x => new
             {
                 x.Type,
-                Metadatas = _propertyMetadataDictionaryProvider.GetMetadata(x.Type, x.Attribute),
+                Metadatas = _propertyMetadataDictionaryProvider.GetMetadata(x.Type, x.Attribute!),
             })
             .ToDictionary(x => x.Type, x => x.Metadatas)
             .ToReadOnly();
@@ -143,7 +144,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
             .ToReadOnly();
     }
 
-    public IPropertyMetadata GetMetadataFromObjectAttribute(
+    public IPropertyMetadata? GetMetadataFromObjectAttribute(
         Type modelType,
         bool isSortableRequired,
         bool isFilterableRequired,
@@ -169,7 +170,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
                 isSortableRequired,
                 isFilterableRequired);
 
-            if (isMatching)
+            if (isMatching && attribute is not null && propertyInfo is not null)
             {
                 return _attributePropertyMetadataBuilder.BuildPropertyMetadata(attribute, propertyInfo);
             }
@@ -182,7 +183,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         return null;
     }
 
-    public IPropertyMetadata GetMetadataFromPropertyAttribute(
+    public IPropertyMetadata? GetMetadataFromPropertyAttribute(
         Type modelType,
         bool isSortableRequired,
         bool isFilterableRequired,
@@ -219,7 +220,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         return keyValue?.attribute;
     }
 
-    public IReadOnlyList<IPropertyMetadata> GetMetadataFromObjectAttribute(Type modelType)
+    public IReadOnlyList<IPropertyMetadata>? GetMetadataFromObjectAttribute(Type modelType)
     {
         Guard.Against.Null(modelType);
 
@@ -248,7 +249,7 @@ public class AttributeMetadataRetriever : IAttributeMetadataRetriever
         return null;
     }
 
-    public IReadOnlyList<IPropertyMetadata> GetMetadataFromPropertyAttribute(Type modelType)
+    public IReadOnlyList<IPropertyMetadata>? GetMetadataFromPropertyAttribute(Type modelType)
     {
         Guard.Against.Null(modelType);
 

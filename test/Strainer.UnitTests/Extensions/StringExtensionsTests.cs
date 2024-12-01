@@ -104,7 +104,6 @@ public class StringExtensionsTests
         Assert.Throws<ArgumentNullException>(() => value.TrimEndOnce(subValue));
     }
 
-
     [Fact]
     public void TrimStart_Returns_String_Without_TrimmedValue()
     {

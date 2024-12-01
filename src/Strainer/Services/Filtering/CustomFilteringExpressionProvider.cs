@@ -17,7 +17,7 @@ public class CustomFilteringExpressionProvider : ICustomFilteringExpressionProvi
     public bool TryGetCustomExpression<T>(
         IFilterTerm filterTerm,
         string filterTermName,
-        out Expression<Func<T, bool>> expression)
+        out Expression<Func<T, bool>>? expression)
     {
         Guard.Against.Null(filterTerm);
         Guard.Against.Null(filterTermName);
@@ -26,11 +26,11 @@ public class CustomFilteringExpressionProvider : ICustomFilteringExpressionProvi
         if (customFilterMethods.TryGetValue(typeof(T), out var typeCustomFilterMethods)
             && typeCustomFilterMethods.TryGetValue(filterTermName, out var customMethod))
         {
-            var customFilterMethod = customMethod as ICustomFilterMethod<T>;
+            var customFilterMethod = (ICustomFilterMethod<T>)customMethod;
 
             expression = customFilterMethod.FilterTermExpression is not null
                 ? customFilterMethod.FilterTermExpression(filterTerm)
-                : customFilterMethod.Expression;
+                : customFilterMethod.Expression!;
 
             return true;
         }

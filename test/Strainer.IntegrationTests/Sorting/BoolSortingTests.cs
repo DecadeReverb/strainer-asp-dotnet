@@ -29,7 +29,7 @@ public class BoolSortingTests : StrainerFixtureBase
         }.AsQueryable();
         var model = new StrainerModel()
         {
-            Sorts = "-IsDraft"
+            Sorts = "-IsDraft",
         };
         var processor = Factory.CreateDefaultProcessor(opt =>
         {

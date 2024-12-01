@@ -4,5 +4,5 @@ namespace Fluorite.Strainer.Services.Filtering;
 
 public interface IFilterOperatorParser
 {
-    IFilterOperator GetParsedOperator(string symbol);
+    IFilterOperator? GetParsedOperator(string? symbol);
 }

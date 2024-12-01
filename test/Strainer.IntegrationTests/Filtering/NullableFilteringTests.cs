@@ -17,18 +17,18 @@ public class NullableFilteringTests : StrainerFixtureBase
         // Arrange
         var queryable = new List<Post>
         {
-            new Post
+            new()
             {
                 CategoryId = 0,
             },
-            new Post
+            new()
             {
                 CategoryId = 1,
             },
         }.AsQueryable();
         var model = new StrainerModel()
         {
-            Filters = "CategoryId==1"
+            Filters = "CategoryId==1",
         };
         var processor = Factory.CreateDefaultProcessor();
 

@@ -2,6 +2,7 @@
 
 namespace Fluorite.Strainer.Services.Filtering;
 
+// TODO: What for is this mapper? It is not used anywhere.
 public class CustomFilterMethodMapper : ICustomFilterMethodMapper
 {
     public CustomFilterMethodMapper()
@@ -23,15 +24,18 @@ public class CustomFilterMethodMapper : ICustomFilterMethodMapper
         Methods[typeof(TEntity)][customMethod.Name] = customMethod;
     }
 
-    public ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name)
+    public void CustomMethod<TEntity>(Func<ICustomFilterMethodBuilder<TEntity>, ICustomFilterMethod<TEntity>> buildingDelegate)
     {
-        Guard.Against.NullOrWhiteSpace(name);
+        Guard.Against.Null(buildingDelegate);
+
+        var builder = new CustomFilterMethodBuilder<TEntity>();
+        var customMethod = buildingDelegate.Invoke(builder);
 
         if (!Methods.ContainsKey(typeof(TEntity)))
         {
             Methods[typeof(TEntity)] = new Dictionary<string, ICustomFilterMethod>();
         }
 
-        return new CustomFilterMethodBuilder<TEntity>(Methods, name);
+        Methods[typeof(TEntity)][customMethod.Name] = customMethod;
     }
 }

@@ -1,4 +1,7 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
@@ -20,15 +23,15 @@ public interface IStrainerModuleBuilder
     /// Adds custom filtering method.
     /// </summary>
     /// <typeparam name="TEntity">
-    /// The type of entity on which custom filter method will operate.
+    /// The type of entity on which custom sorting method will operate.
     /// </typeparam>
-    /// <param name="name">
-    /// The name for custom filtering method.
+    /// <param name="buildingDelegate">
+    /// A building delegate for custom filtering method.
     /// </param>
     /// <returns>
-    /// A builder instance for further configuration of custom filtering method.
+    /// A builder instance for further configuration.
     /// </returns>
-    ICustomFilterMethodBuilder<TEntity> AddCustomFilterMethod<TEntity>(string name);
+    IStrainerModuleBuilder AddCustomFilterMethod<TEntity>(Func<ICustomFilterMethodBuilder<TEntity>, ICustomFilterMethod<TEntity>> buildingDelegate);
 
     /// <summary>
     /// Adds custom sorting method.
@@ -36,24 +39,24 @@ public interface IStrainerModuleBuilder
     /// <typeparam name="TEntity">
     /// The type of entity on which custom sorting method will operate.
     /// </typeparam>
-    /// <param name="name">
-    /// The name for custom sorting method.
+    /// <param name="buildingDelegate">
+    /// A building delegate for custom filtering method.
     /// </param>
     /// <returns>
-    /// A builder instance for further configuration of custom sorting method.
+    /// A builder instance for further configuration.
     /// </returns>
-    ICustomSortMethodBuilder<TEntity> AddCustomSortMethod<TEntity>(string name);
+    IStrainerModuleBuilder AddCustomSortMethod<TEntity>(Func<ICustomSortMethodBuilder<TEntity>, ICustomSortMethod<TEntity>> buildingDelegate);
 
     /// <summary>
     /// Adds filter operator.
     /// </summary>
-    /// <param name="symbol">
-    /// The symbol for the filter operator.
+    /// <param name="buildingDelegate">
+    /// A delegate for building the filter operator.
     /// </param>
     /// <returns>
-    /// A builder instance for further configuration of filter operator.
+    /// A builder instance for further configuration.
     /// </returns>
-    IFilterOperatorBuilder AddFilterOperator(string symbol);
+    IStrainerModuleBuilder AddFilterOperator(Func<IFilterOperatorBuilder, IFilterOperator> buildingDelegate);
 
     /// <summary>
     /// Registers object metadata.

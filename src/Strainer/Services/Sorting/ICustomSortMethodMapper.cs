@@ -8,5 +8,5 @@ public interface ICustomSortMethodMapper
 
     void AddMap<TEntity>(ICustomSortMethod<TEntity> sortMethod);
 
-    ICustomSortMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
+    void CustomMethod<TEntity>(Func<ICustomSortMethodBuilder<TEntity>, ICustomSortMethod<TEntity>> buildingDelegate);
 }

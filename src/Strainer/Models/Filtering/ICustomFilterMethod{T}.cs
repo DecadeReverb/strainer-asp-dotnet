@@ -14,10 +14,10 @@ public interface ICustomFilterMethod<T> : ICustomFilterMethod
     /// <summary>
     /// Gets the expression used for custom filtering.
     /// </summary>
-    Expression<Func<T, bool>> Expression { get; }
+    Expression<Func<T, bool>>? Expression { get; }
 
     /// <summary>
     /// Gets the expression used for custom filtering.
     /// </summary>
-    Func<IFilterTerm, Expression<Func<T, bool>>> FilterTermExpression { get; }
+    Func<IFilterTerm, Expression<Func<T, bool>>>? FilterTermExpression { get; }
 }

@@ -12,9 +12,9 @@ public class FilterTermSections
     {
     }
 
-    public string Names { get; set; }
+    public string? Names { get; set; }
 
-    public string OperatorSymbol { get; set; }
+    public string? OperatorSymbol { get; set; }
 
-    public string Values { get; set; }
+    public string? Values { get; set; }
 }

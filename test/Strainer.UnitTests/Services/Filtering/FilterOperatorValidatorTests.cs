@@ -2,6 +2,7 @@
 using Fluorite.Strainer.Models.Filtering.Operators;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Validation;
+using NSubstitute.ReturnsExtensions;
 using System.Linq.Expressions;
 
 namespace Fluorite.Strainer.UnitTests.Services.Filtering;
@@ -12,11 +13,7 @@ public class FilterOperatorValidatorTests
     public void Validator_DoesNot_Throw_Exception_For_ValidOperator()
     {
         // Arrange
-        var filterOperator = new FilterOperator
-        {
-            Expression = (context) => Expression.Empty(),
-            Symbol = "@",
-        };
+        var filterOperator = new FilterOperator("test", "@", _ => Expression.Empty());
         var validator = new FilterOperatorValidator();
 
         // Act & Assert
@@ -28,11 +25,8 @@ public class FilterOperatorValidatorTests
     public void Validator_Throw_Exception_For_Operator_With_NullSymbol()
     {
         // Arrange
-        var filterOperator = new FilterOperator
-        {
-            Expression = (context) => Expression.Empty(),
-            Symbol = null,
-        };
+        var filterOperator = Substitute.For<IFilterOperator>();
+        filterOperator.Symbol.ReturnsNull();
         var validator = new FilterOperatorValidator();
 
         // Act & Assert
@@ -47,11 +41,8 @@ public class FilterOperatorValidatorTests
     public void Validator_Throw_Exception_For_Operator_With_EmptySymbol()
     {
         // Arrange
-        var filterOperator = new FilterOperator
-        {
-            Expression = (context) => Expression.Empty(),
-            Symbol = string.Empty,
-        };
+        var filterOperator = Substitute.For<IFilterOperator>();
+        filterOperator.Symbol.Returns(string.Empty);
         var validator = new FilterOperatorValidator();
 
         // Act & Assert
@@ -66,11 +57,8 @@ public class FilterOperatorValidatorTests
     public void Validator_Throw_Exception_For_Operator_With_WhitespaceSymbol()
     {
         // Arrange
-        var filterOperator = new FilterOperator
-        {
-            Expression = (context) => Expression.Empty(),
-            Symbol = " ",
-        };
+        var filterOperator = Substitute.For<IFilterOperator>();
+        filterOperator.Symbol.Returns(" ");
         var validator = new FilterOperatorValidator();
 
         // Act & Assert
@@ -85,11 +73,9 @@ public class FilterOperatorValidatorTests
     public void Validator_Throw_Exception_For_Operator_With_NullExpression()
     {
         // Arrange
-        var filterOperator = new FilterOperator
-        {
-            Expression = null,
-            Symbol = "@",
-        };
+        var filterOperator = Substitute.For<IFilterOperator>();
+        filterOperator.Symbol.Returns("@");
+        filterOperator.Expression.ReturnsNull();
         var validator = new FilterOperatorValidator();
 
         // Act & Assert
@@ -104,18 +90,13 @@ public class FilterOperatorValidatorTests
     public void Validator_Throw_Exception_For_Operators_With_TheSameSymbol()
     {
         // Arrange
-        var filterOperators = new FilterOperator[]
+        var filterOperator = Substitute.For<IFilterOperator>();
+        filterOperator.Symbol.Returns("@");
+        filterOperator.Expression.Returns(_ => Expression.Empty());
+        var filterOperators = new IFilterOperator[]
         {
-            new FilterOperator
-            {
-                Expression = (context) => Expression.Empty(),
-                Symbol = "@",
-            },
-            new FilterOperator
-            {
-                Expression = (context) => Expression.Empty(),
-                Symbol = "@",
-            }
+            filterOperator,
+            filterOperator,
         };
         var excludedBuiltInFilterOperators = new ReadOnlyHashSet<string>(new HashSet<string>());
         var validator = new FilterOperatorValidator();
@@ -137,10 +118,10 @@ public class FilterOperatorValidatorTests
         {
             FilterOperatorMapper.DefaultOperators[symbol],
         };
-        var excludedBuiltInFilterOperators = new ReadOnlyHashSet<string>(new[]
-        {
+        var excludedBuiltInFilterOperators = new ReadOnlyHashSet<string>(
+        [
             symbol,
-        });
+        ]);
         var validator = new FilterOperatorValidator();
 
         // Act & Assert

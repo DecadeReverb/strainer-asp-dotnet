@@ -31,7 +31,7 @@ public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     /// <summary>
     /// Gets or sets the filter operator.
     /// </summary>
-    public IFilterOperator Operator { get; set; }
+    public IFilterOperator? Operator { get; set; }
 
     /// <summary>
     /// Gets or sets the list of values.
@@ -75,13 +75,12 @@ public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     /// <see langword="true"/> if provided other <see cref="FilterTerm"/>
     /// instance is equal to the current one; otherwise <see langword="false"/>.
     /// </returns>
-    public bool Equals(FilterTerm other)
+    public bool Equals(FilterTerm? other)
     {
-        return other != null &&
+        return other is not null &&
                Names.SequenceEqual(other.Names) &&
-               EqualityComparer<IFilterOperator>.Default.Equals(Operator, other.Operator) &&
+               EqualityComparer<IFilterOperator?>.Default.Equals(Operator, other.Operator) &&
                Values.SequenceEqual(other.Values);
-
     }
 
     /// <summary>
@@ -95,7 +94,7 @@ public class FilterTerm : IFilterTerm, IEquatable<FilterTerm>
     {
         var hashCode = 215681951;
         hashCode = (hashCode * -1521134295) + EqualityComparer<IList<string>>.Default.GetHashCode(Names);
-        hashCode = (hashCode * -1521134295) + EqualityComparer<IFilterOperator>.Default.GetHashCode(Operator);
+        hashCode = (hashCode * -1521134295) + EqualityComparer<IFilterOperator?>.Default.GetHashCode(Operator);
         hashCode = (hashCode * -1521134295) + EqualityComparer<IList<string>>.Default.GetHashCode(Values);
 
         return hashCode;

@@ -17,17 +17,17 @@ public class ConditionalFilteringTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 Title = "How not to die?",
             },
-            new Post
+            new()
             {
                 Title = "Why Java programmers can't C#",
             },
-            new Post
+            new()
             {
-                Title = "When the dinner will be ready?"
+                Title = "When the dinner will be ready?",
             },
         }.AsQueryable();
         var model = new StrainerModel()
@@ -49,17 +49,17 @@ public class ConditionalFilteringTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 Title = ":)",
             },
-            new Post
+            new()
             {
                 Title = "(YES/NO)",
             },
-            new Post
+            new()
             {
-                Title = "",
+                Title = string.Empty,
             },
         }.AsQueryable();
         var model = new StrainerModel()
@@ -81,15 +81,15 @@ public class ConditionalFilteringTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 Id = 20,
             },
-            new Post
+            new()
             {
                 CommentCount = 20,
             },
-            new Post
+            new()
             {
                 LikeCount = 20,
             },
@@ -113,11 +113,11 @@ public class ConditionalFilteringTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 CommentCount = 20,
             },
-            new Post
+            new()
             {
                 LikeCount = 20,
             },

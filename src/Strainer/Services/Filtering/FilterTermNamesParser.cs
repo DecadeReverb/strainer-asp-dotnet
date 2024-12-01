@@ -6,7 +6,7 @@ public class FilterTermNamesParser : IFilterTermNamesParser
 {
     private const string EscapedPipePattern = @"(?<!($|[^\\])(\\\\)*?\\)\|";
 
-    public IList<string> Parse(string input)
+    public IList<string> Parse(string? input)
     {
         if (string.IsNullOrEmpty(input))
         {

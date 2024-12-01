@@ -82,6 +82,6 @@ public class PaginatePipelineOperationTests
         // Assert
         result.Should().NotBeNull();
         result.Should().NotBeEmpty();
-        result.Should().BeEquivalentTo(new [] { 9, 10 });
+        result.Should().BeEquivalentTo([9, 10]);
     }
 }

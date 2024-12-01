@@ -17,14 +17,14 @@ public class NestedSortingTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 Comment = new Comment
                 {
                     Id = 34,
                 },
             },
-            new Post
+            new()
             {
                 Comment = new Comment
                 {
@@ -51,14 +51,14 @@ public class NestedSortingTests : StrainerFixtureBase
         // Arrange
         var posts = new Post[]
         {
-            new Post
+            new()
             {
                 Comment = new Comment
                 {
                     Text = "Nice!",
                 },
             },
-            new Post
+            new()
             {
                 Comment = new Comment
                 {

@@ -28,9 +28,16 @@ public class ConvertFilterValueToStringStepTests
         filterOperator.IsStringBased.Returns(true);
         var term = Substitute.For<IFilterTerm>();
         term.Operator.Returns(filterOperator);
+        var propertyInfo = Substitute.For<PropertyInfo>();
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata.PropertyInfo.Returns(propertyInfo);
+        var typeConverter = Substitute.For<ITypeConverter>();
         var context = new FilterExpressionWorkflowContext
         {
             Term = term,
+            PropertyMetadata = propertyMetadata,
+            TypeConverter = typeConverter,
+            FilterTermValue = "test",
         };
 
         // Act
@@ -54,10 +61,13 @@ public class ConvertFilterValueToStringStepTests
         propertyInfo.PropertyType.Returns(typeof(string));
         var propertyMetadata = Substitute.For<IPropertyMetadata>();
         propertyMetadata.PropertyInfo.Returns(propertyInfo);
+        var typeConverter = Substitute.For<ITypeConverter>();
         var context = new FilterExpressionWorkflowContext
         {
             PropertyMetadata = propertyMetadata,
             Term = term,
+            TypeConverter = typeConverter,
+            FilterTermValue = "test",
         };
 
         // Act
@@ -88,6 +98,7 @@ public class ConvertFilterValueToStringStepTests
             PropertyMetadata = propertyMetadata,
             Term = term,
             TypeConverter = typeConverter,
+            FilterTermValue = "test",
         };
 
         // Act

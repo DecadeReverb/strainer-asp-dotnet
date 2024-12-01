@@ -6,9 +6,9 @@ namespace Fluorite.Strainer.Services.Filtering;
 
 public interface IFilterExpressionProvider
 {
-    Expression GetExpression(
+    Expression? GetExpression(
         IPropertyMetadata metadata,
         IFilterTerm filterTerm,
         ParameterExpression parameterExpression,
-        Expression innerExpression);
+        Expression? innerExpression);
 }

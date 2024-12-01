@@ -1,6 +1,5 @@
 ﻿using Fluorite.Strainer.Models.Filtering.Operators;
 using System.Reflection;
-using System.Runtime.Serialization;
 
 namespace Fluorite.Strainer.Exceptions;
 
@@ -39,11 +38,6 @@ public class StrainerOperatorException : StrainerException
         FilterOperator = Guard.Against.Null(filterOperator);
         PropertyInfo = Guard.Against.Null(propertyInfo);
         Value = value;
-    }
-
-    protected StrainerOperatorException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-
     }
 
     public IFilterOperator FilterOperator { get; }

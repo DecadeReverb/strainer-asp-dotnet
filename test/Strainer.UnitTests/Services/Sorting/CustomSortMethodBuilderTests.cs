@@ -10,8 +10,7 @@ public class CustomSortMethodBuilderTests
     {
         // Arrange
         var name = "foo";
-        var customMethodsDictionary = new Dictionary<Type, IDictionary<string, ICustomSortMethod>>();
-        var builder = new CustomSortMethodBuilder<Post>(customMethodsDictionary, name);
+        var builder = new CustomSortMethodBuilder<Post>().HasName(name);
 
         // Act
         builder.HasFunction(x => x.Name);
@@ -29,8 +28,7 @@ public class CustomSortMethodBuilderTests
     {
         // Arrange
         var name = "foo";
-        var customMethodsDictionary = new Dictionary<Type, IDictionary<string, ICustomSortMethod>>();
-        var builder = new CustomSortMethodBuilder<Post>(customMethodsDictionary, name);
+        var builder = new CustomSortMethodBuilder<Post>().HasName(name);
 
         // Act
         builder.HasFunction((sortTerm) => sortTerm.IsDescending ? (x => x.Author) : (x => x.Name));
@@ -48,8 +46,7 @@ public class CustomSortMethodBuilderTests
     {
         // Arrange
         var name = "foo";
-        var customMethodsDictionary = new Dictionary<Type, IDictionary<string, ICustomSortMethod>>();
-        var builder = new CustomSortMethodBuilder<Post>(customMethodsDictionary, name);
+        var builder = new CustomSortMethodBuilder<Post>().HasName(name);
 
         // Act
         builder.HasFunction(term => x => x.Name);

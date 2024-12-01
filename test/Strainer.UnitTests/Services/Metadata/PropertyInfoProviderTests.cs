@@ -63,7 +63,9 @@ public class PropertyInfoProviderTests
 
     private class Stub
     {
+#pragma warning disable SA1401 // Fields should be private
         public readonly int Field = 0;
+#pragma warning restore SA1401 // Fields should be private
 
         public int Property { get; set; }
 

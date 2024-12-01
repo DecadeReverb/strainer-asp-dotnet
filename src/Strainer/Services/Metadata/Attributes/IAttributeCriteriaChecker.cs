@@ -6,14 +6,14 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes;
 public interface IAttributeCriteriaChecker
 {
     bool CheckIfObjectAttributeIsMatching(
-        StrainerObjectAttribute attribute,
-        PropertyInfo propertyInfo,
+        StrainerObjectAttribute? attribute,
+        PropertyInfo? propertyInfo,
         bool isSortableRequired,
         bool isFilterableRequired);
 
     bool CheckIfPropertyAttributeIsMatching(
-        StrainerPropertyAttribute attribute,
-        PropertyInfo propertyInfo,
+        StrainerPropertyAttribute? attribute,
+        PropertyInfo? propertyInfo,
         bool isSortableRequired,
         bool isFilterableRequired,
         string name);

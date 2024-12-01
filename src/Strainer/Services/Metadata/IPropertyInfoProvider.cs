@@ -9,7 +9,7 @@ namespace Fluorite.Strainer.Services.Metadata;
 /// </summary>
 public interface IPropertyInfoProvider
 {
-    PropertyInfo GetPropertyInfo(Type type, string name);
+    PropertyInfo? GetPropertyInfo(Type type, string name);
 
     /// <summary>
     /// Gets the <see cref="PropertyInfo"/> and property full name

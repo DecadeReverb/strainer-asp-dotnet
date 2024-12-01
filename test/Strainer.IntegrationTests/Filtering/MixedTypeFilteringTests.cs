@@ -18,7 +18,7 @@ public class MixedTypeFilteringTests : StrainerFixtureBase
         var processor = Factory.CreateDefaultProcessor<PostStrainerModule>(options => options.ThrowExceptions = true);
         var source = new List<Post>
         {
-            new () { IsActive = true },
+            new() { IsActive = true },
         }.AsQueryable();
         var model = new StrainerModel
         {

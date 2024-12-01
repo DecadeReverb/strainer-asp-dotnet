@@ -4,5 +4,5 @@ namespace Fluorite.Strainer.Services.Filtering;
 
 public interface IFilterTermParser
 {
-    IList<IFilterTerm> GetParsedTerms(string input);
+    IList<IFilterTerm> GetParsedTerms(string? input);
 }

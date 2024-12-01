@@ -1,6 +1,6 @@
-﻿using Fluorite.Strainer.Models.Metadata;
+﻿using Fluorite.Extensions;
+using Fluorite.Strainer.Models.Metadata;
 using Fluorite.Strainer.Services.Metadata;
-using Fluorite.Extensions;
 using NSubstitute.ReturnsExtensions;
 
 namespace Fluorite.Strainer.UnitTests.Services.Metadata;
@@ -11,7 +11,7 @@ public class MetadataFacadeTests
     public void GetAllMetadata_Should_Return_EmptyDictionary_WhenNoMetadataIsReturnedFromProviders()
     {
         // Arrange
-        var facade = new MetadataFacade(Enumerable.Empty<IMetadataProvider>());
+        var facade = new MetadataFacade([]);
 
         // Act
         var result = facade.GetAllMetadata();
@@ -102,7 +102,7 @@ public class MetadataFacadeTests
     public void GetDefaultMetadata_Should_Return_Null_WhenThereIsNoProviders()
     {
         // Arrange
-        var facade = new MetadataFacade(Enumerable.Empty<IMetadataProvider>());
+        var facade = new MetadataFacade([]);
 
         // Act
         var result = facade.GetDefaultMetadata<Exception>();
@@ -121,7 +121,7 @@ public class MetadataFacadeTests
         provider
             .GetDefaultMetadata(modelType)
             .Returns(defaultMetadata);
-        var facade = new MetadataFacade(new[] { provider });
+        var facade = new MetadataFacade([provider]);
 
         // Act
         var result = facade.GetDefaultMetadata<Exception>();
@@ -141,7 +141,7 @@ public class MetadataFacadeTests
         provider
             .GetPropertyMetadata(modelType, false, false, name)
             .ReturnsNull();
-        var facade = new MetadataFacade(new[] { provider });
+        var facade = new MetadataFacade([provider]);
 
         // Act
         var result = facade.GetMetadata<Exception>(false, false, name);
@@ -163,7 +163,7 @@ public class MetadataFacadeTests
         provider
             .GetPropertyMetadata(modelType, isSortableRequired, isFilterableRequired, name)
             .Returns(propertyMetadata);
-        var facade = new MetadataFacade(new[] { provider });
+        var facade = new MetadataFacade([provider]);
 
         // Act
         var result = facade.GetMetadata<Exception>(isSortableRequired, isFilterableRequired, name);
@@ -182,13 +182,14 @@ public class MetadataFacadeTests
         provider
             .GetPropertyMetadatas(modelType)
             .ReturnsNull();
-        var facade = new MetadataFacade(new[] { provider });
+        var facade = new MetadataFacade([provider]);
 
         // Act
         var result = facade.GetMetadatas<Exception>();
 
         // Assert
-        result.Should().BeNull();
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -204,7 +205,7 @@ public class MetadataFacadeTests
         provider
             .GetPropertyMetadatas(modelType)
             .Returns(propertyMetadatas);
-        var facade = new MetadataFacade(new[] { provider });
+        var facade = new MetadataFacade([provider]);
 
         // Act
         var result = facade.GetMetadatas<Exception>();

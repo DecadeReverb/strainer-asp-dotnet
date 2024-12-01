@@ -8,5 +8,5 @@ public interface ICustomFilterMethodMapper
 
     void AddMap<TEntity>(ICustomFilterMethod<TEntity> sortMethod);
 
-    ICustomFilterMethodBuilder<TEntity> CustomMethod<TEntity>(string name);
+    void CustomMethod<TEntity>(Func<ICustomFilterMethodBuilder<TEntity>, ICustomFilterMethod<TEntity>> buildingDelegate);
 }

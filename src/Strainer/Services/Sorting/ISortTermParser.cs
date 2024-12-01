@@ -4,5 +4,5 @@ namespace Fluorite.Strainer.Services.Sorting;
 
 public interface ISortTermParser
 {
-    IList<ISortTerm> GetParsedTerms(string input);
+    IList<ISortTerm> GetParsedTerms(string? input);
 }

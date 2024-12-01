@@ -39,9 +39,9 @@ public class ConfigurationCustomMethodsProviderTests
                     {
                         "foo",
                         Substitute.For<ICustomFilterMethod>()
-                    }
+                    },
                 }
-            }
+            },
         };
 
         var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();
@@ -74,9 +74,9 @@ public class ConfigurationCustomMethodsProviderTests
                     {
                         "foo",
                         Substitute.For<ICustomSortMethod>()
-                    }
+                    },
                 }
-            }
+            },
         };
 
         var strainerConfigurationMock = Substitute.For<IStrainerConfiguration>();

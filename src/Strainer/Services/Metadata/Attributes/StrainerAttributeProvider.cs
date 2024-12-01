@@ -5,14 +5,14 @@ namespace Fluorite.Strainer.Services.Metadata.Attributes;
 
 public class StrainerAttributeProvider : IStrainerAttributeProvider
 {
-    public StrainerObjectAttribute GetObjectAttribute(Type type)
+    public StrainerObjectAttribute? GetObjectAttribute(Type type)
     {
         Guard.Against.Null(type);
 
         return type.GetCustomAttribute<StrainerObjectAttribute>(inherit: false);
     }
 
-    public StrainerPropertyAttribute GetPropertyAttribute(PropertyInfo propertyInfo)
+    public StrainerPropertyAttribute? GetPropertyAttribute(PropertyInfo propertyInfo)
     {
         Guard.Against.Null(propertyInfo);
 

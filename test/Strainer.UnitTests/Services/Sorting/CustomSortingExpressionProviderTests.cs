@@ -3,7 +3,6 @@ using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Models.Sorting.Terms;
 using Fluorite.Strainer.Services.Configuration;
 using Fluorite.Strainer.Services.Sorting;
-using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using System.Linq.Expressions;
 

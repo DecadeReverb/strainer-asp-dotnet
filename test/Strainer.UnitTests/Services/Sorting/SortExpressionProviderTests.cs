@@ -23,16 +23,13 @@ public class SortExpressionProviderTests
     {
         // Arrange
         var propertyInfo = typeof(Comment).GetProperty(nameof(Comment.Text));
-        var propertyMetadata = new PropertyMetadata
+        var propertyMetadata = new PropertyMetadata(propertyInfo.Name, propertyInfo)
         {
             IsSortable = true,
-            Name = propertyInfo.Name,
-            PropertyInfo = propertyInfo,
         };
-        var sortTerm = new SortTerm
+        var sortTerm = new SortTerm(propertyInfo.Name)
         {
             IsDescending = false,
-            Name = propertyInfo.Name,
         };
         var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
         {
@@ -83,23 +80,20 @@ public class SortExpressionProviderTests
     public void Provider_Returns_ListOfSortExpressions_For_NestedProperty()
     {
         // Arrange
-        var sortTerm = new SortTerm
+        var name = $"{nameof(Post.TopComment)}.{nameof(Comment.Text)}.{nameof(string.Length)}";
+        var sortTerm = new SortTerm(name)
         {
             Input = $"-{nameof(Post.TopComment)}.{nameof(Comment.Text)}.{nameof(string.Length)}",
             IsDescending = true,
-            Name = $"{nameof(Post.TopComment)}.{nameof(Comment.Text)}.{nameof(string.Length)}"
         };
         var propertyInfo = typeof(string).GetProperty(nameof(string.Length));
         var sortTerms = new Dictionary<PropertyInfo, ISortTerm>
         {
             { propertyInfo, sortTerm },
         };
-        var propertyMetadata = new PropertyMetadata
-        {
-            IsSortable = true,
-            Name = sortTerm.Name,
-            PropertyInfo = propertyInfo,
-        };
+        var propertyMetadata = Substitute.For<IPropertyMetadata>();
+        propertyMetadata.Name.Returns(sortTerm.Name);
+        propertyMetadata.IsSortable.Returns(true);
 
         _metadataProvidersFacadeMock
             .GetMetadata<Post>(true, false, sortTerm.Name)
@@ -121,17 +115,15 @@ public class SortExpressionProviderTests
         // Arrange
         var termsList = new List<ISortTerm>
         {
-            new SortTerm
+            new SortTerm(nameof(Comment.Text))
             {
                 Input = $"-{nameof(Comment.Text)},{nameof(Comment.Id)}",
                 IsDescending = true,
-                Name = nameof(Comment.Text),
             },
-            new SortTerm
+            new SortTerm(nameof(Comment.Id))
             {
                 Input = $"-{nameof(Comment.Text)},{nameof(Comment.Id)}",
                 IsDescending = false,
-                Name = nameof(Comment.Id),
             },
         };
         var properties = new PropertyInfo[]
@@ -144,19 +136,15 @@ public class SortExpressionProviderTests
             { properties[0], termsList[0] },
             { properties[1], termsList[1] },
         };
-        var propertyMetadatas = new []
+        var propertyMetadatas = new[]
         {
-            new PropertyMetadata
+            new PropertyMetadata(nameof(Comment.Text), properties[0])
             {
-                Name = nameof(Comment.Text),
                 IsSortable = true,
-                PropertyInfo = properties[0],
             },
-            new PropertyMetadata
+            new PropertyMetadata(nameof(Comment.Id), properties[1])
             {
-                Name = nameof(Comment.Id),
                 IsSortable = true,
-                PropertyInfo = properties[1],
             },
         };
 

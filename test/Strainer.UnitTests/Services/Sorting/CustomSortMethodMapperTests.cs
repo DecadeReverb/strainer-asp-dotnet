@@ -9,11 +9,7 @@ public class CustomSortMethodMapperTests
     public void Mapper_Adds_NewCustomMethod()
     {
         // Arrange
-        var customSortMethod = new CustomSortMethod<Uri>
-        {
-            Expression = uri => uri.Port,
-            Name = "PortThenHost",
-        };
+        var customSortMethod = new CustomSortMethod<Uri>("PortThenHost", uri => uri.Port);
         var mapper = new CustomSortMethodMapper();
 
         // Act

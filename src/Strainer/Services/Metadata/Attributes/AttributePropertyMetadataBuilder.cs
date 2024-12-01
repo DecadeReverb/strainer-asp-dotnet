@@ -11,14 +11,12 @@ public class AttributePropertyMetadataBuilder : IAttributePropertyMetadataBuilde
         Guard.Against.Null(attribute);
         Guard.Against.Null(propertyInfo);
 
-        return new PropertyMetadata
+        return new PropertyMetadata(propertyInfo.Name, propertyInfo)
         {
             IsDefaultSorting = true,
             IsDefaultSortingDescending = attribute.IsDefaultSortingDescending,
             IsFilterable = attribute.IsFilterable,
             IsSortable = attribute.IsSortable,
-            Name = propertyInfo.Name,
-            PropertyInfo = propertyInfo,
         };
     }
 
@@ -29,14 +27,12 @@ public class AttributePropertyMetadataBuilder : IAttributePropertyMetadataBuilde
 
         var isDefaultSorting = attribute.DefaultSortingPropertyName == propertyInfo.Name;
 
-        return new PropertyMetadata
+        return new PropertyMetadata(propertyInfo.Name, propertyInfo)
         {
             IsDefaultSorting = isDefaultSorting,
             IsDefaultSortingDescending = isDefaultSorting && attribute.IsDefaultSortingDescending,
             IsFilterable = attribute.IsFilterable,
             IsSortable = attribute.IsSortable,
-            Name = propertyInfo.Name,
-            PropertyInfo = propertyInfo,
         };
     }
 }

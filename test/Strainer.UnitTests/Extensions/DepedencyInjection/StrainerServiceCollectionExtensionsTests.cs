@@ -40,10 +40,10 @@ public class StrainerServiceCollectionExtensionsTests
         var assemblyMock = Substitute.For<Assembly>();
         assemblyMock
             .GetTypes()
-            .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
+            .Returns([typeof(DerivedModule), typeof(BaseModule)]);
 
         // Act
-        services.AddStrainer(new[] { assemblyMock });
+        services.AddStrainer([assemblyMock]);
         using var serviceProvider = services.BuildServiceProvider();
         var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
 
@@ -102,10 +102,10 @@ public class StrainerServiceCollectionExtensionsTests
         var assemblyMock = Substitute.For<Assembly>();
         assemblyMock
             .GetTypes()
-            .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
+            .Returns([typeof(DerivedModule), typeof(BaseModule)]);
 
         // Act
-        services.AddStrainer(options => options.DefaultPageSize = defaultPageSize, new[] { assemblyMock });
+        services.AddStrainer(options => options.DefaultPageSize = defaultPageSize, [assemblyMock]);
         using var serviceProvider = services.BuildServiceProvider();
         var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
         var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();
@@ -129,7 +129,7 @@ public class StrainerServiceCollectionExtensionsTests
         var services = new ServiceCollection();
         var strainerOptions = new Dictionary<string, string>
         {
-            { nameof(StrainerOptions.DefaultPageSize) , defaultPageSize.ToString() },
+            { nameof(StrainerOptions.DefaultPageSize), defaultPageSize.ToString() },
         };
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(strainerOptions)
@@ -153,7 +153,7 @@ public class StrainerServiceCollectionExtensionsTests
         var defaultPageSize = 20;
         var strainerOptions = new Dictionary<string, string>
         {
-            { nameof(StrainerOptions.DefaultPageSize) , defaultPageSize.ToString() },
+            { nameof(StrainerOptions.DefaultPageSize), defaultPageSize.ToString() },
         };
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(strainerOptions)
@@ -162,14 +162,13 @@ public class StrainerServiceCollectionExtensionsTests
         var assemblyMock = Substitute.For<Assembly>();
         assemblyMock
             .GetTypes()
-            .Returns(new[] { typeof(DerivedModule), typeof(BaseModule) });
+            .Returns([typeof(DerivedModule), typeof(BaseModule)]);
 
         // Act
-        services.AddStrainer(configuration, new[] { assemblyMock });
+        services.AddStrainer(configuration, [assemblyMock]);
         using var serviceProvider = services.BuildServiceProvider();
         var metadataFacade = serviceProvider.GetService<IMetadataFacade>();
         var strainerOptionsProvider = serviceProvider.GetService<IStrainerOptionsProvider>();
-
 
         // Assert
         metadataFacade.Should().NotBeNull();
@@ -223,7 +222,7 @@ public class StrainerServiceCollectionExtensionsTests
         var services = new ServiceCollection();
 
         // Act
-        services.AddStrainer(new[] { typeof(StronglyTypedStrainerModule) });
+        services.AddStrainer([typeof(StronglyTypedStrainerModule)]);
         using var serviceProvider = services.BuildServiceProvider();
 
         // Assert
@@ -241,7 +240,7 @@ public class StrainerServiceCollectionExtensionsTests
         var services = new ServiceCollection();
 
         // Act
-        services.AddStrainer(new[] { typeof(DerivedModule) });
+        services.AddStrainer([typeof(DerivedModule)]);
         using var serviceProvider = services.BuildServiceProvider();
 
         // Assert
@@ -259,7 +258,7 @@ public class StrainerServiceCollectionExtensionsTests
         var services = new ServiceCollection();
 
         // Act & Assert
-        services.AddStrainer(new[] { typeof(Exception) });
+        services.AddStrainer([typeof(Exception)]);
         using var serviceProvider = services.BuildServiceProvider();
         Assert.Throws<InvalidOperationException>(() => serviceProvider.GetRequiredService<IStrainerConfigurationProvider>());
     }
@@ -271,7 +270,7 @@ public class StrainerServiceCollectionExtensionsTests
         var services = new ServiceCollection();
 
         // Act & Assert
-        services.AddStrainer(new[] { typeof(BaseModule) });
+        services.AddStrainer([typeof(BaseModule)]);
         using var serviceProvider = services.BuildServiceProvider();
         Assert.Throws<InvalidOperationException>(() => serviceProvider.GetRequiredService<IStrainerConfigurationProvider>());
     }

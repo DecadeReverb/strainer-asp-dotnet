@@ -1,4 +1,7 @@
 ﻿using Fluorite.Strainer.Models;
+using Fluorite.Strainer.Models.Filtering;
+using Fluorite.Strainer.Models.Filtering.Operators;
+using Fluorite.Strainer.Models.Sorting;
 using Fluorite.Strainer.Services.Filtering;
 using Fluorite.Strainer.Services.Metadata;
 using Fluorite.Strainer.Services.Sorting;
@@ -22,35 +25,35 @@ public interface IStrainerModuleBuilder<T>
     /// <summary>
     /// Adds custom filtering method.
     /// </summary>
-    /// <param name="name">
-    /// The name for custom filtering method.
+    /// <param name="buildingDelegate">
+    /// A building delegate for custom filtering method.
     /// </param>
     /// <returns>
-    /// A builder instance for further configuration of custom filtering method.
+    /// A builder instance for further configuration.
     /// </returns>
-    ICustomFilterMethodBuilder<T> AddCustomFilterMethod(string name);
+    IStrainerModuleBuilder<T> AddCustomFilterMethod(Func<ICustomFilterMethodBuilder<T>, ICustomFilterMethod<T>> buildingDelegate);
 
     /// <summary>
     /// Adds custom sorting method.
     /// </summary>
-    /// <param name="name">
-    /// The name for custom sorting method.
+    /// <param name="buildingDelegate">
+    /// A building delegate for custom filtering method.
     /// </param>
     /// <returns>
-    /// A builder instance for further configuration of custom sorting method.
+    /// A builder instance for further configuration.
     /// </returns>
-    ICustomSortMethodBuilder<T> AddCustomSortMethod(string name);
+    IStrainerModuleBuilder<T> AddCustomSortMethod(Func<ICustomSortMethodBuilder<T>, ICustomSortMethod<T>> buildingDelegate);
 
     /// <summary>
     /// Adds filter operator.
     /// </summary>
-    /// <param name="symbol">
-    /// The symbol for the filter operator.
+    /// <param name="buildingDelegate">
+    /// A delegate for building the filter operator.
     /// </param>
     /// <returns>
-    /// A builder instance for further configuration of filter operator.
+    /// A builder instance for further configuration.
     /// </returns>
-    IFilterOperatorBuilder AddFilterOperator(string symbol);
+    IStrainerModuleBuilder<T> AddFilterOperator(Func<IFilterOperatorBuilder, IFilterOperator> buildingDelegate);
 
     /// <summary>
     /// Registers object metadata.

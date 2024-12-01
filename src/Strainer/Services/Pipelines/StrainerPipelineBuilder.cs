@@ -14,7 +14,7 @@ public class StrainerPipelineBuilder : IStrainerPipelineBuilder
         IPaginatePipelineOperation paginatePipelineOperation,
         IStrainerOptionsProvider strainerOptionsProvider)
     {
-        _operations = new ();
+        _operations = new();
         _filterPipelineOperation = Guard.Against.Null(filterPipelineOperation);
         _sortPipelineOperation = Guard.Against.Null(sortPipelineOperation);
         _paginatePipelineOperation = Guard.Against.Null(paginatePipelineOperation);

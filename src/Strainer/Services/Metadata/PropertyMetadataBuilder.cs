@@ -23,7 +23,7 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
         Save(Build());
     }
 
-    protected string DisplayName { get; set; }
+    protected string? DisplayName { get; set; }
 
     protected string FullName { get; }
 
@@ -39,15 +39,13 @@ public class PropertyMetadataBuilder<TEntity> : IPropertyMetadataBuilder<TEntity
 
     public virtual IPropertyMetadata Build()
     {
-        return new PropertyMetadata
+        return new PropertyMetadata(FullName, PropertyInfo)
         {
             DisplayName = DisplayName,
             IsDefaultSorting = IsDefaultSorting,
             IsDefaultSortingDescending = IsDefaultSortingDescending,
             IsFilterable = IsFilterableValue,
             IsSortable = IsSortableValue,
-            Name = FullName,
-            PropertyInfo = PropertyInfo,
         };
     }
 

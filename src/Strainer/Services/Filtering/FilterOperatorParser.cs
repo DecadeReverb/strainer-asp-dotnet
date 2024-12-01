@@ -11,14 +11,14 @@ public class FilterOperatorParser : IFilterOperatorParser
         _filterOperatorsConfigurationProvider = Guard.Against.Null(filterOperatorsConfigurationProvider);
     }
 
-    public virtual IFilterOperator GetParsedOperator(string symbol)
+    public virtual IFilterOperator? GetParsedOperator(string? symbol)
     {
         if (string.IsNullOrWhiteSpace(symbol))
         {
             return null;
         }
 
-        _filterOperatorsConfigurationProvider.GetFilterOperators().TryGetValue(symbol, out var filterOperator);
+        _filterOperatorsConfigurationProvider.GetFilterOperators().TryGetValue(symbol!, out var filterOperator);
 
         return filterOperator;
     }
